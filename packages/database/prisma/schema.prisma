@@ -12,8 +12,36 @@ datasource db {
 }
 
 // Example table used in the express router example
-model Score {
-  id    Int      @id @default(autoincrement())
-  time  DateTime
-  score Int
+enum Status{
+  NOTASSIGNED
+  ASSIGNED
+  INPROGRESS
+  COMPLETED
+}
+enum RequestType{
+  AUDIOVISUAL
+  EXTERNALTRANSPORTATION
+  EQUIPMENTDELIVERY
+  MAINTENANCE
+  LANGUAGE
+  SANITATION
+  SECURITY
+}
+model Employee {
+  id            Int      @id @default(autoincrement())
+  name          String
+  employeeType  String
+  canService    RequestType[]
+  ServiceRequest ServiceRequest[]
+}
+model ServiceRequest{
+  id            Int             @id
+  type          RequestType
+  dateCreated   DateTime        @default(now())
+  dateUpdated   DateTime?
+  status        Status
+  description   String
+  priority      Int             @unique
+  employeeID    Int
+  assignedTo    Employee        @relation(fields: [employeeID], references: [id])
 }
