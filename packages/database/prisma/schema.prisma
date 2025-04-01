@@ -39,6 +39,7 @@ model ServiceRequest {
   id          Int         @id
   type        RequestType
   dateCreated DateTime    @default(now())
+  deadline     DateTime
   dateUpdated DateTime?
   status      Status
   description String
