@@ -9,12 +9,36 @@ router.get('/', async function (req: Request, res: Response) {
         // Attempt to create in the database
         await PrismaClient.employee.createMany({
             data: [
-                { name: 'Matthew Alex', employeeType: 'admin', canService: [] },
-                { name: 'Bob Lens', employeeType: 'interpreter', canService: [RequestType.LANGUAGE]},
-                { name: 'Sally Appleseed', employeeType: 'pilot', canService: [RequestType.EXTERNALTRANSPORTATION],},
-                { name: 'Amy On', employeeType: 'security guard', canService: [RequestType.SECURITY],},
-                { name: 'Lilly Kit', employeeType: 'janitor', canService: [RequestType.EQUIPMENTDELIVERY] },
-                { name: 'Ila Pol', employeeType: 'interpreter', canService: [RequestType.AUDIOVISUAL, RequestType.LANGUAGE]},
+                {
+                    name: 'Matthew Alex',
+                    employeeType: 'admin',
+                    canService: [],
+                },
+                {
+                    name: 'Bob Lens',
+                    employeeType: 'interpreter',
+                    canService: [RequestType.LANGUAGE],
+                },
+                {
+                    name: 'Sally Appleseed',
+                    employeeType: 'pilot',
+                    canService: [RequestType.EXTERNALTRANSPORTATION],
+                },
+                {
+                    name: 'Amy On',
+                    employeeType: 'security guard',
+                    canService: [RequestType.SECURITY],
+                },
+                {
+                    name: 'Lilly Kit',
+                    employeeType: 'janitor',
+                    canService: [RequestType.EQUIPMENTDELIVERY],
+                },
+                {
+                    name: 'Ila Pol',
+                    employeeType: 'interpreter',
+                    canService: [RequestType.AUDIOVISUAL, RequestType.LANGUAGE],
+                },
             ],
         });
         console.info('Successfully saved emplyee'); // Log that it was successful

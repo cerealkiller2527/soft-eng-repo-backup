@@ -36,7 +36,7 @@ model Employee {
 }
 
 model ServiceRequest {
-  id          Int         @id
+  id          Int         @id@default(autoincrement())
   type        RequestType
   dateCreated DateTime    @default(now())
   deadline     DateTime
@@ -44,8 +44,8 @@ model ServiceRequest {
   status      Status
   description String
   priority    Int         @unique
-  employeeID  Int
-  assignedTo  Employee    @relation(fields: [employeeID], references: [id])
+  employeeID  Int?
+  assignedTo  Employee?   @relation(fields: [employeeID], references: [id])
 }
 
 model Score {
