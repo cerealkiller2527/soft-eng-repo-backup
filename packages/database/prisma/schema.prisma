@@ -43,7 +43,7 @@ model ServiceRequest {
   dateUpdated DateTime?
   status      Status
   description String
-  priority    Int         @unique
+  priority    Int
   employeeID  Int?
   assignedTo  Employee?   @relation(fields: [employeeID], references: [id])
 }
