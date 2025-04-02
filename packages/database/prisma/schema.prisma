@@ -32,20 +32,68 @@ model Employee {
   name           String
   employeeType   String
   canService     RequestType[]
+  language       String[]
   ServiceRequest ServiceRequest[]
 }
 
 model ServiceRequest {
-  id          Int         @id@default(autoincrement())
-  type        RequestType
-  dateCreated DateTime    @default(now())
-  deadline     DateTime
-  dateUpdated DateTime?
-  status      Status
-  description String
-  priority    Int
-  employeeID  Int?
-  assignedTo  Employee?   @relation(fields: [employeeID], references: [id])
+  id                        Int                     @id@default(autoincrement())
+  type                      RequestType
+  dateCreated               DateTime                @default(now())
+  deadline                  DateTime
+  dateUpdated               DateTime?
+  status                    Status
+  description               String
+  priority                  Int
+  employeeID                Int?
+  assignedTo                Employee?               @relation(fields: [employeeID], references: [id])
+  audioVisual               AudioVisual?
+  externalTransportation    ExternalTransportation?
+  equipmentDelivery         EquipmentDelivery?
+  language                  Language?
+  security                  Security?
+}
+model AudioVisual{
+  id              Int             @id
+  serviceRequest  ServiceRequest  @relation(fields: [id], references: [id])
+  location        String
+  deadline        DateTime
+  audiovisualType String
+}
+
+model ExternalTransportation{
+  id              Int             @id
+  serviceRequest  ServiceRequest  @relation(fields: [id], references: [id])
+  fromWhere       String
+  toWhere         String
+  transportType   String
+  dropoffTime     DateTime
+  pickupTime      DateTime
+}
+
+model EquipmentDelivery{
+  id              Int             @id
+  serviceRequest  ServiceRequest  @relation(fields: [id], references: [id])
+  dealine         DateTime
+  equipments      String[]
+  toWhere         DateTime
+  fromWhere       DateTime
+}
+
+model Language{
+  id              Int             @id
+  serviceRequest  ServiceRequest  @relation(fields: [id], references: [id])
+  location        DateTime
+  language        DateTime
+  startTime       DateTime
+  endTime         DateTime
+}
+
+model Security{
+  id                Int            @id
+  serviceRequest    ServiceRequest  @relation(fields: [id], references: [id])
+  location          String
+  riskLevel         Int
 }
 
 model Score {
