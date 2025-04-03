@@ -5,8 +5,11 @@ const prisma = new PrismaClient();
 async function main() {
     // 🚀 Step 1: Create 5 employees
 
-    await prisma.serviceRequest.deleteMany();
-    await prisma.employee.deleteMany();
+    await prisma.serviceRequest.deleteMany(); // clear all SR
+    await prisma.employee.deleteMany();  // clear all employee
+
+    // await prisma.node.deleteMany(); // clear all nodes
+    // await prisma.edge.deleteMany(); // clear all edges
 
     console.log('🗑️ Existing data purged.');
     const employees = await Promise.all(
@@ -20,6 +23,29 @@ async function main() {
             })
         )
     );
+
+
+    // seed nodes
+    const nodes = await prisma.node.createMany({
+        data: [
+            {name: 'A'},
+            {name: 'B'},
+            {name: 'C'},
+            {name: 'D'},
+            {name: 'E'},
+            {name: 'F'}
+        ]
+    })
+
+    const edges = await prisma.edge.createMany({
+        data: [
+            {fromNodeId: nodes[0].id, toNodeId: nodes[1].id}, // this implementation works with prisma.$transaction implementation
+            {},
+            {},
+
+        ]
+    })
+
 
     // 🚀 Step 2: Create 10 service requests
     await Promise.all(
