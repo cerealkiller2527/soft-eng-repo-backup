@@ -1,13 +1,46 @@
 import React from 'react';
-import ExampleComponent from '../components/ExampleComponent.tsx';
+import '../styles/directoryStyles.css';
 
-const ExamplePage = () => {
+const DirectoryPage = () => {
+    const accordionItems = [
+        {
+            id: 'section1',
+            title: 'Centers Of Exellence',
+            content: <button className={"brighamButton"}>Test</button>
+        },
+        {
+            id: 'section2',
+            title: 'General Patient Care',
+            content: 'Ut enim ad minim veniam, quis nostrud exercitation...'
+        },
+        {
+            id: 'section3',
+            title: 'Section 3',
+            content: 'Brigham Groups and Associates'
+        }
+    ];
+
     return (
-        <div className="p-10">
-            <h1 className="font-bold text-xl pb-4">Example Page</h1>
-            <ExampleComponent></ExampleComponent>
-        </div>
+        <>
+            <h1>Directory</h1>
+
+            {accordionItems.map((item) => (
+                <div key={item.id} className="accordion-container">
+                    <input
+                        type="checkbox"
+                        id={item.id}
+                        className="accordion"
+                    />
+                    <label htmlFor={item.id} className="accordion-label">
+                        {item.title}
+                    </label>
+                    <div className="panel">
+                        <p>{item.content}</p>
+                    </div>
+                </div>
+            ))}
+        </>
     );
 };
 
-export default ExamplePage;
+export default DirectoryPage;

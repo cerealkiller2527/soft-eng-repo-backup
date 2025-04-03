@@ -1,0 +1,48 @@
+/* Accordion styles */
+.accordion {
+    display: none;
+}
+
+.accordion-label {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-size: 15px;
+    transition: background-color 0.4s;
+    display: block;
+    margin-bottom: 4px;
+    border-radius: 4px;
+}
+
+.accordion-label:hover {
+    background-color: #ddd;
+}
+
+.panel {
+    padding: 0 18px;
+    background-color: white;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+    margin-bottom: 10px;
+}
+
+.accordion:checked ~ .panel {
+    max-height: 300px;
+    padding: 18px;
+}
+
+.accordion-container {
+    margin-bottom: 10px;
+}
+
+/* Button Styling */
+.brighamButton {
+    padding: 18px;
+    background-color: #012D5A;
+    color: #ffffff;
+}
