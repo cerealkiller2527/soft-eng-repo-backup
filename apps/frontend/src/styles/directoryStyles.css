@@ -42,7 +42,14 @@
 
 /* Button Styling */
 .brighamButton {
-    padding: 18px;
+    padding-left: 30px;
+    padding-right: 30px;
     background-color: #012D5A;
     color: #ffffff;
+}
+
+.brighamButtonRow {
+    display: flex;
+    gap: 250px;
+    margin: 15px 0;
 }

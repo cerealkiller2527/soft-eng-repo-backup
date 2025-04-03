@@ -6,17 +6,25 @@ const DirectoryPage = () => {
         {
             id: 'section1',
             title: 'Centers Of Exellence',
-            content: <button className={"brighamButton"}>Test</button>
+            content: (
+                <>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Test 1</button>
+                        <button className="brighamButton">Test 2</button>
+                        <button className="brighamButton">Test 3</button>
+                    </div>
+                </>
+            )
         },
         {
             id: 'section2',
             title: 'General Patient Care',
-            content: 'Ut enim ad minim veniam, quis nostrud exercitation...'
+            content: 'TEST'
         },
         {
             id: 'section3',
-            title: 'Section 3',
-            content: 'Brigham Groups and Associates'
+            title: 'Brigham Groups and Associates',
+            content: 'TEST'
         }
     ];
 
