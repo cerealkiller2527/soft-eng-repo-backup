@@ -3,8 +3,23 @@
     background-color: #012D5A;
     color: white;
     padding: 10px;
+    z-index: 0;
+    position: sticky;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.directoryPage{
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    border: 1px black;
+    padding: 10px;
+}
 
 
 /* Accordion styles */
@@ -42,7 +57,7 @@
 }
 
 .accordion:checked ~ .panel {
-    max-height: 300px;
+    max-height: 1000px;
     padding: 18px;
 }
 
