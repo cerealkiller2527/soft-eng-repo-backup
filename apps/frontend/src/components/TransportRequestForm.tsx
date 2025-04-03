@@ -13,8 +13,10 @@ export default function TransportRequestForm() {
         transportType: "",
         pickupTransport: "",
         dropoffTransport: "",
-        AdditionalNotes: "",
+        additionalNotes: "",
     });
+
+    const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -37,6 +39,7 @@ export default function TransportRequestForm() {
             alert("Please fill all required fields.");
             return;
         }
+        setSubmittedRequests(prevRequests => [...prevRequests, form]);
 
         console.log("Form submitted successfully.", form);
 
@@ -80,6 +83,21 @@ export default function TransportRequestForm() {
                     <input name="additionalNotes" placeholder="Enter Additional Notes" className="p-8 w-full border border-gray-300 rounded-xl focus:outline-none" onChange={handleChange}></input>
                     <button type='submit' className="w-full btn btn-primary p-3 px-8 bg-[#012D5A] text-white rounded-xl ">Submit</button>
                 </form>
+            {submittedRequests.length > 0 && (
+                <div className="mt-6 p-4 border-t border-gray-300">
+                    <h3 className="text-lg font-semibold">Submitted Requests</h3>
+                    {submittedRequests.map((request, index) => (
+                        <div key={index} className="mt-4 p-2 border-b border-gray-300">
+                            <p><strong>Patient Name:</strong> {request.patientName}</p>
+                            <p><strong>Priority:</strong> {request.priority}</p>
+                            <p><strong>Transport Type:</strong> {request.transportType}</p>
+                            <p><strong>Pickup From:</strong> {request.pickupTransport}</p>
+                            <p><strong>Dropoff To:</strong> {request.dropoffTransport}</p>
+                            <p><strong>Additional Notes:</strong> {request.additionalNotes || "N/A"}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 
