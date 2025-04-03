@@ -63,7 +63,7 @@ const DirectoryPage = () => {
 
     return (
         <div className="directory-page">
-            <h2>Brigham and Women's Directory</h2>
+            <h2 className={"directoryHeader"}>Brigham and Women's Directory</h2>
 
             {accordionItems.map((item) => (
                 <div key={item.id} className="accordion-container">
@@ -80,6 +80,15 @@ const DirectoryPage = () => {
                     </div>
                 </div>
             ))}
+
+            <div className="directory-image">
+                <img
+                    src="/placeholderDirectory.jpeg"
+                    alt="Brigham and Women's Hospital"
+                    className="directory-image"
+                />
+            </div>
+
         </div>
     );
 };

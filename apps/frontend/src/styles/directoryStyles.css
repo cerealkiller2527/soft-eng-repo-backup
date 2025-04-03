@@ -1,3 +1,12 @@
+/* Header styles */
+.directoryHeader {
+    background-color: #012D5A;
+    color: white;
+    padding: 10px;
+}
+
+
+
 /* Accordion styles */
 .accordion {
     display: none;
