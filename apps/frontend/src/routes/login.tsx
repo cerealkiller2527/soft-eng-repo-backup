@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { router } from "../routes.tsx"
 import { useNavigate } from "react-router-dom";
-import "./login.css";
 
 
 const Login: React.FC = () => {
