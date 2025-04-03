@@ -1,10 +1,15 @@
 import React, { useState } from "react";
+import { router } from "../routes.tsx"
+import { useNavigate } from "react-router-dom";
+import "./login.css";
+
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogin = () => {
         const storedEmail = localStorage.getItem("email");
@@ -12,7 +17,7 @@ const Login: React.FC = () => {
 
         if (email === storedEmail && password === storedPassword) {
             setIsLoggedIn(true);
-            alert("Login successful!");
+            navigate("/Directory");
         } else {
             alert("Email Address or password is incorrect!");
         }
@@ -39,14 +44,12 @@ const Login: React.FC = () => {
                             placeholder="Email Address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <button
                             onClick={handleSignUp}
