@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import "./login.css"; // Ensure this file contains styles
+import "./login.css";
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isSignUp, setIsSignUp] = useState(false); // Toggle between login and signup
+    const [isSignUp, setIsSignUp] = useState(false);
 
     const handleLogin = () => {
         const storedEmail = localStorage.getItem("email");
