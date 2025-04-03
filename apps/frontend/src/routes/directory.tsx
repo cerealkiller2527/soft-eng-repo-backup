@@ -5,13 +5,18 @@ const DirectoryPage = () => {
     const accordionItems = [
         {
             id: 'section1',
-            title: 'Centers Of Exellence',
+            title: 'Centers Of Excellence',
             content: (
                 <>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Test 1</button>
-                        <button className="brighamButton">Test 2</button>
-                        <button className="brighamButton">Test 3</button>
+                        <button className="brighamButton">Backup Child Care Center</button>
+                        <button className="brighamButton">Center of Pain Medicine</button>
+                        <button className="brighamButton">Crohn's and Colitis Center</button>
+                    </div>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Endoscopy Center</button>
+                        <button className="brighamButton">Gretchen S. and Edward A. Fish Center for Women's Health</button>
+                        <button className="brighamButton">Osher Clinical Center for Integrative Health</button>
                     </div>
                 </>
             )
@@ -19,18 +24,46 @@ const DirectoryPage = () => {
         {
             id: 'section2',
             title: 'General Patient Care',
-            content: 'TEST'
+            content: (
+                <>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Allergy and Clinical Immunology</button>
+                        <button className="brighamButton">Laboratory</button>
+                        <button className="brighamButton">Multi-Specialty Clinic</button>
+                    </div>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Patient Financial Services</button>
+                        <button className="brighamButton">Pharmacy</button>
+                        <button className="brighamButton">Radiology</button>
+                    </div>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Radiology, MRI/CT scan</button>
+                        <button className="brighamButton">Rehabilitation Services</button>
+                    </div>
+                </>
+            )
         },
         {
             id: 'section3',
             title: 'Brigham Groups and Associates',
-            content: 'TEST'
+            content: (
+                <>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Brigham Dermatology Associates</button>
+                        <button className="brighamButton">Brigham Obstetrics and Gynecology Group</button>
+                        <button className="brighamButton">Brigham Physicians Group</button>
+                    </div>
+                    <div className="brighamButtonRow">
+                        <button className="brighamButton">Brigham Psychiatric Specialities</button>
+                    </div>
+                </>
+            )
         }
     ];
 
     return (
-        <>
-            <h1>Directory</h1>
+        <div className="directory-page">
+            <h2>Brigham and Women's Directory</h2>
 
             {accordionItems.map((item) => (
                 <div key={item.id} className="accordion-container">
@@ -43,11 +76,11 @@ const DirectoryPage = () => {
                         {item.title}
                     </label>
                     <div className="panel">
-                        <p>{item.content}</p>
+                        {item.content}
                     </div>
                 </div>
             ))}
-        </>
+        </div>
     );
 };
 
