@@ -4,6 +4,11 @@ const prisma = new PrismaClient();
 
 async function main() {
     // 🚀 Step 1: Create 5 employees
+
+    await prisma.serviceRequest.deleteMany();
+    await prisma.employee.deleteMany();
+
+    console.log('🗑️ Existing data purged.');
     const employees = await Promise.all(
         Array.from({ length: 5 }).map((_, i) =>
             prisma.employee.create({
