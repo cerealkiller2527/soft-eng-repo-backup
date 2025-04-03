@@ -54,7 +54,7 @@ const FloorPlan = () => {
 
                 <div id="map" className="p-4">
                     <img
-                        src="/ChestnutHillFloor1.png"
+                        src="/combinedFloorPlan.png"
                         alt="Placeholder floor plan"
                         className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
                     />
