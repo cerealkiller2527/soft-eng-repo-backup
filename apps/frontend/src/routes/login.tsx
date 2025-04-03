@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./login.css";
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -27,54 +26,78 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="login-container">
-            <div className="login-box">
+        <div className="flex justify-center items-center h-screen bg-gray-300">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
                 {isSignUp ? (
                     <>
-                        <h1>Create Account</h1>
-                        <p>Please enter your email and password to sign up.</p>
+                        <h1 className="text-2xl text-gray-800 mb-4">Create Account</h1>
+                        <p className="text-sm text-gray-500 mb-6">
+                            Please enter your email and password to sign up.
+                        </p>
                         <input
                             type="email"
                             placeholder="Email Address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <button onClick={handleSignUp}>Sign Up</button>
-                        <p>
+                        <button
+                            onClick={handleSignUp}
+                            className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
+                        >
+                            Sign Up
+                        </button>
+                        <p className="mt-4 text-sm">
                             Already have an account?{" "}
-                            <span onClick={() => setIsSignUp(false)} className="signup-link">
-                                Sign In
-                            </span>
+                            <span
+                                onClick={() => setIsSignUp(false)}
+                                className="text-blue-900 hover:underline cursor-pointer"
+                            >
+                Sign In
+              </span>
                         </p>
                     </>
                 ) : (
                     <>
-                        <h1>Sign In</h1>
-                        <p>Please sign in to access the application.</p>
+                        <h1 className="text-2xl text-gray-800 mb-4">Sign In</h1>
+                        <p className="text-sm text-gray-500 mb-6">
+                            Please sign in to access the application.
+                        </p>
                         <input
                             type="email"
                             placeholder="Email Address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <button onClick={handleLogin}>Sign In</button>
-                        <p>
+                        <button
+                            onClick={handleLogin}
+                            className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
+                        >
+                            Sign In
+                        </button>
+                        <p className="mt-4 text-sm">
                             Don't have an account?{" "}
-                            <span onClick={() => setIsSignUp(true)} className="signup-link">
-                                Create Account
-                            </span>
+                            <span
+                                onClick={() => setIsSignUp(true)}
+                                className="text-blue-900 hover:underline cursor-pointer"
+                            >
+                Create Account
+              </span>
                         </p>
                     </>
                 )}
