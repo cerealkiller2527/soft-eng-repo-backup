@@ -26,6 +26,9 @@
         "studio:prod": "dotenv -e ${PROJECT_CWD}/.env.prod prisma studio",
         "seed": "dotenv -e ${PROJECT_CWD}/.env prisma db seed"
     },
+    "prisma": {
+        "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} seed.ts"
+    },
     "devDependencies": {
         "@yarnpkg/pnpify": "^4.0.0-rc.45",
         "eslint": "*",
