@@ -53,31 +53,31 @@ export default function TransportRequestForm() {
                  <input name="patientName" placeholder="Enter Patient Name" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none focus:ring-2 focus:ring-[#012D5A]"  />
                     <br/>
                     <label className="p-2 text-gray-800">Priority:</label>
-                 <select name="priority"onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                 <select name="priority" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                      <option value="">Select Priority Level</option>
                      {priorityLevels.map(priority => <option key={priority} value={priority}>{priority}</option>)}
                  </select>
                  <br/>
                     <label className="p-2 text-gray-800">Transport Type:</label>
-                    <select name="transportType"onChange={handleChange} className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                    <select name="transportType" onChange={handleChange} className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                         <option value="">Select Transport Type</option>
                         {transportTypes.map(transport => <option key={transport} value={transport}>{transport}</option>)}
                     </select>
                     <br/>
                     <label className="p-2 text-gray-800">Pickup From:</label>
-                    <select name="pickupTransport"onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                    <select name="pickupTransport" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                         <option value="">Select Pickup Location</option>
                         {MGBHospitals.map(hospital => <option key={hospital} value={hospital}>{hospital}</option>)}
                     </select>
                     <br/>
                     <label className="p-2 text-gray-800">Dropoff To:</label>
-                    <select name="dropoffTransport"onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                    <select name="dropoffTransport" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                         <option value="">Select Dropoff Location</option>
                         {MGBHospitals.map(hospital => <option key={hospital} value={hospital}>{hospital}</option>)}
                     </select>
                     <br/>
                     <label className="p-2 text-gray-800">Additional Notes: </label>
-                    <input name="additionalNotes" placeholder="Enter Additional Notes" className="p-8 w-full border border-gray-300 rounded-xl focus:outline-none"onChange={handleChange}></input>
+                    <input name="additionalNotes" placeholder="Enter Additional Notes" className="p-8 w-full border border-gray-300 rounded-xl focus:outline-none" onChange={handleChange}></input>
                     <button type='submit' className="w-full btn btn-primary p-3 px-8 bg-[#012D5A] text-white rounded-xl ">Submit</button>
                 </form>
         </div>
