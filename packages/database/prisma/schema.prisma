@@ -2,8 +2,7 @@
 
 generator client {
   provider   = "prisma-client-js"
-  output     = "../.prisma/client"
-  engineType = "binary"
+  output = "../.prisma/client"
 }
 
 datasource db {
@@ -12,6 +11,98 @@ datasource db {
 }
 
 // Example table used in the express router example
+enum Status {
+  NOTASSIGNED
+  ASSIGNED
+  INPROGRESS
+  COMPLETED
+}
+
+enum RequestType {
+  AUDIOVISUAL
+  EXTERNALTRANSPORTATION
+  EQUIPMENTDELIVERY
+  LANGUAGE
+  SECURITY
+}
+
+enum Priority {
+  URGENT
+  HIGH
+  INTERMEDIATE
+  LOW
+}
+
+model Employee {
+  id             Int              @id @default(autoincrement())
+  name           String
+  employeeType   String
+  canService     RequestType[]
+  language       String[]
+  ServiceRequest ServiceRequest[]
+}
+
+model ServiceRequest {
+  id                     Int                     @id @default(autoincrement())
+  type                   RequestType
+  dateCreated            DateTime                @default(now())
+  deadline               DateTime
+  dateUpdated            DateTime?
+  status                 Status
+  description            String
+  priority               Int
+  employeeID             Int?
+  assignedTo             Employee?               @relation(fields: [employeeID], references: [id])
+  audioVisual            AudioVisual?
+  externalTransportation ExternalTransportation?
+  equipmentDelivery      EquipmentDelivery?
+  language               Language?
+  security               Security?
+}
+
+model AudioVisual {
+  id              Int            @id
+  serviceRequest  ServiceRequest @relation(fields: [id], references: [id])
+  location        String
+  deadline        DateTime
+  audiovisualType String
+}
+
+model ExternalTransportation {
+  id             Int            @id
+  serviceRequest ServiceRequest @relation(fields: [id], references: [id])
+  fromWhere      String
+  toWhere        String
+  transportType  String
+  patientName    String
+  priority       Priority
+}
+
+model EquipmentDelivery {
+  id             Int            @id
+  serviceRequest ServiceRequest @relation(fields: [id], references: [id])
+  dealine        DateTime
+  equipments     String[]
+  toWhere        DateTime
+  fromWhere      DateTime
+}
+
+model Language {
+  id             Int            @id
+  serviceRequest ServiceRequest @relation(fields: [id], references: [id])
+  location       DateTime
+  language       DateTime
+  startTime      DateTime
+  endTime        DateTime
+}
+
+model Security {
+  id             Int            @id
+  serviceRequest ServiceRequest @relation(fields: [id], references: [id])
+  location       String
+  riskLevel      Int
+}
+
 model Score {
   id    Int      @id @default(autoincrement())
   time  DateTime

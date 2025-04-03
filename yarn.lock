@@ -2773,6 +2773,8 @@ __metadata:
     prettier-config-custom: "npm:*"
     prisma: "npm:6.5.0"
     ts-config-custom: "npm:*"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
 
@@ -6219,7 +6221,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "softeng-startercode-d25@workspace:."
   dependencies:
-    "@types/node": "npm:^22.13.13"
+    "@types/node": "npm:^22.14.0"
     "@vitest/ui": "npm:^3.0.9"
     "@yarnpkg/pnpify": "npm:^4.1.4"
     common: "workspace:*"
