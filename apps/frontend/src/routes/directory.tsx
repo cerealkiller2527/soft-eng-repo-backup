@@ -1,6 +1,8 @@
 import React from 'react';
 import '../styles/directoryStyles.css';
 import {Link} from "react-router-dom";
+import Navbar from "../components/Navbar.tsx";
+
 
 const DirectoryPage = () => {
     const accordionItems = [
@@ -10,6 +12,7 @@ const DirectoryPage = () => {
             content: (
                 <>
                     <div className="brighamButtonRow">
+
                         <Link to={'/bccc'} className="brighamButton">Backup Child Care Center</Link>
                         <button className="brighamButton">Center of Pain Medicine</button>
                         <button className="brighamButton">Crohn's and Colitis Center</button>
@@ -65,6 +68,16 @@ const DirectoryPage = () => {
     return (
         <body>
             <div>
+                <div className="flex justify-start mb-2">
+                    <img
+                        src="/BrighamAndWomensLogo.png"
+                        alt="Brigham and Women's Hospital Logo"
+                        className="h-12 ml-2"
+                    />
+                </div>
+
+
+                <Navbar />
                 <h2 className={"directoryHeader"}>Brigham and Women's Directory</h2>
 
                 {accordionItems.map((item) => (
