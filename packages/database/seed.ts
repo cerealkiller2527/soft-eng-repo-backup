@@ -26,7 +26,7 @@ async function main() {
 
 
     // seed nodes
-    const nodes = await prisma.node.createMany({
+    const nodes = await prisma.node.createManyAndReturn({
         data: [
             {name: 'A'},
             {name: 'B'},
@@ -39,7 +39,7 @@ async function main() {
 
     const edges = await prisma.edge.createMany({
         data: [
-            {fromNodeId: nodes[0].id, toNodeId: nodes[1].id}, // this implementation works with prisma.$transaction implementation
+            {fromNodeId: nodes[0].id, toNodeId: nodes[1].id},
             {},
             {},
 
