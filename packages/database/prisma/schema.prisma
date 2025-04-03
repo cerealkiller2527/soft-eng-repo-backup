@@ -1,8 +1,8 @@
 // This is your Prisma schema file, learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider   = "prisma-client-js"
-  output = "../.prisma/client"
+  provider = "prisma-client-js"
+  output   = "../.prisma/client"
 }
 
 datasource db {
@@ -107,4 +107,15 @@ model Score {
   id    Int      @id @default(autoincrement())
   time  DateTime
   score Int
+}
+
+model Node {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Edge {
+  id         Int @id @default(autoincrement())
+  fromNodeId Int
+  toNodeId   Int
 }
