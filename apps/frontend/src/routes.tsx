@@ -4,6 +4,7 @@ import ServiceRequest from './routes/serviceRequest.tsx';
 import FloorPlan from './routes/floorPlan.tsx';
 import Directory from './routes/directory.tsx';
 import Login from './routes/login.tsx';
+import BackupChildCareCenter from './routes/directoryPages/backupChildCareCenter.tsx';
 
 export const routes = [
     {
@@ -25,6 +26,11 @@ export const routes = [
         path: '/',
         errorElement: <div />,
         element: <Login />,
+    },
+    {
+        path: '/bccc',
+        errorElement: <div />,
+        element: <BackupChildCareCenter />,
     },
 ];
 

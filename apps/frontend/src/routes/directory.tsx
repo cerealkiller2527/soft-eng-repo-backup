@@ -10,7 +10,7 @@ const DirectoryPage = () => {
             content: (
                 <>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Backup Child Care Center</button>
+                        <Link to={'/bccc'} className="brighamButton">Backup Child Care Center</Link>
                         <button className="brighamButton">Center of Pain Medicine</button>
                         <button className="brighamButton">Crohn's and Colitis Center</button>
                     </div>

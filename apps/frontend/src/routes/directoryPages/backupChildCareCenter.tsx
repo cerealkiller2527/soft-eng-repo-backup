@@ -1,9 +1,11 @@
 import React from 'react';
-import './App.css';
+import '../../styles/directoryPagesStyles.css';
 
 const  backupChildCareCenter = () => {
     return (
-        <h2>Welcome to the backupChildCareCenter!</h2>
+        <body>
+            <h2>Welcome to the Backup Child Care Center!</h2>
+        </body>
     );
 };
 
