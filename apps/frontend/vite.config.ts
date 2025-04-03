@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import path from "path"
 import react from '@vitejs/plugin-react-swc';
 import eslint from 'vite-plugin-eslint';
 import tailwindcss from '@tailwindcss/vite';
@@ -13,7 +14,7 @@ export default defineConfig({
         host: 'localhost',
         port: parseInt(process.env.FRONTEND_PORT),
         proxy: {
-            '/api': process.env.BACKEND_URL
+            '/api': process.env.BACKEND_URL,
         },
         watch: {
             usePolling: true,
