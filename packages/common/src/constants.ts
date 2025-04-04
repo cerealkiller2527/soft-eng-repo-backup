@@ -1,7 +1,7 @@
 export const API_ROUTES = {
     HEALTHCHECK: '/api/healthcheck',
     SCORE: '/api/score',
-    EMPLOYEE: '/employee',
-    SERVICEREQ: '/servicereqs',
-    ASSIGNED: '/assigned'
+    EMPLOYEE: '/api/employee',
+    SERVICEREQ: '/api/servicereqs',
+    ASSIGNED: '/api/assigned'
 };
