@@ -27,13 +27,6 @@ enum RequestType {
   SECURITY
 }
 
-enum Priority {
-  URGENT
-  HIGH
-  INTERMEDIATE
-  LOW
-}
-
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
@@ -74,7 +67,8 @@ model ExternalTransportation {
   toWhere        String
   transportType  String
   patientName    String
-  priority       Priority
+  dropoffTime    DateTime
+  pickupTime     DateTime
 }
 
 model EquipmentDelivery {
@@ -87,12 +81,12 @@ model EquipmentDelivery {
 }
 
 model Language {
-  id              Int            @id
-  serviceRequest  ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
-  location        String
-  language        String
-  startTime       DateTime
-  durationInHours Float
+  id             Int            @id
+  serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
+  location       String
+  language       String
+  startTime      DateTime
+  endTime        DateTime
 }
 
 model Security {

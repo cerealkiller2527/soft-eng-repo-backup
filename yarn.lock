@@ -1462,7 +1462,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/morgan@npm:^1.9.9":
+"@types/morgan@npm:^1, @types/morgan@npm:^1.9.9":
   version: 1.9.9
   resolution: "@types/morgan@npm:1.9.9"
   dependencies:
@@ -4903,7 +4903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"morgan@npm:^1.9.9":
+"morgan@npm:^1.10.0, morgan@npm:^1.9.9":
   version: 1.10.0
   resolution: "morgan@npm:1.10.0"
   dependencies:
@@ -6221,6 +6221,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "softeng-startercode-d25@workspace:."
   dependencies:
+    "@types/morgan": "npm:^1"
     "@types/node": "npm:^22.14.0"
     "@vitest/ui": "npm:^3.0.9"
     "@yarnpkg/pnpify": "npm:^4.1.4"
@@ -6230,6 +6231,7 @@ __metadata:
     eslint: "npm:^9.23.0"
     eslint-config-custom: "workspace:*"
     husky: "npm:^9.1.7"
+    morgan: "npm:^1.10.0"
     prettier: "npm:^3.5.3"
     prettier-config-custom: "workspace:*"
     ts-config-custom: "workspace:*"

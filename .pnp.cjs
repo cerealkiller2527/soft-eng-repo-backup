@@ -62,6 +62,7 @@ const RAW_RUNTIME_STATE =
       [null, {\
         "packageLocation": "./",\
         "packageDependencies": [\
+          ["@types/morgan", "npm:1.9.9"],\
           ["@types/node", "npm:22.13.13"],\
           ["@vitest/ui", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:3.0.9"],\
           ["@yarnpkg/pnpify", "npm:4.1.4"],\
@@ -71,6 +72,7 @@ const RAW_RUNTIME_STATE =
           ["eslint", "virtual:19a1bbfd66c0a8b6e4e9b4eb3053d58c46601ff49b62144208f9d27690e7d3dafa1ec4b1cf3db192de427911ae217357531df59f991426daf174c7b5b2cfb34e#npm:9.23.0"],\
           ["eslint-config-custom", "workspace:configs/eslint-config-custom"],\
           ["husky", "npm:9.1.7"],\
+          ["morgan", "npm:1.10.0"],\
           ["prettier", "npm:3.5.3"],\
           ["prettier-config-custom", "workspace:configs/prettier-config-custom"],\
           ["ts-config-custom", "workspace:configs/ts-config-custom"],\
@@ -2899,7 +2901,7 @@ const RAW_RUNTIME_STATE =
           ["body-parser", "npm:1.20.3"],\
           ["bytes", "npm:3.1.2"],\
           ["content-type", "npm:1.0.5"],\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["depd", "npm:2.0.0"],\
           ["destroy", "npm:1.2.0"],\
           ["http-errors", "npm:2.0.0"],\
@@ -3349,7 +3351,7 @@ const RAW_RUNTIME_STATE =
           ["accepts", "npm:1.3.8"],\
           ["bytes", "npm:3.0.0"],\
           ["compressible", "npm:2.0.18"],\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["on-headers", "npm:1.0.2"],\
           ["safe-buffer", "npm:5.1.2"],\
           ["vary", "npm:1.1.2"]\
@@ -3526,10 +3528,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9", {\
-        "packageLocation": "./.yarn/__virtual__/debug-virtual-ce39f1817a/0/cache/debug-npm-2.6.9-7d4cb597dc-121908fb83.zip/node_modules/debug/",\
+      ["virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9", {\
+        "packageLocation": "./.yarn/__virtual__/debug-virtual-dc49b120dc/0/cache/debug-npm-2.6.9-7d4cb597dc-121908fb83.zip/node_modules/debug/",\
         "packageDependencies": [\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["@types/supports-color", null],\
           ["ms", "npm:2.0.0"],\
           ["supports-color", null]\
@@ -4319,7 +4321,7 @@ const RAW_RUNTIME_STATE =
           ["content-type", "npm:1.0.5"],\
           ["cookie", "npm:0.7.1"],\
           ["cookie-signature", "npm:1.0.6"],\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["depd", "npm:2.0.0"],\
           ["encodeurl", "npm:2.0.0"],\
           ["escape-html", "npm:1.0.3"],\
@@ -4482,7 +4484,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/finalhandler-npm-1.3.1-690d7d7e6d-d380358318.zip/node_modules/finalhandler/",\
         "packageDependencies": [\
           ["finalhandler", "npm:1.3.1"],\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["encodeurl", "npm:2.0.0"],\
           ["escape-html", "npm:1.0.3"],\
           ["on-finished", "npm:2.4.1"],\
@@ -5941,7 +5943,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["morgan", "npm:1.10.0"],\
           ["basic-auth", "npm:2.0.1"],\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["depd", "npm:2.0.0"],\
           ["on-finished", "npm:2.3.0"],\
           ["on-headers", "npm:1.0.2"]\
@@ -7193,7 +7195,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/send-npm-0.19.0-4297594770-ea3f8a67a8.zip/node_modules/send/",\
         "packageDependencies": [\
           ["send", "npm:0.19.0"],\
-          ["debug", "virtual:c7b184cd14c02e3ce555ab1875e60cf5033c617e17d82c4c02ea822101d3c817f48bf25a766b4d4335742dc5c9c14c2e88a57ed955a56c4ad0613899f82f5618#npm:2.6.9"],\
+          ["debug", "virtual:a0da109b6bb2221d58f29dc59726c567934008a44a6ba5ff00fb6a418135f3bfbb062d75cc9584275e233f5c2369177667c01f9eb6419553dc7abe081d7542fb#npm:2.6.9"],\
           ["depd", "npm:2.0.0"],\
           ["destroy", "npm:1.2.0"],\
           ["encodeurl", "npm:1.0.2"],\
@@ -7430,6 +7432,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["softeng-startercode-d25", "workspace:."],\
+          ["@types/morgan", "npm:1.9.9"],\
           ["@types/node", "npm:22.13.13"],\
           ["@vitest/ui", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:3.0.9"],\
           ["@yarnpkg/pnpify", "npm:4.1.4"],\
@@ -7439,6 +7442,7 @@ const RAW_RUNTIME_STATE =
           ["eslint", "virtual:19a1bbfd66c0a8b6e4e9b4eb3053d58c46601ff49b62144208f9d27690e7d3dafa1ec4b1cf3db192de427911ae217357531df59f991426daf174c7b5b2cfb34e#npm:9.23.0"],\
           ["eslint-config-custom", "workspace:configs/eslint-config-custom"],\
           ["husky", "npm:9.1.7"],\
+          ["morgan", "npm:1.10.0"],\
           ["prettier", "npm:3.5.3"],\
           ["prettier-config-custom", "workspace:configs/prettier-config-custom"],\
           ["ts-config-custom", "workspace:configs/ts-config-custom"],\
