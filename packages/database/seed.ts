@@ -5,6 +5,11 @@ const prisma = new PrismaClient();
 async function main() {
     // 🚀 Step 1: Create 5 employees
 
+    await prisma.audioVisual.deleteMany();
+    await prisma.externalTransportation.deleteMany();
+    await prisma.equipmentDelivery.deleteMany();
+    await prisma.language.deleteMany();
+    await prisma.security.deleteMany();
     await prisma.serviceRequest.deleteMany();
     await prisma.employee.deleteMany();
 
@@ -27,10 +32,8 @@ async function main() {
             prisma.serviceRequest.create({
                 data: {
                     type: i % 2 === 0 ? RequestType.AUDIOVISUAL : RequestType.SECURITY,
-                    deadline: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day from now
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
                     description: `Request ${i + 1}`,
-                    priority: Math.floor(Math.random() * 5) + 1,
                     employeeID: i < 5 ? employees[i % employees.length].id : null,
                 },
             })
