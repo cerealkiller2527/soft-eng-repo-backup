@@ -107,3 +107,14 @@ model Score {
   time  DateTime
   score Int
 }
+
+model Node {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Edge {
+  id         Int @id @default(autoincrement())
+  fromNodeId Int
+  toNodeId   Int
+}
