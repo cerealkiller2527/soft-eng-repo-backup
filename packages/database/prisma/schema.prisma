@@ -101,3 +101,54 @@ model Score {
   time  DateTime
   score Int
 }
+
+model Node {
+  id       Int       @id @default(autoincrement())
+  x        Int
+  y        Int
+  Location Location?
+}
+
+model Location {
+  id           Int        @id @default(autoincrement())
+  suite        String
+  floor        Int
+  nodeID       Int        @unique
+  node         Node       @relation(fields: [nodeID], references: [id])
+  departmentId Int?
+  Department   Department? @relation(fields: [departmentId], references: [id])
+}
+
+model Department {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  description        String?
+  phoneNumber        Int
+  Location           Location[]
+  DepartmentServices DepartmentServices[]
+  buildingID         Int
+  building           Building             @relation(fields: [buildingID], references: [id])
+}
+
+model Service {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  DepartmentServices DepartmentServices[]
+}
+
+model DepartmentServices {
+  departmentID Int
+  serviceID    Int
+  department   Department @relation(fields: [departmentID], references: [id])
+  service      Service    @relation(fields: [serviceID], references: [id])
+
+  @@id([departmentID, serviceID])
+}
+
+model Building {
+  id          Int          @id @default(autoincrement())
+  name        String
+  address     String
+  phoneNumber Int
+  Department  Department[]
+}
