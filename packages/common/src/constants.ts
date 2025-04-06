@@ -3,5 +3,6 @@ export const API_ROUTES = {
     SCORE: '/api/score',
     EMPLOYEE: '/api/employee',
     SERVICEREQ: '/api/servicereqs',
-    ASSIGNED: '/api/assigned'
+    ASSIGNED: '/api/assigned',
+    LOGIN: '/api/login',
 };

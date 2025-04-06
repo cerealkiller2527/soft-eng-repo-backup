@@ -27,6 +27,12 @@ enum RequestType {
   SECURITY
 }
 
+model User {
+  username String @id
+  password String
+  email    String
+}
+
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
