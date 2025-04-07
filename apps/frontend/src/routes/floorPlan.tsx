@@ -1,16 +1,23 @@
 import React from 'react';
-import ExampleComponent from '../components/ExampleComponent.tsx';
+import axios from 'axios';
 import {useRef , useEffect } from 'react';
 import Navbar from "../components/Navbar.tsx";
 
 const FloorPlan = () => {
+    /*
+    const [pathCoords, setPathCoords] = useState<{ x: number; y: number }[]>([]);
 
-    const pathCoords = [
-        { x: 50, y: 250 },
-        { x: 200, y: 250 },
-        { x: 200, y: 375 },
-        { x: 400, y: 320 },
-    ];
+
+    useEffect(() => {
+        axios.get('/api/pathcoords')
+            .then((response) => {
+                setPathCoords(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching path coordinates:', error);
+            });
+    }, []); //
+    */
 
     useEffect(() => {
         const canvas = document.getElementById("overlay-canvas") as HTMLCanvasElement;
@@ -20,15 +27,51 @@ const FloorPlan = () => {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        const resizeCanvas = () => {
-            canvas.width = image.clientWidth;
-            canvas.height = image.clientHeight;
+
+
+        const pathCoords = [
+            { x: 100, y: 227 }, //leftEntranceOutside, connects to leftEntrance
+            { x: 190, y: 227 }, //leftEntrance, connects to leftEntranceOutside, hallwayAFloor1, hallwayCFloor1
+            { x: 190, y: 130 }, //hallwayAFloor1, connects to leftEntranceOutside, hallwayBFloor1
+            { x: 272, y: 130 }, //hallwayBFloor1, connects to hallwayAFloor1, topStairs
+            { x: 272, y: 110 }, //topStairs, connects to hallwayBFloor1
+            { x: 272, y: 130 },
+            { x: 190, y: 130 },
+            { x: 190, y: 227 },
+            { x: 190, y: 239 }, //hallwayCFloor1, connects to leftEntrance, hallwayDFloor1
+            { x: 163, y: 239 }, //hallwayDFloor1, connects to hallwayCFloor1, hallwayEFloor1
+            { x: 163, y: 360 }, //hallwayEFloor1, connects to hallwayDFloor1, hallwayFFloor1
+            { x: 275, y: 360 }, //hallwayFFloor1, connects to hallwayGFloor1, bottomEntrance, hallwayEFloor1
+            { x: 275, y: 390 }, //bottomEntrance, connects to hallwayFFloor1,
+            { x: 275, y: 450 }, //bottonEntranceOutside, connects to bottomEntrance
+            { x: 275, y: 390 },
+            { x: 275, y: 360 },
+            { x: 275, y: 315 }, //hallwayGFloor1, connects to hallwayFFloor1, hallwayHFloor1
+            { x: 357, y: 315 }, //hallwayHFloor1, connects to hallwayGFloor1, stairBottomRight, rightEntrance
+            { x: 357, y: 300 }, //stairBottomRight, connects to hallwayHFloor1
+            { x: 357, y: 315 },
+            { x: 400, y: 315 }, //rightEntrance, connects to hallwayHFloor1, rightEntranceOutside
+            { x: 450, y: 315 }, //rightEntranceOutside, connects to hallwayHFloor1
+        ];
+
+
+
+        const dashPattern = [10, 6];
+        const drawSpeed = 10;
+        let drawProgress = 0;
+        let dashOffset = 0;
+
+
+        //DISPLAYS NODES {DISABLE FOR PROD VERSIONS, ONLY FOR FINDING AND VERIFYING POINTS}
+        const drawCircles = () => {
+            ctx.fillStyle = "red";
+            pathCoords.forEach((point) => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            });
         };
 
-        resizeCanvas();
-        window.addEventListener("resize", resizeCanvas);
-
-        // Helper to get total path length
         const getPathLength = (points: { x: number; y: number }[]) => {
             let length = 0;
             for (let i = 1; i < points.length; i++) {
@@ -40,10 +83,11 @@ const FloorPlan = () => {
         };
 
         const totalLength = getPathLength(pathCoords);
-        const dashPattern = [10, 6];
-        let drawProgress = 0;
-        let dashOffset = 0;
-        const drawSpeed = 3;
+
+        const resizeCanvas = () => {
+            canvas.width = image.clientWidth;
+            canvas.height = image.clientHeight;
+        };
 
         const drawSegmentedPath = (lengthToDraw: number) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -74,6 +118,8 @@ const FloorPlan = () => {
             }
 
             ctx.stroke();
+
+            drawCircles();
         };
 
         const drawFlowingPath = () => {
@@ -89,6 +135,8 @@ const FloorPlan = () => {
                 ctx.lineTo(pathCoords[i].x, pathCoords[i].y);
             }
             ctx.stroke();
+            //comment this line out to hide nodes
+            drawCircles();
         };
 
         const animate = () => {
@@ -97,33 +145,31 @@ const FloorPlan = () => {
                 drawProgress += drawSpeed;
             } else {
                 drawFlowingPath();
-                dashOffset += .1; // Speed of flowing motion
+                dashOffset += 0.1;
             }
             requestAnimationFrame(animate);
         };
 
-        animate();
+        const startDrawing = () => {
+            resizeCanvas();
+            animate();
+            window.addEventListener("resize", resizeCanvas);
+        };
 
-        return () => window.removeEventListener("resize", resizeCanvas);
-    }, []);
-
-    const drawLines = (canvas: HTMLCanvasElement, points: { x: number; y: number }[]) => {
-        const ctx = canvas.getContext("2d");
-        if (!ctx || points.length < 2) return;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-
-        ctx.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y);
+        // Wait for image to be loaded before drawing
+        if (image.complete) {
+            startDrawing();
+        } else {
+            image.onload = () => {
+                startDrawing();
+            };
         }
 
-        ctx.stroke();
-    };
+        return () => {
+            window.removeEventListener("resize", resizeCanvas);
+        };
+    }, []);
+
 
 
     return (
@@ -178,7 +224,7 @@ const FloorPlan = () => {
                 <div id="map" className="p-4 relative">
                     <img
                         id="floor-image"
-                        src="/ChestnutHillFloor1.png"
+                        src="/chestnutHillCombined.png"
                         alt="Placeholder floor plan"
                         className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
                     />
