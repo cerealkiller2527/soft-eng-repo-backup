@@ -11,11 +11,12 @@ interface AccordionItem {
 
 /* Setup for Buttons */
 const DirectoryPage: React.FC = () => {
+
     /* Extracted Styling so there aren't bricks of code */
 
     const buttonClass = "flex items-center justify-center text-center text-white bg-[#012D5A] " +
-                                "rounded p-2 md:p-3 min-h-[60px] w-[200px] text-xs md:text-sm leading-snug whitespace-normal" +
-                                "break-words transition-colors duration-300 hover:bg-[#034080] box-border";
+                                "rounded-lg p-4 h-24 w-64 text-sm md:text-base leading-tight whitespace-normal " +
+                                "break-words transition-all duration-300 hover:bg-[#034080] hover:scale-105 transform shadow-md";
     const buttonRowClass = "flex justify-center gap-5 my-4 flex-wrap w-full max-w-4xl mx-auto";
     const accordionContentClass = "space-y-4 p-4 bg-gray-50 rounded-b-lg";
 
