@@ -4,20 +4,10 @@ import Navbar from "../components/Navbar.tsx";
 
 const FloorPlan = () => {
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
-
-            <div className="flex justify-start mb-2">
-                <img
-                    src="/BrighamAndWomensLogo.png"
-                    alt="Brigham and Women's Hospital Logo"
-                    className="h-12 ml-2"
-                />
-            </div>
-
+        <div id="floorplan" className="min-h-screen bg-gray-100 pt-20">
 
             <Navbar />
-
-
+            <div className="p-10">
             <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
 
                 <div id="mapkey" className="p-4 w-52 border-gray-300">
@@ -54,12 +44,13 @@ const FloorPlan = () => {
 
                 <div id="map" className="p-4">
                     <img
-                        src="/ChestnutHillFloor1.png"
+                        src="/combinedFloorPlan.png"
                         alt="Placeholder floor plan"
                         className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
                     />
                 </div>
             </div>
+        </div>
         </div>
     );
 };
