@@ -102,43 +102,43 @@ async function main() {
     // seed nodes
     const nodes = await prisma.node.createManyAndReturn({
         data: [
-            {name: 'entry', x: 0, y: 0},
-            {name: 'a', x: 0, y: 0},
-            {name: 'lab1', x: 0, y: 0},
-            {name: 'b', x: 0, y: 0},
-            {name: 'c', x: 0, y: 0},
-            {name: 'd', x: 0, y: 0},
-            {name: 'lab2', x: 0, y: 0},
-            {name: 'e', x: 0, y: 0},
-            {name: 'multi-spec clinic', x: 0, y: 0},
-            {name: 'f', x: 0, y: 0},
-            {name: 'radiology', x: 0, y: 0},
+            {description: 'entry', x: 1, y: 6},
+            {description: 'a', x: 2, y: 6},
+            {description: 'lab1', x: 2, y: 5},
+            {description: 'b', x: 3, y: 6},
+            {description: 'c', x: 4, y: 6},
+            {description: 'd', x: 4, y: 3},
+            {description: 'lab2', x: 3, y: 3},
+            {description: 'e', x: 5, y: 3},
+            {description: 'multi-spec clinic', x: 5, y: 2},
+            {description: 'f', x: 3, y: 10},
+            {description: 'radiology', x: 4, y: 10},
         ]
     })
 
     // seed edges with node ids
     const edges = await prisma.edge.createMany({
         data: [
-            {fromNodeId: nodes[idFromName("entry")].id, toNodeId: nodes[idFromName("a")].id},
-            {fromNodeId: nodes[idFromName("a")].id, toNodeId: nodes[idFromName("lab1")].id},
-            {fromNodeId: nodes[idFromName("a")].id, toNodeId: nodes[idFromName("b")].id},
-            {fromNodeId: nodes[idFromName("b")].id, toNodeId: nodes[idFromName("c")].id},
-            {fromNodeId: nodes[idFromName("c")].id, toNodeId: nodes[idFromName("d")].id},
-            {fromNodeId: nodes[idFromName("d")].id, toNodeId: nodes[idFromName("lab2")].id},
-            {fromNodeId: nodes[idFromName("d")].id, toNodeId: nodes[idFromName("e")].id},
-            {fromNodeId: nodes[idFromName("e")].id, toNodeId: nodes[idFromName("multi-spec clinic")].id},
-            {fromNodeId: nodes[idFromName("b")].id, toNodeId: nodes[idFromName("f")].id},
-            {fromNodeId: nodes[idFromName("f")].id, toNodeId: nodes[idFromName("radiology")].id}
+            {fromNodeId: nodes[idFromDesc("entry")].id, toNodeId: nodes[idFromDesc("a")].id},
+            {fromNodeId: nodes[idFromDesc("a")].id, toNodeId: nodes[idFromDesc("lab1")].id},
+            {fromNodeId: nodes[idFromDesc("a")].id, toNodeId: nodes[idFromDesc("b")].id},
+            {fromNodeId: nodes[idFromDesc("b")].id, toNodeId: nodes[idFromDesc("c")].id},
+            {fromNodeId: nodes[idFromDesc("c")].id, toNodeId: nodes[idFromDesc("d")].id},
+            {fromNodeId: nodes[idFromDesc("d")].id, toNodeId: nodes[idFromDesc("lab2")].id},
+            {fromNodeId: nodes[idFromDesc("d")].id, toNodeId: nodes[idFromDesc("e")].id},
+            {fromNodeId: nodes[idFromDesc("e")].id, toNodeId: nodes[idFromDesc("multi-spec clinic")].id},
+            {fromNodeId: nodes[idFromDesc("b")].id, toNodeId: nodes[idFromDesc("f")].id},
+            {fromNodeId: nodes[idFromDesc("f")].id, toNodeId: nodes[idFromDesc("radiology")].id}
         ]
     })
 
-    /*  idFromName()
-        return the index from nodes[] that corresponds to a given "name"
-        returns -1 if no node is found with that name
+    /*  idFromDesc()
+        return the index from nodes[] that corresponds to a given "description"
+        returns -1 if no node is found with that description
      */
-    function idFromName(name: string): number{
+    function idFromDesc(description: string): number{
         for(let i = 0; i < nodes.length; i++){
-            if(nodes[i].name === name){
+            if(nodes[i].description === description){
                 return i;
             }
         }
