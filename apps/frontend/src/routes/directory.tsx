@@ -187,7 +187,7 @@ const DirectoryPage: React.FC = () => {
                         />
                         <label
                             htmlFor={item.id}
-                            className="block w-full p-4.5 bg-gray-200 text-gray-700 cursor-pointer text-left text-sm mb-1 rounded transition-colors duration-300 hover:bg-gray-300 peer-checked:rounded-b-none"
+                            className="block w-full p-4.5 bg-gray-200 text-gray-700 cursor-pointer text-center text-sm mb-1 rounded transition-colors duration-300 hover:bg-gray-300 peer-checked:rounded-b-none"
                         >
                             {item.title}
                         </label>
