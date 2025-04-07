@@ -117,20 +117,11 @@ const DirectoryPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white p-4 overflow-y-auto pt-20">
-            {/* Logo */}
-            <div className="flex justify-start mb-4">
-                <img
-                    src="/BrighamAndWomensLogo.png"
-                    alt="Brigham and Women's Hospital Logo"
-                    className="h-12 ml-2"
-                />
-            </div>
 
             <Navbar />
 
             {/* Header */}
-            <br/>
-            <h2 className= "p-4 text-5xl text-center font-[palladio]">
+            <h2 className= "w-full p-4 text-5xl text-center font-[palladio] bg-[#012D5A] text-white">
                 Services at Brigham and Women's Hospital
             </h2>
 
