@@ -1,6 +1,8 @@
 import React from 'react';
 import '../styles/directoryStyles.css';
 import {Link} from "react-router-dom";
+import Navbar from "../components/Navbar.tsx";
+
 
 const DirectoryPage = () => {
     const accordionItems = [
@@ -10,14 +12,15 @@ const DirectoryPage = () => {
             content: (
                 <>
                     <div className="brighamButtonRow">
+
                         <Link to={'/bccc'} className="brighamButton">Backup Child Care Center</Link>
-                        <button className="brighamButton">Center of Pain Medicine</button>
-                        <button className="brighamButton">Crohn's and Colitis Center</button>
+                        <Link to={'/copm'} className="brighamButton">Center of Pain Medicine</Link>
+                        <Link to={'/cacc'} className="brighamButton">Crohn's and Colitis Center</Link>
                     </div>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Endoscopy Center</button>
-                        <button className="brighamButton">Gretchen S. and Edward A. Fish Center for Women's Health</button>
-                        <button className="brighamButton">Osher Clinical Center for Integrative Health</button>
+                        <Link to={'/ec'} className="brighamButton">Endoscopy Center</Link>
+                        <Link to={'/gsea'} className="brighamButton">Gretchen S. and Edward A. Fish Center for Women's Health</Link>
+                        <Link to={'/occ'} className="brighamButton">Osher Clinical Center for Integrative Health</Link>
                     </div>
                 </>
             )
@@ -28,18 +31,18 @@ const DirectoryPage = () => {
             content: (
                 <>
                     <div className="brighamButtonRow">
-                        <Link to={'/floorPlan'} className="brighamButton">Allergy and Clinical Immunology</Link>
-                        <button className="brighamButton">Laboratory</button>
-                        <button className="brighamButton">Multi-Specialty Clinic</button>
+                        <Link to={'/aci'} className="brighamButton">Allergy and Clinical Immunology</Link>
+                        <Link to={'/Laboratory'} className="brighamButton">Laboratory</Link>
+                        <Link to={'/Multi-Speciality'} className="brighamButton">Multi-Speciality Clinic</Link>
                     </div>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Patient Financial Services</button>
-                        <button className="brighamButton">Pharmacy</button>
-                        <button className="brighamButton">Radiology</button>
+                        <Link to={'/pfs'} className="brighamButton">Patient Financial Services</Link>
+                        <Link to={'/Pharmacy'} className="brighamButton">Pharmacy</Link>
+                        <Link to={'/Radiology'} className="brighamButton">Radiology</Link>
                     </div>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Radiology, MRI/CT scan</button>
-                        <button className="brighamButton">Rehabilitation Services</button>
+                        <Link to={'/MRI'} className="brighamButton">Radiology, MRI/CT scan</Link>
+                        <Link to={'/rehab'} className="brighamButton">Rehabilitation Services</Link>
                     </div>
                 </>
             )
@@ -50,12 +53,12 @@ const DirectoryPage = () => {
             content: (
                 <>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Brigham Dermatology Associates</button>
-                        <button className="brighamButton">Brigham Obstetrics and Gynecology Group</button>
-                        <button className="brighamButton">Brigham Physicians Group</button>
+                        <Link to={'/bda'} className="brighamButton">Brigham Dermatology Associates</Link>
+                        <Link to={'/bogg'} className="brighamButton">Brigham Obstetrics and Gynecology Group</Link>
+                        <Link to={'/bpg'} className="brighamButton">Brigham Physicians Group</Link>
                     </div>
                     <div className="brighamButtonRow">
-                        <button className="brighamButton">Brigham Psychiatric Specialities</button>
+                        <Link to={'/bps'} className="brighamButton">Brigham Psychiatric Specialities</Link>
                     </div>
                 </>
             )
@@ -65,6 +68,16 @@ const DirectoryPage = () => {
     return (
         <body>
             <div>
+                <div className="flex justify-start mb-2">
+                    <img
+                        src="/BrighamAndWomensLogo.png"
+                        alt="Brigham and Women's Hospital Logo"
+                        className="h-12 ml-2"
+                    />
+                </div>
+
+
+                <Navbar />
                 <h2 className={"directoryHeader"}>Brigham and Women's Directory</h2>
 
                 {accordionItems.map((item) => (
