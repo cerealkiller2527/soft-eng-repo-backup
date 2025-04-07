@@ -1,0 +1,120 @@
+---
+id: dbc26acf-6408-44e5-8cb7-31536b3d2a4c
+---
+erDiagram
+    %% Service Request System
+    EMPLOYEE {
+      int id PK
+      string name
+      string employeeType
+      RequestType[] canService
+      string[] language
+    }
+    SERVICEREQUEST {
+      int id PK
+      RequestType type
+      DateTime dateCreated
+      DateTime dateUpdated
+      Status status
+      string description
+      int employeeID FK
+    }
+    AUDIOVISUAL {
+      int id PK
+      string location
+      DateTime deadline
+      string audiovisualType
+    }
+    EXTERNALTRANSPORTATION {
+      int id PK
+      string fromWhere
+      string toWhere
+      string transportType
+      string patientName
+      DateTime dropoffTime
+      DateTime pickupTime
+    }
+    EQUIPMENTDELIVERY {
+      int id PK
+      DateTime deadline
+      string[] equipments
+      string toWhere
+      string fromWhere
+    }
+    LANGUAGE {
+      int id PK
+      string location
+      string language
+      DateTime startTime
+      DateTime endTime
+    }
+    SECURITY {
+      int id PK
+      string location
+      int riskLevel
+    }
+    SCORE {
+      int id PK
+      DateTime time
+      int score
+    }
+    
+    %% Location / Department Directory
+    EDGE {
+      int id PK
+      int fromNodeId FK
+      int toNodeId FK
+    }
+    NODE {
+      int id PK
+      string description
+      int x
+      int y
+    }
+    LOCATION {
+      int id PK
+      string suite
+      int floor
+      int nodeID FK
+      int departmentId FK
+    }
+    DEPARTMENT {
+      int id PK
+      string name
+      string description
+      int phoneNumber
+      int buildingID FK
+    }
+    SERVICE {
+      int id PK
+      string name
+    }
+    DEPARTMENT_SERVICES {
+      int departmentID FK
+      int serviceID FK
+    }
+    BUILDING {
+      int id PK
+      string name
+      string address
+      int phoneNumber
+    }
+    
+    %% Relationships: Service Request System
+    EMPLOYEE ||--o{ SERVICEREQUEST : "assigned to"
+    SERVICEREQUEST ||--|| AUDIOVISUAL : "has"
+    SERVICEREQUEST ||--|| EXTERNALTRANSPORTATION : "has"
+    SERVICEREQUEST ||--|| EQUIPMENTDELIVERY : "has"
+    SERVICEREQUEST ||--|| LANGUAGE : "has"
+    SERVICEREQUEST ||--|| SECURITY : "has"
+    
+    %% Relationships: Location / Department Directory
+    NODE ||--|| LOCATION : "is"
+    LOCATION }o--|| DEPARTMENT : "belongs to"
+    BUILDING ||--o{ DEPARTMENT : "contains"
+    DEPARTMENT ||--o{ DEPARTMENT_SERVICES : "offers"
+    SERVICE ||--o{ DEPARTMENT_SERVICES : "provided by"
+    
+    %% Relationships: Graph Edges
+    NODE ||--o{ EDGE : "fromNode"
+    NODE ||--o{ EDGE : "toNode"
