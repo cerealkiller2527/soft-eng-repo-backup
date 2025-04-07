@@ -107,14 +107,15 @@ model Node {
   x        Int
   y        Int
   Location Location?
+  name     String
 }
 
 model Location {
-  id           Int        @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   suite        String
   floor        Int
-  nodeID       Int        @unique
-  node         Node       @relation(fields: [nodeID], references: [id])
+  nodeID       Int         @unique
+  node         Node        @relation(fields: [nodeID], references: [id])
   departmentId Int?
   Department   Department? @relation(fields: [departmentId], references: [id])
 }
