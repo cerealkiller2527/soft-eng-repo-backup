@@ -13,6 +13,12 @@ async function main() {
     await prisma.serviceRequest.deleteMany();
     await prisma.employee.deleteMany();
 
+    // deleted backwards to preserve foreign key constraint
+    await prisma.departmentServices.deleteMany();
+    await prisma.service.deleteMany();
+    await prisma.department.deleteMany();
+    await prisma.building.deleteMany();
+
     console.log('🗑️ Existing data purged.');
     const employees = await Promise.all(
         Array.from({ length: 5 }).map((_, i) =>
@@ -96,6 +102,54 @@ async function main() {
                         break;
                 }
             }
+        )
+    );
+
+    const buildings = await Promise.all(
+        Array.from({ length: 3 }).map((_, i) =>
+            prisma.building.create({
+                data: {
+                    name: `Building ${i + 1}`,
+                    address: `Address for Building ${i + 1}`,
+                    phoneNumber: Math.floor(Math.random() * 2000000000) + 1000000000,
+                },
+            })
+        )
+    );
+
+    const departments = await Promise.all(
+        Array.from({ length: 5 }).map((_, i) =>
+            prisma.department.create({
+                data: {
+                    name: `Department ${i + 1}`,
+                    description: `Description for Department ${i + 1}`,
+                    phoneNumber: Math.floor(Math.random() * 9000000000) + 1000000000,
+                    buildingID: buildings[i % buildings.length].id,
+                },
+            })
+        )
+    );
+
+    const services = await Promise.all(
+        Array.from({ length: 3 }).map((_, i) =>
+            prisma.service.create({
+                data: {
+                    name: `Service ${i + 1}`,
+                },
+            })
+        )
+    );
+
+    const departmentServices = await Promise.all(
+        services.flatMap((service) =>
+            Array.from({ length: 2 }).map((_, i) =>
+                prisma.departmentServices.create({
+                    data: {
+                        departmentID: departments[i % departments.length].id,
+                        serviceID: service.id,
+                    },
+                })
+            )
         )
     );
 
