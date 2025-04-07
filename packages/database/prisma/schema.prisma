@@ -102,19 +102,30 @@ model Score {
   score Int
 }
 
+model Edge {
+  id         Int  @id @default(autoincrement())
+  fromNodeId Int
+  toNodeId   Int
+  fromNode   Node @relation("fromNode", fields: [fromNodeId], references: [id])
+  toNode     Node @relation("toNode", fields: [toNodeId], references: [id])
+}
+
 model Node {
-  id       Int       @id @default(autoincrement())
-  x        Int
-  y        Int
-  Location Location?
+  id          Int       @id @default(autoincrement())
+  description String
+  x           Int
+  y           Int
+  Location    Location?
+  fromEdge    Edge[]    @relation("fromNode")
+  toEdge      Edge[]    @relation("toNode")
 }
 
 model Location {
-  id           Int        @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   suite        String
   floor        Int
-  nodeID       Int        @unique
-  node         Node       @relation(fields: [nodeID], references: [id])
+  nodeID       Int         @unique
+  node         Node        @relation(fields: [nodeID], references: [id])
   departmentId Int?
   Department   Department? @relation(fields: [departmentId], references: [id])
 }
