@@ -118,7 +118,6 @@ html, body {
     flex: 1 1 200px;
 }
 
-/* This should resize properly? */
 @media (max-width: 768px) {
     .brighamButtonRow {
         flex-direction: column;
