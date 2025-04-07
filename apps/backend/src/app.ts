@@ -7,9 +7,16 @@ import highscoreRouter from './routes/score.ts';
 import serviceRouter from './routes/serviceRouter.ts';
 import employeeRouter from './routes/employeeRouter.ts';
 import serviceassignedto from './routes/serviceassigned.ts';
+import searchRouter from './routes/search.ts';
+
 import { API_ROUTES } from 'common/src/constants';
 
+import path from 'path';
+
 const app: Express = express(); // Setup the backend
+
+// serve favicon.ico
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Setup generic middlewear
 app.use(
@@ -32,6 +39,7 @@ app.use(API_ROUTES.SCORE, highscoreRouter);
 app.use(API_ROUTES.EMPLOYEE, employeeRouter);
 app.use(API_ROUTES.SERVICEREQ, serviceRouter);
 app.use(API_ROUTES.ASSIGNED, serviceassignedto);
+app.use(API_ROUTES.SEARCH, searchRouter);
 
 /**
  * Catch all 404 errors, and forward them to the error handler
