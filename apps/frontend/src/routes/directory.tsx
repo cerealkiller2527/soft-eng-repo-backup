@@ -18,7 +18,7 @@ const DirectoryPage: React.FC = () => {
                                 "rounded-lg p-4 h-24 w-64 text-sm md:text-base leading-tight whitespace-normal " +
                                 "break-words transition-all duration-300 hover:bg-[#034080] hover:scale-105 transform shadow-md";
     const buttonRowClass = "flex justify-center gap-5 my-4 flex-wrap w-full max-w-4xl mx-auto";
-    const accordionContentClass = "space-y-4 p-4 bg-gray-50 rounded-b-lg";
+    const accordionContentClass = "space-y-4 px-4 bg-white rounded-b-lg";
 
     const accordionItems: AccordionItem[] = [
         {
@@ -116,7 +116,7 @@ const DirectoryPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-white p-4 overflow-y-auto">
+        <div className="min-h-screen bg-white p-4 overflow-y-auto pt-20">
             {/* Logo */}
             <div className="flex justify-start mb-4">
                 <img
@@ -129,8 +129,9 @@ const DirectoryPage: React.FC = () => {
             <Navbar />
 
             {/* Header */}
-            <h2 className="bg-[#012D5A] text-white p-4 sticky top-0 z-0 text-lg md:text-xl">
-                Brigham and Women's Directory
+            <br/>
+            <h2 className= "p-4 text-5xl text-center font-[palladio]">
+                Services at Brigham and Women's Hospital
             </h2>
 
             <br/>
