@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
-import Navbar from '../components/Navbar.tsx';
+import Navbar from "../components/Navbar.tsx";
+import Footer from "../components/Footer";
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 
 const FloorPlan = () => {
@@ -231,19 +232,19 @@ const FloorPlan = () => {
                         // You can also save it in state if needed
                     }}
                 />                <div style={{ display: showMap ? 'none' : 'flex' }}>
-                    <div id="floorplan-map" className="p-4 relative">
-                        <img
-                            id="floor-image"
-                            src="/chestnutHillCombined.png"
-                            alt="Floor plan"
-                            className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
-                        />
-                        <canvas
-                            id="overlay-canvas"
-                            className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                        />
-                    </div>
+                <div id="floorplan-map" className="p-4 relative">
+                    <img
+                        id="floor-image"
+                        src="/chestnutHillCombined.png"
+                        alt="Floor plan"
+                        className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
+                    />
+                    <canvas
+                        id="overlay-canvas"
+                        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                    />
                 </div>
+            </div>
 
                 {/* Google Map (always rendered) */}
                 <div
@@ -266,8 +267,10 @@ const FloorPlan = () => {
                     </button>
                 </div>
             </div>
+            <Footer/>
         </div>
     );
 };
+
 
 export default FloorPlan;
