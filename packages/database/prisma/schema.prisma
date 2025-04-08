@@ -134,10 +134,10 @@ model Department {
   id                 Int                  @id @default(autoincrement())
   name               String
   description        String?
-  phoneNumber        Int
+  phoneNumber        String
   Location           Location[]
   DepartmentServices DepartmentServices[]
-  buildingID         Int
+  buildingID         Int                  @default(1)
   building           Building             @relation(fields: [buildingID], references: [id])
 }
 
@@ -160,6 +160,6 @@ model Building {
   id          Int          @id @default(autoincrement())
   name        String
   address     String
-  phoneNumber Int
+  phoneNumber String
   Department  Department[]
 }
