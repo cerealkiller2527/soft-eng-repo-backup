@@ -73,7 +73,6 @@ model ExternalTransportation {
   toWhere        String
   transportType  String
   patientName    String
-  dropoffTime    DateTime
   pickupTime     DateTime
 }
 

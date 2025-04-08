@@ -1,7 +1,8 @@
 import { initTRPC } from '@trpc/server';
-import { ServiceRequest, RequestType } from 'database';
+import { ServiceRequest, RequestType, Status } from 'database';
 import PrismaClient from '../bin/prisma-client';
 export const t = initTRPC.create();
+import { z } from 'zod';
 const audioVisual = PrismaClient.serviceRequest.findMany({
     where: {
         type: RequestType.AUDIOVISUAL,
@@ -138,6 +139,45 @@ export const serviceRouter = t.router({
         assignedRequests.sort((a, b) => a.id - b.id);
         return assignedRequests;
     }),
+    addRequest: t.procedure
+        .input(
+            z.object({
+                patientName: z.string(),
+                pickupTime: z.date(),
+                transportation: z.string(),
+                pickupTransport: z.string(),
+                dropoffTransport: z.string(),
+                additionalNotes: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const {
+                patientName,
+                pickupTime,
+                transportation,
+                pickupTransport,
+                dropoffTransport,
+                additionalNotes,
+            } = input;
+            const serviceRequest = await PrismaClient.serviceRequest.create({
+                data: {
+                    type: RequestType.EXTERNALTRANSPORTATION,
+                    dateCreated: new Date(Date.now()).toLocaleString(),
+                    status: Status.NOTASSIGNED,
+                    description: additionalNotes,
+                },
+            });
+            PrismaClient.externalTransportation.create({
+                data: {
+                    id: serviceRequest.id,
+                    fromWhere: pickupTransport,
+                    toWhere: pickupTransport,
+                    transportType: transportation,
+                    patientName: patientName,
+                    pickupTime: pickupTime,
+                },
+            });
+        }),
 });
 // export type definition of API
 export type serviceRouter = typeof serviceRouter;
