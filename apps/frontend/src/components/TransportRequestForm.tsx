@@ -1,17 +1,18 @@
-import { useState } from "react";
+import {ChangeEvent, ChangeEventHandler, FormEvent, useState} from "react";
 import React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
 const transportTypes = ["Ambulance", "Shuttle", "Private Transport", "Helicopter"];
-const priorityLevels = ["Urgent", "High", "Intermediate", "Low"];
 
-export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: any) => void }) {
+export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: object) => void }) {
 
     const [form, setForm] = useState({
         patientName: "",
-        priority: "",
+        pickupTime: new Date(),
         transportType: "",
         pickupTransport: "",
         dropoffTransport: "",
@@ -20,21 +21,32 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: an
 
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
 
-    const handleChange = (event) => {
+    const handleSelectChange = (event:ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.target;
+        console.log(event);
         setForm({ ...form, [name]: value });
+    };
+
+    const handleInputChange = (event:ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        console.log(event);
+        setForm({ ...form, [name]: value });
+    };
+
+    const handleDateChange = (date: Date) => {
+        setForm({ ...form, pickupTime: date });
     };
 
     const handleDelete = (index: number) => {
         setSubmittedRequests(prevRequests => prevRequests.filter((_, i) => i !== index));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const requiredFields = [
             "patientName",
-            "priority",
+            "pickupTime",
             "transportType",
             "pickupTransport",
             "dropoffTransport",
@@ -46,7 +58,18 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: an
             return;
         }
         setSubmittedRequests(prevRequests => [...prevRequests, form]);
-        onSubmit(form);
+
+
+        const finalForm = {
+            ...form,
+            pickupTime: form.pickupTime?.toISOString(), // Optional formatting
+        };
+
+        if (!form.pickupTime || isNaN(new Date(form.pickupTime).getTime())) {
+            alert("Please enter a valid pickup time.");
+            return;
+        }
+        onSubmit(finalForm);
 
         console.log("Form submitted successfully.", form);
 
@@ -60,34 +83,39 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: an
             </div>
                 <form onSubmit={handleSubmit} className="space-y-6 p-4">
                     <label className="p-2 text-gray-800">Patient Full Name:</label>
-                 <input name="patientName" placeholder="Enter Patient Name" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none focus:ring-2 focus:ring-[#012D5A]"  />
+                 <input name="patientName" placeholder="Enter Patient Name" onChange={handleInputChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none focus:ring-2 focus:ring-[#012D5A]"  />
                     <br/>
-                    <label className="p-2 text-gray-800">Priority:</label>
-                 <select name="priority" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
-                     <option value="">Select Priority Level</option>
-                     {priorityLevels.map(priority => <option key={priority} value={priority}>{priority}</option>)}
-                 </select>
-                 <br/>
+                    <label className="p-2 text-gray-800">Pickup Time:</label>
+                    <DatePicker
+                        selected={form.pickupTime}
+                        onChange={handleDateChange}
+                        showTimeSelect
+                        timeIntervals={15}
+                        dateFormat="Pp"
+                        className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none focus:ring-2 focus:ring-[#012D5A]"
+                        placeholderText="Select a date and time"
+                    />
+                    <br/>
                     <label className="p-2 text-gray-800">Transport Type:</label>
-                    <select name="transportType" onChange={handleChange} className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                    <select name="transportType" onChange={handleSelectChange} className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                         <option value="">Select Transport Type</option>
                         {transportTypes.map(transport => <option key={transport} value={transport}>{transport}</option>)}
                     </select>
                     <br/>
                     <label className="p-2 text-gray-800">Pickup From:</label>
-                    <select name="pickupTransport" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                    <select name="pickupTransport" onChange={handleSelectChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                         <option value="">Select Pickup Location</option>
                         {MGBHospitals.map(hospital => <option key={hospital} value={hospital}>{hospital}</option>)}
                     </select>
                     <br/>
                     <label className="p-2 text-gray-800">Dropoff To:</label>
-                    <select name="dropoffTransport" onChange={handleChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
+                    <select name="dropoffTransport" onChange={handleSelectChange} className=" w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100">
                         <option value="">Select Dropoff Location</option>
                         {MGBHospitals.map(hospital => <option key={hospital} value={hospital}>{hospital}</option>)}
                     </select>
                     <br/>
                     <label className="p-2 text-gray-800">Additional Notes: </label>
-                    <input name="additionalNotes" placeholder="Enter Additional Notes" className="p-8 w-full border border-gray-300 rounded-xl focus:outline-none" onChange={handleChange}></input>
+                    <input name="additionalNotes" placeholder="Enter Additional Notes" className="p-8 w-full border border-gray-300 rounded-xl focus:outline-none" onChange={handleInputChange}></input>
                     <button type='submit' className="border border-3 border-[#012D5A] w-full btn btn-primary p-3 px-8 bg-[#012D5A] text-white rounded-xl hover:bg-white hover:text-[#012D5A]">Submit</button>
                 </form>
         </div>

@@ -2,12 +2,13 @@ import React from "react";
 import {useState} from "react";
 import TransportRequestForm from "../components/TransportRequestForm.tsx";
 
-export default function TransportCard({ onAddRequest }: { onAddRequest: (data: any) => void}) {
+export default function TransportCard({ onAddRequest }: { onAddRequest: (data: object) => void}) {
 
     const [isOpen, setIsOpen] = useState(false);
-    const handleFormSubmit = (formData) => {
-        onAddRequest(formData);         // update dashboard
-        setIsOpen(false);           // close modal
+
+    const handleFormSubmit = (formData: object) => {
+        onAddRequest(formData);
+        setIsOpen(false);
     };
 
     return (

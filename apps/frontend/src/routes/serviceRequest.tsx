@@ -9,7 +9,7 @@ import Navbar from "../components/Navbar.tsx";
 const ServiceRequest = () => {
     type TransportRequest = {
         patientName: string;
-        priority: string;
+        pickupTime: Date;
         transportType: string;
         pickupTransport: string;
         dropoffTransport: string;
@@ -36,7 +36,7 @@ const ServiceRequest = () => {
                                 key={i}
                                 className="border p-4 rounded-xl shadow bg-white space-y-1">
                                 <p><strong>Patient:</strong> {req.patientName}</p>
-                                <p><strong>Priority:</strong> {req.priority}</p>
+                                <p><strong>Pickup Time:</strong> {req.pickupTime.toString()}</p>
                                 <p><strong>Transport Type:</strong> {req.transportType}</p>
                                 <p><strong>Pickup:</strong> {req.pickupTransport}</p>
                                 <p><strong>Dropoff:</strong> {req.dropoffTransport}</p>
