@@ -15,10 +15,10 @@ const ServiceRequest = () => {
         dropoffTransport: string;
         additionalNotes: string;
     };
-    const [requests, setRequests] = useState<TransportRequest[]>([]);
+    const [requests, setRequests] = useState<object[]>([]);
     const [showForm, setShowForm] = useState(false);
 
-    const addRequest = (newRequest) => {
+    const addRequest = (newRequest: object) => {
         setRequests((prev) => [...prev, newRequest]);
     };
     return (

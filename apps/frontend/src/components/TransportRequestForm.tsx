@@ -2,13 +2,21 @@ import {ChangeEvent, ChangeEventHandler, FormEvent, useState} from "react";
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import TransportRequest from "../routes/serviceRequest.tsx"
 
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
 const transportTypes = ["Ambulance", "Shuttle", "Private Transport", "Helicopter"];
 
-export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: object) => void }) {
+export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: {
+        patientName: string;
+        pickupTime: string | undefined;
+        transportType: string;
+        pickupTransport: string;
+        dropoffTransport: string;
+        additionalNotes: string
+    }) => void }) {
 
     const [form, setForm] = useState({
         patientName: "",
