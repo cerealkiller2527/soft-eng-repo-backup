@@ -27,15 +27,12 @@ enum RequestType {
   SECURITY
 }
 
-<<<<<<< HEAD
 model User {
   username String @id
   password String
   email    String
 }
 
-=======
->>>>>>> bd4ea6f8d86ca9ea01ed9fd2ac899a1a55c147f9
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
@@ -76,10 +73,6 @@ model ExternalTransportation {
   toWhere        String
   transportType  String
   patientName    String
-<<<<<<< HEAD
-=======
-  dropoffTime    DateTime
->>>>>>> bd4ea6f8d86ca9ea01ed9fd2ac899a1a55c147f9
   pickupTime     DateTime
 }
 
@@ -146,11 +139,7 @@ model Department {
   id                 Int                  @id @default(autoincrement())
   name               String
   description        String?
-<<<<<<< HEAD
-  phoneNumber        BigInt
-=======
-  phoneNumber        Int
->>>>>>> bd4ea6f8d86ca9ea01ed9fd2ac899a1a55c147f9
+  phoneNumber        String
   Location           Location[]
   DepartmentServices DepartmentServices[]
   buildingID         Int
@@ -176,12 +165,6 @@ model Building {
   id          Int          @id @default(autoincrement())
   name        String
   address     String
-<<<<<<< HEAD
-  phoneNumber BigInt
+  phoneNumber String
   Department  Department[]
 }
-=======
-  phoneNumber Int
-  Department  Department[]
-}
->>>>>>> bd4ea6f8d86ca9ea01ed9fd2ac899a1a55c147f9
