@@ -112,7 +112,7 @@ class Node {
 router.get('/', async (req: Request, res: Response) => {
     try {
         // set start and end descriptions. This will be taken from req at some point but is hard coded right now
-        const startDesc = "1bottom entrance outside";
+        const startDesc = "1right entrance outside";
         const endDesc = "1a";
 
         // clear node cache
