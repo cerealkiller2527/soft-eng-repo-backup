@@ -1,70 +1,115 @@
-import React from 'react';
-import axios from 'axios';
-import {useRef , useEffect } from 'react';
-import Navbar from "../components/Navbar.tsx";
+import React, { useRef, useEffect, useState } from 'react';
+import Navbar from '../components/Navbar.tsx';
+import LocationRequestForm from '../components/locationRequestForm.tsx';
 
 const FloorPlan = () => {
-    /*
-    const [pathCoords, setPathCoords] = useState<{ x: number; y: number }[]>([]);
+    const [showMap, setShowMap] = useState(false);
+    const [originLocation, setOriginLocation] = useState<{ lat: number; lng: number } | null>(null); // Default to null
+    const mapRef = useRef<HTMLDivElement | null>(null);
+    const mapInstance = useRef<google.maps.Map>();
+    const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
 
+    const toggleView = () => {
+        setShowMap((prev) => {
+            if (!prev && mapInstance.current) {
+                setTimeout(() => {
+                    google.maps.event.trigger(mapInstance.current!, 'resize');
+                    mapInstance.current!.setCenter({ lat: 42.326259, lng: -71.149766 });
+                }, 50);
+            }
+            return !prev;
+        });
+    };
 
+    // Initialize map once
     useEffect(() => {
-        axios.get('/api/pathcoords')
-            .then((response) => {
-                setPathCoords(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching path coordinates:', error);
+        if (mapRef.current && !mapInstance.current) {
+            mapInstance.current = new google.maps.Map(mapRef.current, {
+                center: { lat: 42.326259328131265, lng: -71.14976692050537 },
+                zoom: 16,
+                disableDefaultUI: true,
+                streetViewControl: false,
             });
-    }, []); //
-    */
 
+            directionsRenderer.current = new google.maps.DirectionsRenderer();
+            directionsRenderer.current.setMap(mapInstance.current);
+        }
+    }, []); // Empty dependency array ensures this effect runs once on mount
+
+    // Update directions when originLocation changes
     useEffect(() => {
-        const canvas = document.getElementById("overlay-canvas") as HTMLCanvasElement;
-        const image = document.getElementById("floor-image") as HTMLImageElement;
+        console.log('Updated originLocation:', originLocation); // Log whenever originLocation changes
+        const travelMode = google.maps.TravelMode.DRIVE || 'DRIVING';
+        if (originLocation && mapInstance.current && directionsRenderer.current) {
+            const directionsService = new google.maps.DirectionsService();
+            console.log(originLocation)
+            directionsService.route(
+                {
+                    origin: originLocation,
+                    destination: { lat: 42.326259328131265, lng: -71.14976692050537 }, // Fixed destination for now
+                    travelMode: travelMode,
+                },
+                (result, status) => {
+                    console.log(status);
+                    if (status === 'OK') {
+                        console.log('OK')
+                        directionsRenderer.current.setDirections(result);
+                    }
+                }
+            );
+        }
+    }, [originLocation]); // Runs when originLocation changes
+
+    // Handle map visibility changes
+    useEffect(() => {
+        if (mapInstance.current) {
+            google.maps.event.trigger(mapInstance.current, 'resize');
+            if (showMap) {
+                mapInstance.current.setCenter({ lat: 42.326259, lng: -71.149766 });
+            }
+        }
+    }, [showMap]);
+
+    // Floor plan drawing logic (unchanged)
+    useEffect(() => {
+        if (showMap) return;
+
+        const canvas = document.getElementById('overlay-canvas') as HTMLCanvasElement;
+        const image = document.getElementById('floor-image') as HTMLImageElement;
         if (!canvas || !image) return;
 
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-
-
         const pathCoords = [
-            { x: 100, y: 227 }, //leftEntranceOutside, connects to leftEntrance
-            { x: 190, y: 227 }, //leftEntrance, connects to leftEntranceOutside, hallwayAFloor1, hallwayCFloor1
-            { x: 190, y: 130 }, //hallwayAFloor1, connects to leftEntranceOutside, hallwayBFloor1
-            { x: 272, y: 130 }, //hallwayBFloor1, connects to hallwayAFloor1, topStairs
-            { x: 272, y: 110 }, //topStairs, connects to hallwayBFloor1
+            { x: 190, y: 130 },
+            { x: 272, y: 130 },
+            { x: 272, y: 110 },
             { x: 272, y: 130 },
             { x: 190, y: 130 },
-            { x: 190, y: 227 },
-            { x: 190, y: 239 }, //hallwayCFloor1, connects to leftEntrance, hallwayDFloor1
-            { x: 163, y: 239 }, //hallwayDFloor1, connects to hallwayCFloor1, hallwayEFloor1
-            { x: 163, y: 360 }, //hallwayEFloor1, connects to hallwayDFloor1, hallwayFFloor1
-            { x: 275, y: 360 }, //hallwayFFloor1, connects to hallwayGFloor1, bottomEntrance, hallwayEFloor1
-            { x: 275, y: 390 }, //bottomEntrance, connects to hallwayFFloor1,
-            { x: 275, y: 450 }, //bottonEntranceOutside, connects to bottomEntrance
+            { x: 190, y: 239 },
+            { x: 163, y: 239 },
+            { x: 163, y: 360 },
+            { x: 275, y: 360 },
+            { x: 275, y: 390 },
+            { x: 275, y: 450 },
             { x: 275, y: 390 },
             { x: 275, y: 360 },
-            { x: 275, y: 315 }, //hallwayGFloor1, connects to hallwayFFloor1, hallwayHFloor1
-            { x: 357, y: 315 }, //hallwayHFloor1, connects to hallwayGFloor1, stairBottomRight, rightEntrance
-            { x: 357, y: 300 }, //stairBottomRight, connects to hallwayHFloor1
+            { x: 275, y: 315 },
             { x: 357, y: 315 },
-            { x: 400, y: 315 }, //rightEntrance, connects to hallwayHFloor1, rightEntranceOutside
-            { x: 450, y: 315 }, //rightEntranceOutside, connects to hallwayHFloor1
+            { x: 357, y: 300 },
+            { x: 357, y: 315 },
+            { x: 400, y: 315 },
+            { x: 450, y: 315 },
         ];
-
-
 
         const dashPattern = [10, 6];
         const drawSpeed = 10;
         let drawProgress = 0;
         let dashOffset = 0;
 
-
-        //DISPLAYS NODES {DISABLE FOR PROD VERSIONS, ONLY FOR FINDING AND VERIFYING POINTS}
         const drawCircles = () => {
-            ctx.fillStyle = "red";
+            ctx.fillStyle = 'red';
             pathCoords.forEach((point) => {
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
@@ -91,7 +136,7 @@ const FloorPlan = () => {
 
         const drawSegmentedPath = (lengthToDraw: number) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "red";
+            ctx.strokeStyle = 'red';
             ctx.lineWidth = 3;
             ctx.setLineDash(dashPattern);
             ctx.lineDashOffset = 0;
@@ -118,13 +163,12 @@ const FloorPlan = () => {
             }
 
             ctx.stroke();
-
             drawCircles();
         };
 
         const drawFlowingPath = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "red";
+            ctx.strokeStyle = 'red';
             ctx.lineWidth = 3;
             ctx.setLineDash(dashPattern);
             ctx.lineDashOffset = -dashOffset;
@@ -135,7 +179,6 @@ const FloorPlan = () => {
                 ctx.lineTo(pathCoords[i].x, pathCoords[i].y);
             }
             ctx.stroke();
-            //comment this line out to hide nodes
             drawCircles();
         };
 
@@ -153,28 +196,22 @@ const FloorPlan = () => {
         const startDrawing = () => {
             resizeCanvas();
             animate();
-            window.addEventListener("resize", resizeCanvas);
+            window.addEventListener('resize', resizeCanvas);
         };
 
-        // Wait for image to be loaded before drawing
         if (image.complete) {
             startDrawing();
         } else {
-            image.onload = () => {
-                startDrawing();
-            };
+            image.onload = startDrawing;
         }
 
         return () => {
-            window.removeEventListener("resize", resizeCanvas);
+            window.removeEventListener('resize', resizeCanvas);
         };
-    }, []);
-
-
+    }, [showMap]);
 
     return (
         <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
-
             <div className="flex justify-start mb-2">
                 <img
                     src="/BrighamAndWomensLogo.png"
@@ -183,61 +220,49 @@ const FloorPlan = () => {
                 />
             </div>
 
-
             <Navbar />
 
-
             <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
-
-                <div id="mapkey" className="p-4 w-52 border-gray-300">
-                    <h2 className="text-xl font-semibold mb-2 text-gray-800">Key</h2>
-                    <ul className="list-none space-y-2 text-gray-700">
-                        <li className={"flex items-center gap-2"}>
-                            <img src={"/entrance-icon.svg"} alt="entrance icon" className={"h-5 w-5"} />
-                            Entrance
-                            <input type={"checkbox"} className={"w-4 h-4 accent-blue-600"} />
-                        </li>
-                        <li className={"flex items-center gap-2"}>
-                            <img src={"/info-icon.svg"} alt="information desk icon" className={"h-5 w-5"}/>
-                            Information Desk
-                            <input type={"checkbox"} className={"w-4 h-4 accent-blue-600"} />
-                        </li>
-                        <li className={"flex items-center gap-2"}>
-                            <img src={"/restroom-icon.svg"} alt="restroom icon" className={"h-5 w-5"}/>
-                            Restroom
-                            <input type={"checkbox"} className={"w-4 h-4 accent-blue-600"} />
-                        </li>
-                        <li className={"flex items-center gap-2"}>
-                            <img src={"/elevator-icon.svg"} alt="elevator icon" className={"h-5 w-5"}/>
-                            Elevator
-                            <input type={"checkbox"} className={"w-4 h-4 accent-blue-600"} />
-                        </li>
-                        <li className={"flex items-center gap-2"}>
-                            <img src={"/stairs-icon.svg"} alt="staircase icon" className={"h-5 w-5"}/>
-                            Staircase
-                            <input type={"checkbox"} className={"w-4 h-4 accent-blue-600"} />
-                        </li>
-                    </ul>
+                {/* Floor Plan */}
+                <LocationRequestForm onSubmit={setOriginLocation} />
+                <div style={{ display: showMap ? 'none' : 'flex' }}>
+                    <div id="floorplan-map" className="p-4 relative">
+                        <img
+                            id="floor-image"
+                            src="/chestnutHillCombined.png"
+                            alt="Floor plan"
+                            className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
+                        />
+                        <canvas
+                            id="overlay-canvas"
+                            className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                        />
+                    </div>
                 </div>
 
+                {/* Google Map (always rendered) */}
+                <div
+                    id="google-map-container"
+                    className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
+                    ref={mapRef}
+                    style={{
+                        width: '100%',
+                        height: '600px',
+                        display: showMap ? 'block' : 'none',
+                    }}
+                />
 
-                <div id="map" className="p-4 relative">
-                    <img
-                        id="floor-image"
-                        src="/chestnutHillCombined.png"
-                        alt="Placeholder floor plan"
-                        className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
-                    />
-                    <canvas
-                        id="overlay-canvas"
-                        className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                    />
+                <div className="mb-4 flex justify-center">
+                    <button
+                        onClick={toggleView}
+                        className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
+                    >
+                        {showMap ? 'Show Floor Plan' : 'Show Google Map'}
+                    </button>
                 </div>
-
             </div>
         </div>
     );
 };
-
 
 export default FloorPlan;
