@@ -253,23 +253,16 @@ async function main() {
         },
     ];
 
-    // Create unique services based on splitting descriptions
-    const uniqueServiceNames = new Set<string>();
-    rawDepartmentData.forEach(dept => {
-        const servicesList = (dept.description ?? dept.name).split(',').map(s => s.trim()).filter(s => s);
-        servicesList.forEach(serviceName => uniqueServiceNames.add(serviceName));
-    });
-
-    const serviceData = Array.from(uniqueServiceNames).map(name => ({ name }));
-
-    await prisma.service.createMany({
-        data: serviceData,
-        skipDuplicates: true, // Avoid errors if a service name somehow repeats
-    });
-
-    // Fetch all services (including potentially pre-existing ones if skipDuplicates was used)
-    const allServices = await prisma.service.findMany();
-    const serviceNameToIdMap = new Map(allServices.map(s => [s.name, s.id]));
+    // Create one service per department using the full description/name
+    const services = await Promise.all(
+        rawDepartmentData.map((dept) =>
+            prisma.service.create({
+                data: {
+                    name: dept.description ?? dept.name, // Use full description or name
+                },
+            })
+        )
+    );
 
     // Create departments
     const departments = await Promise.all(
@@ -316,28 +309,24 @@ async function main() {
         })
     );
 
-    // Create department-service relationships (Revised for split services)
-    const departmentServiceLinks: { departmentID: number; serviceID: number }[] = [];
-    departments.forEach(dept => {
-        // Find the raw data again to get the original description to split
-        const deptRawData = rawDepartmentData.find(d => d.name === dept.name && d.phoneNumber === dept.phoneNumber);
-        if (deptRawData) {
-            const servicesForDept = (deptRawData.description ?? deptRawData.name).split(',').map(s => s.trim()).filter(s => s);
-            servicesForDept.forEach(serviceName => {
-                const serviceId = serviceNameToIdMap.get(serviceName);
-                if (serviceId) {
-                    departmentServiceLinks.push({ departmentID: dept.id, serviceID: serviceId });
-                } else {
-                    console.warn(`Could not find service ID for service name: "${serviceName}" in department "${dept.name}"`);
-                }
-            });
+    // Create department-service relationships (Simplified: One service per department)
+    const departmentServiceLinks = departments.map((dept, i) => {
+        // Simple 1-to-1 link based on array index
+        if (services[i]) { // Basic check to ensure service exists at index
+            return {
+                departmentID: dept.id,
+                serviceID: services[i].id,
+            };
+        } else {
+            console.warn(`Department ${dept.name} at index ${i} missing corresponding service.`);
+            return null;
         }
-    });
+    }).filter(Boolean) as { departmentID: number; serviceID: number }[]; // Filter out nulls and assert type
 
     if (departmentServiceLinks.length > 0) {
         await prisma.departmentServices.createMany({
             data: departmentServiceLinks,
-            skipDuplicates: true, // Should not be necessary if logic is correct, but safe
+            skipDuplicates: true,
         });
     }
 
