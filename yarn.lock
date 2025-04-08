@@ -824,6 +824,237 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/primitive@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/primitive@npm:1.1.1"
+  checksum: 10c0/6457bd8d1aa4ecb948e5d2a2484fc570698b2ab472db6d915a8f1eec04823f80423efa60b5ba840f0693bec2ca380333cc5f3b52586b40f407d9f572f9261f8d
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-accordion@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@radix-ui/react-accordion@npm:1.2.3"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.1"
+    "@radix-ui/react-collapsible": "npm:1.1.3"
+    "@radix-ui/react-collection": "npm:1.1.2"
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+    "@radix-ui/react-context": "npm:1.1.1"
+    "@radix-ui/react-direction": "npm:1.1.0"
+    "@radix-ui/react-id": "npm:1.1.0"
+    "@radix-ui/react-primitive": "npm:2.0.2"
+    "@radix-ui/react-use-controllable-state": "npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/2036497884696453a888433dff87eda35ad72859d04205b5aef74aa72df8ca07557eafcc56a4e204a3f755d6f8895927b59453643be9542049d8ad2a969b7a9a
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-collapsible@npm:1.1.3":
+  version: 1.1.3
+  resolution: "@radix-ui/react-collapsible@npm:1.1.3"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.1"
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+    "@radix-ui/react-context": "npm:1.1.1"
+    "@radix-ui/react-id": "npm:1.1.0"
+    "@radix-ui/react-presence": "npm:1.1.2"
+    "@radix-ui/react-primitive": "npm:2.0.2"
+    "@radix-ui/react-use-controllable-state": "npm:1.1.0"
+    "@radix-ui/react-use-layout-effect": "npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/93511dd4406af8f47a9b1b289cb70bfe907e9e4460946a0fa64224058aee663b52137dc249af4c3b024538cb20c463ec1412499adbbdf44ed913f0eb6dea049c
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-collection@npm:1.1.2":
+  version: 1.1.2
+  resolution: "@radix-ui/react-collection@npm:1.1.2"
+  dependencies:
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+    "@radix-ui/react-context": "npm:1.1.1"
+    "@radix-ui/react-primitive": "npm:2.0.2"
+    "@radix-ui/react-slot": "npm:1.1.2"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/8376aa0c0f38efbb45e5c0a2e8724b0ca2ccdab511f5aee4c3eb62a89959b20be0d4dd410b7068bc13d722751cbc88e916e10573784fb26b084c43f930818715
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-compose-refs@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-compose-refs@npm:1.1.1"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/3e84580024e66e3cc5b9ae79355e787815c1d2a3c7d46e7f47900a29c33751ca24cf4ac8903314957ab1f7788aebe1687e2258641c188cf94653f7ddf8f70627
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-context@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-context@npm:1.1.1"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/fc4ace9d79d7954c715ade765e06c95d7e1b12a63a536bcbe842fb904f03f88fc5bd6e38d44bd23243d37a270b4c44380fedddaeeae2d274f0b898a20665aba2
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-direction@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@radix-ui/react-direction@npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/eb07d8cc3ae2388b824e0a11ae0e3b71fb0c49972b506e249cec9f27a5b7ef4305ee668c98b674833c92e842163549a83beb0a197dec1ec65774bdeeb61f932c
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-id@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@radix-ui/react-id@npm:1.1.0"
+  dependencies:
+    "@radix-ui/react-use-layout-effect": "npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/acf13e29e51ee96336837fc0cfecc306328b20b0e0070f6f0f7aa7a621ded4a1ee5537cfad58456f64bae76caa7f8769231e88dc7dc106197347ee433c275a79
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-presence@npm:1.1.2":
+  version: 1.1.2
+  resolution: "@radix-ui/react-presence@npm:1.1.2"
+  dependencies:
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+    "@radix-ui/react-use-layout-effect": "npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/0c6fa281368636308044df3be4c1f02733094b5e35ba04f26e610dd1c4315a245ffc758e0e176c444742a7a46f4328af1a9d8181e860175ec39338d06525a78d
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-primitive@npm:2.0.2":
+  version: 2.0.2
+  resolution: "@radix-ui/react-primitive@npm:2.0.2"
+  dependencies:
+    "@radix-ui/react-slot": "npm:1.1.2"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/1af7a33a86f8bd2467f2300b1bb6ca9af67cae3950953ba543d2a625c17f341dff05d19056ece7b03e5ced8b9f8de99c74f806710ce0da6b9a000f2af063fffe
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-slot@npm:1.1.2":
+  version: 1.1.2
+  resolution: "@radix-ui/react-slot@npm:1.1.2"
+  dependencies:
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/81d45091806c52b507cec80b4477e4f31189d76ffcd7845b382eb3a034e6cf1faef71b881612028d5893f7580bf9ab59daa18fbf2792042dccd755c99a18df67
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-use-callback-ref@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@radix-ui/react-use-callback-ref@npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/e954863f3baa151faf89ac052a5468b42650efca924417470efd1bd254b411a94c69c30de2fdbb90187b38cb984795978e12e30423dc41e4309d93d53b66d819
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-use-controllable-state@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@radix-ui/react-use-controllable-state@npm:1.1.0"
+  dependencies:
+    "@radix-ui/react-use-callback-ref": "npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/2af883b5b25822ac226e60a6bfde647c0123a76345052a90219026059b3f7225844b2c13a9a16fba859c1cda5fb3d057f2a04503f71780e607516492db4eb3a1
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-use-layout-effect@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@radix-ui/react-use-layout-effect@npm:1.1.0"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/9bf87ece1845c038ed95863cfccf9d75f557c2400d606343bab0ab3192b9806b9840e6aa0a0333fdf3e83cf9982632852192f3e68d7d8367bc8c788dfdf8e62b
+  languageName: node
+  linkType: hard
+
 "@remix-run/router@npm:1.23.0":
   version: 1.23.0
   resolution: "@remix-run/router@npm:1.23.0"
@@ -1149,9 +1380,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/node@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/node@npm:4.1.3"
+  dependencies:
+    enhanced-resolve: "npm:^5.18.1"
+    jiti: "npm:^2.4.2"
+    lightningcss: "npm:1.29.2"
+    tailwindcss: "npm:4.1.3"
+  checksum: 10c0/c36c1baf0308d8d9f240c1f03bbc1a14b0475fa54170e5c306ddb9520d4ccab1af9644e08fc7b6ddf9e3049a5c93ba6631df12e1025be977fc3a75f40d0b8305
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/oxide-android-arm64@npm:4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/oxide-android-arm64@npm:4.0.17"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/oxide-android-arm64@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-android-arm64@npm:4.1.3"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
@@ -1163,9 +1413,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/oxide-darwin-arm64@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-darwin-arm64@npm:4.1.3"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/oxide-darwin-x64@npm:4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/oxide-darwin-x64@npm:4.0.17"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/oxide-darwin-x64@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-darwin-x64@npm:4.1.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
@@ -1177,9 +1441,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/oxide-freebsd-x64@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-freebsd-x64@npm:4.1.3"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.0.17"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-linux-arm-gnueabihf@npm:4.1.3"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
@@ -1191,9 +1469,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/oxide-linux-arm64-gnu@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-linux-arm64-gnu@npm:4.1.3"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/oxide-linux-arm64-musl@npm:4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/oxide-linux-arm64-musl@npm:4.0.17"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/oxide-linux-arm64-musl@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-linux-arm64-musl@npm:4.1.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
@@ -1205,9 +1497,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/oxide-linux-x64-gnu@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-linux-x64-gnu@npm:4.1.3"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/oxide-linux-x64-musl@npm:4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/oxide-linux-x64-musl@npm:4.0.17"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/oxide-linux-x64-musl@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-linux-x64-musl@npm:4.1.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
@@ -1219,9 +1525,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/oxide-win32-arm64-msvc@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-win32-arm64-msvc@npm:4.1.3"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/oxide-win32-x64-msvc@npm:4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/oxide-win32-x64-msvc@npm:4.0.17"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/oxide-win32-x64-msvc@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide-win32-x64-msvc@npm:4.1.3"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -1268,6 +1588,48 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/oxide@npm:4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/oxide@npm:4.1.3"
+  dependencies:
+    "@tailwindcss/oxide-android-arm64": "npm:4.1.3"
+    "@tailwindcss/oxide-darwin-arm64": "npm:4.1.3"
+    "@tailwindcss/oxide-darwin-x64": "npm:4.1.3"
+    "@tailwindcss/oxide-freebsd-x64": "npm:4.1.3"
+    "@tailwindcss/oxide-linux-arm-gnueabihf": "npm:4.1.3"
+    "@tailwindcss/oxide-linux-arm64-gnu": "npm:4.1.3"
+    "@tailwindcss/oxide-linux-arm64-musl": "npm:4.1.3"
+    "@tailwindcss/oxide-linux-x64-gnu": "npm:4.1.3"
+    "@tailwindcss/oxide-linux-x64-musl": "npm:4.1.3"
+    "@tailwindcss/oxide-win32-arm64-msvc": "npm:4.1.3"
+    "@tailwindcss/oxide-win32-x64-msvc": "npm:4.1.3"
+  dependenciesMeta:
+    "@tailwindcss/oxide-android-arm64":
+      optional: true
+    "@tailwindcss/oxide-darwin-arm64":
+      optional: true
+    "@tailwindcss/oxide-darwin-x64":
+      optional: true
+    "@tailwindcss/oxide-freebsd-x64":
+      optional: true
+    "@tailwindcss/oxide-linux-arm-gnueabihf":
+      optional: true
+    "@tailwindcss/oxide-linux-arm64-gnu":
+      optional: true
+    "@tailwindcss/oxide-linux-arm64-musl":
+      optional: true
+    "@tailwindcss/oxide-linux-x64-gnu":
+      optional: true
+    "@tailwindcss/oxide-linux-x64-musl":
+      optional: true
+    "@tailwindcss/oxide-win32-arm64-msvc":
+      optional: true
+    "@tailwindcss/oxide-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/a7b36fc98e5b67d03d2bd0c6d268167216c4c64fe967e4570dd941ad85dfc7d249e540dc10ac977b4ba511b6ae3ec929a546bbc9844dba7a4680e64f44a0c5d9
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/vite@npm:^4.0.17":
   version: 4.0.17
   resolution: "@tailwindcss/vite@npm:4.0.17"
@@ -1279,6 +1641,19 @@ __metadata:
   peerDependencies:
     vite: ^5.2.0 || ^6
   checksum: 10c0/9baaa79b9c78c6fdfbba0b06ed786b1f673f761def8c1faa4883adba3053d53640cf444eb691a9c742af3c620944876ea788b9e9c11766ac945b692102741150
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/vite@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "@tailwindcss/vite@npm:4.1.3"
+  dependencies:
+    "@tailwindcss/node": "npm:4.1.3"
+    "@tailwindcss/oxide": "npm:4.1.3"
+    tailwindcss: "npm:4.1.3"
+  peerDependencies:
+    vite: ^5.2.0 || ^6
+  checksum: 10c0/0148ba2b33174fb189d2879a58f60ce1ef73aa2637f5469c58a9abcbc005520b60fa65a05d3d2db7bfa758ae7e3ebfe893a89caabf1307620b0bb937e98235de
   languageName: node
   linkType: hard
 
@@ -3691,6 +4066,7 @@ __metadata:
   resolution: "frontend@workspace:apps/frontend"
   dependencies:
     "@auth0/auth0-react": "npm:^2.1.1"
+    "@radix-ui/react-accordion": "npm:^1.2.3"
     "@tailwindcss/vite": "npm:^4.0.17"
     "@types/node": "npm:^22.14.0"
     "@types/prop-types": "npm:^15.7.5"
@@ -6221,9 +6597,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "softeng-startercode-d25@workspace:."
   dependencies:
+    "@tailwindcss/vite": "npm:^4.1.3"
     "@types/node": "npm:^22.14.0"
     "@vitest/ui": "npm:^3.0.9"
     "@yarnpkg/pnpify": "npm:^4.1.4"
+    class-variance-authority: "npm:^0.7.1"
+    clsx: "npm:^2.1.1"
     common: "workspace:*"
     dotenv: "npm:^16.4.7"
     dotenv-cli: "npm:^7.4.4"
@@ -6232,6 +6611,8 @@ __metadata:
     husky: "npm:^9.1.7"
     prettier: "npm:^3.5.3"
     prettier-config-custom: "workspace:*"
+    tailwind-variants: "npm:^1.0.0"
+    tailwindcss: "npm:^4.1.3"
     ts-config-custom: "workspace:*"
     turbo: "npm:*"
     typescript: "npm:^5.8.2"
@@ -6411,6 +6792,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tailwind-merge@npm:3.0.2":
+  version: 3.0.2
+  resolution: "tailwind-merge@npm:3.0.2"
+  checksum: 10c0/73f528345e5130e7690c5c57701155849ae4f0834e0a4bf56bc03e25d4563d45d4905ff9c487a7dce9efdfa18689a223e78365962105ad0e2f2d1226216c66ef
+  languageName: node
+  linkType: hard
+
 "tailwind-merge@npm:^3.1.0":
   version: 3.1.0
   resolution: "tailwind-merge@npm:3.1.0"
@@ -6418,10 +6806,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tailwind-variants@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "tailwind-variants@npm:1.0.0"
+  dependencies:
+    tailwind-merge: "npm:3.0.2"
+  peerDependencies:
+    tailwindcss: "*"
+  checksum: 10c0/404b88293067009c72b5c22e662ad6994438278b7ebcf4dedf9782832d98206f56f2918e39e202c590e7bb4a99b6272e3482fae3058fcd1cb7cc6e1c9ccf2435
+  languageName: node
+  linkType: hard
+
 "tailwindcss@npm:4.0.17, tailwindcss@npm:^4.0.17":
   version: 4.0.17
   resolution: "tailwindcss@npm:4.0.17"
   checksum: 10c0/740c0a1c0df5bfa1aff1ff6e197493e503b068f38a8f78f77e9ea7364441fafae4b554e4d6de727758ba60d0fb52d862ce6f1524c82beb00d8789580d25c995e
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:4.1.3, tailwindcss@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "tailwindcss@npm:4.1.3"
+  checksum: 10c0/e1a57c6fa8d3b2a950b50ee599bf40734e472f719d2a7c74d6fa95584ac09554625481a9c28420bb32396a7f49e1b9eafe628eb61c230fcdc134b86999bf0bae
   languageName: node
   linkType: hard
 

@@ -1,11 +1,13 @@
 import { useState } from "react";
+import React from "react";
 
 
-const MGBHospitals = ["Chestnut Hill", "20 Patriots Place", "22 Patriots Place"];
+const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
+    "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
 const transportTypes = ["Ambulance", "Shuttle", "Private Transport", "Helicopter"];
 const priorityLevels = ["Urgent", "High", "Intermediate", "Low"];
 
-export default function TransportRequestForm() {
+export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 
     const [form, setForm] = useState({
         patientName: "",
@@ -44,6 +46,7 @@ export default function TransportRequestForm() {
             return;
         }
         setSubmittedRequests(prevRequests => [...prevRequests, form]);
+        onSubmit(form);
 
         console.log("Form submitted successfully.", form);
 
@@ -51,7 +54,7 @@ export default function TransportRequestForm() {
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-md rounded-2xl">
-            <div className="bg-gray-200 w-full p-4 rounded-t-2xl rounded-b-xl">
+            <div className=" w-full p-4 rounded-t-2xl rounded-b-xl">
                 <h2 className="text-xl font-semibold">Transportation Service Request</h2>
                 <p>Select the following requests needed.</p>
             </div>
@@ -87,29 +90,6 @@ export default function TransportRequestForm() {
                     <input name="additionalNotes" placeholder="Enter Additional Notes" className="p-8 w-full border border-gray-300 rounded-xl focus:outline-none" onChange={handleChange}></input>
                     <button type='submit' className="border border-3 border-[#012D5A] w-full btn btn-primary p-3 px-8 bg-[#012D5A] text-white rounded-xl hover:bg-white hover:text-[#012D5A]">Submit</button>
                 </form>
-            {submittedRequests.length > 0 && (
-                <div className="mt-6 p-4 border-t border-gray-300">
-                    <h3 className="text-lg font-semibold">Submitted Requests</h3>
-                    {submittedRequests.map((request, index) => (
-                        <div key={index} className="mt-4 p-2 border-b border-gray-300">
-                            <div>
-                            <p><strong>Patient Name:</strong> {request.patientName}<button
-                                onClick={() => handleDelete(index)}
-                                className="border ml-4 text-red-500 hover:text-red-700 p-2 rounded-l rounded-r justify-end hover:text-white hover:bg-red-500 ">
-                            X
-                            </button></p>
-                            <p><strong>Priority:</strong> {request.priority}</p>
-                            <p><strong>Transport Type:</strong> {request.transportType}</p>
-                            <p><strong>Pickup From:</strong> {request.pickupTransport}</p>
-                            <p><strong>Dropoff To:</strong> {request.dropoffTransport}</p>
-                            <p><strong>Additional Notes:</strong> {request.additionalNotes || "N/A"}</p>
-                            </div>
-
-                        </div>
-
-                    ))}
-                </div>
-            )}
         </div>
     )
 
