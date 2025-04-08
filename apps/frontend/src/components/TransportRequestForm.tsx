@@ -3,7 +3,8 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import TransportRequest from "../routes/serviceRequest.tsx"
-
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '../database/trpc.ts';
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
@@ -26,7 +27,8 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: {
         dropoffTransport: "",
         additionalNotes: "",
     });
-
+    const trpc = useTRPC();
+    const addReq = useMutation(trpc.service.addRequest.mutationOptions())
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
 
     const handleSelectChange = (event:ChangeEvent<HTMLSelectElement>) => {
@@ -70,13 +72,21 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: {
 
         const finalForm = {
             ...form,
-            pickupTime: form.pickupTime?.toISOString(), // Optional formatting
+            pickupTime: form.pickupTime, // Optional formatting
         };
 
         if (!form.pickupTime || isNaN(new Date(form.pickupTime).getTime())) {
             alert("Please enter a valid pickup time.");
             return;
         }
+        addReq.mutate({
+            patientName: finalForm.patientName,
+            pickupTime: new Date(finalForm.pickupTime),
+            transportation: finalForm.transportType,
+            pickupTransport: finalForm.pickupTransport,
+            dropoffTransport: finalForm.dropoffTransport,
+            additionalNotes: finalForm.additionalNotes,
+        })
         onSubmit(finalForm);
 
         console.log("Form submitted successfully.", form);
