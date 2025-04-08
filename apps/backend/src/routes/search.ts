@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import PrismaClient from '../bin/prisma-client';
+import * as process from "node:process";
 
 const router: Router = express.Router();
 
@@ -94,7 +95,7 @@ class Node {
         }
 
         // query for neighbor nodes
-        const neighborNodes: { id: number; name: string }[] = await PrismaClient.node.findMany({
+        const neighborNodes = await PrismaClient.node.findMany({
             where: {
                 id: {
                     in: Array.from(neighborNodeIds),
@@ -113,9 +114,27 @@ router.get('/', async (req: Request, res: Response) => {
         // clear node cache
         Node.clearCache();
 
-        // example start and end nodes
-        let start = new Node(1);
-        let end = new Node(4);
+        // get start and end node from descriptions (temp)
+        let startNode = await PrismaClient.node.findFirst({
+            where: {
+                description: "1bottom entrance outside",
+            },
+        });
+        let endNode = await PrismaClient.node.findFirst({
+            where: {
+                description: "1a",
+            },
+        });
+
+        // make sure nodes were found, exit otherwise
+        if(startNode === null || endNode === null) {
+            console.log("Error finding starting or ending node, check descriptions against seeded descriptions in seed.ts")
+            process.exit(1);
+        }
+
+        // extract Ids from nodes and put into node objects
+        let start = new Node(startNode.id);
+        let end = new Node(endNode.id);
 
         // run bfs
         let bfs = await findBFS(start, end);

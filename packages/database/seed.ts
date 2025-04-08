@@ -47,33 +47,39 @@ async function main() {
         // seed nodes
         const nodes = await prisma.node.createManyAndReturn({
             data: [
-                {description: 'entry', x: 1, y: 6},
-                {description: 'a', x: 2, y: 6},
-                {description: 'lab1', x: 2, y: 5},
-                {description: 'b', x: 3, y: 6},
-                {description: 'c', x: 4, y: 6},
-                {description: 'd', x: 4, y: 3},
-                {description: 'lab2', x: 3, y: 3},
-                {description: 'e', x: 5, y: 3},
-                {description: 'multi-spec clinic', x: 5, y: 2},
-                {description: 'f', x: 3, y: 10},
-                {description: 'radiology', x: 4, y: 10},
+                {description: '1top stairs', x: 272, y: 110},
+                {description: '1b', x: 272, y: 130},
+                {description: '1a', x: 190, y: 130},
+                {description: '1c', x: 190, y: 239},
+                {description: '1d', x: 163, y: 239},
+                {description: '1e', x: 163, y: 360},
+                {description: '1f', x: 275, y: 360},
+                {description: '1bottom entrance', x: 275, y: 390},
+                {description: '1bottom entrance outside', x: 275, y: 450},
+                {description: '1g', x: 275, y: 315},
+                {description: '1h', x: 357, y: 315},
+                {description: '1bottom stairs', x: 357, y: 300},
+                {description: '1right entrance', x: 400, y: 315},
+                {description: '1right entrance outside', x: 450, y: 315},
+
             ]
         })
 
         // seed edges with node ids
         const edges = await prisma.edge.createMany({
             data: [
-                {fromNodeId: nodes[idFromDesc("entry")].id, toNodeId: nodes[idFromDesc("a")].id},
-                {fromNodeId: nodes[idFromDesc("a")].id, toNodeId: nodes[idFromDesc("lab1")].id},
-                {fromNodeId: nodes[idFromDesc("a")].id, toNodeId: nodes[idFromDesc("b")].id},
-                {fromNodeId: nodes[idFromDesc("b")].id, toNodeId: nodes[idFromDesc("c")].id},
-                {fromNodeId: nodes[idFromDesc("c")].id, toNodeId: nodes[idFromDesc("d")].id},
-                {fromNodeId: nodes[idFromDesc("d")].id, toNodeId: nodes[idFromDesc("lab2")].id},
-                {fromNodeId: nodes[idFromDesc("d")].id, toNodeId: nodes[idFromDesc("e")].id},
-                {fromNodeId: nodes[idFromDesc("e")].id, toNodeId: nodes[idFromDesc("multi-spec clinic")].id},
-                {fromNodeId: nodes[idFromDesc("b")].id, toNodeId: nodes[idFromDesc("f")].id},
-                {fromNodeId: nodes[idFromDesc("f")].id, toNodeId: nodes[idFromDesc("radiology")].id}
+                {fromNodeId: nodes[idFromDesc("1top stairs")].id, toNodeId: nodes[idFromDesc("1b")].id},
+                {fromNodeId: nodes[idFromDesc("1b")].id, toNodeId: nodes[idFromDesc("1a")].id},
+                {fromNodeId: nodes[idFromDesc("1a")].id, toNodeId: nodes[idFromDesc("1c")].id},
+                {fromNodeId: nodes[idFromDesc("1c")].id, toNodeId: nodes[idFromDesc("1d")].id},
+                {fromNodeId: nodes[idFromDesc("1d")].id, toNodeId: nodes[idFromDesc("1e")].id},
+                {fromNodeId: nodes[idFromDesc("1e")].id, toNodeId: nodes[idFromDesc("1f")].id},
+                {fromNodeId: nodes[idFromDesc("1f")].id, toNodeId: nodes[idFromDesc("1g")].id},
+                {fromNodeId: nodes[idFromDesc("1g")].id, toNodeId: nodes[idFromDesc("1h")].id},
+                {fromNodeId: nodes[idFromDesc("1h")].id, toNodeId: nodes[idFromDesc("1right entrance")].id},
+                {fromNodeId: nodes[idFromDesc("1right entrance")].id, toNodeId: nodes[idFromDesc("1right entrance outside")].id},
+                {fromNodeId: nodes[idFromDesc("1f")].id, toNodeId: nodes[idFromDesc("1bottom entrance")].id},
+                {fromNodeId: nodes[idFromDesc("1bottom entrance")].id, toNodeId: nodes[idFromDesc("1bottom entrance outside")].id},
             ]
         })
 
