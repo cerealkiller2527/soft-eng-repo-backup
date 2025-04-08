@@ -27,6 +27,12 @@ enum RequestType {
   SECURITY
 }
 
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String
+}
+
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
@@ -162,10 +168,4 @@ model Building {
   address     String
   phoneNumber BigInt
   Department  Department[]
-}
-
-model User {
-  id       Int      @id @default(autoincrement())
-  username String   @unique
-  password String
 }
