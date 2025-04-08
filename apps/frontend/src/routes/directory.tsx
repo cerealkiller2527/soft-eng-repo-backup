@@ -22,7 +22,7 @@ const DirectoryPage: React.FC = () => {
     const buttonContainerClass = "flex flex-wrap justify-center gap-4 my-6 w-full";
 
     // Accordion styling
-    const accordionContentClass = "px-0 pt-2 pb-6";
+    const accordionContentClass = "px-2 pt-2 pb-6";
     const accordionTriggerClass = "w-full py-4 text-[#012D5A] text-left text-xl font-normal " +
         "hover:no-underline border-b border-[#012D5A]/20 hover:bg-gray-50 px-0";
 
