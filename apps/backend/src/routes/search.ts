@@ -1,6 +1,5 @@
 import express, { Request, Response, Router } from 'express';
 import PrismaClient from '../bin/prisma-client';
-import * as process from "node:process";
 
 const router: Router = express.Router();
 
@@ -14,8 +13,12 @@ class Node {
 
     public id: number;
     public neighbors: Node[];
+    public coords: number[];
+    public desc: string;
 
-    constructor(id: number) {
+    constructor(id: number);
+    constructor(id: number, coords: number[], desc: string);
+    constructor(id: number, coords?: number[], desc?: string) {
         /**
          * create new node instance.
          * @param {number} id - node id.
@@ -23,6 +26,8 @@ class Node {
 
         this.id = id;
         this.neighbors = [];
+        this.coords = coords ?? [];
+        this.desc = desc ?? '';
         Node.nodeCache.set(this.id, this); // add to cache
     }
 
@@ -104,7 +109,9 @@ class Node {
         });
 
         for (let neighbor of neighborNodes) {
-            this.neighbors.push(await Node.getNode(neighbor.id));
+            let myNode = await Node.getNode(neighbor.id);
+            myNode.coords = [neighbor.x, neighbor.y];
+            this.neighbors.push(myNode);
         }
     }
 }
@@ -112,8 +119,8 @@ class Node {
 router.get('/', async (req: Request, res: Response) => {
     try {
         // set start and end descriptions. This will be taken from req at some point but is hard coded right now
-        const startDesc = "1right entrance outside";
-        const endDesc = "1a";
+        const startDesc = '1right entrance outside';
+        const endDesc = '1a';
 
         // clear node cache
         Node.clearCache();
@@ -131,8 +138,10 @@ router.get('/', async (req: Request, res: Response) => {
         });
 
         // make sure nodes were found, exit otherwise
-        if(startNode === null || endNode === null) {
-            console.log("Error finding starting or ending node, check descriptions against seeded descriptions in seed.ts")
+        if (startNode === null || endNode === null) {
+            console.log(
+                'Error finding starting or ending node, check descriptions against seeded descriptions in seed.ts'
+            );
             process.exit(1);
         }
 
@@ -142,7 +151,9 @@ router.get('/', async (req: Request, res: Response) => {
 
         // run bfs
         let bfs = await findBFS(start, end);
-        res.json(bfs); // return bfs
+        console.log('asdf');
+        let pathJson = nodePathToCoords(bfs!); // type assertion for Node[]
+        res.json(pathJson); // return bfs
 
         // // this code gets all the nodes from the server (for debug)
         // const myNodes = await PrismaClient.node.findMany();
@@ -152,6 +163,22 @@ router.get('/', async (req: Request, res: Response) => {
         res.sendStatus(500);
     }
 });
+
+function nodePathToCoords(path: Node[]) {
+    /**
+     * Takes a path (list of nodes) and returns a list of XY coordinates on the map
+     * @param path list of nodes representing path
+     * @return listCoords list of coordinates (which a coordinate is a list of [X, Y] of each node on the path
+     */
+
+    let listCoords: number[][] = [];
+
+    for (let node of path) {
+        listCoords.push(node.coords);
+    }
+
+    return listCoords;
+}
 
 async function findBFS(startNode: Node, endNode: Node) {
     /**
