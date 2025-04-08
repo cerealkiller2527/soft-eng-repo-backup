@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/morgan": "^1",
     "@types/node": "^22.14.0",
+    "@types/react-datepicker": "^7.0.0",
     "@vitest/ui": "^3.0.9",
     "@yarnpkg/pnpify": "^4.1.4",
     "eslint": "^9.23.0",
@@ -38,8 +39,10 @@
     "@trpc/server": "^11.0.2",
     "@trpc/tanstack-react-query": "^11.0.2",
     "common": "workspace:*",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^7.4.4",
+    "react-datepicker": "^8.2.1",
     "morgan": "^1.10.0",
     "zod": "^3.24.2"
   },

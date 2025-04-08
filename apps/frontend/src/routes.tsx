@@ -22,6 +22,7 @@ import BrighamDermatologyAssociates from './routes/directoryPages/brighamDermato
 import BrighamObstetrics from './routes/directoryPages/brighamObstetrics.tsx';
 import BrighamPhysiciansGroup from './routes/directoryPages/brighamPhysiciansGroup.tsx';
 import BrighamPsychiatricSpecialities from './routes/directoryPages/brighamPsychiatricSpecialities.tsx';
+import RequestDashboard from './routes/requestDashboard.tsx'
 
 export const routes = [
     {
@@ -134,6 +135,11 @@ export const routes = [
         errorElement: <div />,
         element: <BrighamPsychiatricSpecialities />,
     },
+    {
+        path: '/RequestDashboard',
+        errorElement: <div />,
+        element: <RequestDashboard />,
+    }
 ];
 
 export const router = createBrowserRouter(routes);
