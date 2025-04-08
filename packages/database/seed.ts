@@ -5,13 +5,30 @@ const prisma = new PrismaClient();
 async function main() {
     // 🚀 Step 1: Create 5 employees
 
-    await prisma.audioVisual.deleteMany();
-    await prisma.externalTransportation.deleteMany();
-    await prisma.equipmentDelivery.deleteMany();
-    await prisma.language.deleteMany();
-    await prisma.security.deleteMany();
-    await prisma.serviceRequest.deleteMany();
-    await prisma.employee.deleteMany();
+    if ((await prisma.user.count()) != 0) {
+        await prisma.user.deleteMany();
+    }
+    if ((await prisma.audioVisual.count()) != 0) {
+        await prisma.audioVisual.deleteMany();
+    }
+    if ((await prisma.externalTransportation.count()) != 0){
+        await prisma.externalTransportation.deleteMany();
+    }
+    if ((await prisma.equipmentDelivery.count()) != 0){
+        await prisma.equipmentDelivery.deleteMany();
+    }
+    if ((await prisma.language.count()) != 0){
+        await prisma.language.deleteMany();
+    }
+    if((await prisma.security.count()) != 0){
+        await prisma.security.deleteMany();
+    }
+    if((await prisma.serviceRequest.count()) != 0){
+        await prisma.serviceRequest.deleteMany();
+    }
+    if((await prisma.employee.count()) != 0){
+        await prisma.employee.deleteMany();
+    }
 
     // deleted backwards to preserve foreign key constraint
     await prisma.departmentServices.deleteMany();
@@ -20,6 +37,15 @@ async function main() {
     await prisma.building.deleteMany();
 
     console.log('🗑️ Existing data purged.');
+
+    const admin = await prisma.user.create({
+        data: {
+            username: 'admin',
+            password: 'admin',
+            email: 'admin@admin.com',
+        }
+    })
+
     const employees = await Promise.all(
         Array.from({ length: 5 }).map((_, i) =>
             prisma.employee.create({

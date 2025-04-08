@@ -28,9 +28,9 @@ enum RequestType {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  username String   @unique
+  username String @id
   password String
+  email    String
 }
 
 model Employee {
@@ -73,7 +73,6 @@ model ExternalTransportation {
   toWhere        String
   transportType  String
   patientName    String
-  dropoffTime    DateTime
   pickupTime     DateTime
 }
 
