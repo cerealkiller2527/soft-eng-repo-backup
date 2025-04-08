@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
+import Footer from "../components/Footer";
 import {
     Accordion,
     AccordionContent,
@@ -114,8 +115,9 @@ const DirectoryPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-white p-4 overflow-y-auto pt-20">
+        <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
             <br/>
+            <div className="flex-grow p-4">
             <Navbar />
 
             {/* Header */}
@@ -141,6 +143,8 @@ const DirectoryPage: React.FC = () => {
                     ))}
                 </Accordion>
             </div>
+            </div>
+            <Footer/>
         </div>
     );
 };
