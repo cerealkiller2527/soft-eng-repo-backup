@@ -30,19 +30,23 @@
         "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} seed.ts"
     },
     "devDependencies": {
+        "@types/node": "^22.14.0",
         "@yarnpkg/pnpify": "^4.0.0-rc.45",
         "eslint": "*",
         "eslint-config-custom": "*",
         "prettier": "*",
         "prettier-config-custom": "*",
         "prisma": "6.5.0",
-        "ts-config-custom": "*"
+        "ts-config-custom": "*",
+        "tsx": "^4.19.3"
     },
     "dependencies": {
         "@prisma/client": "6.5.0",
+        "@trpc/server": "^11.0.3",
         "dotenv": "*",
         "dotenv-cli": "*",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "typescript": "^5.3.3",
+        "zod": "^3.24.2"
     }
 }

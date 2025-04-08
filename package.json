@@ -35,7 +35,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.72.0",
     "@trpc/client": "^11.0.2",
-    "@trpc/server": "^11.0.2",
+    "@trpc/server": "^11.0.3",
     "@trpc/tanstack-react-query": "^11.0.2",
     "common": "workspace:*",
     "dotenv": "^16.4.7",
