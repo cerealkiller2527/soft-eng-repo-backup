@@ -2,7 +2,7 @@ import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { employeeRouter } from './routes/employeeRouter';
 import { serviceRouter } from './routes/serviceRouter';
-import {loginRouter} from "./routes/loginRouter.ts";
+import { loginRouter } from './routes/loginRouter.ts';
 import express from 'express';
 
 // created for each request
@@ -24,3 +24,4 @@ app.use(
 );
 
 export default app;
+export type appRouter = typeof appRouter;

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useTRPC } from '../database/trpc.ts';
 
 const Login: React.FC = () => {
+    const trpc = useTRPC();
     const [email, setEmail] = useState("");
 
     const[username, setUsername] = useState("");
@@ -12,17 +14,18 @@ const Login: React.FC = () => {
     //const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
-
-    const handleLogin = () => {
-        const storedUsername = localStorage.getItem("username");
-        const storedPassword = localStorage.getItem("password");
-
-        if (username === storedUsername && password === storedPassword) {
-            navigate("/Directory");
-        } else {
-            alert("Username or password is incorrect!");
-        }
-    };
+    const checkLogin = useMutation(
+        trpc.login.checkLogin.mutationOptions({
+            onSuccess: (data) => {
+                console.log('Login success', data);
+                navigate("/Directory");
+            },
+            onError: (error) => {
+                console.error('Username or password is incorrect!', error);
+                alert("Username or password is incorrect!");
+            },
+        })
+    );
 
     const handleSignUp = () => {
         if(password!== confirmPassword){
@@ -123,7 +126,10 @@ const Login: React.FC = () => {
                                 className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <button
-                                onClick={handleLogin}
+                                onClick={()=>checkLogin.mutate({
+                                    username: username,
+                                    password: password
+                                })}
                                 className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
                             >
                                 Sign In

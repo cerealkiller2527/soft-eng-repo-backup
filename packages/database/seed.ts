@@ -85,7 +85,6 @@ async function main() {
                                 toWhere: `Location ${i + 1}`,
                                 patientName: `Patient ${i + 1}`,
                                 pickupTime: new Date(Date.now() + 1000 * 60 * 60 * 23),
-                                dropoffTime: new Date(Date.now() + 1000 * 60 * 60 * 24),
                             }
                         })
                         break;
