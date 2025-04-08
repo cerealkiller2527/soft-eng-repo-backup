@@ -3,6 +3,12 @@ import { useState, useEffect } from "react";
 const MGBHospitals = ["Chestnut Hill", "20 Patriots Place", "22 Patriots Place"];
 
 export default function LocationRequestForm({ onSubmit }) {
+
+    useEffect(() => {
+        //useeffect for setting MGBHospitals once backend is made
+        //should run on mount
+    }, []);
+
     const [form, setForm] = useState({
         location: "",
         destination: "",

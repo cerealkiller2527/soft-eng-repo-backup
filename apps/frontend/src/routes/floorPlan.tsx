@@ -5,9 +5,34 @@ import LocationRequestForm from '../components/locationRequestForm.tsx';
 const FloorPlan = () => {
     const [showMap, setShowMap] = useState(false);
     const [originLocation, setOriginLocation] = useState<{ lat: number; lng: number } | null>(null); // Default to null
+    const [destination, setDestination] = useState<string | null>(null);
     const mapRef = useRef<HTMLDivElement | null>(null);
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
+    const [pathCoords, setPathCoords] = useState([
+        { x: 190, y: 130 },
+        { x: 272, y: 130 },
+        { x: 272, y: 110 },
+        { x: 272, y: 130 },
+        { x: 190, y: 130 },
+        { x: 190, y: 239 },
+        { x: 163, y: 239 },
+        { x: 163, y: 360 },
+        { x: 275, y: 360 },
+        { x: 275, y: 390 },
+        { x: 275, y: 450 },
+        { x: 275, y: 390 },
+        { x: 275, y: 360 },
+        { x: 275, y: 315 },
+        { x: 357, y: 315 },
+        { x: 357, y: 300 },
+        { x: 357, y: 315 },
+        { x: 400, y: 315 },
+        { x: 450, y: 315 },
+        // Initial coords
+    ]);
+
+
 
     const toggleView = () => {
         setShowMap((prev) => {
@@ -21,7 +46,10 @@ const FloorPlan = () => {
         });
     };
 
-    // Initialize map once
+    useEffect(() => {
+
+    }, [destination]);
+
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
             mapInstance.current = new google.maps.Map(mapRef.current, {
@@ -34,9 +62,10 @@ const FloorPlan = () => {
             directionsRenderer.current = new google.maps.DirectionsRenderer();
             directionsRenderer.current.setMap(mapInstance.current);
         }
-    }, []); // Empty dependency array ensures this effect runs once on mount
+    }, []);
 
-    // Update directions when originLocation changes
+
+    //useEffect for rerouting maps
     useEffect(() => {
         console.log('Updated originLocation:', originLocation); // Log whenever originLocation changes
         const travelMode = google.maps.TravelMode.DRIVE || 'DRIVING';
@@ -58,19 +87,10 @@ const FloorPlan = () => {
                 }
             );
         }
-    }, [originLocation]); // Runs when originLocation changes
+    }, [originLocation]);
 
-    // Handle map visibility changes
-    useEffect(() => {
-        if (mapInstance.current) {
-            google.maps.event.trigger(mapInstance.current, 'resize');
-            if (showMap) {
-                mapInstance.current.setCenter({ lat: 42.326259, lng: -71.149766 });
-            }
-        }
-    }, [showMap]);
 
-    // Floor plan drawing logic (unchanged)
+
     useEffect(() => {
         if (showMap) return;
 
@@ -81,27 +101,7 @@ const FloorPlan = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        const pathCoords = [
-            { x: 190, y: 130 },
-            { x: 272, y: 130 },
-            { x: 272, y: 110 },
-            { x: 272, y: 130 },
-            { x: 190, y: 130 },
-            { x: 190, y: 239 },
-            { x: 163, y: 239 },
-            { x: 163, y: 360 },
-            { x: 275, y: 360 },
-            { x: 275, y: 390 },
-            { x: 275, y: 450 },
-            { x: 275, y: 390 },
-            { x: 275, y: 360 },
-            { x: 275, y: 315 },
-            { x: 357, y: 315 },
-            { x: 357, y: 300 },
-            { x: 357, y: 315 },
-            { x: 400, y: 315 },
-            { x: 450, y: 315 },
-        ];
+
 
         const dashPattern = [10, 6];
         const drawSpeed = 10;
@@ -224,8 +224,13 @@ const FloorPlan = () => {
 
             <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
                 {/* Floor Plan */}
-                <LocationRequestForm onSubmit={setOriginLocation} />
-                <div style={{ display: showMap ? 'none' : 'flex' }}>
+                <LocationRequestForm
+                    onSubmit={(origin, destination) => {
+                        setOriginLocation(origin);
+                        setDestination(destination);
+                        // You can also save it in state if needed
+                    }}
+                />                <div style={{ display: showMap ? 'none' : 'flex' }}>
                     <div id="floorplan-map" className="p-4 relative">
                         <img
                             id="floor-image"

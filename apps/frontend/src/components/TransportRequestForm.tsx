@@ -43,7 +43,6 @@ export default function TransportRequestForm() {
             alert("Please fill all required fields.");
             return;
         }
-        setSubmittedRequests(prevRequests => [...prevRequests, form]);
 
         console.log("Form submitted successfully.", form);
 
