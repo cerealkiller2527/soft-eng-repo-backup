@@ -27,13 +27,6 @@ enum RequestType {
   SECURITY
 }
 
-enum Priority {
-  URGENT
-  HIGH
-  INTERMEDIATE
-  LOW
-}
-
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
@@ -74,7 +67,8 @@ model ExternalTransportation {
   toWhere        String
   transportType  String
   patientName    String
-  priority       Priority
+  dropoffTime    DateTime
+  pickupTime     DateTime
 }
 
 model EquipmentDelivery {
@@ -87,12 +81,12 @@ model EquipmentDelivery {
 }
 
 model Language {
-  id              Int            @id
-  serviceRequest  ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
-  location        String
-  language        String
-  startTime       DateTime
-  durationInHours Float
+  id             Int            @id
+  serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
+  location       String
+  language       String
+  startTime      DateTime
+  endTime        DateTime
 }
 
 model Security {
@@ -106,4 +100,66 @@ model Score {
   id    Int      @id @default(autoincrement())
   time  DateTime
   score Int
+}
+
+model Edge {
+  id         Int  @id @default(autoincrement())
+  fromNodeId Int
+  toNodeId   Int
+  fromNode   Node @relation("fromNode", fields: [fromNodeId], references: [id])
+  toNode     Node @relation("toNode", fields: [toNodeId], references: [id])
+}
+
+model Node {
+  id          Int       @id @default(autoincrement())
+  description String
+  x           Int
+  y           Int
+  Location    Location?
+  fromEdge    Edge[]    @relation("fromNode")
+  toEdge      Edge[]    @relation("toNode")
+}
+
+model Location {
+  id           Int         @id @default(autoincrement())
+  suite        String
+  floor        Int
+  nodeID       Int         @unique
+  node         Node        @relation(fields: [nodeID], references: [id])
+  departmentId Int?
+  Department   Department? @relation(fields: [departmentId], references: [id])
+}
+
+model Department {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  description        String?
+  phoneNumber        Int
+  Location           Location[]
+  DepartmentServices DepartmentServices[]
+  buildingID         Int
+  building           Building             @relation(fields: [buildingID], references: [id])
+}
+
+model Service {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  DepartmentServices DepartmentServices[]
+}
+
+model DepartmentServices {
+  departmentID Int
+  serviceID    Int
+  department   Department @relation(fields: [departmentID], references: [id])
+  service      Service    @relation(fields: [serviceID], references: [id])
+
+  @@id([departmentID, serviceID])
+}
+
+model Building {
+  id          Int          @id @default(autoincrement())
+  name        String
+  address     String
+  phoneNumber Int
+  Department  Department[]
 }
