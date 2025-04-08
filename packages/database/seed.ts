@@ -5,32 +5,19 @@ const prisma = new PrismaClient();
 async function main() {
     // 🚀 Step 1: Create 5 employees
 
+    // Clear all tables in the correct order to maintain foreign key constraints
     if ((await prisma.user.count()) != 0) {
         await prisma.user.deleteMany();
     }
-    if ((await prisma.audioVisual.count()) != 0) {
-        await prisma.audioVisual.deleteMany();
-    }
-    if ((await prisma.externalTransportation.count()) != 0){
-        await prisma.externalTransportation.deleteMany();
-    }
-    if ((await prisma.equipmentDelivery.count()) != 0){
-        await prisma.equipmentDelivery.deleteMany();
-    }
-    if ((await prisma.language.count()) != 0){
-        await prisma.language.deleteMany();
-    }
-    if((await prisma.security.count()) != 0){
-        await prisma.security.deleteMany();
-    }
-    if((await prisma.serviceRequest.count()) != 0){
-        await prisma.serviceRequest.deleteMany();
-    }
-    if((await prisma.employee.count()) != 0){
-        await prisma.employee.deleteMany();
-    }
-
-    // deleted backwards to preserve foreign key constraint
+    await prisma.audioVisual.deleteMany();
+    await prisma.externalTransportation.deleteMany();
+    await prisma.equipmentDelivery.deleteMany();
+    await prisma.language.deleteMany();
+    await prisma.security.deleteMany();
+    await prisma.serviceRequest.deleteMany();
+    await prisma.employee.deleteMany();
+    await prisma.edge.deleteMany();
+    await prisma.node.deleteMany();
     await prisma.departmentServices.deleteMany();
     await prisma.service.deleteMany();
     await prisma.department.deleteMany();
@@ -180,6 +167,67 @@ async function main() {
     );
 
     console.log('✅ Seed complete!');
+}
+
+async function seedNodesEdges() {
+    // seed nodes
+    const nodes = await prisma.node.createManyAndReturn({
+        data: [
+            {description: '1top stairs', x: 272, y: 110},
+            {description: '1b', x: 272, y: 130},
+            {description: '1a', x: 190, y: 130},
+            {description: '1c', x: 190, y: 239},
+            {description: '1d', x: 163, y: 239},
+            {description: '1e', x: 163, y: 360},
+            {description: '1f', x: 275, y: 360},
+            {description: '1bottom entrance', x: 275, y: 390},
+            {description: '1bottom entrance outside', x: 275, y: 450},
+            {description: '1g', x: 275, y: 315},
+            {description: '1h', x: 357, y: 315},
+            {description: '1bottom stairs', x: 357, y: 300},
+            {description: '1right entrance', x: 400, y: 315},
+            {description: '1right entrance outside', x: 450, y: 315},
+
+        ]
+    })
+
+    // seed edges with node ids
+    const edges = await prisma.edge.createMany({
+        data: [
+            {fromNodeId: nodes[idFromDesc("1top stairs")].id, toNodeId: nodes[idFromDesc("1b")].id},
+            {fromNodeId: nodes[idFromDesc("1b")].id, toNodeId: nodes[idFromDesc("1a")].id},
+            {fromNodeId: nodes[idFromDesc("1a")].id, toNodeId: nodes[idFromDesc("1c")].id},
+            {fromNodeId: nodes[idFromDesc("1c")].id, toNodeId: nodes[idFromDesc("1d")].id},
+            {fromNodeId: nodes[idFromDesc("1d")].id, toNodeId: nodes[idFromDesc("1e")].id},
+            {fromNodeId: nodes[idFromDesc("1e")].id, toNodeId: nodes[idFromDesc("1f")].id},
+            {fromNodeId: nodes[idFromDesc("1f")].id, toNodeId: nodes[idFromDesc("1g")].id},
+            {fromNodeId: nodes[idFromDesc("1g")].id, toNodeId: nodes[idFromDesc("1h")].id},
+            {fromNodeId: nodes[idFromDesc("1h")].id, toNodeId: nodes[idFromDesc("1right entrance")].id},
+            {
+                fromNodeId: nodes[idFromDesc("1right entrance")].id,
+                toNodeId: nodes[idFromDesc("1right entrance outside")].id
+            },
+            {fromNodeId: nodes[idFromDesc("1f")].id, toNodeId: nodes[idFromDesc("1bottom entrance")].id},
+            {
+                fromNodeId: nodes[idFromDesc("1bottom entrance")].id,
+                toNodeId: nodes[idFromDesc("1bottom entrance outside")].id
+            },
+        ]
+    })
+
+
+    /*  idFromDesc()
+        return the index from nodes[] that corresponds to a given "description"
+        returns -1 if no node is found with that description
+     */
+    function idFromDesc(description: string): number {
+        for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].description === description) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
 
 main()
