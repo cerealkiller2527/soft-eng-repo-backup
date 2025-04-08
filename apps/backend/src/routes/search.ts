@@ -111,18 +111,22 @@ class Node {
 
 router.get('/', async (req: Request, res: Response) => {
     try {
+        // set start and end descriptions. This will be taken from req at some point but is hard coded right now
+        const startDesc = "1bottom entrance outside";
+        const endDesc = "1a";
+
         // clear node cache
         Node.clearCache();
 
         // get start and end node from descriptions (temp)
         let startNode = await PrismaClient.node.findFirst({
             where: {
-                description: "1bottom entrance outside",
+                description: startDesc,
             },
         });
         let endNode = await PrismaClient.node.findFirst({
             where: {
-                description: "1a",
+                description: endDesc,
             },
         });
 
