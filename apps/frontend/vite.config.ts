@@ -9,6 +9,9 @@ import * as process from 'process';
 export default defineConfig({
     resolve: {
         preserveSymlinks: true,
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
     },
     server: {
         host: 'localhost',
