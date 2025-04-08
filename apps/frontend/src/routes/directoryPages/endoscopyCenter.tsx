@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../styles/directoryPagesStyles.css';
 
 const  endoscopyCenter = () => {
     return (
