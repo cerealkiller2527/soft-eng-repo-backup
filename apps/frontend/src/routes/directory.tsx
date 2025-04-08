@@ -17,11 +17,9 @@ interface AccordionItemData {
 const DirectoryPage: React.FC = () => {
     // Button styling
     const buttonClass = "flex items-center justify-center text-center text-[#012D5A] " +
-        "p-4 w-full text-base leading-tight whitespace-normal border border-[#012D5A] " +
+        "p-4 h-32 w-64 text-base leading-tight whitespace-normal border border-[#012D5A] " +
         "break-words transition-all duration-200 hover:bg-[#012D5A]/5 rounded-lg";
-
-    // Grid layout
-    const buttonGridClass = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 my-4 w-full";
+    const buttonContainerClass = "flex flex-wrap justify-center gap-4 my-6 w-full";
 
     // Accordion styling
     const accordionContentClass = "px-0 pt-2 pb-6";
@@ -34,7 +32,7 @@ const DirectoryPage: React.FC = () => {
             title: 'Centers Of Excellence',
             content: (
                 <div className={accordionContentClass}>
-                    <div className={buttonGridClass}>
+                    <div className={buttonContainerClass}>
                         <Link to={'/bccc'} className={buttonClass}>
                             Backup Child Care Center
                         </Link>
@@ -62,7 +60,7 @@ const DirectoryPage: React.FC = () => {
             title: 'General Patient Care',
             content: (
                 <div className={accordionContentClass}>
-                    <div className={buttonGridClass}>
+                    <div className={buttonContainerClass}>
                         <Link to={'/aci'} className={buttonClass}>
                             Allergy and Clinical Immunology
                         </Link>
@@ -96,7 +94,7 @@ const DirectoryPage: React.FC = () => {
             title: 'Brigham Groups and Associates',
             content: (
                 <div className={accordionContentClass}>
-                    <div className={buttonGridClass}>
+                    <div className={buttonContainerClass}>
                         <Link to={'/bda'} className={buttonClass}>
                             Brigham Dermatology Associates
                         </Link>
