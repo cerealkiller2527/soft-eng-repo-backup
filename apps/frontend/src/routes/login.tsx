@@ -26,18 +26,31 @@ const Login: React.FC = () => {
             },
         })
     );
-
+    const addUser = useMutation(
+        trpc.login.addLogin.mutationOptions({
+            onSuccess: (data) => {
+                console.log('Add user', data);
+                alert("Account created successfully! You can now log in.");
+                setIsSignUp(false); // Switch to login form after sign-up
+            },
+            onError: (error) => {
+                console.error('Unable to add user', error);
+                alert("Unable to add user! Try again later.");
+            }
+        })
+    )
     const handleSignUp = () => {
         if(password!== confirmPassword){
             alert("Password do not match!");
             return;
         }
 
-        localStorage.setItem("email", email);
-        localStorage.setItem("username", username);
-        localStorage.setItem("password", password);
-        alert("Account created successfully! You can now log in.");
-        setIsSignUp(false); // Switch to login form after sign-up
+        addUser.mutate({
+            username: username,
+            password: password,
+            email: email
+        })
+
     };
 
     return (

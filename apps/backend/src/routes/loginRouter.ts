@@ -39,6 +39,40 @@ export const loginRouter = t.router({
                 },
             };
         }),
+    addLogin: t.procedure
+        .input(
+            z.object({
+                username: z.string(),
+                password: z.string(),
+                email: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const { username, password, email } = input;
+            const user = await PrismaClient.user.create({
+                data: {
+                    username: username,
+                    password: password,
+                    email: email,
+                },
+            });
+            if (!user) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'Unable to stored User',
+                });
+            }
+
+            console.log('Successfully created an user: ', user.username);
+            return {
+                message: 'Create user successful',
+                user: {
+                    username: user.username,
+                    password: user.password,
+                    email: user.email,
+                },
+            };
+        }),
 });
 // export type definition of API
 export type loginRouter = typeof loginRouter;
