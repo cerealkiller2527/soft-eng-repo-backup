@@ -133,7 +133,7 @@ export const routes = [
         path: '/bps',
         errorElement: <div />,
         element: <BrighamPsychiatricSpecialities />,
-    }
+    },
 ];
 
 export const router = createBrowserRouter(routes);
