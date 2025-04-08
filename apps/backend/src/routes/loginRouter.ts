@@ -1,37 +1,42 @@
-import { Router, Request, Response } from 'express';
+import {initTRPC, TRPCError} from '@trpc/server';
 import PrismaClient from '../bin/prisma-client';
+import { z } from 'zod';
+export const t = initTRPC.create();
+export const loginRouter = t.router({
+    checkLogin: t.procedure
+        .input(z.object({
+            username: z.string(),
+            password: z.string()
+        }))
+        .mutation(async ({input})=> {
+            const {username, password} = input;
+            const user = await PrismaClient.user.findUnique({
+                where: { username: username },
+            });
 
-const router = Router();
+            if (!user) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "User not found."
+                });
+            }
 
-router.post('/', async (req: Request, res: Response) => {
-    const { username, password } = req.body;
+            if (user.password !== password) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Invalid password."
+                });
+            }
 
-    try {
-        const user = await PrismaClient.user.findUnique({
-            where: { username },
-        });
-
-        if (!user) {
-            res.status(400).send({ message: 'User not found.' });
-            return;
-        }
-
-        if (user.password !== password) {
-            res.status(400).send({ message: 'Invalid password.' });
-        }
-
-        console.log('Successfully logged in: ', user.username);
-        res.status(200).json({
-            message: 'Login successful',
-            user: {
-                username: user.username,
-                email: user.email,
-            },
-        });
-    } catch (err) {
-        console.error('Error fetching login:', err);
-        res.sendStatus(500);
-    }
+            console.log('Successfully logged in: ', user.username);
+            return({
+                message: 'Login successful',
+                user: {
+                    username: user.username,
+                    email: user.email,
+                },
+            });
+        })
 });
-
-export default router;
+// export type definition of API
+export type loginRouter = typeof loginRouter;
