@@ -1,6 +1,7 @@
 import React from 'react';
 import ExampleComponent from '../components/ExampleComponent.tsx';
 import Navbar from "../components/Navbar.tsx";
+import Footer from "../components/Footer";
 
 const FloorPlan = () => {
     return (
@@ -51,6 +52,7 @@ const FloorPlan = () => {
                 </div>
             </div>
         </div>
+            <Footer/>
         </div>
     );
 };
