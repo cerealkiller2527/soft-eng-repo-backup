@@ -163,3 +163,9 @@ model Building {
   phoneNumber Int
   Department  Department[]
 }
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String
+}
