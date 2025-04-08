@@ -1,9 +1,15 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "../components/ui/accordion";
 
 /* Setup for Accordion */
-interface AccordionItem {
+interface AccordionItemData {
     id: string;
     title: string;
     content: React.ReactNode;
@@ -11,16 +17,13 @@ interface AccordionItem {
 
 /* Setup for Buttons */
 const DirectoryPage: React.FC = () => {
-
-    /* Extracted Styling so there aren't bricks of code */
-
     const buttonClass = "flex items-center justify-center text-center text-white bg-[#012D5A] " +
-                                "rounded-lg p-4 h-24 w-64 text-sm md:text-base leading-tight whitespace-normal " +
-                                "break-words transition-all duration-300 hover:bg-[#034080] hover:scale-105 transform shadow-md";
+        "rounded-lg p-4 h-24 w-64 text-sm md:text-base leading-tight whitespace-normal " +
+        "break-words transition-all duration-300 hover:bg-[#034080] hover:scale-105 transform shadow-md";
     const buttonRowClass = "flex justify-center gap-5 my-4 flex-wrap w-full max-w-4xl mx-auto";
     const accordionContentClass = "space-y-4 px-4 bg-white rounded-b-lg";
 
-    const accordionItems: AccordionItem[] = [
+    const accordionItems: AccordionItemData[] = [
         {
             id: 'section1',
             title: 'Centers Of Excellence',
@@ -117,36 +120,29 @@ const DirectoryPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white p-4 overflow-y-auto pt-20">
-
             <Navbar />
 
             {/* Header */}
-            <h2 className= "w-full p-4 text-5xl text-center font-[palladio] bg-[#012D5A] text-white">
+            <h2 className="w-full p-4 text-5xl text-center font-[palladio] bg-[#012D5A] text-white">
                 Services at Brigham and Women's Hospital
             </h2>
 
-            <br/>
+            <br />
 
             {/* Accordion */}
             <div className="space-y-4 px-20 max-w-7xl mx-auto">
-                {accordionItems.map((item) => (
-                    <div key={item.id} className="mb-4 rounded-lg overflow-hidden shadow-sm">
-                        <input
-                            type="checkbox"
-                            id={item.id}
-                            className="hidden peer"
-                        />
-                        <label
-                            htmlFor={item.id}
-                            className="block w-full p-4 bg-gray-200 text-gray-700 cursor-pointer text-center text-lg font-medium rounded-t-lg transition-colors duration-300 hover:bg-gray-300 peer-checked:bg-gray-300 peer-checked:rounded-b-none"
-                        >
-                            {item.title}
-                        </label>
-                        <div className="bg-white overflow-hidden max-h-0 transition-all duration-300 ease-in-out peer-checked:max-h-[2000px]">
-                            {item.content}
-                        </div>
-                    </div>
-                ))}
+                <Accordion type="single" collapsible className="w-full">
+                    {accordionItems.map((item) => (
+                        <AccordionItem key={item.id} value={item.id}>
+                            <AccordionTrigger className="w-full p-4 bg-gray-200 text-gray-700 text-center text-lg font-medium hover:bg-gray-300 hover:no-underline">
+                                {item.title}
+                            </AccordionTrigger>
+                            <AccordionContent className="overflow-hidden">
+                                {item.content}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
             </div>
         </div>
     );

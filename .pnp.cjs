@@ -1119,6 +1119,348 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@radix-ui/primitive", [\
+      ["npm:1.1.1", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-primitive-npm-1.1.1-758e8c9172-6457bd8d1a.zip/node_modules/@radix-ui/primitive/",\
+        "packageDependencies": [\
+          ["@radix-ui/primitive", "npm:1.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-accordion", [\
+      ["npm:1.2.3", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-accordion-npm-1.2.3-2a6f664c92-2036497884.zip/node_modules/@radix-ui/react-accordion/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-accordion", "npm:1.2.3"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:1.2.3", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-accordion-virtual-10a9ea28c6/0/cache/@radix-ui-react-accordion-npm-1.2.3-2a6f664c92-2036497884.zip/node_modules/@radix-ui/react-accordion/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-accordion", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:1.2.3"],\
+          ["@radix-ui/primitive", "npm:1.1.1"],\
+          ["@radix-ui/react-collapsible", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.3"],\
+          ["@radix-ui/react-collection", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.2"],\
+          ["@radix-ui/react-compose-refs", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-context", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-direction", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@radix-ui/react-id", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@radix-ui/react-primitive", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:2.0.2"],\
+          ["@radix-ui/react-use-controllable-state", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.5"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-collapsible", [\
+      ["npm:1.1.3", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-collapsible-npm-1.1.3-0871390455-93511dd440.zip/node_modules/@radix-ui/react-collapsible/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-collapsible", "npm:1.1.3"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.3", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-collapsible-virtual-34d531fffa/0/cache/@radix-ui-react-collapsible-npm-1.1.3-0871390455-93511dd440.zip/node_modules/@radix-ui/react-collapsible/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-collapsible", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.3"],\
+          ["@radix-ui/primitive", "npm:1.1.1"],\
+          ["@radix-ui/react-compose-refs", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-context", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-id", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@radix-ui/react-presence", "virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.2"],\
+          ["@radix-ui/react-primitive", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:2.0.2"],\
+          ["@radix-ui/react-use-controllable-state", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@radix-ui/react-use-layout-effect", "virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.5"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-collection", [\
+      ["npm:1.1.2", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-collection-npm-1.1.2-99cb65db59-8376aa0c0f.zip/node_modules/@radix-ui/react-collection/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-collection", "npm:1.1.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.2", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-collection-virtual-1b7ecfb049/0/cache/@radix-ui-react-collection-npm-1.1.2-99cb65db59-8376aa0c0f.zip/node_modules/@radix-ui/react-collection/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-collection", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.2"],\
+          ["@radix-ui/react-compose-refs", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-context", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-primitive", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:2.0.2"],\
+          ["@radix-ui/react-slot", "virtual:1b7ecfb049df3eaa3de5387288cf7af50c8704957d0de87bb6fe85433ff69a4d591cc35c5e45542b564633a77913153219e99db03d0ec16bbd1023e43423fe28#npm:1.1.2"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.5"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-compose-refs", [\
+      ["npm:1.1.1", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-compose-refs-npm-1.1.1-2480de3ef9-3e84580024.zip/node_modules/@radix-ui/react-compose-refs/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-compose-refs", "npm:1.1.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-compose-refs-virtual-f3b73f4571/0/cache/@radix-ui-react-compose-refs-npm-1.1.1-2480de3ef9-3e84580024.zip/node_modules/@radix-ui/react-compose-refs/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-compose-refs", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-context", [\
+      ["npm:1.1.1", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-context-npm-1.1.1-bafaecc686-fc4ace9d79.zip/node_modules/@radix-ui/react-context/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-context", "npm:1.1.1"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-context-virtual-397189eab8/0/cache/@radix-ui-react-context-npm-1.1.1-bafaecc686-fc4ace9d79.zip/node_modules/@radix-ui/react-context/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-context", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-direction", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-direction-npm-1.1.0-5fb6b21578-eb07d8cc3a.zip/node_modules/@radix-ui/react-direction/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-direction", "npm:1.1.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-direction-virtual-a880f54e8e/0/cache/@radix-ui-react-direction-npm-1.1.0-5fb6b21578-eb07d8cc3a.zip/node_modules/@radix-ui/react-direction/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-direction", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-id", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-id-npm-1.1.0-520751ed60-acf13e29e5.zip/node_modules/@radix-ui/react-id/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-id", "npm:1.1.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-id-virtual-c9908f1c8f/0/cache/@radix-ui-react-id-npm-1.1.0-520751ed60-acf13e29e5.zip/node_modules/@radix-ui/react-id/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-id", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@radix-ui/react-use-layout-effect", "virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-presence", [\
+      ["npm:1.1.2", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-presence-npm-1.1.2-9951e170a0-0c6fa28136.zip/node_modules/@radix-ui/react-presence/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-presence", "npm:1.1.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.2", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-presence-virtual-9ddb7a9abb/0/cache/@radix-ui-react-presence-npm-1.1.2-9951e170a0-0c6fa28136.zip/node_modules/@radix-ui/react-presence/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-presence", "virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.2"],\
+          ["@radix-ui/react-compose-refs", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@radix-ui/react-use-layout-effect", "virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.5"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-primitive", [\
+      ["npm:2.0.2", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-primitive-npm-2.0.2-53536e6763-1af7a33a86.zip/node_modules/@radix-ui/react-primitive/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-primitive", "npm:2.0.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:2.0.2", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-primitive-virtual-dbf31a8394/0/cache/@radix-ui-react-primitive-npm-2.0.2-53536e6763-1af7a33a86.zip/node_modules/@radix-ui/react-primitive/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-primitive", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:2.0.2"],\
+          ["@radix-ui/react-slot", "virtual:1b7ecfb049df3eaa3de5387288cf7af50c8704957d0de87bb6fe85433ff69a4d591cc35c5e45542b564633a77913153219e99db03d0ec16bbd1023e43423fe28#npm:1.1.2"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.5"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-slot", [\
+      ["npm:1.1.2", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-slot-npm-1.1.2-646d6951b9-81d4509180.zip/node_modules/@radix-ui/react-slot/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-slot", "npm:1.1.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:1b7ecfb049df3eaa3de5387288cf7af50c8704957d0de87bb6fe85433ff69a4d591cc35c5e45542b564633a77913153219e99db03d0ec16bbd1023e43423fe28#npm:1.1.2", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-slot-virtual-36889711ca/0/cache/@radix-ui-react-slot-npm-1.1.2-646d6951b9-81d4509180.zip/node_modules/@radix-ui/react-slot/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-slot", "virtual:1b7ecfb049df3eaa3de5387288cf7af50c8704957d0de87bb6fe85433ff69a4d591cc35c5e45542b564633a77913153219e99db03d0ec16bbd1023e43423fe28#npm:1.1.2"],\
+          ["@radix-ui/react-compose-refs", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.1"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-use-callback-ref", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-use-callback-ref-npm-1.1.0-1727bf35c9-e954863f3b.zip/node_modules/@radix-ui/react-use-callback-ref/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-use-callback-ref", "npm:1.1.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:ee261baed247cd117cff49887c722984083378183d601e7c4ede22a96c4136a3969890c4093577723cb1681a05cafd9b2952542543b0f71885a88b2c4e547a9b#npm:1.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-use-callback-ref-virtual-afc33e42d4/0/cache/@radix-ui-react-use-callback-ref-npm-1.1.0-1727bf35c9-e954863f3b.zip/node_modules/@radix-ui/react-use-callback-ref/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-use-callback-ref", "virtual:ee261baed247cd117cff49887c722984083378183d601e7c4ede22a96c4136a3969890c4093577723cb1681a05cafd9b2952542543b0f71885a88b2c4e547a9b#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-use-controllable-state", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-use-controllable-state-npm-1.1.0-53300dd6f2-2af883b5b2.zip/node_modules/@radix-ui/react-use-controllable-state/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-use-controllable-state", "npm:1.1.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-use-controllable-state-virtual-ee261baed2/0/cache/@radix-ui-react-use-controllable-state-npm-1.1.0-53300dd6f2-2af883b5b2.zip/node_modules/@radix-ui/react-use-controllable-state/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-use-controllable-state", "virtual:10a9ea28c69ca85edc8e4b0c77eebf3c50af5bfb76172ea17573c29f333301fb15ea4f077b572a7be4dfb038827e939384239f3bbe84725ef47ab6629be85513#npm:1.1.0"],\
+          ["@radix-ui/react-use-callback-ref", "virtual:ee261baed247cd117cff49887c722984083378183d601e7c4ede22a96c4136a3969890c4093577723cb1681a05cafd9b2952542543b0f71885a88b2c4e547a9b#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@radix-ui/react-use-layout-effect", [\
+      ["npm:1.1.0", {\
+        "packageLocation": "./.yarn/cache/@radix-ui-react-use-layout-effect-npm-1.1.0-710cee2d09-9bf87ece18.zip/node_modules/@radix-ui/react-use-layout-effect/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-use-layout-effect", "npm:1.1.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.0", {\
+        "packageLocation": "./.yarn/__virtual__/@radix-ui-react-use-layout-effect-virtual-032ad9b242/0/cache/@radix-ui-react-use-layout-effect-npm-1.1.0-710cee2d09-9bf87ece18.zip/node_modules/@radix-ui/react-use-layout-effect/",\
+        "packageDependencies": [\
+          ["@radix-ui/react-use-layout-effect", "virtual:34d531fffa7e074fc4151d10421b35f4f1a29f638fe89695cdd41f6dbc3a31117a8f695697606b767d90b0ea193fc29bc836dbcdc148e1c4584c4128f19f8ce1#npm:1.1.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@remix-run/router", [\
       ["npm:1.23.0", {\
         "packageLocation": "./.yarn/cache/@remix-run-router-npm-1.23.0-f3a8bab28d-eaef5cb46a.zip/node_modules/@remix-run/router/",\
@@ -4607,6 +4949,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["frontend", "workspace:apps/frontend"],\
           ["@auth0/auth0-react", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:2.3.0"],\
+          ["@radix-ui/react-accordion", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:1.2.3"],\
           ["@tailwindcss/vite", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:4.0.17"],\
           ["@types/node", "npm:22.13.13"],\
           ["@types/prop-types", "npm:15.7.14"],\
