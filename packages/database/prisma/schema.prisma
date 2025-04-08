@@ -134,7 +134,7 @@ model Department {
   id                 Int                  @id @default(autoincrement())
   name               String
   description        String?
-  phoneNumber        Int
+  phoneNumber        BigInt
   Location           Location[]
   DepartmentServices DepartmentServices[]
   buildingID         Int
@@ -160,7 +160,7 @@ model Building {
   id          Int          @id @default(autoincrement())
   name        String
   address     String
-  phoneNumber Int
+  phoneNumber BigInt
   Department  Department[]
 }
 
