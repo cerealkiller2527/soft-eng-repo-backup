@@ -8,20 +8,25 @@ import {
     AccordionTrigger,
 } from "../components/ui/accordion";
 
-/* Setup for Accordion */
 interface AccordionItemData {
     id: string;
     title: string;
     content: React.ReactNode;
 }
 
-/* Setup for Buttons */
 const DirectoryPage: React.FC = () => {
-    const buttonClass = "flex items-center justify-center text-center text-white bg-[#012D5A] " +
-        "rounded-lg p-4 h-24 w-64 text-sm md:text-base leading-tight whitespace-normal " +
-        "break-words transition-all duration-300 hover:bg-[#034080] hover:scale-105 transform shadow-md";
-    const buttonRowClass = "flex justify-center gap-5 my-4 flex-wrap w-full max-w-4xl mx-auto";
-    const accordionContentClass = "space-y-4 px-4 bg-white rounded-b-lg";
+    // Button styling
+    const buttonClass = "flex items-center justify-center text-center text-[#012D5A] " +
+        "p-4 w-full text-base leading-tight whitespace-normal border border-[#012D5A] " +
+        "break-words transition-all duration-200 hover:bg-[#012D5A]/5 rounded-lg";
+
+    // Grid layout
+    const buttonGridClass = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 my-4 w-full";
+
+    // Accordion styling
+    const accordionContentClass = "px-0 pt-2 pb-6";
+    const accordionTriggerClass = "w-full py-4 text-[#012D5A] text-left text-xl font-normal " +
+        "hover:no-underline border-b border-[#012D5A]/20 hover:bg-gray-50 px-0";
 
     const accordionItems: AccordionItemData[] = [
         {
@@ -29,7 +34,7 @@ const DirectoryPage: React.FC = () => {
             title: 'Centers Of Excellence',
             content: (
                 <div className={accordionContentClass}>
-                    <div className={buttonRowClass}>
+                    <div className={buttonGridClass}>
                         <Link to={'/bccc'} className={buttonClass}>
                             Backup Child Care Center
                         </Link>
@@ -39,8 +44,6 @@ const DirectoryPage: React.FC = () => {
                         <Link to={'/cacc'} className={buttonClass}>
                             Crohn's and Colitis Center
                         </Link>
-                    </div>
-                    <div className={buttonRowClass}>
                         <Link to={'/ec'} className={buttonClass}>
                             Endoscopy Center
                         </Link>
@@ -59,7 +62,7 @@ const DirectoryPage: React.FC = () => {
             title: 'General Patient Care',
             content: (
                 <div className={accordionContentClass}>
-                    <div className={buttonRowClass}>
+                    <div className={buttonGridClass}>
                         <Link to={'/aci'} className={buttonClass}>
                             Allergy and Clinical Immunology
                         </Link>
@@ -69,8 +72,6 @@ const DirectoryPage: React.FC = () => {
                         <Link to={'/Multi-Speciality'} className={buttonClass}>
                             Multi-Speciality Clinic
                         </Link>
-                    </div>
-                    <div className={buttonRowClass}>
                         <Link to={'/pfs'} className={buttonClass}>
                             Patient Financial Services
                         </Link>
@@ -80,8 +81,6 @@ const DirectoryPage: React.FC = () => {
                         <Link to={'/Radiology'} className={buttonClass}>
                             Radiology
                         </Link>
-                    </div>
-                    <div className={buttonRowClass}>
                         <Link to={'/MRI'} className={buttonClass}>
                             Radiology, MRI/CT scan
                         </Link>
@@ -97,7 +96,7 @@ const DirectoryPage: React.FC = () => {
             title: 'Brigham Groups and Associates',
             content: (
                 <div className={accordionContentClass}>
-                    <div className={buttonRowClass}>
+                    <div className={buttonGridClass}>
                         <Link to={'/bda'} className={buttonClass}>
                             Brigham Dermatology Associates
                         </Link>
@@ -107,8 +106,6 @@ const DirectoryPage: React.FC = () => {
                         <Link to={'/bpg'} className={buttonClass}>
                             Brigham Physicians Group
                         </Link>
-                    </div>
-                    <div className={buttonRowClass}>
                         <Link to={'/bps'} className={buttonClass}>
                             Brigham Psychiatric Specialities
                         </Link>
@@ -120,24 +117,26 @@ const DirectoryPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white p-4 overflow-y-auto pt-20">
+            <br/>
             <Navbar />
 
             {/* Header */}
-            <h2 className="w-full p-4 text-5xl text-center font-[palladio] bg-[#012D5A] text-white">
-                Services at Brigham and Women's Hospital
-            </h2>
-
-            <br />
+            <div className="max-w-4xl mx-auto mb-8">
+                <h1 className="text-3xl font-light text-[#012D5A] mb-2">
+                    Services at Brigham and Women's Hospital
+                </h1>
+                <div className="h-px bg-[#012D5A]/20 w-full"></div>
+            </div>
 
             {/* Accordion */}
-            <div className="space-y-4 px-20 max-w-7xl mx-auto">
-                <Accordion type="single" collapsible className="w-full">
+            <div className="max-w-4xl mx-auto">
+                <Accordion type="single" collapsible className="w-full space-y-1">
                     {accordionItems.map((item) => (
-                        <AccordionItem key={item.id} value={item.id}>
-                            <AccordionTrigger className="w-full p-4 bg-gray-200 text-gray-700 text-center text-lg font-medium hover:bg-gray-300 hover:no-underline">
+                        <AccordionItem key={item.id} value={item.id} className="border-none">
+                            <AccordionTrigger className={accordionTriggerClass}>
                                 {item.title}
                             </AccordionTrigger>
-                            <AccordionContent className="overflow-hidden">
+                            <AccordionContent className={accordionContentClass}>
                                 {item.content}
                             </AccordionContent>
                         </AccordionItem>
