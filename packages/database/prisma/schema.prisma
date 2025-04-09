@@ -27,6 +27,12 @@ enum RequestType {
   SECURITY
 }
 
+model User {
+  username String @id
+  password String
+  email    String
+}
+
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
@@ -67,7 +73,6 @@ model ExternalTransportation {
   toWhere        String
   transportType  String
   patientName    String
-  dropoffTime    DateTime
   pickupTime     DateTime
 }
 

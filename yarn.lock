@@ -1705,6 +1705,57 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.72.1":
+  version: 5.72.1
+  resolution: "@tanstack/query-core@npm:5.72.1"
+  checksum: 10c0/e89963af090a35db5b11859cd54c5940cb7c47cfef121e3ed9260c06c42328e58b69805ffa4fd962fc39ad8c74f2e97a35787685e546a1357d9e4316ae8a9462
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.72.0":
+  version: 5.72.1
+  resolution: "@tanstack/react-query@npm:5.72.1"
+  dependencies:
+    "@tanstack/query-core": "npm:5.72.1"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10c0/2e07d47b559ef6cdd29376c01a40c50241bcd730ea4b6b71fc6d0138d6609b762ddd3ecafa39f4dad670a8f5a45db890f9088120fdf918402b8e0973ce4dec0d
+  languageName: node
+  linkType: hard
+
+"@trpc/client@npm:^11.0.2":
+  version: 11.0.4
+  resolution: "@trpc/client@npm:11.0.4"
+  peerDependencies:
+    "@trpc/server": 11.0.4
+    typescript: ">=5.7.2"
+  checksum: 10c0/1ca75059491752ee3d44f570d19628d1681576c2c249c25296674492ad453d78a3884249b99235fa1d555eac65ead6f5e8a1b4f9a12a87e4596ae239e9bfa93b
+  languageName: node
+  linkType: hard
+
+"@trpc/server@npm:^11.0.2":
+  version: 11.0.4
+  resolution: "@trpc/server@npm:11.0.4"
+  peerDependencies:
+    typescript: ">=5.7.2"
+  checksum: 10c0/f43fd7f1d29a1a8ab103792daf97573ce0f0bb2fee6edd1e7b4bdb12b061918fb8eade180c5a096c4bb2d3ad063a69d263cd9d7a635da5560e5453410ba26622
+  languageName: node
+  linkType: hard
+
+"@trpc/tanstack-react-query@npm:^11.0.2":
+  version: 11.0.4
+  resolution: "@trpc/tanstack-react-query@npm:11.0.4"
+  peerDependencies:
+    "@tanstack/react-query": ^5.67.1
+    "@trpc/client": 11.0.4
+    "@trpc/server": 11.0.4
+    react: ">=18.2.0"
+    react-dom: ">=18.2.0"
+    typescript: ">=5.7.2"
+  checksum: 10c0/3de51f058d1ae09908287634e0b206ec0f2ab17986a5ffbec7fb91a5013d80fe552e40e7db604e670cbd357caee58e272e034a542a1da4040b43a39bc056c50e
+  languageName: node
+  linkType: hard
+
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.11
   resolution: "@tsconfig/node10@npm:1.0.11"
@@ -1908,7 +1959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/morgan@npm:^1.9.9":
+"@types/morgan@npm:^1, @types/morgan@npm:^1.9.9":
   version: 1.9.9
   resolution: "@types/morgan@npm:1.9.9"
   dependencies:
@@ -2648,12 +2699,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"backend@npm:^0.0.0":
+  version: 0.0.0
+  resolution: "backend@npm:0.0.0"
+  checksum: 10c0/686c7b54482f3dfd3991e596fab4681d2d7a5940a8b00578fc78f565a0804b57fe9f5c1eeebca5c67b17b61f43e8fb92563ccaf77e4c8551058f5be391831bab
+  languageName: node
+  linkType: hard
+
 "backend@workspace:apps/backend":
   version: 0.0.0-use.local
   resolution: "backend@workspace:apps/backend"
   dependencies:
     "@swc/core": "npm:^1.3.60"
     "@swc/helpers": "npm:^0.5.1"
+    "@tanstack/react-query": "npm:^5.72.0"
+    "@trpc/client": "npm:^11.0.2"
+    "@trpc/server": "npm:^11.0.2"
+    "@trpc/tanstack-react-query": "npm:^11.0.2"
     "@types/cookie-parser": "npm:^1.4.8"
     "@types/express": "npm:^5.0.1"
     "@types/http-errors": "npm:^2.0.4"
@@ -2661,6 +2723,7 @@ __metadata:
     "@types/node": "npm:*"
     "@types/pg": "npm:^8.10.1"
     "@types/supertest": "npm:^6.0.3"
+    backend: "npm:^0.0.0"
     common: "npm:*"
     cookie-parser: "npm:~1.4.4"
     database: "npm:*"
@@ -2670,6 +2733,7 @@ __metadata:
     eslint-config-custom: "npm:*"
     express: "npm:^4.19.2"
     express-oauth2-jwt-bearer: "npm:^1.5.0"
+    frontend: "workspace:^"
     http-errors: "npm:~1.6.3"
     http-terminator: "npm:^3.2.0"
     jose: "npm:^5.4.0"
@@ -2683,6 +2747,8 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:*"
     vitest: "npm:^3.0.9"
+    workspace: "npm:^0.0.1-preview.2"
+    zod: "npm:^3.24.2"
   languageName: unknown
   linkType: soft
 
@@ -4150,13 +4216,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"frontend@workspace:apps/frontend":
+"frontend@workspace:^, frontend@workspace:apps/frontend":
   version: 0.0.0-use.local
   resolution: "frontend@workspace:apps/frontend"
   dependencies:
     "@auth0/auth0-react": "npm:^2.1.1"
     "@radix-ui/react-accordion": "npm:^1.2.3"
     "@tailwindcss/vite": "npm:^4.0.17"
+    "@tanstack/react-query": "npm:^5.72.0"
+    "@trpc/client": "npm:^11.0.2"
+    "@trpc/server": "npm:^11.0.2"
+    "@trpc/tanstack-react-query": "npm:^11.0.2"
     "@types/node": "npm:^22.13.3"
     "@types/prop-types": "npm:^15.7.5"
     "@types/react": "npm:^18.0.37"
@@ -5393,7 +5463,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"morgan@npm:^1.9.9":
+"morgan@npm:^1.10.0, morgan@npm:^1.9.9":
   version: 1.10.0
   resolution: "morgan@npm:1.10.0"
   dependencies:
@@ -6738,10 +6808,15 @@ __metadata:
   dependencies:
     "@react-google-maps/api": "npm:^2.20.6"
     "@tailwindcss/vite": "npm:^4.1.3"
+    "@tanstack/react-query": "npm:^5.72.0"
+    "@trpc/client": "npm:^11.0.2"
+    "@trpc/server": "npm:^11.0.2"
+    "@trpc/tanstack-react-query": "npm:^11.0.2"
     "@types/google-maps": "npm:^4.0.0"
     "@types/google.maps": "npm:^3.58.1"
     "@types/googlemaps": "npm:^3.43.3"
-    "@types/node": "npm:^22.13.3"
+    "@types/morgan": "npm:^1"
+    "@types/node": "npm:^22.14.0"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@vitest/ui": "npm:^3.0.9"
@@ -6755,6 +6830,7 @@ __metadata:
     eslint-config-custom: "workspace:*"
     google-maps: "npm:^4.3.3"
     husky: "npm:^9.1.7"
+    morgan: "npm:^1.10.0"
     prettier: "npm:^3.5.3"
     prettier-config-custom: "workspace:*"
     react: "npm:^19.1.0"
@@ -6765,6 +6841,7 @@ __metadata:
     turbo: "npm:*"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.9"
+    zod: "npm:^3.24.2"
   languageName: unknown
   linkType: soft
 
@@ -7607,6 +7684,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"workspace@npm:^0.0.1-preview.2":
+  version: 0.0.1-preview.2
+  resolution: "workspace@npm:0.0.1-preview.2"
+  checksum: 10c0/6465af7cb50b9f7618034b3766c7a4fa20c1b3e43e843dd9e5e9ff16db39d8f7012a8f12814a4b7bafb0dc8c725644b9c3101d6b14154b0f190e1e6ae0330d50
+  languageName: node
+  linkType: hard
+
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
   version: 7.0.0
   resolution: "wrap-ansi@npm:7.0.0"
@@ -7687,7 +7771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.4":
+"zod@npm:^3.22.4, zod@npm:^3.24.2":
   version: 3.24.2
   resolution: "zod@npm:3.24.2"
   checksum: 10c0/c638c7220150847f13ad90635b3e7d0321b36cce36f3fc6050ed960689594c949c326dfe2c6fa87c14b126ee5d370ccdebd6efb304f41ef5557a4aaca2824565
