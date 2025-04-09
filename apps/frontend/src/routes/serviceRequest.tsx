@@ -3,6 +3,7 @@ import TransportCard from "../components/TransportCard.tsx";
 import { useState } from "react";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer.tsx";
+import DashboardButton from "../components/DashboardButton.tsx";
 
 
 const ServiceRequest = () => {
@@ -28,6 +29,8 @@ const ServiceRequest = () => {
             <hr />
             <br />
             <div className="mt-10">
+                <DashboardButton />
+                <br />
                 <TransportCard onAddRequest={addRequest} />
             </div>
 
