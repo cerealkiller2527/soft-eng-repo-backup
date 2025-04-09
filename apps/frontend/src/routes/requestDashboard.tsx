@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar.tsx";
 import { useQuery } from '@tanstack/react-query';
 import {useTRPC} from "../database/trpc.ts";
 
+
 const requestDashboard = () => {
 
     type TransportRequest = {
@@ -18,6 +19,7 @@ const requestDashboard = () => {
     };
     const trpc = useTRPC();
     const requests = useQuery(trpc.service.getExternalTransportation.queryOptions())
+    console.log("Fetched requests:", requests.data);
 
     return (
         <div className="p-25">
@@ -33,14 +35,15 @@ const requestDashboard = () => {
                     <div className="grid gap-4">
                         {requests.data?.map(req => (
                             <div
+                                key={req.id}
                                 className="border p-4 rounded-xl shadow bg-white space-y-1">
                                 <p><strong>TRANSPORT REQUEST</strong></p>
-                                <p key={req.id}><strong>Patient:</strong> {req.externalTransportation.patientName}</p>
-                                <p key={req.id}><strong>Pickup Time:</strong> {req.externalTransportation.pickupTime.toString()}</p>
-                                <p key={req.id}><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
-                                <p key={req.id}><strong>Pickup:</strong> {req.externalTransportation.fromWhere}</p>
-                                <p key={req.id}><strong>Dropoff:</strong> {req.externalTransportation.toWhere}</p>
-                                <p key={req.id}><strong>Notes:</strong> {req.description || "N/A"}</p>
+                                <p><strong>Patient:</strong> {req.externalTransportation.patientName}</p>
+                                <p><strong>Pickup Time:</strong> {req.externalTransportation.pickupTime.toString()}</p>
+                                <p><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
+                                <p><strong>Pickup:</strong> {req.externalTransportation.fromWhere}</p>
+                                <p><strong>Dropoff:</strong> {req.externalTransportation.toWhere}</p>
+                                <p><strong>Notes:</strong> {req.description || "N/A"}</p>
                             </div>
                         ))}
                     </div>
