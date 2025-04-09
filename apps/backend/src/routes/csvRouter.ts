@@ -44,10 +44,7 @@ export const csvRouter = t.router({
                 },
             });
 
-            console.log(`Found ${departments.length} departments to export`);
-
             if (departments.length === 0) {
-                console.log('No departments found, returning empty CSV with headers');
                 const headers = [
                     'Department ID',
                     'Department Name',
@@ -81,9 +78,6 @@ export const csvRouter = t.router({
             ];
 
             const rows = departments.map((dept) => {
-                console.log('Processing department:', dept.id, dept.name);
-
-                // Check for null department services
                 const deptServices = dept.DepartmentServices || [];
                 const serviceNames =
                     deptServices.length > 0
@@ -93,7 +87,6 @@ export const csvRouter = t.router({
                               .join('; ')
                         : '';
 
-                // Check for null locations
                 const locations = dept.Location || [];
                 const locationIds =
                     locations.length > 0
@@ -117,7 +110,6 @@ export const csvRouter = t.router({
                               .join('; ')
                         : '';
 
-                // Check for null department services
                 const departmentServiceIds =
                     deptServices.length > 0
                         ? deptServices
@@ -130,9 +122,6 @@ export const csvRouter = t.router({
                 const buildingName = dept.building?.name || '';
                 const buildingAddress = dept.building?.address || '';
                 const buildingPhoneNumber = dept.building?.phoneNumber || '';
-
-                console.log('Building ID:', buildingId);
-                console.log('Building Name:', buildingName);
 
                 return [
                     `${dept.id || ''}`,
@@ -151,12 +140,10 @@ export const csvRouter = t.router({
             });
 
             return [headers.join(','), ...rows].join('\n');
-        } catch (error: unknown) {
-            console.error('Error exporting CSV:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        } catch (error) {
             throw new TRPCError({
                 code: 'INTERNAL_SERVER_ERROR',
-                message: `Error exporting CSV: ${errorMessage}`,
+                message: 'Error exporting CSV',
             });
         }
     }),
@@ -165,7 +152,6 @@ export const csvRouter = t.router({
         const lines = input.split('\n').filter((line) => line.trim() !== '');
         const headers = parseCSVLine(lines[0]);
 
-        // Header-to-field map
         const headerMap: Record<string, string> = {
             'Department ID': 'departmentID',
             'Department Name': 'departmentName',
@@ -197,9 +183,6 @@ export const csvRouter = t.router({
             });
 
             try {
-                console.log('Processing record:', record);
-
-                // Building
                 const buildingId = parseInt(record.buildingID, 10);
                 if (isNaN(buildingId)) {
                     throw new TRPCError({
@@ -222,7 +205,6 @@ export const csvRouter = t.router({
                     },
                 });
 
-                // Department
                 const departmentId = parseInt(record.departmentID, 10);
                 const department = await PrismaClient.department.upsert({
                     where: { id: departmentId },
@@ -238,7 +220,6 @@ export const csvRouter = t.router({
                     },
                 });
 
-                // Service
                 const serviceId = parseInt(record.serviceID, 10);
                 const service = await PrismaClient.service.upsert({
                     where: { id: serviceId },
@@ -249,7 +230,6 @@ export const csvRouter = t.router({
                     },
                 });
 
-                // DepartmentService join
                 await PrismaClient.departmentServices.create({
                     data: {
                         departmentID: department.id,
@@ -259,7 +239,7 @@ export const csvRouter = t.router({
             } catch (err) {
                 throw new TRPCError({
                     code: 'INTERNAL_SERVER_ERROR',
-                    message: 'Error processing record:',
+                    message: 'Error processing record',
                 });
             }
         }
