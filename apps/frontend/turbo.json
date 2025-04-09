@@ -3,7 +3,7 @@
     "extends": ["//"],
     "tasks": {
         "dev": {
-            "env": ["FRONTEND_PORT", "BACKEND_PORT", "BACKEND_SOURCE", "BACKEND_URL"]
+            "env": ["FRONTEND_PORT", "BACKEND_PORT", "BACKEND_SOURCE", "BACKEND_URL", "MAPS_API"]
         },
         "deploy": {
             "env": ["FRONTEND_PORT", "BACKEND_URL"]

@@ -1,6 +1,4 @@
 import React from 'react';
-import ExampleComponent from '../components/ExampleComponent.tsx';
-import TransportRequestForm from "../components/TransportRequestForm.tsx";
 import TransportCard from "../components/TransportCard.tsx";
 import { useState } from "react";
 import Navbar from "../components/Navbar.tsx";
