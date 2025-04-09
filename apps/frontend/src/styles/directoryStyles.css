@@ -1,0 +1,133 @@
+/* Header styles */
+.directoryHeader {
+    background-color: #012D5A;
+    color: white;
+    padding: 10px;
+    z-index: 0;
+    position: sticky;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.directoryPage{
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    border: 1px black;
+    padding: 10px;
+}
+
+
+/* Accordion styles */
+.accordion {
+    display: none;
+}
+
+
+.accordion-label {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-size: 15px;
+    transition: background-color 0.4s;
+    display: block;
+    margin-bottom: 4px;
+    border-radius: 4px;
+}
+
+.accordion-label:hover {
+    background-color: #ddd;
+}
+
+.panel {
+    padding: 0 18px;
+    background-color: white;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+    margin-bottom: 10px;
+}
+
+.accordion:checked ~ .panel {
+    max-height: 1000px;
+    padding: 18px;
+}
+
+.accordion-container {
+    margin-bottom: 10px;
+}
+
+/* Button Styling */
+.brighamButton {
+    /* Sizing and spacing */
+    padding: clamp(8px, 1vw, 12px) clamp(12px, 2vw, 20px);
+    min-width: 120px;
+    max-width: 250px;
+    margin: 0 5px;
+    min-height: 60px;
+    width: 100%;
+
+    /* Text styling */
+    font-size: clamp(12px, 1.5vw, 16px);
+    color: #ffffff;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+
+    /* Visual styling */
+    background-color: #012D5A;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    /* Layout */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+
+    /* Effects */
+    transition: background-color 0.3s;
+    overflow: hidden;
+}
+
+.brighamButton:hover {
+    background-color: #034080;
+}
+
+/* Button Row Styling */
+.brighamButtonRow {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.brighamButtonRow > .brighamButton {
+    flex: 1 1 200px;
+}
+
+/* This should resize properly? */
+@media (max-width: 768px) {
+    .brighamButtonRow {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .brighamButton {
+        width: 100%;
+        max-width: none;
+    }
+}

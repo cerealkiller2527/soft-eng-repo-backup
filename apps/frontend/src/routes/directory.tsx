@@ -1,202 +1,150 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
+import Footer from "../components/Footer";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "../components/ui/accordion";
 
-interface AccordionItem {
+interface AccordionItemData {
     id: string;
     title: string;
     content: React.ReactNode;
 }
 
 const DirectoryPage: React.FC = () => {
-    const accordionItems: AccordionItem[] = [
+    // Button styling
+    const buttonClass = "flex items-center justify-center text-center text-[#012D5A] " +
+        "p-4 h-32 w-64 text-base leading-tight whitespace-normal border border-[#012D5A] " +
+        "break-words transition-all duration-200 hover:bg-[#012D5A]/5 rounded-lg";
+    const buttonContainerClass = "flex flex-wrap justify-center gap-4 my-6 w-full";
+
+    // Accordion styling
+    const accordionContentClass = "px-2 pt-2 pb-6";
+    const accordionTriggerClass = "w-full py-4 text-[#012D5A] text-left text-xl font-normal " +
+        "hover:no-underline border-b border-[#012D5A]/20 hover:bg-gray-50 px-0";
+
+    const accordionItems: AccordionItemData[] = [
         {
             id: 'section1',
             title: 'Centers Of Excellence',
             content: (
-                <>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/bccc'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                <div className={accordionContentClass}>
+                    <div className={buttonContainerClass}>
+                        <Link to={'/bccc'} className={buttonClass}>
                             Backup Child Care Center
                         </Link>
-                        <Link
-                            to={'/copm'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/copm'} className={buttonClass}>
                             Center of Pain Medicine
                         </Link>
-                        <Link
-                            to={'/cacc'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/cacc'} className={buttonClass}>
                             Crohn's and Colitis Center
                         </Link>
-                    </div>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/ec'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/ec'} className={buttonClass}>
                             Endoscopy Center
                         </Link>
-                        <Link
-                            to={'/gsea'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/gsea'} className={buttonClass}>
                             Gretchen S. and Edward A. Fish Center for Women's Health
                         </Link>
-                        <Link
-                            to={'/occ'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/occ'} className={buttonClass}>
                             Osher Clinical Center for Integrative Health
                         </Link>
                     </div>
-                </>
+                </div>
             )
         },
         {
             id: 'section2',
             title: 'General Patient Care',
             content: (
-                <>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/aci'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                <div className={accordionContentClass}>
+                    <div className={buttonContainerClass}>
+                        <Link to={'/aci'} className={buttonClass}>
                             Allergy and Clinical Immunology
                         </Link>
-                        <Link
-                            to={'/Laboratory'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/Laboratory'} className={buttonClass}>
                             Laboratory
                         </Link>
-                        <Link
-                            to={'/Multi-Speciality'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/Multi-Speciality'} className={buttonClass}>
                             Multi-Speciality Clinic
                         </Link>
-                    </div>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/pfs'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/pfs'} className={buttonClass}>
                             Patient Financial Services
                         </Link>
-                        <Link
-                            to={'/Pharmacy'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/Pharmacy'} className={buttonClass}>
                             Pharmacy
                         </Link>
-                        <Link
-                            to={'/Radiology'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/Radiology'} className={buttonClass}>
                             Radiology
                         </Link>
-                    </div>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/MRI'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/MRI'} className={buttonClass}>
                             Radiology, MRI/CT scan
                         </Link>
-                        <Link
-                            to={'/rehab'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/rehab'} className={buttonClass}>
                             Rehabilitation Services
                         </Link>
                     </div>
-                </>
+                </div>
             )
         },
         {
             id: 'section3',
             title: 'Brigham Groups and Associates',
             content: (
-                <>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/bda'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                <div className={accordionContentClass}>
+                    <div className={buttonContainerClass}>
+                        <Link to={'/bda'} className={buttonClass}>
                             Brigham Dermatology Associates
                         </Link>
-                        <Link
-                            to={'/bogg'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/bogg'} className={buttonClass}>
                             Brigham Obstetrics and Gynecology Group
                         </Link>
-                        <Link
-                            to={'/bpg'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/bpg'} className={buttonClass}>
                             Brigham Physicians Group
                         </Link>
-                    </div>
-                    <div className="flex justify-center gap-5 my-5 flex-wrap w-full">
-                        <Link
-                            to={'/bps'}
-                            className="flex items-center justify-center text-center text-white bg-[#012D5A] rounded p-2 md:p-3 min-h-[60px] w-full max-w-[250px] flex-1 basis-[200px] text-xs md:text-sm leading-snug whitespace-normal break-words transition-colors duration-300 hover:bg-[#034080] min-w-[120px] box-border"
-                        >
+                        <Link to={'/bps'} className={buttonClass}>
                             Brigham Psychiatric Specialities
                         </Link>
                     </div>
-                </>
+                </div>
             )
         }
     ];
 
     return (
-        <div className="min-h-screen bg-white p-2.5 overflow-y-auto">
-            {/* Logo */}
-            <div className="flex justify-start mb-2">
-                <img
-                    src="/BrighamAndWomensLogo.png"
-                    alt="Brigham and Women's Hospital Logo"
-                    className="h-12 ml-2"
-                />
-            </div>
-
+        <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
+            <br/>
+            <div className="flex-grow p-4">
             <Navbar />
 
             {/* Header */}
-            <h2 className="bg-[#012D5A] text-white p-2.5 sticky top-0 z-0 text-lg md:text-xl">
-                Brigham and Women's Directory
-            </h2>
+            <div className="max-w-4xl mx-auto mb-8">
+                <h1 className="text-3xl font-light text-[#012D5A] mb-2">
+                    Services at Brigham and Women's Hospital
+                </h1>
+                <div className="h-px bg-[#012D5A]/20 w-full"></div>
+            </div>
 
             {/* Accordion */}
-            <div className="space-y-2.5 px-70">
-                {accordionItems.map((item) => (
-                    <div key={item.id} className="mb-2.5">
-                        <input
-                            type="checkbox"
-                            id={item.id}
-                            className="hidden peer"
-                        />
-                        <label
-                            htmlFor={item.id}
-                            className="block w-full p-4.5 bg-gray-200 text-gray-700 cursor-pointer text-center text-m mb-1 rounded transition-colors duration-300 hover:bg-gray-300 peer-checked:rounded-b-none"
-                        >
-                            {item.title}
-                        </label>
-                        <div className="bg-white overflow-hidden max-h-0 transition-all duration-200 ease-out mb-2.5 peer-checked:max-h-[1000px] peer-checked:p-4.5">
-                            {item.content}
-                        </div>
-                    </div>
-                ))}
+            <div className="max-w-4xl mx-auto">
+                <Accordion type="single" collapsible className="w-full space-y-1">
+                    {accordionItems.map((item) => (
+                        <AccordionItem key={item.id} value={item.id} className="border-none">
+                            <AccordionTrigger className={accordionTriggerClass}>
+                                {item.title}
+                            </AccordionTrigger>
+                            <AccordionContent className={accordionContentClass}>
+                                {item.content}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
             </div>
+            </div>
+            <Footer/>
         </div>
     );
 };

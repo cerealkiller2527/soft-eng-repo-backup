@@ -1,9 +1,8 @@
 import React from 'react';
-import ExampleComponent from '../components/ExampleComponent.tsx';
-import TransportRequestForm from "../components/TransportRequestForm.tsx";
 import TransportCard from "../components/TransportCard.tsx";
 import { useState } from "react";
 import Navbar from "../components/Navbar.tsx";
+import Footer from "../components/Footer.tsx";
 
 
 const ServiceRequest = () => {
@@ -22,7 +21,8 @@ const ServiceRequest = () => {
         setRequests((prev) => [...prev, newRequest]);
     };
     return (
-        <div className="p-25">
+        <div className="flex flex-col min-h-screen bg-white">
+        <div className="flex-grow pt-20 pl-20 pr-20">
             <Navbar />
             <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
             <hr />
@@ -52,6 +52,8 @@ const ServiceRequest = () => {
                     </div>
                 )}
             </div>
+        </div>
+            <Footer/>
         </div>
     );
 };
