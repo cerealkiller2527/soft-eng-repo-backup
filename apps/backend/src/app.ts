@@ -4,6 +4,7 @@ import { employeeRouter } from './routes/employeeRouter';
 import { serviceRouter } from './routes/serviceRouter';
 import { loginRouter } from './routes/loginRouter.ts';
 import express from 'express';
+import logger from 'morgan';
 
 // created for each request
 const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
@@ -15,6 +16,15 @@ const appRouter = t.router({
     login: loginRouter,
 });
 const app = express();
+app.use(
+    logger('dev', {
+        stream: {
+            // This is a "hack" that gets the output to appear in the remote debugger :)
+            write: (msg) => console.info(msg),
+        },
+    })
+);
+
 app.use(
     '/api',
     trpcExpress.createExpressMiddleware({
