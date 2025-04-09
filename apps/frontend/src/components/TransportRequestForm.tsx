@@ -94,7 +94,7 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: {
     };
 
     return (
-        <div className="max-w-md mx-auto bg-white shadow-md rounded-2xl">
+        <div className="transform scale-90 sm:scale-100 w-full max-w-md mx-auto bg-white shadow-md rounded-2xl px-4">
             <div className=" w-full p-4 rounded-t-2xl rounded-b-xl">
                 <h2 className="text-xl font-semibold">Transportation Service Request</h2>
                 <p>Select the following requests needed.</p>
