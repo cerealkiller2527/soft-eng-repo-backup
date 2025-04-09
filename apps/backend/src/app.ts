@@ -7,6 +7,7 @@ import { searchRouter } from './routes/search.ts';
 import { csvRouter } from './routes/csvRouter.ts';
 import express from 'express';
 import logger from 'morgan';
+import { departmentRouter } from './routes/departmentRouter.ts';
 
 // created for each request
 const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
@@ -17,6 +18,7 @@ const appRouter = t.router({
     service: serviceRouter,
     login: loginRouter,
     csv: csvRouter,
+    department: departmentRouter,
     search: searchRouter,
 });
 const app = express();
