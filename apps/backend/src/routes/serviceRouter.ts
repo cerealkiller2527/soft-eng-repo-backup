@@ -3,69 +3,109 @@ import { ServiceRequest, RequestType, Status } from 'database';
 import PrismaClient from '../bin/prisma-client';
 export const t = initTRPC.create();
 import { z } from 'zod';
-const audioVisual = PrismaClient.serviceRequest.findMany({
-    where: {
-        type: RequestType.AUDIOVISUAL,
-    },
-    include: {
-        audioVisual: true,
-        assignedTo: true,
-    },
-});
-const externalTransportation = PrismaClient.serviceRequest.findMany({
-    where: {
-        type: RequestType.EXTERNALTRANSPORTATION,
-    },
-    include: {
-        externalTransportation: true,
-        assignedTo: true,
-    },
-});
-const equipmentDelivery = PrismaClient.serviceRequest.findMany({
-    where: {
-        type: RequestType.EQUIPMENTDELIVERY,
-    },
-    include: {
-        equipmentDelivery: true,
-        assignedTo: true,
-    },
-});
-const language = PrismaClient.serviceRequest.findMany({
-    where: {
-        type: RequestType.LANGUAGE,
-    },
-    include: {
-        language: true,
-        assignedTo: true,
-    },
-});
-const security = PrismaClient.serviceRequest.findMany({
-    where: {
-        type: RequestType.SECURITY,
-    },
-    include: {
-        security: true,
-        assignedTo: true,
-    },
-});
 
 export const serviceRouter = t.router({
     getAudioVisual: t.procedure.query(async () => {
-        return audioVisual;
+        return PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.AUDIOVISUAL,
+            },
+            include: {
+                audioVisual: true,
+                assignedTo: true,
+            },
+        });
     }),
     getExternalTransportation: t.procedure.query(async () => {
-        return externalTransportation;
+        return PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.EXTERNALTRANSPORTATION,
+            },
+            include: {
+                externalTransportation: true,
+                assignedTo: true,
+            },
+        });
     }),
     getEquipmentDelivery: t.procedure.query(async () => {
-        return equipmentDelivery;
+        return PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.EQUIPMENTDELIVERY,
+            },
+            include: {
+                equipmentDelivery: true,
+                assignedTo: true,
+            },
+        });
     }),
     getLanguage: t.procedure.query(async () => {
-        return language;
+        return PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.LANGUAGE,
+            },
+            include: {
+                language: true,
+                assignedTo: true,
+            },
+        });
     }),
     getSecurity: t.procedure.query(async () => {
-        return security;
+        return PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.SECURITY,
+            },
+            include: {
+                security: true,
+                assignedTo: true,
+            },
+        });
     }),
     getService: t.procedure.query(async () => {
+        const audioVisual = PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.AUDIOVISUAL,
+            },
+            include: {
+                audioVisual: true,
+                assignedTo: true,
+            },
+        });
+        const externalTransportation = PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.EXTERNALTRANSPORTATION,
+            },
+            include: {
+                externalTransportation: true,
+                assignedTo: true,
+            },
+        });
+        const equipmentDelivery = PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.EQUIPMENTDELIVERY,
+            },
+            include: {
+                equipmentDelivery: true,
+                assignedTo: true,
+            },
+        });
+        const language = PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.LANGUAGE,
+            },
+            include: {
+                language: true,
+                assignedTo: true,
+            },
+        });
+        const security = PrismaClient.serviceRequest.findMany({
+            where: {
+                type: RequestType.SECURITY,
+            },
+            include: {
+                security: true,
+                assignedTo: true,
+            },
+        });
         const all = [
             audioVisual,
             externalTransportation,
