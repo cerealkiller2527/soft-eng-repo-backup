@@ -1,103 +1,151 @@
 import React from 'react';
-import '../styles/directoryStyles.css';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
+import Footer from "../components/Footer";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "../components/ui/accordion";
 
+interface AccordionItemData {
+    id: string;
+    title: string;
+    content: React.ReactNode;
+}
 
-const DirectoryPage = () => {
-    const accordionItems = [
+const DirectoryPage: React.FC = () => {
+    // Button styling
+    const buttonClass = "flex items-center justify-center text-center text-[#012D5A] " +
+        "p-4 h-32 w-64 text-base leading-tight whitespace-normal border border-[#012D5A] " +
+        "break-words transition-all duration-200 hover:bg-[#012D5A]/5 rounded-lg";
+    const buttonContainerClass = "flex flex-wrap justify-center gap-4 my-6 w-full";
+
+    // Accordion styling
+    const accordionContentClass = "px-2 pt-2 pb-6";
+    const accordionTriggerClass = "w-full py-4 text-[#012D5A] text-left text-xl font-normal " +
+        "hover:no-underline border-b border-[#012D5A]/20 hover:bg-gray-50 px-0";
+
+    const accordionItems: AccordionItemData[] = [
         {
             id: 'section1',
             title: 'Centers Of Excellence',
             content: (
-                <>
-                    <div className="brighamButtonRow">
-
-                        <Link to={'/bccc'} className="brighamButton">Backup Child Care Center</Link>
-                        <Link to={'/copm'} className="brighamButton">Center of Pain Medicine</Link>
-                        <Link to={'/cacc'} className="brighamButton">Crohn's and Colitis Center</Link>
+                <div className={accordionContentClass}>
+                    <div className={buttonContainerClass}>
+                        <Link to={'/bccc'} className={buttonClass}>
+                            Backup Child Care Center
+                        </Link>
+                        <Link to={'/copm'} className={buttonClass}>
+                            Center of Pain Medicine
+                        </Link>
+                        <Link to={'/cacc'} className={buttonClass}>
+                            Crohn's and Colitis Center
+                        </Link>
+                        <Link to={'/ec'} className={buttonClass}>
+                            Endoscopy Center
+                        </Link>
+                        <Link to={'/gsea'} className={buttonClass}>
+                            Gretchen S. and Edward A. Fish Center for Women's Health
+                        </Link>
+                        <Link to={'/occ'} className={buttonClass}>
+                            Osher Clinical Center for Integrative Health
+                        </Link>
                     </div>
-                    <div className="brighamButtonRow">
-                        <Link to={'/ec'} className="brighamButton">Endoscopy Center</Link>
-                        <Link to={'/gsea'} className="brighamButton">Gretchen S. and Edward A. Fish Center for Women's Health</Link>
-                        <Link to={'/occ'} className="brighamButton">Osher Clinical Center for Integrative Health</Link>
-                    </div>
-                </>
+                </div>
             )
         },
         {
             id: 'section2',
             title: 'General Patient Care',
             content: (
-                <>
-                    <div className="brighamButtonRow">
-                        <Link to={'/aci'} className="brighamButton">Allergy and Clinical Immunology</Link>
-                        <Link to={'/Laboratory'} className="brighamButton">Laboratory</Link>
-                        <Link to={'/Multi-Speciality'} className="brighamButton">Multi-Speciality Clinic</Link>
+                <div className={accordionContentClass}>
+                    <div className={buttonContainerClass}>
+                        <Link to={'/aci'} className={buttonClass}>
+                            Allergy and Clinical Immunology
+                        </Link>
+                        <Link to={'/Laboratory'} className={buttonClass}>
+                            Laboratory
+                        </Link>
+                        <Link to={'/Multi-Speciality'} className={buttonClass}>
+                            Multi-Speciality Clinic
+                        </Link>
+                        <Link to={'/pfs'} className={buttonClass}>
+                            Patient Financial Services
+                        </Link>
+                        <Link to={'/Pharmacy'} className={buttonClass}>
+                            Pharmacy
+                        </Link>
+                        <Link to={'/Radiology'} className={buttonClass}>
+                            Radiology
+                        </Link>
+                        <Link to={'/MRI'} className={buttonClass}>
+                            Radiology, MRI/CT scan
+                        </Link>
+                        <Link to={'/rehab'} className={buttonClass}>
+                            Rehabilitation Services
+                        </Link>
                     </div>
-                    <div className="brighamButtonRow">
-                        <Link to={'/pfs'} className="brighamButton">Patient Financial Services</Link>
-                        <Link to={'/Pharmacy'} className="brighamButton">Pharmacy</Link>
-                        <Link to={'/Radiology'} className="brighamButton">Radiology</Link>
-                    </div>
-                    <div className="brighamButtonRow">
-                        <Link to={'/MRI'} className="brighamButton">Radiology, MRI/CT scan</Link>
-                        <Link to={'/rehab'} className="brighamButton">Rehabilitation Services</Link>
-                    </div>
-                </>
+                </div>
             )
         },
         {
             id: 'section3',
             title: 'Brigham Groups and Associates',
             content: (
-                <>
-                    <div className="brighamButtonRow">
-                        <Link to={'/bda'} className="brighamButton">Brigham Dermatology Associates</Link>
-                        <Link to={'/bogg'} className="brighamButton">Brigham Obstetrics and Gynecology Group</Link>
-                        <Link to={'/bpg'} className="brighamButton">Brigham Physicians Group</Link>
+                <div className={accordionContentClass}>
+                    <div className={buttonContainerClass}>
+                        <Link to={'/bda'} className={buttonClass}>
+                            Brigham Dermatology Associates
+                        </Link>
+                        <Link to={'/bogg'} className={buttonClass}>
+                            Brigham Obstetrics and Gynecology Group
+                        </Link>
+                        <Link to={'/bpg'} className={buttonClass}>
+                            Brigham Physicians Group
+                        </Link>
+                        <Link to={'/bps'} className={buttonClass}>
+                            Brigham Psychiatric Specialities
+                        </Link>
                     </div>
-                    <div className="brighamButtonRow">
-                        <Link to={'/bps'} className="brighamButton">Brigham Psychiatric Specialities</Link>
-                    </div>
-                </>
+                </div>
             )
         }
     ];
 
     return (
-        <body>
-            <div>
-                <div className="flex justify-start mb-2">
-                    <img
-                        src="/BrighamAndWomensLogo.png"
-                        alt="Brigham and Women's Hospital Logo"
-                        className="h-12 ml-2"
-                    />
-                </div>
+        <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
+            <br/>
+            <div className="flex-grow p-4">
+            <Navbar />
 
+            {/* Header */}
+            <div className="max-w-4xl mx-auto mb-8">
+                <h1 className="text-3xl font-light text-[#012D5A] mb-2">
+                    Services at Brigham and Women's Hospital
+                </h1>
+                <div className="h-px bg-[#012D5A]/20 w-full"></div>
+            </div>
 
-                <Navbar />
-                <h2 className={"directoryHeader"}>Brigham and Women's Directory</h2>
-
-                {accordionItems.map((item) => (
-                    <div key={item.id} className="accordion-container">
-                        <input
-                            type="checkbox"
-                            id={item.id}
-                            className="accordion"
-                        />
-                        <label htmlFor={item.id} className="accordion-label">
-                            {item.title}
-                        </label>
-                        <div className="panel">
-                            {item.content}
-                        </div>
-                    </div>
-                ))}
-
+            {/* Accordion */}
+            <div className="max-w-4xl mx-auto">
+                <Accordion type="single" collapsible className="w-full space-y-1">
+                    {accordionItems.map((item) => (
+                        <AccordionItem key={item.id} value={item.id} className="border-none">
+                            <AccordionTrigger className={accordionTriggerClass}>
+                                {item.title}
+                            </AccordionTrigger>
+                            <AccordionContent className={accordionContentClass}>
+                                {item.content}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
+            </div>
+            <Footer/>
         </div>
-        </body>
     );
 };
 

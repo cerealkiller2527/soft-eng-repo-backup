@@ -1,7 +1,8 @@
-import { Router } from 'express';
+import { initTRPC, TRPCError } from '@trpc/server';
 import PrismaClient from '../bin/prisma-client';
+import { z } from 'zod';
 
-const router = Router();
+export const t = initTRPC.create();
 
 function parseCSVLine(line: string): string[] {
     const values: string[] = [];
@@ -30,17 +31,73 @@ function parseCSVLine(line: string): string[] {
     return values.map((v) => v.trim());
 }
 
-router.post('/', async (req, res) => {
-    try {
-        let data = '';
-
-        // Read
-        req.on('data', (chunk) => {
-            data += chunk;
+export const csvRouter = t.router({
+    exportCSV: t.procedure.query(async () => {
+        const departments = await PrismaClient.department.findMany({
+            include: {
+                Location: true,
+                building: true,
+                DepartmentServices: {
+                    include: { service: true },
+                },
+            },
         });
 
-        req.on('end', async () => {
-            const lines = data.split('\n').filter((line) => line.trim() !== '');
+        const headers = [
+            'Department ID',
+            'Department Name',
+            'Phone Number',
+            'Location ID',
+            'Floor',
+            'Suite',
+            'Building ID',
+            'Building Name',
+            'Building Address',
+            'Building Phone Number',
+            'Service ID',
+            'Services',
+        ];
+
+        const rows = departments.map((dept) => {
+            console.log('Processing department:', dept);
+
+            const serviceNames = dept.DepartmentServices.map((ds) => ds.service.name).join('; ');
+
+            const locationIds = dept.Location.map((loc) => loc.id).join('; ');
+            const floors = dept.Location.map((loc) => loc.floor).join('; ');
+            const suites = dept.Location.map((loc) => loc.suite).join('; ');
+            const departmentServiceIds = dept.DepartmentServices.map((ds) => ds.serviceID).join(
+                '; '
+            );
+
+            const buildingId = dept.building?.id || '';
+            const buildingPhoneNumber = dept.building?.phoneNumber || '';
+
+            console.log('Building ID:', buildingId);
+            console.log('Building Phone Number:', buildingPhoneNumber);
+
+            return [
+                `${dept.id}`,
+                `"${dept.name}"`,
+                `"${dept.phoneNumber}"`,
+                `${locationIds}`,
+                `${floors}`,
+                `"${suites}"`,
+                `${buildingId}`,
+                `"${dept.building.name}"`,
+                `"${dept.building.address}"`,
+                `"${buildingPhoneNumber}"`,
+                `${departmentServiceIds}`,
+                `"${serviceNames}"`,
+            ].join(',');
+        });
+        return [headers.join(','), ...rows].join('\n');
+    }),
+
+    importCSV: t.procedure
+        .input(z.string())
+        .mutation(async ({input}) => {
+            const lines = input.split('\n').filter((line) => line.trim() !== '');
             const headers = parseCSVLine(lines[0]);
 
             // Header-to-field map
@@ -80,8 +137,10 @@ router.post('/', async (req, res) => {
                     // Building
                     const buildingId = parseInt(record.buildingID, 10);
                     if (isNaN(buildingId)) {
-                        console.error('Invalid building ID:', record.buildingID);
-                        return res.status(400).json({ error: 'Invalid building ID' });
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: 'Invalid building ID',
+                        });
                     }
 
                     const building = await PrismaClient.building.upsert({
@@ -133,17 +192,11 @@ router.post('/', async (req, res) => {
                         },
                     });
                 } catch (err) {
-                    console.error('Error processing record:', record, err);
-                    return res.status(500).json({ error: 'Failed to import record' });
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'Error processing record:',
+                    });
                 }
             }
-
-            res.status(200).json({ message: 'CSV imported successfully' });
-        });
-    } catch (err) {
-        console.error('Error during import:', err);
-        res.status(500).json({ error: 'Failed to import CSV' });
-    }
-});
-
-export default router;
+        })
+})
