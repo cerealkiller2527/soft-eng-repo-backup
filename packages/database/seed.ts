@@ -18,8 +18,20 @@ async function main() {
     await prisma.department.deleteMany();
     await prisma.node.deleteMany();
     await prisma.building.deleteMany();
+    await prisma.user.deleteMany();
 
     console.log('Existing data purged.');
+
+    // Seed admin user
+    // WARNING: Storing plain text passwords is insecure. Hash passwords in real applications.
+    const admin = await prisma.user.create({
+        data: {
+            username: 'admin',
+            password: 'admin', // Plain text - insecure!
+            email: 'admin@admin.com',
+        }
+    });
+    console.log(`Created admin user: ${admin.username}`);
 
     // Create building
     const building = await prisma.building.create({
