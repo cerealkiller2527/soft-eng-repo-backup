@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 
 const FloorPlan = () => {
+    const trpc = useTRPC();
     const [showMap, setShowMap] = useState(false);
     const [originLocation, setOriginLocation] = useState<{ lat: number; lng: number } | null>(null); // Default to null
     const [destination, setDestination] = useState<string | null>(null);
@@ -11,25 +14,7 @@ const FloorPlan = () => {
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [pathCoords, setPathCoords] = useState([
-        { x: 190, y: 130 },
-        { x: 272, y: 130 },
-        { x: 272, y: 110 },
-        { x: 272, y: 130 },
-        { x: 190, y: 130 },
-        { x: 190, y: 239 },
-        { x: 163, y: 239 },
-        { x: 163, y: 360 },
-        { x: 275, y: 360 },
-        { x: 275, y: 390 },
-        { x: 275, y: 450 },
-        { x: 275, y: 390 },
-        { x: 275, y: 360 },
-        { x: 275, y: 315 },
-        { x: 357, y: 315 },
-        { x: 357, y: 300 },
-        { x: 357, y: 315 },
-        { x: 400, y: 315 },
-        { x: 450, y: 315 },
+
         // Initial coords
     ]);
 
@@ -47,8 +32,30 @@ const FloorPlan = () => {
         });
     };
 
-    useEffect(() => {
 
+    const search = useMutation(
+        trpc.search.getPath.mutationOptions({
+            onSuccess: (data) => {
+                console.log("HIT HERE");
+                //const formattedCoords = data.map(([x, y]) => ({ x, y }));
+                setPathCoords(data);
+                console.log(data);
+
+            },
+            onError: (error) => {
+                console.error('Username or password is incorrect!', error);
+                alert("Username or password is incorrect!");
+            },
+        })
+    );
+
+    useEffect(() => {
+        if (destination) {
+            search.mutate({
+                startDesc: '1bottom entrance',
+                endDesc: 'reception',
+            });
+        }
     }, [destination]);
 
     useEffect(() => {
@@ -110,12 +117,14 @@ const FloorPlan = () => {
         let dashOffset = 0;
 
         const drawCircles = () => {
+            if (pathCoords.length === 0) return; // Optional: avoid errors if array is empty
+
+            const lastPoint = pathCoords[pathCoords.length - 1];
+
             ctx.fillStyle = 'red';
-            pathCoords.forEach((point) => {
-                ctx.beginPath();
-                ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-                ctx.fill();
-            });
+            ctx.beginPath();
+            ctx.arc(lastPoint.x, lastPoint.y, 5, 0, 2 * Math.PI);
+            ctx.fill();
         };
 
         const getPathLength = (points: { x: number; y: number }[]) => {
@@ -209,7 +218,7 @@ const FloorPlan = () => {
         return () => {
             window.removeEventListener('resize', resizeCanvas);
         };
-    }, [showMap]);
+    }, [pathCoords]);
 
     return (
         <div id="floorplan" className="min-h-screen bg-gray-100 p-6">

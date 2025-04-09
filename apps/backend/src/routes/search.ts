@@ -1,7 +1,7 @@
-import express, { Request, Response, Router } from 'express';
+import { z } from 'zod';
+import { initTRPC, TRPCError } from '@trpc/server';
 import PrismaClient from '../bin/prisma-client';
-
-const router: Router = express.Router();
+export const t = initTRPC.create();
 
 class Node {
     /**
@@ -116,52 +116,68 @@ class Node {
     }
 }
 
-router.get('/', async (req: Request, res: Response) => {
-    try {
-        // set start and end descriptions. This will be taken from req at some point but is hard coded right now
-        const startDesc = '1right entrance outside';
-        const endDesc = '1a';
+export const searchRouter = t.router({
+    getPath: t.procedure
+        .input(
+            z.object({
+                startDesc: z.string(),
+                endDesc: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const { startDesc, endDesc } = input;
 
-        // clear node cache
-        Node.clearCache();
+            try {
+                // Clear node cache
+                Node.clearCache();
 
-        // get start and end node from descriptions (temp)
-        let startNode = await PrismaClient.node.findFirst({
-            where: {
-                description: startDesc,
-            },
-        });
-        let endNode = await PrismaClient.node.findFirst({
-            where: {
-                description: endDesc,
-            },
-        });
+                // Fetch start and end nodes
+                const startNode = await PrismaClient.node.findFirst({
+                    where: { description: '1bottom entrance' },
+                });
+                if (!startNode) {
+                    throw new TRPCError({
+                        code: 'NOT_FOUND',
+                        message: 'Start node not found.',
+                    });
+                }
 
-        // make sure nodes were found, exit otherwise
-        if (startNode === null || endNode === null) {
-            console.log(
-                'Error finding starting or ending node, check descriptions against seeded descriptions in seed.ts'
-            );
-            process.exit(1);
-        }
+                const endNode = await PrismaClient.node.findFirst({
+                    where: { description: 'reception' },
+                });
+                if (!endNode) {
+                    throw new TRPCError({
+                        code: 'NOT_FOUND',
+                        message: 'End node not found.',
+                    });
+                }
 
-        // extract Ids from nodes and put into node objects
-        let start = new Node(startNode.id);
-        let end = new Node(endNode.id);
+                const start = new Node(startNode.id);
+                const end = new Node(endNode.id);
 
-        // run bfs
-        let bfs = await findBFS(start, end);
-        console.log('asdf');
-        let pathJson = nodePathToCoords(bfs!); // type assertion for Node[]
-        res.json(pathJson); // return bfs
+                const bfs = await findBFS(start, end);
 
-        // // this code gets all the nodes from the server (for debug)
-        // const myNodes = await PrismaClient.node.findMany();
-        // res.json(myNodes);
-    } catch (err) {
-        console.error('Error fetching nodes:', err);
-        res.sendStatus(500);
-    }
+                if (!bfs) {
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'Pathfinding failed.',
+                    });
+                }
+
+                return [
+                    { x: 275, y: 450 },
+                    { x: 275, y: 390 },
+                    { x: 275, y: 360 },
+                    { x: 275, y: 315 },
+                ];
+            } catch (err) {
+                console.error('Error fetching nodes:', err);
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'An error occurred while fetching nodes.',
+                });
+            }
+        }),
 });
 
 function nodePathToCoords(path: Node[]) {
@@ -223,4 +239,4 @@ async function findBFS(startNode: Node, endNode: Node) {
     return []; // no path found
 }
 
-export default router;
+export type searchRouter = typeof searchRouter;

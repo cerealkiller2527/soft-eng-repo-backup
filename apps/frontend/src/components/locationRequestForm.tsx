@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const MGBHospitals = ["Chestnut Hill", "20 Patriots Place", "22 Patriots Place"];
+const MGBHospitals = ["Reception"];
 
 export default function LocationRequestForm({ onSubmit }) {
 

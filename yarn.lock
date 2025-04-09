@@ -7042,7 +7042,7 @@ __metadata:
     ts-config-custom: "workspace:*"
     ts-node: "npm:^10.9.2"
     turbo: "npm:*"
-    typescript: "npm:^5.8.3"
+    typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.9"
     zod: "npm:^3.24.2"
   languageName: unknown
