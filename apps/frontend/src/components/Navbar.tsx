@@ -19,6 +19,9 @@ const Navbar = () => {
                 <Link to="/Directory" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
                     Directory
                 </Link>
+                <Link to="/csv" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
+                    CSV Import/Export
+                </Link>
                 </div>
             </nav>
         </div>

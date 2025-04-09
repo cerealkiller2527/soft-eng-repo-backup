@@ -23,6 +23,7 @@ import BrighamObstetrics from './routes/directoryPages/brighamObstetrics.tsx';
 import BrighamPhysiciansGroup from './routes/directoryPages/brighamPhysiciansGroup.tsx';
 import BrighamPsychiatricSpecialities from './routes/directoryPages/brighamPsychiatricSpecialities.tsx';
 import RequestDashboard from './routes/requestDashboard.tsx';
+import CSVPage from './routes/csv.tsx';
 
 export const routes = [
     {
@@ -139,6 +140,11 @@ export const routes = [
         path: '/requestdashboard',
         errorElement: <div />,
         element: <RequestDashboard />,
+    },
+    {
+        path: '/csv',
+        errorElement: <div />,
+        element: <CSVPage />,
     },
 ];
 
