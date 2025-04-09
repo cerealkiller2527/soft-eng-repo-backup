@@ -303,46 +303,20 @@ async function main() {
                 return;
             }
 
-            // Rather than updating the location, create a specific link for each department
-            // This enables multiple departments to share the same location
-            const locationsForDept = await prisma.location.findMany({
+            // Update any location matching the floor and suite
+            // Note: If multiple departments share a floor/suite, the last one processed will set the departmentId
+            const updateResult = await prisma.location.updateMany({
                 where: {
                     floor: deptRawData.floor,
                     suite: deptRawData.suite,
                 },
+                data: {
+                    departmentId: departmentEntry.id,
+                },
             });
 
-            if (locationsForDept.length === 0) {
+            if (updateResult.count === 0) {
                 console.warn(`No location found for Floor ${deptRawData.floor}, Suite ${deptRawData.suite} (Department: ${deptRawData.name})`);
-                return;
-            }
-
-            // Update all matching locations to reference this department
-            for (const loc of locationsForDept) {
-                // Create a new location specifically for this department if needed (for shared suites)
-                // Special handling for "Pharmacy" and "Brigham Dermatology Associates (BDA)"
-                if (
-                    (deptRawData.name === "Pharmacy" && deptRawData.suite === "317") ||
-                    (deptRawData.name === "Laboratory" && deptRawData.suite === "130") ||
-                    (deptRawData.name === "Multi-Specialty Clinic" && deptRawData.suite === "130")
-                ) {
-                    // For departments sharing a location, create a copy of the location linked to this department
-                    await prisma.location.create({
-                        data: {
-                            floor: loc.floor,
-                            suite: loc.suite,
-                            nodeID: loc.nodeID,
-                            departmentId: departmentEntry.id
-                        }
-                    });
-                    console.log(`Created separate location for shared suite: ${deptRawData.suite}, Department: ${deptRawData.name}`);
-                } else {
-                    // For other departments, directly link the location
-                    await prisma.location.update({
-                        where: { id: loc.id },
-                        data: { departmentId: departmentEntry.id }
-                    });
-                }
             }
         })
     );
