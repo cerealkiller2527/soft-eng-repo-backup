@@ -3,6 +3,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import { employeeRouter } from './routes/employeeRouter';
 import { serviceRouter } from './routes/serviceRouter';
 import { loginRouter } from './routes/loginRouter.ts';
+import { csvRouter } from './routes/csvRouter.ts';
 import express from 'express';
 import logger from 'morgan';
 
@@ -14,6 +15,7 @@ const appRouter = t.router({
     employee: employeeRouter,
     service: serviceRouter,
     login: loginRouter,
+    csv : csvRouter,
 });
 const app = express();
 app.use(

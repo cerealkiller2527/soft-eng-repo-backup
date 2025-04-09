@@ -142,7 +142,7 @@ model Department {
   phoneNumber        String
   Location           Location[]
   DepartmentServices DepartmentServices[]
-  buildingID         Int
+  buildingID         Int                  @default(1)
   building           Building             @relation(fields: [buildingID], references: [id])
 }
 
