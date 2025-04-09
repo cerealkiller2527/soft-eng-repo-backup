@@ -1,4 +1,4 @@
-import { PrismaClient, RequestType, Status } from '../database/.prisma/client';
+import { PrismaClient, RequestType, Status } from './.prisma/client';
 
 const prisma = new PrismaClient();
 
