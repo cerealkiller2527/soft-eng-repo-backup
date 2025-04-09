@@ -7,7 +7,10 @@ import highscoreRouter from './routes/score.ts';
 import serviceRouter from './routes/serviceRouter.ts';
 import employeeRouter from './routes/employeeRouter.ts';
 import serviceassignedto from './routes/serviceassigned.ts';
+import departmentRouter from './routes/departmentRouter.ts';
 import searchRouter from './routes/search.ts';
+import csvExportRouter from './routes/csvExportRouter';
+import csvImportRouter from './routes/csvImportRouter.ts';
 
 import { API_ROUTES } from 'common/src/constants';
 
@@ -38,8 +41,12 @@ app.use(API_ROUTES.HEALTHCHECK, healthcheckRouter);
 app.use(API_ROUTES.SCORE, highscoreRouter);
 app.use(API_ROUTES.EMPLOYEE, employeeRouter);
 app.use(API_ROUTES.SERVICEREQ, serviceRouter);
+app.use(API_ROUTES.DEPARTMENT, departmentRouter);
 app.use(API_ROUTES.ASSIGNED, serviceassignedto);
 app.use(API_ROUTES.SEARCH, searchRouter);
+
+app.use(API_ROUTES.CSV_EXPORT, csvExportRouter);
+app.use(API_ROUTES.CSV_IMPORT, csvImportRouter);
 
 /**
  * Catch all 404 errors, and forward them to the error handler

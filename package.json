@@ -28,13 +28,15 @@
     "prettier-config-custom": "workspace:*",
     "ts-config-custom": "workspace:*",
     "turbo": "*",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "vitest": "^3.0.9"
   },
   "dependencies": {
     "common": "workspace:*",
     "dotenv": "^16.4.7",
-    "dotenv-cli": "^7.4.4"
+    "dotenv-cli": "^7.4.4",
+    "node-fetch": "^3.3.2",
+    "ts-node": "^10.9.2"
   },
   "resolutions": {
     "dotenv": "^16.4.7",

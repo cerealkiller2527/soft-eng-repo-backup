@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import PrismaClient from '../bin/prisma-client';
-import * as process from "node:process";
+import * as process from 'node:process';
 
 const router: Router = express.Router();
 
@@ -112,8 +112,8 @@ class Node {
 router.get('/', async (req: Request, res: Response) => {
     try {
         // set start and end descriptions. This will be taken from req at some point but is hard coded right now
-        const startDesc = "1right entrance outside";
-        const endDesc = "1a";
+        const startDesc = '1right entrance outside';
+        const endDesc = '1a';
 
         // clear node cache
         Node.clearCache();
@@ -131,8 +131,10 @@ router.get('/', async (req: Request, res: Response) => {
         });
 
         // make sure nodes were found, exit otherwise
-        if(startNode === null || endNode === null) {
-            console.log("Error finding starting or ending node, check descriptions against seeded descriptions in seed.ts")
+        if (startNode === null || endNode === null) {
+            console.log(
+                'Error finding starting or ending node, check descriptions against seeded descriptions in seed.ts'
+            );
             process.exit(1);
         }
 

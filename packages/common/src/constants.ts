@@ -4,5 +4,8 @@ export const API_ROUTES = {
     EMPLOYEE: '/employee',
     SERVICEREQ: '/servicereqs',
     ASSIGNED: '/assigned',
-    SEARCH: '/api/search'
+    SEARCH: '/api/search',
+    DEPARTMENT: '/api/department',
+    CSV_EXPORT: '/api/csv/export',
+    CSV_IMPORT: '/api/csv/import',
 };
