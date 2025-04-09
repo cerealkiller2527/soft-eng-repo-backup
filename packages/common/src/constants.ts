@@ -5,5 +5,4 @@ export const API_ROUTES = {
     SERVICEREQ: '/api/servicereqs',
     ASSIGNED: '/api/assigned',
     LOGIN: '/api/login',
-    SEARCH: '/api/search'
 };

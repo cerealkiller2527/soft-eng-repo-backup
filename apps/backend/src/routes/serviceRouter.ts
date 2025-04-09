@@ -143,7 +143,7 @@ export const serviceRouter = t.router({
         .input(
             z.object({
                 patientName: z.string(),
-                pickupTime: z.date(),
+                pickupTime: z.coerce.date(),
                 transportation: z.string(),
                 pickupTransport: z.string(),
                 dropoffTransport: z.string(),
@@ -162,21 +162,25 @@ export const serviceRouter = t.router({
             const serviceRequest = await PrismaClient.serviceRequest.create({
                 data: {
                     type: RequestType.EXTERNALTRANSPORTATION,
-                    dateCreated: new Date(Date.now()).toLocaleString(),
+                    dateCreated: new Date(Date.now()),
                     status: Status.NOTASSIGNED,
                     description: additionalNotes,
                 },
             });
-            PrismaClient.externalTransportation.create({
+            await PrismaClient.externalTransportation.create({
                 data: {
                     id: serviceRequest.id,
                     fromWhere: pickupTransport,
-                    toWhere: pickupTransport,
+                    toWhere: dropoffTransport,
                     transportType: transportation,
                     patientName: patientName,
                     pickupTime: pickupTime,
                 },
             });
+            console.log('Create request done');
+            return {
+                message: 'Create request done',
+            };
         }),
 });
 // export type definition of API
