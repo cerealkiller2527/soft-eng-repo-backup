@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import TransportRequest from "../routes/serviceRequest.tsx"
 import { useMutation } from '@tanstack/react-query';
-import { useTRPC } from '../database/trpc.ts';
+import { useTRPC, queryClient} from '../database/trpc.ts';
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
@@ -28,7 +28,11 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: {
         additionalNotes: "",
     });
     const trpc = useTRPC();
-    const addReq = useMutation(trpc.service.addRequest.mutationOptions())
+    const addReq = useMutation(trpc.service.addRequest.mutationOptions({
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['service.getExternalTransportation'] });
+        }
+    }))
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
 
     const handleSelectChange = (event:ChangeEvent<HTMLSelectElement>) => {
