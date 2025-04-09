@@ -74,8 +74,6 @@ model ExternalTransportation {
   transportType  String
   patientName    String
   pickupTime     DateTime
-  dropoffTime    DateTime
-  pickupTime     DateTime
 }
 
 model EquipmentDelivery {
