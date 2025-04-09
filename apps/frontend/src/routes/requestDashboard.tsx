@@ -2,12 +2,13 @@ import React from "react";
 import {useState} from "react";
 import TransportRequestForm from "../components/TransportRequestForm.tsx";
 import TransportCard from "../components/TransportCard.tsx"
+import Navbar from "../components/Navbar.tsx";
 
 const requestDashboard = () => {
 
     type TransportRequest = {
         patientName: string;
-        priority: string;
+        pickupTime: Date;
         transportType: string;
         pickupTransport: string;
         dropoffTransport: string;
@@ -16,36 +17,32 @@ const requestDashboard = () => {
     const [requests, setRequests] = useState<TransportRequest[]>([]);
 
     return (
-        <div>
-            <div className="flex justify-between">
-                <h2 className="text-2xl font-bold">Request Dashboard</h2>
-            </div>
+        <div className="p-25">
+            <Navbar />
+            <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
+            <hr />
+            <br />
 
-            {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-xl shadow-xl w-[500px] max-h-[90vh] overflow-y-auto">
-                        <TransportRequestForm onSubmit={addRequest} />
-                        <button
-                            onClick={() => setShowForm(false)}
-                            className="mt-4 w-full bg-red-500 text-white p-2 rounded-xl hover:bg-red-600"
-                        >
-                            Cancel
-                        </button>
+            <div className="mt-8">
+                <h2 className="text-lg font-semibold mb-4">Submitted Requests</h2>
+                {requests.length === 0 ? (
+                    <p>No requests submitted yet.</p>) : (
+                    <div className="grid gap-4">
+                        {requests.map((req, i) => (
+                            <div
+                                key={i}
+                                className="border p-4 rounded-xl shadow bg-white space-y-1">
+                                <p><strong>TRANSPORT REQUEST</strong></p>
+                                <p><strong>Patient:</strong> {req.patientName}</p>
+                                <p><strong>Pickup Time:</strong> {req.pickupTime.toString()}</p>
+                                <p><strong>Transport Type:</strong> {req.transportType}</p>
+                                <p><strong>Pickup:</strong> {req.pickupTransport}</p>
+                                <p><strong>Dropoff:</strong> {req.dropoffTransport}</p>
+                                <p><strong>Notes:</strong> {req.additionalNotes || "N/A"}</p>
+                            </div>
+                        ))}
                     </div>
-                </div>
-            )}
-
-            <div className="grid gap-4 mt-4">
-                {requests.map((req, i) => (
-                    <div key={i} className="border p-4 rounded-xl shadow">
-                        <p><strong>Patient:</strong> {req.patientName}</p>
-                        <p><strong>Priority:</strong> {req.priority}</p>
-                        <p><strong>Transport:</strong> {req.transportType}</p>
-                        <p><strong>Pickup:</strong> {req.pickupTransport}</p>
-                        <p><strong>Dropoff:</strong> {req.dropoffTransport}</p>
-                        <p><strong>Notes:</strong> {req.additionalNotes}</p>
-                    </div>
-                ))}
+                )}
             </div>
         </div>
     );
