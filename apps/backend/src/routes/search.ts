@@ -8,7 +8,7 @@ class Node {
      * node class: represents a node in the graph with neighbors and an id.
      */
 
-    // node cache as map of node ids to nodes
+        // node cache as map of node ids to nodes
     private static nodeCache: Map<number, Node> = new Map();
 
     public id: number;
@@ -164,12 +164,9 @@ export const searchRouter = t.router({
                     });
                 }
 
-                return [
-                    { x: 275, y: 450 },
-                    { x: 275, y: 390 },
-                    { x: 275, y: 360 },
-                    { x: 275, y: 315 },
-                ];
+
+
+                return nodePathToCoords(bfs);
             } catch (err) {
                 console.error('Error fetching nodes:', err);
                 throw new TRPCError({

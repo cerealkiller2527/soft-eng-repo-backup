@@ -14,7 +14,7 @@ const FloorPlan = () => {
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [pathCoords, setPathCoords] = useState([
-
+        { x: 275, y: 450 },
         // Initial coords
     ]);
 
@@ -37,9 +37,9 @@ const FloorPlan = () => {
         trpc.search.getPath.mutationOptions({
             onSuccess: (data) => {
                 console.log("HIT HERE");
-                //const formattedCoords = data.map(([x, y]) => ({ x, y }));
-                setPathCoords(data);
-                console.log(data);
+                const formattedCoords = data.map(([x, y]) => ({ x, y }));
+                setPathCoords(formattedCoords);
+                console.log(formattedCoords);
 
             },
             onError: (error) => {
