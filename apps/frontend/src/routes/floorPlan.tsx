@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
+import {useMutation} from "@tanstack/react-query";
 
 const FloorPlan = () => {
     const trpc = useTRPC();
@@ -14,7 +14,7 @@ const FloorPlan = () => {
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [pathCoords, setPathCoords] = useState([
-
+        { x: 275, y: 450 }
         // Initial coords
     ]);
 
