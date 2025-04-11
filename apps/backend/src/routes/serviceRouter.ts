@@ -179,11 +179,12 @@ export const serviceRouter = t.router({
         assignedRequests.sort((a, b) => a.id - b.id);
         return assignedRequests;
     }),
-    addRequest: t.procedure
+    addTransportationRequest: t.procedure
         .input(
             z.object({
                 patientName: z.string(),
-                pickupTime: z.coerce.date(),
+                pickupTime: z.coerc
+                e.date(),
                 transportation: z.string(),
                 pickupTransport: z.string(),
                 dropoffTransport: z.string(),

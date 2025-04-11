@@ -4,10 +4,14 @@ import TransportRequestForm from "../components/TransportRequestForm.tsx";
 import TransportRequest from "../routes/serviceRequest.tsx";
 import transportImage from "../../public/transport.png"
 
+
+
 export default function TransportCard({ onAddRequest }: { onAddRequest: (data: object) => void}) {
 
+        // useState to check if pop up should be open or not
     const [isOpen, setIsOpen] = useState(false);
 
+    // when called, this moves the form data to the request form button page and sets popup to false
     const handleFormSubmit = (formData: object) => {
         onAddRequest(formData);
         setIsOpen(false);

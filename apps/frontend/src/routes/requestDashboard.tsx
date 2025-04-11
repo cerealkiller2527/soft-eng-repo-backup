@@ -1,7 +1,5 @@
 import React from "react";
 import {useState} from "react";
-import TransportRequestForm from "../components/TransportRequestForm.tsx";
-import TransportCard from "../components/TransportCard.tsx"
 import Navbar from "../components/Navbar.tsx";
 import { useQuery } from '@tanstack/react-query';
 import {useTRPC} from "../database/trpc.ts";
@@ -9,14 +7,19 @@ import {useTRPC} from "../database/trpc.ts";
 
 const requestDashboard = () => {
 
+    //list of transport request options
     type TransportRequest = {
+        employeeName: string;
         patientName: string;
+        priority: string;
         pickupTime: Date;
         transportType: string;
         pickupTransport: string;
         dropoffTransport: string;
         additionalNotes: string;
     };
+
+    // Setup for tRPC
     const trpc = useTRPC();
     const requests = useQuery(trpc.service.getExternalTransportation.queryOptions())
     console.log("Fetched requests:", requests.data);

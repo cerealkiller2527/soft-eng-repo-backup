@@ -5,8 +5,10 @@ import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer.tsx";
 import DashboardButton from "../components/DashboardButton.tsx";
 
-
+//This page is used to hold all of the buttons and forms for the different service requests
 const ServiceRequest = () => {
+
+    //Transport request type
     type TransportRequest = {
         patientName: string;
         pickupTime: Date;
@@ -15,8 +17,8 @@ const ServiceRequest = () => {
         dropoffTransport: string;
         additionalNotes: string;
     };
+    //This whole part is just to locally show the submitted forms on the same page, keeping here for now for consistency
     const [requests, setRequests] = useState<object[]>([]);
-    const [showForm, setShowForm] = useState(false);
 
     const addRequest = (newRequest: object) => {
         setRequests((prev) => [...prev, newRequest]);
