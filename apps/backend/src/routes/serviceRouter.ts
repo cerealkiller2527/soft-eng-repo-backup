@@ -1,5 +1,5 @@
 import { initTRPC } from '@trpc/server';
-import { ServiceRequest, RequestType, Status } from 'database';
+import { ServiceRequest, RequestType, Status, Priority } from 'database';
 import PrismaClient from '../bin/prisma-client';
 export const t = initTRPC.create();
 import { z } from 'zod';
@@ -121,7 +121,7 @@ export const serviceRouter = t.router({
         const audioVisual = PrismaClient.serviceRequest.findMany({
             where: {
                 type: RequestType.AUDIOVISUAL,
-                employeeID: { not: null },
+                assignedEmployeeID: { not: null },
             },
             include: {
                 audioVisual: true,
@@ -131,7 +131,7 @@ export const serviceRouter = t.router({
         const externalTransportation = PrismaClient.serviceRequest.findMany({
             where: {
                 type: RequestType.EXTERNALTRANSPORTATION,
-                employeeID: { not: null },
+                assignedEmployeeID: { not: null },
             },
             include: {
                 externalTransportation: true,
@@ -141,7 +141,7 @@ export const serviceRouter = t.router({
         const equipmentDelivery = PrismaClient.serviceRequest.findMany({
             where: {
                 type: RequestType.EQUIPMENTDELIVERY,
-                employeeID: { not: null },
+                assignedEmployeeID: { not: null },
             },
             include: {
                 equipmentDelivery: true,
@@ -151,7 +151,7 @@ export const serviceRouter = t.router({
         const language = PrismaClient.serviceRequest.findMany({
             where: {
                 type: RequestType.LANGUAGE,
-                employeeID: { not: null },
+                assignedEmployeeID: { not: null },
             },
             include: {
                 language: true,
@@ -161,7 +161,7 @@ export const serviceRouter = t.router({
         const security = PrismaClient.serviceRequest.findMany({
             where: {
                 type: RequestType.SECURITY,
-                employeeID: { not: null },
+                assignedEmployeeID: { not: null },
             },
             include: {
                 security: true,
@@ -188,6 +188,8 @@ export const serviceRouter = t.router({
                 pickupTransport: z.string(),
                 dropoffTransport: z.string(),
                 additionalNotes: z.string(),
+                priority: z.nativeEnum(Priority),
+                employee: z.string(),
             })
         )
         .mutation(async ({ input }) => {
@@ -198,6 +200,8 @@ export const serviceRouter = t.router({
                 pickupTransport,
                 dropoffTransport,
                 additionalNotes,
+                priority,
+                employee,
             } = input;
             const serviceRequest = await PrismaClient.serviceRequest.create({
                 data: {
@@ -205,6 +209,8 @@ export const serviceRouter = t.router({
                     dateCreated: new Date(Date.now()),
                     status: Status.NOTASSIGNED,
                     description: additionalNotes,
+                    fromEmployee: employee,
+                    priority: priority as Priority,
                 },
             });
             await PrismaClient.externalTransportation.create({
@@ -215,6 +221,113 @@ export const serviceRouter = t.router({
                     transportType: transportation,
                     patientName: patientName,
                     pickupTime: pickupTime,
+                },
+            });
+            console.log('Create request done');
+            return {
+                message: 'Create request done',
+            };
+        }),
+    addEquipmentRequest: t.procedure
+        .input(
+            z.object({
+                deadline: z.coerce.date(),
+                equipment: z.array(z.string()),
+                location: z.string(),
+                additionalNotes: z.string(),
+                priority: z.nativeEnum(Priority),
+                employee: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const { deadline, equipment, location, additionalNotes, priority, employee } = input;
+            const serviceRequest = await PrismaClient.serviceRequest.create({
+                data: {
+                    type: RequestType.EQUIPMENTDELIVERY,
+                    dateCreated: new Date(Date.now()),
+                    status: Status.NOTASSIGNED,
+                    description: additionalNotes,
+                    fromEmployee: employee,
+                    priority: priority as Priority,
+                },
+            });
+            await PrismaClient.equipmentDelivery.create({
+                data: {
+                    id: serviceRequest.id,
+                    deadline: deadline,
+                    equipments: equipment,
+                    toWhere: location,
+                },
+            });
+            console.log('Create request done');
+            return {
+                message: 'Create request done',
+            };
+        }),
+    addLanguageRequest: t.procedure
+        .input(
+            z.object({
+                language: z.string(),
+                location: z.string(),
+                startTime: z.coerce.date(),
+                endTime: z.coerce.date(),
+                additionalNotes: z.string(),
+                priority: z.nativeEnum(Priority),
+                employee: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const { language, location, startTime, endTime, additionalNotes, priority, employee } =
+                input;
+            const serviceRequest = await PrismaClient.serviceRequest.create({
+                data: {
+                    type: RequestType.LANGUAGE,
+                    dateCreated: new Date(Date.now()),
+                    status: Status.NOTASSIGNED,
+                    description: additionalNotes,
+                    fromEmployee: employee,
+                    priority: priority as Priority,
+                },
+            });
+            await PrismaClient.language.create({
+                data: {
+                    id: serviceRequest.id,
+                    language: language,
+                    location: location,
+                    startTime: startTime,
+                    endTime: endTime,
+                },
+            });
+            console.log('Create request done');
+            return {
+                message: 'Create request done',
+            };
+        }),
+    addSecurityRequest: t.procedure
+        .input(
+            z.object({
+                location: z.string(),
+                additionalNotes: z.string(),
+                priority: z.nativeEnum(Priority),
+                employee: z.string(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const { location, additionalNotes, priority, employee } = input;
+            const serviceRequest = await PrismaClient.serviceRequest.create({
+                data: {
+                    type: RequestType.SECURITY,
+                    dateCreated: new Date(Date.now()),
+                    status: Status.NOTASSIGNED,
+                    description: additionalNotes,
+                    fromEmployee: employee,
+                    priority: priority as Priority,
+                },
+            });
+            await PrismaClient.security.create({
+                data: {
+                    id: serviceRequest.id,
+                    location: location,
                 },
             });
             console.log('Create request done');
