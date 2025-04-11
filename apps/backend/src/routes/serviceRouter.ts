@@ -183,8 +183,7 @@ export const serviceRouter = t.router({
         .input(
             z.object({
                 patientName: z.string(),
-                pickupTime: z.coerc
-                e.date(),
+                pickupTime: z.coerce.date(),
                 transportation: z.string(),
                 pickupTransport: z.string(),
                 dropoffTransport: z.string(),
