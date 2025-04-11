@@ -7,16 +7,15 @@ const Landing: React.FC = () => {
         '/HeroPageWalking.jpg',
         '/HeroPageNavigation.jpg',
         '/HeroPagePatriotPlace.jpg',
-        '/HeroPageChestnutHill.jpg',
+        '/HeroPageChestnutHill.jpg'
     ];
 
+    // Useful for rotation logic
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovering, setIsHovering] = useState(false);
 
-    // Auto-rotate images every 5 seconds (pauses on hover)
+    // Auto-rotate images every 5 seconds
     useEffect(() => {
-        if (isHovering) return;
-
         const interval = setInterval(() => {
             setCurrentImageIndex((prevIndex) =>
                 prevIndex === images.length - 1 ? 0 : prevIndex + 1
@@ -45,7 +44,7 @@ const Landing: React.FC = () => {
                         className={`absolute inset-0 transition-opacity duration-1000 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
                     >
                         <div
-                            className="w-full h-full bg-blue-400 bg-opacity-100 bg-blend-multiply"
+                            className="w-full h-full bg-blue-300 bg-opacity-100 bg-blend-multiply"
                             style={{
                                 backgroundImage: `url(${image})`,
                                 backgroundSize: 'cover',
@@ -67,7 +66,7 @@ const Landing: React.FC = () => {
                 <div className="flex flex-col gap-4 sm:flex-row">
                     <Link
                         to="/login"
-                        className="rounded-lg bg-white px-8 py-3 text-lg font-semibold text-blue-600 transition-all hover:bg-gray-100 hover:shadow-lg"
+                        className="rounded-lg bg-white px-8 py-3 text-lg font-semibold text-black transition-all hover:bg-gray-100 hover:shadow-lg"
                     >
                         Login
                     </Link>
@@ -87,8 +86,8 @@ const Landing: React.FC = () => {
                         key={index}
                         onClick={() => goToImage(index)}
                         className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                            index === currentImageIndex
-                                ? 'bg-white w-6'
+                            index === currentImageIndex // Logic for switching indicator color
+                                ? 'bg-white'
                                 : 'bg-white/50 hover:bg-white/70'
                         }`}
                         aria-label={`Go to slide ${index + 1}`}
