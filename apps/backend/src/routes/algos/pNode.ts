@@ -1,5 +1,4 @@
-import PrismaClient from "../../bin/prisma-client.ts";
-
+import PrismaClient from '../../bin/prisma-client.ts';
 
 export class pNode {
     private static nodeCache: Map<number, pNode> = new Map();
@@ -15,8 +14,8 @@ export class pNode {
     constructor(id: number, longitute?: number, lattitute?: number, description?: string) {
         this.longitude = longitute ?? -1;
         this.latitude = lattitute ?? -1;
-        this.description = description ?? "";
-        this.id = 0;
+        this.description = description ?? '';
+        this.id = id;
         this.neighbors = [];
     }
 
@@ -34,7 +33,7 @@ export class pNode {
         // if it doesn't exist in the node cache, create it
         let node = new pNode(id);
         pNode.nodeCache.set(id, node); // add it to cache
-        return pNode; // return the new node
+        return node; // return the new node
     }
 
     static clearCache() {
@@ -106,10 +105,8 @@ export class pNode {
     static async nodesToPath(path: pNode[]): Promise<number[][]> {
         let r: number[][] = [];
         for (let i = 0; i < path.length; i++) {
-            r[i][0] = path[i].longitude;
-            r[i][1] = path[i].latitude;
+            r.push([path[i].longitude, path[i].latitude]);
         }
         return r;
     }
-
 }

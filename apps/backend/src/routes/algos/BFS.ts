@@ -1,31 +1,27 @@
-import {Algorithm} from "./Algorithm.ts";
-import {pNode} from "./pNode.ts";
-import {SearchSystem} from "./SearchSystem.ts";
-
-
+import { Algorithm } from './Algorithm.ts';
+import { pNode } from './pNode.ts';
+import { SearchSystem } from './SearchSystem.ts';
 
 export class BFS implements Algorithm {
-    s: SearchSystem = new SearchSystem(new BFS())
-
     async findPath(startDesc: string, endDesc: string): Promise<number[][]> {
-        const startNode: pNode = await this.s.getNodeFromDescription(startDesc);
-        const endNode: pNode = await this.s.getNodeFromDescription(endDesc);
+        const startNode: pNode = await Algorithm.getNodeFromDescription(startDesc);
+        const endNode: pNode = await Algorithm.getNodeFromDescription(endDesc);
 
         if (startNode.id === -1) {
-            console.error("start node not found, no node has given description");
+            console.error('start node not found, no node has given description');
         }
         if (endNode.id === -1) {
-            console.error("end node not found, no node has given description");
+            console.error('end node not found, no node has given description');
         }
         const path: pNode[] | undefined = await this.findBFS(startNode, endNode);
         if (path === undefined) {
             return [[startNode.longitude, startNode.latitude]];
-        }else {
+        } else {
             return pNode.nodesToPath(path);
         }
     }
 
-    private async findBFS(startNode: pNode, endNode: pNode): Promise<pNode[] | undefined>{
+    private async findBFS(startNode: pNode, endNode: pNode): Promise<pNode[] | undefined> {
         /**
          * BFS for graph search to find path from startNode to endNode
          *  * @param {Node} startNode - the starting node for the search.
@@ -67,7 +63,4 @@ export class BFS implements Algorithm {
         }
         return []; // no path found
     }
-
-
-
 }
