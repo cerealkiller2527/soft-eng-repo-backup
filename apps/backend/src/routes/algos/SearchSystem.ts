@@ -1,6 +1,5 @@
 import {Algorithm} from "./Algorithm.ts";
 import {pNode} from "./pNode.ts";
-import {BFS} from "./BFS.ts";
 import PrismaClient from "../../bin/prisma-client.ts";
 
 
@@ -16,8 +15,12 @@ export class SearchSystem {
     }
 
     async getNodeFromDescription(description: string) {
-        // query database for node with description
-        // will return a node with all required fields filled
+        /**
+         * queries database for node with given description
+         * @param description string that matches a description of a node in the database
+         * @return a new pNode with all fields filled, or a node with id -1 if no node was found
+         */
+
 
         const node = await PrismaClient.node.findFirst({
             where: { description: description },

@@ -103,7 +103,7 @@ export class pNode {
         };
     }
 
-    static nodesToPath(path: pNode[]): number[][] {
+    static async nodesToPath(path: pNode[]): Promise<number[][]> {
         let r: number[][] = [];
         for (let i = 0; i < path.length; i++) {
             r[i][0] = path[i].longitude;
