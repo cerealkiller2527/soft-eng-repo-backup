@@ -265,12 +265,51 @@ async function main() {
         },
     ];
 
-    // Create one service per department using the full description/name
+    // Create services by parsing the descriptions into individual services
+    const servicesList: { name: string; departmentIndex: number }[] = [];
+    
+    // Parse each department's description into individual services
+    rawDepartmentData.forEach((dept, index) => {
+        if (dept.description) {
+            // Split the description by commas and handle special cases
+            let services = dept.description.split(',').map(s => s.trim());
+            
+            // Handle special cases with "and" connectors that should be separate services
+            services = services.flatMap(service => {
+                // If the service has "and" in it, split it further (but avoid breaking phrases like "Food and Drug Allergies")
+                if (service.includes(' and ') && 
+                    !service.toLowerCase().includes('allergy') && 
+                    !service.toLowerCase().includes('inflammatory') &&
+                    !service.toLowerCase().includes('crohn')) {
+                    return service.split(' and ').map(s => s.trim());
+                }
+                return service;
+            });
+            
+            // Add each service to our list
+            services.forEach(serviceName => {
+                if (serviceName && serviceName.length > 1) { // Skip empty or very short names
+                    servicesList.push({
+                        name: serviceName,
+                        departmentIndex: index
+                    });
+                }
+            });
+        } else {
+            // If no description, use department name as service
+            servicesList.push({
+                name: dept.name,
+                departmentIndex: index
+            });
+        }
+    });
+
+    // Create all services in the database
     const services = await Promise.all(
-        rawDepartmentData.map((dept) =>
+        servicesList.map(service =>
             prisma.service.create({
                 data: {
-                    name: dept.description ?? dept.name, // Use full description or name
+                    name: service.name,
                 },
             })
         )
@@ -321,16 +360,16 @@ async function main() {
         })
     );
 
-    // Create department-service relationships (Simplified: One service per department)
-    const departmentServiceLinks = departments.map((dept, i) => {
-        // Simple 1-to-1 link based on array index
-        if (services[i]) { // Basic check to ensure service exists at index
+    // Create department-service relationships (Multiple services per department)
+    const departmentServiceLinks = servicesList.map((serviceItem, index) => {
+        const departmentIndex = serviceItem.departmentIndex;
+        if (departments[departmentIndex] && services[index]) {
             return {
-                departmentID: dept.id,
-                serviceID: services[i].id,
+                departmentID: departments[departmentIndex].id,
+                serviceID: services[index].id,
             };
         } else {
-            console.warn(`Department ${dept.name} at index ${i} missing corresponding service.`);
+            console.warn(`Service ${serviceItem.name} at index ${index} missing corresponding department.`);
             return null;
         }
     }).filter(Boolean) as { departmentID: number; serviceID: number }[]; // Filter out nulls and assert type

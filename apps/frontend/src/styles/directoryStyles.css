@@ -1,3 +1,10 @@
+/* Common styles for directory listing and service pages */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
 /* Header styles */
 .directoryHeader {
     background-color: #012D5A;
@@ -7,13 +14,8 @@
     position: sticky;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-.directoryPage{
+/* Directory Page container */
+.directoryPage {
     width: 100%;
     height: 100%;
     overflow-y: scroll;
@@ -21,12 +23,17 @@ html, body {
     padding: 10px;
 }
 
+/* Service content styles */
+.service-content {
+    padding: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
 
 /* Accordion styles */
 .accordion {
     display: none;
 }
-
 
 .accordion-label {
     background-color: #eee;
@@ -118,7 +125,50 @@ html, body {
     flex: 1 1 200px;
 }
 
-/* This should resize properly? */
+/* Individual service page styles */
+.service-page-header {
+    background-color: #012D5A;
+    color: white;
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+}
+
+.service-page-title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+.service-page-content {
+    padding: 0 2rem;
+}
+
+.service-page-section {
+    margin-bottom: 2rem;
+}
+
+.service-page-section-title {
+    color: #012D5A;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.back-button {
+    display: inline-block;
+    background-color: #012D5A;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 2rem;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #034080;
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
     .brighamButtonRow {
         flex-direction: column;
@@ -129,5 +179,13 @@ html, body {
     .brighamButton {
         width: 100%;
         max-width: none;
+    }
+    
+    .service-page-header {
+        padding: 1rem;
+    }
+    
+    .service-page-content {
+        padding: 0 1rem;
     }
 }
