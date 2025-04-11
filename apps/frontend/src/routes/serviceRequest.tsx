@@ -45,7 +45,7 @@ const ServiceRequest = () => {
                                 className="border p-4 rounded-xl shadow bg-white space-y-1">
                                 <p><strong>TRANSPORT REQUEST</strong></p>
                                 <p><strong>Patient:</strong> {req.patientName}</p>
-                                <p><strong>Pickup Time:</strong> {req.pickupTime.toString()}</p>
+                                <p><strong>Pickup Time:</strong> {req.pickupTime.toLocaleString()}</p>
                                 <p><strong>Transport Type:</strong> {req.transportType}</p>
                                 <p><strong>Pickup:</strong> {req.pickupTransport}</p>
                                 <p><strong>Dropoff:</strong> {req.dropoffTransport}</p>
