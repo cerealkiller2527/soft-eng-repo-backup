@@ -7029,6 +7029,7 @@ __metadata:
     dotenv-cli: "npm:^7.4.4"
     eslint: "npm:^9.23.0"
     eslint-config-custom: "workspace:*"
+    frontend: "workspace:^"
     google-maps: "npm:^4.3.3"
     husky: "npm:^9.1.7"
     morgan: "npm:^1.10.0"
@@ -7045,6 +7046,7 @@ __metadata:
     turbo: "npm:*"
     typescript: "npm:^5.8.2"
     vitest: "npm:^3.0.9"
+    workspace: "npm:^0.0.1-preview.2"
     zod: "npm:^3.24.2"
   languageName: unknown
   linkType: soft
