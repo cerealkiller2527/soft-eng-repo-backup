@@ -1,22 +1,30 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, {useRef, useEffect, useState, SetStateAction} from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 
+type formType = {
+    location: "",
+    destination: "",
+    transport: "",
+};
+
+
 const FloorPlan = () => {
     const trpc = useTRPC();
     const [showMap, setShowMap] = useState(false);
-    const [originLocation, setOriginLocation] = useState<{ lat: number; lng: number } | null>(null); // Default to null
-    const [destination, setDestination] = useState<string | null>(null);
-    const mapRef = useRef<HTMLDivElement | null>(null);
+    const [showPopup, setShowPopup] = useState(true);
+    const [eta, setEta] = useState<string | undefined>(undefined);
+    const [form, setForm] = useState<HTMLFormElement | null>(null);
+    const mapRef = useRef<formType | null>(null);
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [pathCoords, setPathCoords] = useState([
         { x: 275, y: 450 },
-        // Initial coords
     ]);
+
 
 
 
@@ -36,10 +44,8 @@ const FloorPlan = () => {
     const search = useMutation(
         trpc.search.getPath.mutationOptions({
             onSuccess: (data) => {
-                console.log("HIT HERE");
                 const formattedCoords = data.map(([x, y]) => ({ x, y }));
                 setPathCoords(formattedCoords);
-                console.log(formattedCoords);
 
             },
             onError: (error) => {
@@ -50,13 +56,16 @@ const FloorPlan = () => {
     );
 
     useEffect(() => {
-        if (destination) {
+        if(!form){
+            return;
+        }
+        if (form.destination) {
             search.mutate({
                 startDesc: '1bottom entrance',
                 endDesc: 'reception',
             });
         }
-    }, [destination]);
+    }, [form]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -65,6 +74,10 @@ const FloorPlan = () => {
                 zoom: 16,
                 disableDefaultUI: true,
                 streetViewControl: false,
+                drivingOptions: {
+                    departureTime: new Date(),
+                    trafficModel: 'bestguess',
+                },
             });
 
             directionsRenderer.current = new google.maps.DirectionsRenderer();
@@ -75,27 +88,40 @@ const FloorPlan = () => {
 
     //useEffect for rerouting maps
     useEffect(() => {
-        console.log('Updated originLocation:', originLocation); // Log whenever originLocation changes
-        const travelMode = google.maps.TravelMode.DRIVE || 'DRIVING';
-        if (originLocation && mapInstance.current && directionsRenderer.current) {
+        if(!form){
+            return;
+        }
+        let travelMode = google.maps.TravelMode.DRIVE || 'DRIVING';
+        switch(form.transport){
+            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT
+                break;
+            case "Walking": travelMode = google.maps.TravelMode.WALKING
+                break;
+            default: break;
+        }
+        if (form.location && mapInstance.current && directionsRenderer.current) {
             const directionsService = new google.maps.DirectionsService();
-            console.log(originLocation)
             directionsService.route(
                 {
-                    origin: originLocation,
+                    origin: form.location,
                     destination: { lat: 42.326259328131265, lng: -71.14976692050537 }, // Fixed destination for now
                     travelMode: travelMode,
                 },
                 (result, status) => {
                     console.log(status);
-                    if (status === 'OK') {
-                        console.log('OK')
+                    if (status === 'OK' && result?.routes?.length > 0) {
                         directionsRenderer.current.setDirections(result);
+                        const leg = result.routes[0].legs[0];
+                        const durationText = leg?.duration?.text; // e.g. "12 mins"
+                        setEta(durationText);
+                        console.log("ETA:", durationText);
+                    } else {
+                        console.warn("Directions response status:", status, result);
                     }
                 }
             );
         }
-    }, [originLocation]);
+    }, [form]);
 
 
 
@@ -235,9 +261,8 @@ const FloorPlan = () => {
             <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
                 {/* Floor Plan */}
                 <LocationRequestForm
-                    onSubmit={(origin, destination) => {
-                        setOriginLocation(origin);
-                        setDestination(destination);
+                    onSubmit={(form) => {
+                        setForm(form);
                         // You can also save it in state if needed
                     }}
                 />                <div style={{ display: showMap ? 'none' : 'flex' }}>
@@ -266,6 +291,20 @@ const FloorPlan = () => {
                         display: showMap ? 'block' : 'none',
                     }}
                 />
+                {showPopup && (
+                    <div className="absolute top-25 left-120 bg-white border border-gray-300 rounded p-3 shadow-md z-10 w-64">
+                        <div className="flex justify-between items-center mb-2">
+                            <strong>ETA:</strong>
+                            <button
+                                className="text-gray-500 hover:text-black"
+                                onClick={() => setShowPopup(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <p>{eta}.</p>
+                    </div>
+                )}
 
                 <div className="mb-4 flex justify-center">
                     <button

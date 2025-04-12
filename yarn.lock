@@ -4344,6 +4344,7 @@ __metadata:
     "@trpc/client": "npm:^11.0.2"
     "@trpc/server": "npm:^11.0.2"
     "@trpc/tanstack-react-query": "npm:^11.0.2"
+    "@types/google.maps": "npm:^3.58.1"
     "@types/node": "npm:^22.13.3"
     "@types/prop-types": "npm:^15.7.5"
     "@types/react": "npm:^18.0.37"
