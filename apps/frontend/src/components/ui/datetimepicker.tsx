@@ -153,7 +153,7 @@ export const DatetimePicker = forwardRef<HTMLDivElement, DateTimeInput>(
         );
         const timescape = useTimescape({
             ...dtOptions,
-            ...(value && { date: value }),
+            date: value ?? new Date(), // force it to always reflect the latest external value
             onChangeDate: handleDateChange,
         });
         return (

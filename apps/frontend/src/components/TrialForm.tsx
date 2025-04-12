@@ -23,7 +23,7 @@ import {DatetimePicker} from "@/components/ui/datetimepicker"
         employeeName: z.string(),
         patientName: z.string(),
         priority: z.string(),
-        pickupTime: z.string(),
+        pickupTime: z.coerce.date(),
         transportType: z.string(),
         pickupTransport: z.string(),
         dropoffTransport: z.string(),
@@ -45,7 +45,7 @@ import {DatetimePicker} from "@/components/ui/datetimepicker"
                 employeeName: "",
                 patientName: "",
                 priority: "",
-                pickupTime: "",
+                pickupTime: new Date(),
                 transportType: "",
                 pickupTransport: "",
                 dropoffTransport: "",
@@ -55,6 +55,7 @@ import {DatetimePicker} from "@/components/ui/datetimepicker"
 
         function onSubmit(values: z.infer<typeof formSchema>) {
             console.log(values);
+            console.log(values.pickupTime);
             addReq.mutate({
                 employee: values.employeeName,
                 patientName: values.patientName,
@@ -64,9 +65,8 @@ import {DatetimePicker} from "@/components/ui/datetimepicker"
                 dropoffTransport: values.dropoffTransport,
                 additionalNotes: values.additionalNotes,
                 priority: values.priority,
-
             });
-            console.log(values);
+
         }
 
         return (
@@ -149,6 +149,28 @@ import {DatetimePicker} from "@/components/ui/datetimepicker"
                             </Select>
                         </FormItem>
                     )}/>
+                    <FormField
+                        control={form.control}
+                        name="pickupTime"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>Pick Up Time/Date</FormLabel>
+                                <DatetimePicker
+                                    value={field.value}
+                                    onChange={(date) => {
+                                        console.log("Picked:", date);
+                                        field.onChange(date);
+                                    }}
+                                    format={[
+                                        ["months", "days", "years"],
+                                        ["hours", "minutes", "am/pm"],
+                                    ]}
+                                />
+                                <FormDescription>Add the date and time of pickup.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <FormField
                         control={form.control}
