@@ -91,6 +91,7 @@ export default function TransportRequestForm({onSubmit}: TransportFormProps) {
 
         // Adds the data from the form to the database
         addReq.mutate({
+            employee: finalForm.employeeName,
             patientName: finalForm.patientName,
             pickupTime: new Date(finalForm.pickupTime),
             transportation: finalForm.transportType,
