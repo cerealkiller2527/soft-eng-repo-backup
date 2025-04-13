@@ -19,6 +19,13 @@ enum Status {
   COMPLETED
 }
 
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  EMERGENCY
+}
+
 enum RequestType {
   AUDIOVISUAL
   EXTERNALTRANSPORTATION
@@ -43,25 +50,29 @@ model Employee {
 }
 
 model ServiceRequest {
-  id                     Int                     @id @default(autoincrement())
-  type                   RequestType
-  dateCreated            DateTime                @default(now())
-  dateUpdated            DateTime?
-  status                 Status
-  description            String
-  employeeID             Int?
-  assignedTo             Employee?               @relation(fields: [employeeID], references: [id])
+  id           Int         @id @default(autoincrement())
+  type         RequestType
+  dateCreated  DateTime    @default(now())
+  dateUpdated  DateTime?
+  status       Status
+  priority     Priority
+  location     Location?   @relation(fields: [locationId], references: [id])
+  description  String
+  employeeID   Int?
+  employeeName String?
+  assignedTo   Employee?   @relation(fields: [employeeID], references: [id])
+
   audioVisual            AudioVisual?
   externalTransportation ExternalTransportation?
   equipmentDelivery      EquipmentDelivery?
   language               Language?
   security               Security?
+  locationId             Int?
 }
 
 model AudioVisual {
   id              Int            @id
   serviceRequest  ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
-  location        String
   deadline        DateTime
   audiovisualType String
 }
@@ -69,11 +80,11 @@ model AudioVisual {
 model ExternalTransportation {
   id             Int            @id
   serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
-  fromWhere      String
-  toWhere        String
+  toWhere        Location       @relation(fields: [locationId], references: [id])
   transportType  String
   patientName    String
   pickupTime     DateTime
+  locationId     Int
 }
 
 model EquipmentDelivery {
@@ -81,14 +92,13 @@ model EquipmentDelivery {
   serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
   deadline       DateTime
   equipments     String[]
-  toWhere        String
-  fromWhere      String
+  toWhere        Location       @relation(fields: [locationId], references: [id])
+  locationId     Int
 }
 
 model Language {
   id             Int            @id
   serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
-  location       String
   language       String
   startTime      DateTime
   endTime        DateTime
@@ -97,7 +107,6 @@ model Language {
 model Security {
   id             Int            @id
   serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
-  location       String
   riskLevel      Int
 }
 
@@ -126,13 +135,16 @@ model Node {
 }
 
 model Location {
-  id           Int         @id @default(autoincrement())
-  suite        String
-  floor        Int
-  nodeID       Int?        @unique
-  node         Node?       @relation(fields: [nodeID], references: [id])
-  departmentId Int?
-  Department   Department? @relation(fields: [departmentId], references: [id])
+  id                     Int                      @id @default(autoincrement())
+  suite                  String
+  floor                  Int
+  nodeID                 Int?                     @unique
+  node                   Node?                    @relation(fields: [nodeID], references: [id])
+  departmentId           Int?
+  Department             Department?              @relation(fields: [departmentId], references: [id])
+  ServiceRequest         ServiceRequest[]
+  ExternalTransportation ExternalTransportation[]
+  EquipmentDelivery      EquipmentDelivery[]
 }
 
 model Department {
