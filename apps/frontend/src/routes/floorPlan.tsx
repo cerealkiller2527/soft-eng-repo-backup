@@ -39,51 +39,47 @@ const FloorPlan = () => {
             {
                 imageUrl: "/chestnutFloorOne.png",
                 bounds: {
-                    north: 42.32622046941922,
-                    south: 42.32569961058454,
-                    east: -71.14922891056955,
-                    west: -71.15011079333681,
+                    north: 42.32624046941922,
+                    south: 42.32567461058454,
+                    east: -71.14920891056955,
+                    west: -71.15014579333681,
                 },
             },
             {
-                imageUrl: "/chestnutFloorOne.png",
-                bounds: {
-                    north: 42.32622046941922,
-                    south: 42.32569961058454,
-                    east: -71.14922891056955,
-                    west: -71.15011079333681,
-                },
-            }
-        ],
-        [
-            {
                 imageUrl: "/20PatriotPlaceFloorOne.png",
                 bounds: {
-                    north: 42.09333,
-                    south: 42.09247,
-                    east: -71.26546,
-                    west: -71.26611,
+                    north: 42.09309,
+                    south: 42.09249,
+                    east: -71.26552,
+                    west: -71.26656,
                 },
             }
         ],
         [
             {
-                imageUrl: "/chestnutHillCombined.png",
+                imageUrl: "/chestnutFloorOne.png",
                 bounds: {
-                    north: 42.32622046941922,
-                    south: 42.32569961058454,
-                    east: -71.14922891056955,
-                    west: -71.15011079333681,
+                    north: 42.32624046941922,
+                    south: 42.32567461058454,
+                    east: -71.14920891056955,
+                    west: -71.15014579333681,
                 },
-            }
-        ]
+            },
+
+        ],
+
     ];
+    const marker = new AdvancedMarkerElement({
+        position : { lat: 42.3262, lng: -71.1497 },
+        map: mapInstance.current,
+        gmpClickable: true,
+    });
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
             const map = new google.maps.Map(mapRef.current, {
                 zoom: 18,
-                center: { lat: 42.3262, lng: -71.1497 },
+                center: { lat: 42.09333, lng: -71.26546 },
                 disableDefaultUI: false,
                 mapId: '57f41020f9b31f57',
             });
