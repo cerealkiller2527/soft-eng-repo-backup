@@ -24,27 +24,40 @@ import BrighamPhysiciansGroup from './routes/directoryPages/brighamPhysiciansGro
 import BrighamPsychiatricSpecialities from './routes/directoryPages/brighamPsychiatricSpecialities.tsx';
 import RequestDashboard from './routes/requestDashboard.tsx';
 import CSVPage from './routes/csv.tsx';
+import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import {useAuth} from './Context/AuthContext.tsx';
 
 export const routes = [
     {
-        path: '/ServiceRequest',
-        errorElement: <div />,
-        element: <ServiceRequest />,
+        path: '/',
+        errorElement: <div/>,
+        element: <Login/>,
     },
-    {
-        path: '/FloorPlan',
-        errorElement: <div />,
-        element: <FloorPlan />,
-    },
+
     {
         path: '/Directory',
         errorElement: <div />,
         element: <Directory />,
     },
+
+
     {
-        path: '/',
+        path: '/ServiceRequest',
         errorElement: <div />,
-        element: <Login />,
+        element: (
+            <ProtectedRoute>
+            <ServiceRequest />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: '/FloorPlan',
+        errorElement: <div />,
+        element: (
+            <ProtectedRoute>
+            <FloorPlan />
+            </ProtectedRoute>
+        ),
     },
     {
         path: '/bccc',
@@ -139,12 +152,20 @@ export const routes = [
     {
         path: '/requestdashboard',
         errorElement: <div />,
-        element: <RequestDashboard />,
+        element: (
+            <ProtectedRoute>
+            <RequestDashboard />
+            </ProtectedRoute>
+),
     },
     {
         path: '/csv',
         errorElement: <div />,
-        element: <CSVPage />,
+        element: (
+            <ProtectedRoute>
+            <CSVPage />
+            </ProtectedRoute>
+        ),
     },
 ];
 

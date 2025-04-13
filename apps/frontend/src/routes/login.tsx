@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
+import {useAuth} from '../Context/AuthContext';
 
 const Login: React.FC = () => {
+
+    const {setAuthenticated} = useAuth();
+    const location = useLocation();
     const trpc = useTRPC();
     const [email, setEmail] = useState("");
     const[transition, setTransition] = useState(false);
@@ -15,11 +19,16 @@ const Login: React.FC = () => {
     //const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
+
+    const from = location.state?.from?.pathname || '/Directory';
+
+
     const checkLogin = useMutation(
         trpc.login.checkLogin.mutationOptions({
             onSuccess: (data) => {
                 console.log('Login success', data);
-                navigate("/Directory");
+                setAuthenticated(true);
+                navigate(from);
             },
             onError: (error) => {
                 console.error('Username or password is incorrect!', error);
@@ -115,6 +124,8 @@ const Login: React.FC = () => {
                             >
                                 Sign Up
                             </button>
+
+
                             <p className="mt-4 text-sm text-center">
                                 Already have an account?{" "}
                                 <span
