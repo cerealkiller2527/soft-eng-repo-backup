@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -20,7 +19,7 @@ import {
     SelectItem,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { DatetimePicker } from "@/components/ui/datetimepicker"
+import { DatetimePicker } from "@/components/ui/datetimepicker.tsx"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { queryClient, useTRPC } from "@/database/trpc.ts"
@@ -129,12 +128,8 @@ export default function EquipmentRequestForm() {
                                 <DatetimePicker
                                     value={field.value}
                                     onChange={(date) => {
-                                        field.onChange(date)
+                                        field.onChange(date);
                                     }}
-                                    format={[
-                                        ["months", "days", "years"],
-                                        ["hours", "minutes", "am/pm"],
-                                    ]}
                                 />
                                 <FormMessage />
                             </FormItem>
