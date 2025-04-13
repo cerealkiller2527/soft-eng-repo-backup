@@ -17,6 +17,16 @@ const ServiceRequest = () => {
         dropoffTransport: string;
         additionalNotes: string;
     };
+
+    type EquipmentRequest = {
+        deadline: Date;
+        equipment: string[];
+        location: string;
+        additionalNotes: string;
+        priority: string;
+        employee: string,
+    }
+
     //This whole part is just to locally show the submitted forms on the same page, keeping here for now for consistency
     const [requests, setRequests] = useState<object[]>([]);
 
