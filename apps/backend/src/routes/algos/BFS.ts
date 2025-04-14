@@ -15,8 +15,10 @@ export class BFS implements Algorithm {
         }
         const path: pNode[] | undefined = await this.findBFS(startNode, endNode);
         if (path === undefined) {
+            console.error('no path found');
             return [[startNode.longitude, startNode.latitude]];
         } else {
+            console.log('path found', path);
             return pNode.nodesToPath(path);
         }
     }
@@ -34,7 +36,7 @@ export class BFS implements Algorithm {
         while (pathQueue.length > 0) {
             let currentPath = pathQueue.shift(); // path we are investigating
             let currentNode = currentPath![currentPath!.length - 1]; // not null assertion
-            console.log('checking node:' + currentNode.id);
+            // console.log('checking node:' + currentNode.id);
 
             if (currentNode.id === endNode.id) {
                 // if this node is the end node
@@ -55,9 +57,6 @@ export class BFS implements Algorithm {
                     if (!visited.has(neighbor.id)) {
                         pathQueue.push([...currentPath!, neighbor]);
                     }
-                }
-                for (let path of pathQueue) {
-                    console.log('path: ', path);
                 }
             }
         }
