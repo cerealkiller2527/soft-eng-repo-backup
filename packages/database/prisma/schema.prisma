@@ -34,6 +34,14 @@ enum Priority {
   Emergency
 }
 
+enum nodeType {
+  Entrance
+  Intermediary
+  Staircase
+  Elevator
+  Location
+}
+
 model User {
   username String @id
   password String
@@ -123,21 +131,17 @@ model Edge {
 }
 
 model Node {
-  id          Int       @id @default(autoincrement())
-  description String
-  x           Int
-  y           Int
-  Location    Location?
-  fromEdge    Edge[]    @relation("fromNode")
-  toEdge      Edge[]    @relation("toNode")
-}
-
-model Location {
   id           Int         @id @default(autoincrement())
+  type         nodeType
+  description  String
+  lat          Float
+  long         Float
   suite        String
   floor        Int
-  nodeID       Int?        @unique
-  node         Node?       @relation(fields: [nodeID], references: [id])
+  fromEdge     Edge[]      @relation("fromNode")
+  toEdge       Edge[]      @relation("toNode")
+  buildingInt  Int
+  building     Building    @relation(fields: [buildingInt], references: [id])
   departmentId Int?
   Department   Department? @relation(fields: [departmentId], references: [id])
 }
@@ -147,10 +151,9 @@ model Department {
   name               String
   description        String?
   phoneNumber        String
-  Location           Location[]
+  node               Node[]
   DepartmentServices DepartmentServices[]
-  buildingID         Int                  @default(1)
-  building           Building             @relation(fields: [buildingID], references: [id])
+  buildingID         Int
 }
 
 model Service {
@@ -169,9 +172,9 @@ model DepartmentServices {
 }
 
 model Building {
-  id          Int          @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   name        String
   address     String
   phoneNumber String
-  Department  Department[]
+  Node        Node[]
 }
