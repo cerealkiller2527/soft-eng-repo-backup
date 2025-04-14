@@ -45,6 +45,7 @@ async function main() {
     // Create nodes first
     await prisma.node.createMany({
         data: [
+            // Chestnut Hill
             { description: '1top stairs', x: 272, y: 110 },
             { description: '1b', x: 272, y: 130 },
             { description: '1a', x: 190, y: 130 },
@@ -65,6 +66,30 @@ async function main() {
             { description: 'Placeholder Node 3 (Suite 560)', x: -1, y: -1 },
             { description: 'Placeholder Node 4 (Suite 102B)', x: -1, y: -1 },
             { description: 'Placeholder Node 5 (Suite 200)', x: -1, y: -1 },
+
+            // Patriot Place Floor 1
+            /**
+             * arranged in rough grid
+             * a through e, a is bottom part of the map, e is top
+             */
+            { description: 'left entrance outside', x: -1, y: -1 },
+            { description: 'left entrance', x: -1, y: -1 },
+            { description: 'a1', x: -1, y: -1 },
+            { description: 'a2', x: -1, y: -1 },
+            { description: 'a3', x: -1, y: -1 },
+            { description: 'a4', x: -1, y: -1 },
+            { description: 'a5', x: -1, y: -1 },
+            { description: 'middle stairs', x: -1, y: -1 },
+            { description: 'a6', x: -1, y: -1 },
+            { description: 'a7', x: -1, y: -1 },
+            { description: 'a8', x: -1, y: -1 },
+            { description: 'urology/cardiology', x: -1, y: -1 },
+            { description: 'a9', x: -1, y: -1 },
+            { description: 'a10', x: -1, y: -1 },
+            { description: 'right stairs', x: -1, y: -1 },
+            { description: 'elevator', x: -1, y: -1 },
+            { description: 'a11', x: -1, y: -1 },
+            { description: 'a12', x: -1, y: -1 },
         ]
     });
 
