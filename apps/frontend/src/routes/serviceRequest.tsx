@@ -1,5 +1,6 @@
 import React from 'react';
 import TransportCard from "../components/TransportCard.tsx";
+import EquipmentCard from "../components/EquipmentCard.tsx";
 import { useState } from "react";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer.tsx";
@@ -44,6 +45,8 @@ const ServiceRequest = () => {
                 <DashboardButton />
                 <br />
                 <TransportCard onAddRequest={addRequest} />
+                <br />
+                <EquipmentCard onAddRequest={addRequest} />
             </div>
 
             <div className="mt-8">

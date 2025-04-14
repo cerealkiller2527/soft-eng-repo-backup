@@ -4,7 +4,6 @@ import TransportRequestForm from "../components/TransportRequestForm.tsx";
 import TransportRequest from "../routes/serviceRequest.tsx";
 import transportImage from "../../public/transport.png"
 import TrialForm from "@/components/TrialForm.tsx";
-import EquipmentForm from "@/components/EquipmentRequestForm.tsx"
 
 
 
@@ -37,7 +36,7 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
                     >
                         x
                     </button>
-                    <EquipmentForm />
+                    <TrialForm />
                 </div>
             </div>
         )}
