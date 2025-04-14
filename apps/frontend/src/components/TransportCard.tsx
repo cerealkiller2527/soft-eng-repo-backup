@@ -3,11 +3,16 @@ import {useState} from "react";
 import TransportRequestForm from "../components/TransportRequestForm.tsx";
 import TransportRequest from "../routes/serviceRequest.tsx";
 import transportImage from "../../public/transport.png"
+import TrialForm from "@/components/TrialForm.tsx";
+
+
 
 export default function TransportCard({ onAddRequest }: { onAddRequest: (data: object) => void}) {
 
+        // useState to check if pop up should be open or not
     const [isOpen, setIsOpen] = useState(false);
 
+    // when called, this moves the form data to the request form button page and sets popup to false
     const handleFormSubmit = (formData: object) => {
         onAddRequest(formData);
         setIsOpen(false);
@@ -18,7 +23,7 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
         <button onClick={() => {
             setIsOpen(true);
         }} className="text-xl font-bold text-center items-center flex flex-col p-12 bg-[#012D5A] bg-opacity-10 text-white rounded-xl hover:bg-white hover:text-[#012D5A] border border-4 border-[#012D5A]">Transport
-            <img src={transportImage}
+            <img src="/transport.png"
             alt="Transport"
             className="w-12 h-12 object-contain flex items-center"
         /></button>
@@ -31,7 +36,7 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
                     >
                         x
                     </button>
-                    <TransportRequestForm onSubmit={handleFormSubmit} />
+                    <TrialForm />
                 </div>
             </div>
         )}

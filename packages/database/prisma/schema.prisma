@@ -27,6 +27,13 @@ enum RequestType {
   SECURITY
 }
 
+enum Priority {
+  Low
+  Medium
+  High
+  Emergency
+}
+
 model User {
   username String @id
   password String
@@ -39,7 +46,7 @@ model Employee {
   employeeType   String
   canService     RequestType[]
   language       String[]
-  ServiceRequest ServiceRequest[]
+  ServiceRequest ServiceRequest[] @relation("assign to")
 }
 
 model ServiceRequest {
@@ -49,8 +56,10 @@ model ServiceRequest {
   dateUpdated            DateTime?
   status                 Status
   description            String
-  employeeID             Int?
-  assignedTo             Employee?               @relation(fields: [employeeID], references: [id])
+  assignedEmployeeID     Int?
+  assignedTo             Employee?               @relation("assign to", fields: [assignedEmployeeID], references: [id])
+  fromEmployee           String
+  priority               Priority
   audioVisual            AudioVisual?
   externalTransportation ExternalTransportation?
   equipmentDelivery      EquipmentDelivery?
@@ -82,7 +91,6 @@ model EquipmentDelivery {
   deadline       DateTime
   equipments     String[]
   toWhere        String
-  fromWhere      String
 }
 
 model Language {
@@ -98,7 +106,6 @@ model Security {
   id             Int            @id
   serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
   location       String
-  riskLevel      Int
 }
 
 model Score {

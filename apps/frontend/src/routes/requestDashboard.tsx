@@ -1,7 +1,5 @@
 import React from "react";
 import {useState} from "react";
-import TransportRequestForm from "../components/TransportRequestForm.tsx";
-import TransportCard from "../components/TransportCard.tsx"
 import Navbar from "../components/Navbar.tsx";
 import { useQuery } from '@tanstack/react-query';
 import {useTRPC} from "../database/trpc.ts";
@@ -9,14 +7,19 @@ import {useTRPC} from "../database/trpc.ts";
 
 const requestDashboard = () => {
 
+    //list of transport request options
     type TransportRequest = {
+        employeeName: string;
         patientName: string;
+        priority: string;
         pickupTime: Date;
         transportType: string;
         pickupTransport: string;
         dropoffTransport: string;
         additionalNotes: string;
     };
+
+    // Setup for tRPC
     const trpc = useTRPC();
     const requests = useQuery(trpc.service.getExternalTransportation.queryOptions())
     console.log("Fetched requests:", requests.data);
@@ -39,11 +42,13 @@ const requestDashboard = () => {
                                 className="border p-4 rounded-xl shadow bg-white space-y-1">
                                 <p><strong>TRANSPORT REQUEST</strong></p>
                                 <p><strong>Patient:</strong> {req.externalTransportation.patientName}</p>
-                                <p><strong>Pickup Time:</strong> {req.externalTransportation.pickupTime.toString()}</p>
+                                <p><strong>Pickup Time:</strong> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
                                 <p><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
                                 <p><strong>Pickup:</strong> {req.externalTransportation.fromWhere}</p>
                                 <p><strong>Dropoff:</strong> {req.externalTransportation.toWhere}</p>
                                 <p><strong>Notes:</strong> {req.description || "N/A"}</p>
+                                <p><strong>Created By:</strong> {req.fromEmployee}</p>
+                                <p><strong>Priority:</strong> {req.priority}</p>
                             </div>
                         ))}
                     </div>
