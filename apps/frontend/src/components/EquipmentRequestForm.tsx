@@ -75,7 +75,10 @@ export default function EquipmentRequestForm() {
             <div className="w-full p-4 rounded-t-2xl rounded-b-xl">
                 <h2 className="text-xl font-semibold">Equipment Service Request</h2>
                 <p>Select the following requests needed.</p>
-                <p>Created by: Will Schieffer (based on transport request by Matt Nickerson) - Iteration 2</p>
+                <p>
+                    Created by: Will Schieffer (based on transport request by Matt Nickerson) -
+                    Iteration 2
+                </p>
             </div>
 
             <Form {...form}>
@@ -130,6 +133,10 @@ export default function EquipmentRequestForm() {
                                     onChange={(date) => {
                                         field.onChange(date);
                                     }}
+                                    format={[
+                                        ["months", "days", "years"],
+                                        ["hours", "minutes", "am/pm"],
+                                    ]}
                                 />
                                 <FormMessage />
                             </FormItem>
@@ -156,15 +163,21 @@ export default function EquipmentRequestForm() {
                                                     >
                                                         <FormControl>
                                                             <Checkbox
-                                                                checked={field.value?.includes(item)}
+                                                                checked={field.value?.includes(
+                                                                    item
+                                                                )}
                                                                 onCheckedChange={(checked) => {
                                                                     return checked
-                                                                        ? field.onChange([...field.value, item])
+                                                                        ? field.onChange([
+                                                                              ...field.value,
+                                                                              item,
+                                                                          ])
                                                                         : field.onChange(
-                                                                            field.value?.filter(
-                                                                                (value) => value !== item
-                                                                            )
-                                                                        )
+                                                                              field.value?.filter(
+                                                                                  (value) =>
+                                                                                      value !== item
+                                                                              )
+                                                                          );
                                                                 }}
                                                             />
                                                         </FormControl>
@@ -172,7 +185,7 @@ export default function EquipmentRequestForm() {
                                                             {item}
                                                         </FormLabel>
                                                     </FormItem>
-                                                )
+                                                );
                                             }}
                                         />
                                     ))}
@@ -231,5 +244,5 @@ export default function EquipmentRequestForm() {
                 </form>
             </Form>
         </div>
-    )
+    );
 }
