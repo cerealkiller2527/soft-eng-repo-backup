@@ -36,6 +36,9 @@ const FloorPlan = () => {
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
+    const [endMapsLocation, setEndMapsLocation] = useState([
+        {lat : 0.00 , lng : 0.00}
+    ]);
     const [pathCoords, setPathCoords] = useState([
         { x: 275, y: 450 },
     ]);
@@ -114,6 +117,7 @@ const FloorPlan = () => {
         search.mutate({
             startDesc: '1bottom entrance',
             endDesc: 'reception',
+            //mapsEndLocation : endMapsLocation
         });
 
         let travelMode = google.maps.TravelMode.DRIVING;
@@ -147,6 +151,9 @@ const FloorPlan = () => {
                     if (status === 'OK' && result?.routes?.length > 0) {
                         directionsRenderer.current.setDirections(result);
                         const leg = result.routes[0].legs[0];
+                        setEndMapsLocation(leg.end_location);
+
+
 
                         const durationText = leg?.duration?.text;
                         setEta(durationText);
