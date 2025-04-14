@@ -3,7 +3,7 @@ import { pNode } from './pNode.ts';
 import { SearchSystem } from './SearchSystem.ts';
 
 export class BFS implements Algorithm {
-    async findPath(startDesc: string, endDesc: string): Promise<number[][]> {
+    async findPath(startDesc: string, endDesc: string): Promise<pNode[]> {
         const startNode: pNode = await Algorithm.getNodeFromDescription(startDesc);
         const endNode: pNode = await Algorithm.getNodeFromDescription(endDesc);
 
@@ -15,9 +15,9 @@ export class BFS implements Algorithm {
         }
         const path: pNode[] | undefined = await this.findBFS(startNode, endNode);
         if (path === undefined) {
-            return [[startNode.longitude, startNode.latitude]];
+            return [startNode];
         } else {
-            return pNode.nodesToPath(path);
+            return path;
         }
     }
 
@@ -34,11 +34,11 @@ export class BFS implements Algorithm {
         while (pathQueue.length > 0) {
             let currentPath = pathQueue.shift(); // path we are investigating
             let currentNode = currentPath![currentPath!.length - 1]; // not null assertion
-            console.log('checking node:' + currentNode.id);
+            // console.log('checking node:' + currentNode.id);
 
             if (currentNode.id === endNode.id) {
                 // if this node is the end node
-                console.log('found path');
+                // console.log('found path');
                 return currentPath;
             }
 
@@ -48,7 +48,7 @@ export class BFS implements Algorithm {
 
                 // search DB for neighbors
                 await currentNode.addNeighbors();
-                console.log('got node (id)', currentNode.id, "'s neighbors");
+                // console.log('got node (id)', currentNode.id, "'s neighbors");
 
                 for (let neighbor of currentNode.neighbors) {
                     // unzip current path list into elements, adding neighbor at the end
@@ -56,9 +56,9 @@ export class BFS implements Algorithm {
                         pathQueue.push([...currentPath!, neighbor]);
                     }
                 }
-                for (let path of pathQueue) {
-                    console.log('path: ', path);
-                }
+                // for (let path of pathQueue) {
+                //     console.log('path: ', path);
+                // }
             }
         }
         return []; // no path found
