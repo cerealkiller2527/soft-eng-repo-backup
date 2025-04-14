@@ -5,6 +5,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 
+import {pNodeDTO} from "../../../../share/types.ts";
+
 type formType = {
     location: "",
     destination: "",
@@ -43,9 +45,18 @@ const FloorPlan = () => {
 
     const search = useMutation(
         trpc.search.getPath.mutationOptions({
-            onSuccess: (data) => {
-                const formattedCoords = data.map(([x, y]) => ({ x, y }));
-                setPathCoords(formattedCoords);
+            onSuccess: (data: pNodeDTO[]) => {
+
+
+                const formattedCoords = data.map((node) => ({
+                    x: node.longitude,
+                    y: node.latitude,
+                }));
+
+                // const formattedCoords = data.map(([x, y]) => ({ x, y }));
+                // setPathCoords(formattedCoords);
+
+                setPathCoords(formattedCoords)
 
             },
             onError: (error) => {
