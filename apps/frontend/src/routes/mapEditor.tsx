@@ -3,15 +3,14 @@ import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
-import LocationRequestForm from '../components/locationRequestForm.tsx';
+import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx'
 const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
 const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+import { overlays } from "@/constants.tsx";
 
 type formType = {
-    location: string;
-    destination: string;
-    transport: string;
     building: string;
+    floor: number;
 };
 
 type OverlayImage = {
@@ -31,54 +30,36 @@ const MapEditor = () => {
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
+    const [form, setForm] = useState<formType | null>(null);
 
-    const overlays: OverlayImage[][] = [
-        [
-            {
-                imageUrl: "/chestnutFloorOne.png",
-                bounds: {
-                    north: 42.32624046941922,
-                    south: 42.32567461058454,
-                    east: -71.14920891056955,
-                    west: -71.15014579333681,
-                },
-            },
-            {
-                imageUrl: "/20PatriotPlaceFloorOne.png",
-                bounds: {
-                    north: 42.09309,
-                    south: 42.09249,
-                    east: -71.26552,
-                    west: -71.26656,
-                },
-            }
-        ],
-        [
-            {
-                imageUrl: "/chestnutFloorOne.png",
-                bounds: {
-                    north: 42.32624046941922,
-                    south: 42.32567461058454,
-                    east: -71.14920891056955,
-                    west: -71.15014579333681,
-                },
-            },
 
-        ],
 
-    ];
+
 
     const marker = new AdvancedMarkerElement({
         position : { lat: 42.3262, lng: -71.1497 },
         map: mapInstance.current,
         gmpClickable: true,
+
     });
+
+    useEffect(() => {
+        if(!form) return;
+        if(form.building == "Patriot Place"){
+            mapInstance.current?.setCenter({ lat: 42.09280, lng: -71.266 });
+        }else{
+            mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
+        }
+        setImageIndex(form.floor - 1);
+        console.log(form.floor);
+
+    }, [form]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
             const map = new google.maps.Map(mapRef.current, {
-                zoom: 18,
-                center: { lat: 42.09333, lng: -71.26546 },
+                zoom: 19,
+                center: { lat: 42.09280, lng: -71.266 },
                 disableDefaultUI: false,
                 mapId: '57f41020f9b31f57',
             });
@@ -113,10 +94,7 @@ const MapEditor = () => {
 
 
 
-    const handleImageSwitch = () => {
-        console.log("switch");
-        setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
-    };
+
 
     return (
         <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
@@ -127,6 +105,9 @@ const MapEditor = () => {
             <Navbar />
 
             <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
+                <MapEditorSelectForm onSubmit={(form) => {
+                    setForm(form);
+                }} />
 
                 <div
                     id="google-map-container"
@@ -134,14 +115,6 @@ const MapEditor = () => {
                     ref={mapRef}
                     style={{ width: '100%', height: '600px' }}
                 />
-                <div className="mt-4 flex justify-center">
-                    <button
-                        onClick={handleImageSwitch}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md"
-                    >
-                        Floor : {imageIndex + 1}
-                    </button>
-                </div>
 
 
             </div>

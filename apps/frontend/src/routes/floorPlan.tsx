@@ -6,6 +6,7 @@ import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
 const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+import { overlays } from "@/constants.tsx";
 
 import {pNodeDTO} from "../../../../share/types.ts";
 
@@ -38,41 +39,7 @@ const FloorPlan = () => {
     const [pathCoords, setPathCoords] = useState([
         { x: 275, y: 450 },
     ]);
-    const overlays: OverlayImage[][] = [
-        [
-            {
-                imageUrl: "/chestnutFloorOne.png",
-                bounds: {
-                    north: 42.32624046941922,
-                    south: 42.32567461058454,
-                    east: -71.14920891056955,
-                    west: -71.15014579333681,
-                },
-            },
-            {
-                imageUrl: "/20PatriotPlaceFloorOne.png",
-                bounds: {
-                    north: 42.09309,
-                    south: 42.09249,
-                    east: -71.26552,
-                    west: -71.26656,
-                },
-            }
-        ],
-        [
-            {
-                imageUrl: "/chestnutFloorOne.png",
-                bounds: {
-                    north: 42.32624046941922,
-                    south: 42.32567461058454,
-                    east: -71.14920891056955,
-                    west: -71.15014579333681,
-                },
-            },
 
-        ],
-
-    ];
     const marker = new AdvancedMarkerElement({
         position : { lat: 42.3262, lng: -71.1497 },
         map: mapInstance.current,
@@ -130,6 +97,7 @@ const FloorPlan = () => {
                 // setPathCoords(formattedCoords);
 
                 setPathCoords(formattedCoords)
+                console.log(pathCoords);
 
             },
             onError: (error) => {
@@ -139,20 +107,14 @@ const FloorPlan = () => {
         })
     );
 
-    useEffect(() => {
-        if (!form) return;
-
-        if (form.destination) {
-            search.mutate({
-                startDesc: '1bottom entrance',
-                endDesc: 'reception',
-            });
-        }
-    }, [form]);
 
     useEffect(() => {
         if (!form) return;
 
+        search.mutate({
+            startDesc: '1bottom entrance',
+            endDesc: 'reception',
+        });
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -168,9 +130,6 @@ const FloorPlan = () => {
 
 
 
-        console.log(form.location);
-        console.log(mapInstance.current );
-        console.log(directionsRenderer.current);
 
         if (form.location && mapInstance.current && directionsRenderer.current) {
             const directionsService = new google.maps.DirectionsService();
@@ -190,7 +149,6 @@ const FloorPlan = () => {
                         const leg = result.routes[0].legs[0];
 
                         const durationText = leg?.duration?.text;
-                        console.log(durationText);
                         setEta(durationText);
                     } else {
                         console.warn("Directions failed:", status, result);
@@ -201,7 +159,6 @@ const FloorPlan = () => {
     }, [form]);
 
     const handleImageSwitch = () => {
-        console.log("switch");
         setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
     };
 
