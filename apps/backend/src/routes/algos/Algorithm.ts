@@ -2,7 +2,7 @@ import { pNode } from './pNode.ts';
 import PrismaClient from '../../bin/prisma-client.ts';
 
 export abstract class Algorithm {
-    abstract findPath(startDesc: string, endDesc: string): Promise<number[][]>;
+    abstract findPath(startDesc: string, endDesc: string): Promise<pNode[]>;
 
     static async getNodeFromDescription(description: string): Promise<pNode> {
         /**

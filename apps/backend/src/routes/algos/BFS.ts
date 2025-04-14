@@ -3,7 +3,7 @@ import { pNode } from './pNode.ts';
 import { SearchSystem } from './SearchSystem.ts';
 
 export class BFS implements Algorithm {
-    async findPath(startDesc: string, endDesc: string): Promise<number[][]> {
+    async findPath(startDesc: string, endDesc: string): Promise<pNode[]> {
         const startNode: pNode = await Algorithm.getNodeFromDescription(startDesc);
         const endNode: pNode = await Algorithm.getNodeFromDescription(endDesc);
 
@@ -16,10 +16,10 @@ export class BFS implements Algorithm {
         const path: pNode[] | undefined = await this.findBFS(startNode, endNode);
         if (path === undefined) {
             console.error('no path found');
-            return [[startNode.longitude, startNode.latitude]];
+            return [startNode];
         } else {
             console.log('path found', path);
-            return pNode.nodesToPath(path);
+            return path;
         }
     }
 

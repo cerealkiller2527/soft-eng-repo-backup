@@ -3,6 +3,9 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { BFS } from './algos/BFS.ts';
 import { SearchSystem } from './algos/SearchSystem.ts';
 
+import { pNodeDTO } from '../../../../share/types.ts';
+import { pNode } from '../../../backend/src/routes/algos/pNode.ts';
+
 export const t = initTRPC.create();
 
 export const searchRouter = t.router({
@@ -18,9 +21,19 @@ export const searchRouter = t.router({
 
             try {
                 const s = new SearchSystem(new BFS());
-                const path = await s.path('1a1', '1e3');
-                console.log(path);
-                return path;
+                const nodePath = await s.path('1bottom entrance outside', '1a');
+
+                // convert each pNode to pNodeDTO
+                const pNodeDTOS: pNodeDTO[] = nodePath.map((node) => ({
+                    id: node.id,
+                    description: node.description,
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    neighbors: node.neighbors.map((neighbor) => ({
+                        id: neighbor.id,
+                    })),
+                }));
+                return pNodeDTOS;
             } catch (err) {
                 console.error('Error fetching nodes:', err);
                 throw new TRPCError({
