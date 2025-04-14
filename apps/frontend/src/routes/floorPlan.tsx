@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { useMutation } from '@tanstack/react-query';
@@ -6,6 +6,8 @@ import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
 const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+
+import {pNodeDTO} from "../../../../share/types.ts";
 
 type formType = {
     location: string;
@@ -33,7 +35,9 @@ const FloorPlan = () => {
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
-
+    const [pathCoords, setPathCoords] = useState([
+        { x: 275, y: 450 },
+    ]);
     const overlays: OverlayImage[][] = [
         [
             {
@@ -114,17 +118,26 @@ const FloorPlan = () => {
 
     const search = useMutation(
         trpc.search.getPath.mutationOptions({
-            onSuccess: (data) => {
-                console.log('Path data:', data);
+            onSuccess: (data: pNodeDTO[]) => {
+
+
+                const formattedCoords = data.map((node) => ({
+                    x: node.longitude,
+                    y: node.latitude,
+                }));
+
+                // const formattedCoords = data.map(([x, y]) => ({ x, y }));
+                // setPathCoords(formattedCoords);
+
+                setPathCoords(formattedCoords)
+
             },
             onError: (error) => {
-                console.error('Pathfinding error:', error);
-                alert("Error finding path.");
+                console.error('Username or password is incorrect!', error);
+                alert("Username or password is incorrect!");
             },
         })
     );
-
-
 
     useEffect(() => {
         if (!form) return;
