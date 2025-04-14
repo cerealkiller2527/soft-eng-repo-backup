@@ -19,7 +19,6 @@ export const searchRouter = t.router({
             try {
                 const s = new SearchSystem(new BFS());
                 return await s.path('1bottom entrance outside', '1a');
-
             } catch (err) {
                 console.error('Error fetching nodes:', err);
                 throw new TRPCError({

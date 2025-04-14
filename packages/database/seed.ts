@@ -72,6 +72,7 @@ async function main() {
              * arranged in rough grid
              * a through e, a is bottom part of the map, e is top
              */
+            // A
             { description: 'left entrance outside', x: -1, y: -1 },
             { description: 'left entrance', x: -1, y: -1 },
             { description: 'a1', x: -1, y: -1 },
@@ -90,6 +91,61 @@ async function main() {
             { description: 'elevator', x: -1, y: -1 },
             { description: 'a11', x: -1, y: -1 },
             { description: 'a12', x: -1, y: -1 },
+            // B
+            { description: 'radiology', x: -1, y: -1 },
+            { description: 'b17', x: -1, y: -1 },
+            { description: 'b1', x: -1, y: -1 },
+            { description: 'b2', x: -1, y: -1 },
+            { description: 'b3', x: -1, y: -1 },
+            { description: 'b4', x: -1, y: -1 },
+            { description: 'blood/urgent', x: -1, y: -1 },
+            { description: 'b5', x: -1, y: -1 },
+            { description: 'b6', x: -1, y: -1 },
+            { description: 'b7', x: -1, y: -1 },
+            { description: 'b8', x: -1, y: -1 },
+            { description: 'b9', x: -1, y: -1 },
+            { description: 'b9', x: -1, y: -1 },
+            { description: 'b10', x: -1, y: -1 },
+            { description: 'b11', x: -1, y: -1 },
+            { description: 'b12', x: -1, y: -1 },
+            { description: 'b13', x: -1, y: -1 },
+            { description: 'b14', x: -1, y: -1 },
+            { description: 'b15', x: -1, y: -1 },
+            { description: 'right entrance', x: -1, y: -1 },
+            { description: 'right entrance outside', x: -1, y: -1 },
+            { description: 'b16', x: -1, y: -1 },
+            // C
+            { description: 'c1', x: -1, y: -1 },
+            { description: 'pharmacy', x: -1, y: -1 },
+            { description: 'c2', x: -1, y: -1 },
+            { description: 'c3', x: -1, y: -1 },
+            { description: 'c4', x: -1, y: -1 },
+            { description: 'c5', x: -1, y: -1 },
+            { description: 'c6', x: -1, y: -1 },
+            { description: 'c7', x: -1, y: -1 },
+            { description: 'c8', x: -1, y: -1 },
+            // D
+            { description: 'd1', x: -1, y: -1 },
+            { description: 'd2', x: -1, y: -1 },
+            { description: 'd3', x: -1, y: -1 },
+            { description: 'd4', x: -1, y: -1 },
+            { description: 'd5', x: -1, y: -1 },
+            { description: 'd6', x: -1, y: -1 },
+            { description: 'd7', x: -1, y: -1 },
+            { description: 'd8', x: -1, y: -1 },
+            { description: 'd9', x: -1, y: -1 },
+            { description: 'd10', x: -1, y: -1 },
+            { description: 'd11', x: -1, y: -1 },
+            // E
+            { description: 'e1', x: -1, y: -1 },
+            { description: 'e2', x: -1, y: -1 },
+            { description: 'e3', x: -1, y: -1 },
+            { description: 'e4', x: -1, y: -1 },
+            { description: 'e5', x: -1, y: -1 },
+            { description: 'e6', x: -1, y: -1 },
+            { description: 'e7', x: -1, y: -1 },
+            { description: 'top stairs', x: -1, y: -1 },
+
         ]
     });
 
@@ -370,6 +426,7 @@ async function main() {
     // Create edges
     const edges = await prisma.edge.createMany({
         data: [
+            // chestnut hill
             { fromNodeId: allNodes[0].id, toNodeId: allNodes[1].id },
             { fromNodeId: allNodes[1].id, toNodeId: allNodes[2].id },
             { fromNodeId: allNodes[2].id, toNodeId: allNodes[3].id },
@@ -384,11 +441,124 @@ async function main() {
             { fromNodeId: allNodes[11].id, toNodeId: allNodes[12].id },
             { fromNodeId: allNodes[12].id, toNodeId: allNodes[13].id },
             { fromNodeId: allNodes[13].id, toNodeId: allNodes[14].id },
+
+            // 20 patriot pl, floor 1
+            //  A
+            edgeFromTo("left entrance outside", "left entrance"),
+            edgeFromTo("left entrance", "a1"),
+            edgeFromTo("a1", "a2"),
+            edgeFromTo("a2", "a3"),
+            edgeFromTo("a3", "a4"),
+            edgeFromTo("a1", "a4"),
+            edgeFromTo("a4", "a5"),
+            edgeFromTo("a5", "middle stairs"),
+            edgeFromTo("a5", "a6"),
+            edgeFromTo("a6", "a11"),
+            edgeFromTo("a11", "a12"),
+            edgeFromTo("a6", "a7"),
+            edgeFromTo("a7", "a8"),
+            edgeFromTo("a8", "urology/cardiology"),
+            edgeFromTo("a8", "a9"),
+            edgeFromTo("a9", "a10"),
+            edgeFromTo("a10", "elevator"),
+            edgeFromTo("a10", "right stairs"),
+            //  A -> B
+            edgeFromTo("a3", "b2"),
+            edgeFromTo("a12", "b7"),
+            edgeFromTo("a7", "b9"),
+            edgeFromTo("a9", "b12"),
+            edgeFromTo("a10", "b13"),
+            //  B
+            edgeFromTo("b1", "b2"),
+            edgeFromTo("b2", "b3"),
+            edgeFromTo("b3", "b4"),
+            edgeFromTo("b4", "blood/urgent"),
+            edgeFromTo("b3", "b17"),
+            edgeFromTo("b3", "b17"),
+            edgeFromTo("radiology", "b17"),
+            edgeFromTo("b1", "radiology"),
+            edgeFromTo("b2", "b5"),
+            edgeFromTo("b5", "b6"),
+            edgeFromTo("b6", "b7"),
+            edgeFromTo("b6", "b8"),
+            edgeFromTo("b7", "b9"),
+            edgeFromTo("b9", "b10"),
+            edgeFromTo("b10", "b11"),
+            edgeFromTo("b10", "b12"),
+            edgeFromTo("b11", "b16"),
+            edgeFromTo("b13", "b14"),
+            edgeFromTo("b14", "b15"),
+            edgeFromTo("b15", "right entrance"),
+            edgeFromTo("right entrance", "right entrance outside"),
+            //  B -> C
+            edgeFromTo("b17", "c1"),
+            edgeFromTo("b8", "c5"),
+            edgeFromTo("b9", "c7"),
+            edgeFromTo("b16", "c8"),
+            //  C
+            edgeFromTo("c1", "pharmacy"),
+            edgeFromTo("c1", "c2"),
+            edgeFromTo("c2", "c3"),
+            edgeFromTo("c3", "c4"),
+            edgeFromTo("c4", "c5"),
+            edgeFromTo("c4", "c6"),
+            edgeFromTo("c5", "c7"),
+            edgeFromTo("c6", "c7"),
+            //  C -> D
+            edgeFromTo("c8", "d10"),
+            edgeFromTo("c6", "d8"),
+            edgeFromTo("c2", "d1"),
+            //  D
+            edgeFromTo("d1", "d2"),
+            edgeFromTo("d2", "d3"),
+            edgeFromTo("d3", "d4"),
+            edgeFromTo("d4", "d5"),
+            edgeFromTo("d5", "d11"),
+            edgeFromTo("d5", "d6"),
+            edgeFromTo("d6", "d7"),
+            edgeFromTo("d7", "d8"),
+            edgeFromTo("d7", "d9"),
+            edgeFromTo("d8", "d9"),
+            edgeFromTo("d9", "d10"),
+            //  D -> E
+            edgeFromTo("d4", "e1"),
+            edgeFromTo("d11", "e3"),
+            //  E
+            edgeFromTo("e1", "e2"),
+            edgeFromTo("e2", "e3"),
+            edgeFromTo("e1", "e4"),
+            edgeFromTo("e4", "e5"),
+            edgeFromTo("e5", "e6"),
+            edgeFromTo("e6", "e7"),
+            edgeFromTo("e7", "top stairs"),
+
+
         ]
     });
+    
+    function edgeFromTo(startDesc: string, endDesc: string) {
+        const startIndex = descToI(startDesc);
+        const endIndex = descToI(endDesc);
+        return {
+            fromNodeId: allNodes[startIndex].id, toNodeId: allNodes[endIndex].id,
+        }
+    }
+    
+
+    function descToI(description: string) {
+        for(let i = 0; i < allNodes.length; i++) {
+            if(allNodes[i].description === description) {
+                return i;
+            }
+        }
+        console.error("error seeding node paths, searched for node with description that does not exist: |" + description + "| does not exist");
+        return -1;
+    }
 
     console.log('Seed complete!');
 }
+
+
 
 main()
     .catch((e) => {
