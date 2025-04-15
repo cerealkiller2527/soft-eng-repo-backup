@@ -5,18 +5,15 @@ import Papa from 'papaparse';
 
 // Simple interface for CSV row data
 interface DeptRow {
-  'Node ID': string;
   'Node Type': string;
   'Node Description': string;
   'Floor': string;
   'Suite': string;
   'Node (lat,long)': string;
-  'Department ID': string;
   'Department Name': string;
   'Phone Number': string;
-  'Service ID': string;
+  'Department Description': string;
   'Services': string;
-  'Building ID': string;
   'Building Name': string;
   'Building Address': string;
   'Building Phone Number': string;
@@ -145,43 +142,38 @@ export default function CSV() {
               <table className="min-w-full bg-white border">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="py-2 px-3 border">Node ID</th>
                     <th className="py-2 px-3 border">Node Type</th>
                     <th className="py-2 px-3 border">Node Description</th>
                     <th className="py-2 px-3 border">Edge Connections (from -&gt; to)</th>
                     <th className="py-2 px-3 border">Node (lat,long)</th>
                     <th className="py-2 px-3 border">Floor</th>
                     <th className="py-2 px-3 border">Suite</th>
-                    <th className="py-2 px-3 border">Department ID</th>
-                    <th className="py-2 px-3 border">Department Name</th>
-                    <th className="py-2 px-3 border">Phone Number</th>
-                    <th className="py-2 px-3 border">Service ID</th>
-                    <th className="py-2 px-3 border">Services</th>
-                    <th className="py-2 px-3 border">Building ID</th>
                     <th className="py-2 px-3 border">Building Name</th>
                     <th className="py-2 px-3 border">Building Address</th>
                     <th className="py-2 px-3 border">Building Phone Number</th>
+                    <th className="py-2 px-3 border">Department Name</th>
+                    <th className="py-2 px-3 border">Phone Number</th>
+                    <th className="py-2 px-3 border">Department Description</th>
+                    <th className="py-2 px-3 border">Services</th>
+
                   </tr>
                 </thead>
                 <tbody>
                   {previewData.map((row, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                      <td className="py-2 px-3 border">{row["Node ID"]}</td>
                       <td className="py-2 px-3 border">{row["Node Type"]}</td>
                       <td className="py-2 px-3 border">{row["Node Description"]}</td>
                       <td className="py-2 px-3 border">{row["Edge Connections (from -> to)"]}</td>
                       <td className="py-2 px-3 border">{row["Node (lat,long)"]}</td>
                       <td className="py-2 px-3 border">{row["Floor"]}</td>
                       <td className="py-2 px-3 border">{row["Suite"]}</td>
-                      <td className="py-2 px-3 border">{row["Department ID"]}</td>
-                      <td className="py-2 px-3 border">{row["Department Name"]}</td>
-                      <td className="py-2 px-3 border">{row["Phone Number"]}</td>
-                      <td className="py-2 px-3 border">{row["Service ID"]}</td>
-                      <td className="py-2 px-3 border">{row["Services"]}</td>
-                      <td className="py-2 px-3 border">{row["Building ID"]}</td>
                       <td className="py-2 px-3 border">{row["Building Name"]}</td>
                       <td className="py-2 px-3 border">{row["Building Address"]}</td>
                       <td className="py-2 px-3 border">{row["Building Phone Number"]}</td>
+                      <td className="py-2 px-3 border">{row["Department Name"]}</td>
+                      <td className="py-2 px-3 border">{row["Phone Number"]}</td>
+                      <td className="py-2 px-3 border">{row["Department Description"]}</td>
+                      <td className="py-2 px-3 border">{row["Services"]}</td>
                     </tr>
                   ))}
                 </tbody>

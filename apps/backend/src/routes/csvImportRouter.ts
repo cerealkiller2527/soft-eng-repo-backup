@@ -5,13 +5,16 @@ import { parse } from 'csv-parse/sync';
 
 export const t = initTRPC.create();
 
+//trim the nodeCoord String
+const normalizeCoord = (coord: string) => coord.replace(/\s+/g, '');
+
 export const csvImportRouter = t.router({
     importCSV: t.procedure
         .input(z.union([z.string(), z.object({ json: z.string() })]))
         .mutation(async (req) => {
             try {
                 const input = typeof req.input === 'string' ? req.input : req.input.json;
-                //parse through the parse library
+
                 const records = parse(input, {
                     columns: true,
                     skip_empty_lines: true,
@@ -19,138 +22,164 @@ export const csvImportRouter = t.router({
                 });
 
                 const edgeBuffer: { from: string; to: string }[] = [];
-                const nodeMap = new Map<string, number>(); // key: "lat,long" -> node.id
+                const nodeMap = new Map<string, number>(); // nodeCoord -> nodeId
 
-                //for each row of the csv
                 for (const record of records) {
-                    //get the deptID and buildingID
-                    const deptId = parseInt(record['Department ID'], 10);
-                    const bldgId = parseInt(record['Building ID'], 10);
+                    const departmentName = record['Department Name']?.trim();
+                    const buildingName = record['Building Name']?.trim();
+                    if (!buildingName) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Building Name missing`,
+                        });
+                    }
 
-                    if (isNaN(deptId) || isNaN(bldgId)) continue;
-
-                    //update the building and department or create a new building and department
+                    // Create/Update the building via building name
                     const building = await PrismaClient.building.upsert({
-                        where: { id: bldgId },
+                        where: { name: buildingName },
                         update: {
-                            name: record['Building Name'] || '',
                             address: record['Building Address'] || '',
                             phoneNumber: record['Building Phone Number'] || '',
                         },
                         create: {
-                            id: bldgId,
-                            name: record['Building Name'] || '',
+                            name: buildingName,
                             address: record['Building Address'] || '',
                             phoneNumber: record['Building Phone Number'] || '',
                         },
                     });
 
-                    const department = await PrismaClient.department.upsert({
-                        where: { id: deptId },
-                        update: {
-                            name: record['Department Name'] || '',
-                            phoneNumber: record['Phone Number'] || '',
-                            buildingID: bldgId,
-                        },
-                        create: {
-                            id: deptId,
-                            name: record['Department Name'] || '',
-                            phoneNumber: record['Phone Number'] || '',
-                            buildingID: bldgId,
+                    // get the node info
+                    const rawCoord = normalizeCoord(record['Node (lat,long)']);
+                    if (!rawCoord) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Node Coord missing`,
+                        });
+                    }
+                    const match = rawCoord.match(/\(([-\d.]+),\s*([-\d.]+)\)/); // match to (decimal,decimal)
+                    if (!match) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Invalid format of the Node Coord`,
+                        });
+                    }
+
+                    const lat = parseFloat(match[1]); // get the lat
+                    const long = parseFloat(match[2]); // get the long
+                    const floor = parseInt(record['Floor'].trim(), 10);
+                    if (isNaN(floor)) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Floor number missing`,
+                        });
+                    }
+                    const description = (record['Node Description'] || '').trim();
+                    const suite = (record['Suite'] || '').trim();
+
+                    //find with there is the same lat, long, and floor
+                    let node = await PrismaClient.node.findFirst({
+                        where: { lat, long, floor },
+                    });
+
+                    // if node doesn't exist that create the node
+                    if (!node) {
+                        node = await PrismaClient.node.create({
+                            data: {
+                                type: 'Location',
+                                lat,
+                                long,
+                                floor,
+                                suite,
+                                description,
+                                buildingId: building.id,
+                                departmentId: null, // added later
+                            },
+                        });
+                    }
+                    //make sure the node and the building is connected
+                    await PrismaClient.node.update({
+                        where: { id: node.id },
+                        data: { buildingId: building.id },
+                    });
+                    // key the nodeCoord with the nodeId
+                    nodeMap.set(rawCoord, node.id);
+
+                    // create or update department
+                    //find department via department name and building id
+                    let department = await PrismaClient.department.findFirst({
+                        where: {
+                            name: departmentName,
+                            node: {
+                                some: {
+                                    buildingId: building.id,
+                                },
+                            },
                         },
                     });
 
-                    // split the service
-                    const svcIds = (record['Service ID'] || '')
-                        .split(';')
-                        .map((id: string) => id.trim());
+                    //if department doesn't exist create department or update info
+                    if (!department) {
+                        department = await PrismaClient.department.create({
+                            data: {
+                                name: departmentName,
+                                phoneNumber: record['Phone Number'] || '',
+                                description: record['Department Description'] || null,
+                            },
+                        });
+                    } else {
+                        department = await PrismaClient.department.update({
+                            where: { id: department.id },
+                            data: {
+                                phoneNumber: record['Phone Number'] || '',
+                                description: record['Department Description'] || null,
+                            },
+                        });
+                    }
+
+                    // update node with departmentId
+                    await PrismaClient.node.update({
+                        where: { id: node.id },
+                        data: { departmentId: department.id },
+                    });
+
+                    // get all the service
                     const svcNames = (record['Services'] || '')
                         .split(';')
                         .map((s: string) => s.trim());
 
-                    //for each service
-                    for (let i = 0; i < svcIds.length; i++) {
-                        const svcId = parseInt(svcIds[i], 10);
-                        if (isNaN(svcId)) continue;
+                    //for every service
+                    for (const name of svcNames) {
+                        if (!name) continue;
 
-                        const name = svcNames[i] || `Service ${svcId}`;
-                        //update the service or create a service
-                        const service = await PrismaClient.service.upsert({
-                            where: { id: svcId },
-                            update: { name },
-                            create: { id: svcId, name },
-                        });
+                        //find out if there is already a service in the database
+                        let service = await PrismaClient.service.findFirst({ where: { name } });
 
-                        //check if the relationship between department and service exist. if not, create the relationship
+                        //if there isn't create one
+                        if (!service) {
+                            service = await PrismaClient.service.create({ data: { name } });
+                        }
+
+                        //check if there is a relationship between the department and service
                         const exists = await PrismaClient.departmentServices.findFirst({
                             where: {
-                                departmentID: deptId,
-                                serviceID: svcId,
+                                departmentID: department.id,
+                                serviceID: service.id,
                             },
                         });
 
+                        // if there isn't, create it
                         if (!exists) {
                             await PrismaClient.departmentServices.create({
                                 data: {
-                                    departmentID: deptId,
-                                    serviceID: svcId,
+                                    departmentID: department.id,
+                                    serviceID: service.id,
                                 },
                             });
                         }
                     }
 
-                    // get every node info
-                    const latLongPairs = (record['"Node (lat,long)"'] || '')
-                        .split(';')
-                        .map((s: string) => s.trim());
-                    const descriptions = (record['Node Description'] || '')
-                        .split(';')
-                        .map((s: string) => s.trim());
-                    const floors = (record['Floor'] || '')
-                        .split(';')
-                        .map((s: string) => parseInt(s.trim(), 10) || 1);
-                    const suites = (record['Suite'] || '').split(';').map((s: string) => s.trim());
-
-                    for (let i = 0; i < latLongPairs.length; i++) {
-                        const match = latLongPairs[i].match(/\(([-\d.]+),\s*([-\d.]+)\)/);
-                        if (!match) continue;
-
-                        const lat = parseFloat(match[1]);
-                        const long = parseFloat(match[2]);
-                        const coordKey = `${lat},${long}`;
-
-                        //check if the node exist
-                        const existingNode = await PrismaClient.node.findFirst({
-                            where: {
-                                lat: lat,
-                                long: long,
-                                floor: floors[i],
-                            },
-                        });
-
-                        //if it exists, add it to the nodeMap
-                        if (existingNode) {
-                            nodeMap.set(coordKey, existingNode.id);
-                        } else {
-                            //if it doesn't exist, create the node and add it to the nodeMap
-                            const node = await PrismaClient.node.create({
-                                data: {
-                                    type: 'Location',
-                                    lat,
-                                    long,
-                                    description: descriptions[i] || '',
-                                    floor: floors[i] || 1,
-                                    suite: suites[i] || '',
-                                    buildingId: bldgId,
-                                    departmentId: deptId,
-                                },
-                            });
-
-                            nodeMap.set(coordKey, node.id);
-                        }
-                    }
-
-                    // get edge info
+                    // store all the edges
+                    //separate to different edge connection
                     const edgeStrs = (record['Edge Connections (from -> to)'] || '')
                         .split(';')
                         .map((s: string) => s.trim());
@@ -158,32 +187,33 @@ export const csvImportRouter = t.router({
                     for (const edgeStr of edgeStrs) {
                         const match = edgeStr.match(
                             /\(([-\d.]+),\s*([-\d.]+)\)\s*->\s*\(([-\d.]+),\s*([-\d.]+)\)/
-                        );
+                        ); // match to (lat, long) -> (lat, long)
                         if (!match) continue;
 
-                        const from = `${parseFloat(match[1])},${parseFloat(match[2])}`;
-                        const to = `${parseFloat(match[3])},${parseFloat(match[4])}`;
-                        //add to the edge pairs
+                        const from = normalizeCoord(`(${match[1]},${match[2]})`);
+                        const to = normalizeCoord(`(${match[3]},${match[4]})`);
+
+                        //store the edges
                         edgeBuffer.push({ from, to });
                     }
                 }
 
-                // Create the edges
+                // create the edges from the store
                 for (const { from, to } of edgeBuffer) {
                     const fromId = nodeMap.get(from);
                     const toId = nodeMap.get(to);
 
                     if (!fromId || !toId) {
-                        console.warn(`Node at ${from} or ${to} not found`);
+                        console.warn(`Missing node`);
                         continue;
                     }
 
-                    // check if the edge exist
+                    //find if the edge exist
                     const exists = await PrismaClient.edge.findFirst({
                         where: { fromNodeId: fromId, toNodeId: toId },
                     });
 
-                    // if edge doesn't exist, create a new edge
+                    // if not add it
                     if (!exists) {
                         await PrismaClient.edge.create({
                             data: {
@@ -194,7 +224,7 @@ export const csvImportRouter = t.router({
                     }
                 }
 
-                return { message: 'CSV import succeeded!' };
+                return { message: 'CSV import succeeded (1 node per row)' };
             } catch (error) {
                 const msg = error instanceof Error ? error.message : String(error);
                 throw new TRPCError({

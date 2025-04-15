@@ -4,19 +4,19 @@ const prisma = new PrismaClient();
 
 async function main() {
     // Delete all existing data in correct order
-    await prisma.audioVisual.deleteMany();
-    await prisma.externalTransportation.deleteMany();
-    await prisma.equipmentDelivery.deleteMany();
-    await prisma.language.deleteMany();
-    await prisma.security.deleteMany();
-    await prisma.serviceRequest.deleteMany();
-    await prisma.employee.deleteMany();
-    await prisma.edge.deleteMany();
-    await prisma.departmentServices.deleteMany();
-    await prisma.service.deleteMany();
-    await prisma.node.deleteMany();
-    await prisma.building.deleteMany();
-    await prisma.user.deleteMany();
+    await prisma.audioVisual.deleteMany({});
+    await prisma.externalTransportation.deleteMany({});
+    await prisma.equipmentDelivery.deleteMany({});
+    await prisma.language.deleteMany({});
+    await prisma.security.deleteMany({});
+    await prisma.serviceRequest.deleteMany({});
+    await prisma.employee.deleteMany({});
+    await prisma.edge.deleteMany({});
+    await prisma.departmentServices.deleteMany({});
+    await prisma.service.deleteMany({});
+    await prisma.node.deleteMany({});
+    await prisma.building.deleteMany({});
+    await prisma.user.deleteMany({});
 
     console.log('Existing data purged.');
 
@@ -342,6 +342,7 @@ async function main() {
     });
 
     console.log('✅ Seed complete!');
+
 }
 
 main()
