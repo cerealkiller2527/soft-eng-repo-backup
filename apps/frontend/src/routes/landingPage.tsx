@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const Landing: React.FC = () => {
     // Images array (you can add as many as you want, code should support it)
@@ -7,7 +7,7 @@ const Landing: React.FC = () => {
         '/HeroPageWalking.jpg',
         '/HeroPageNavigation.jpg',
         '/HeroPagePatriotPlace.jpg',
-        '/HeroPageChestnutHill.jpg'
+        '/HeroPageChestnutHill.jpg',
     ];
 
     // Useful for rotation logic

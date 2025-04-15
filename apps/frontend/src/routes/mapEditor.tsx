@@ -1,16 +1,15 @@
 import React, { useRef, useEffect, useState } from 'react';
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer";
+import Navbar from '../components/Navbar.tsx';
+import Footer from '../components/Footer';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
-import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx'
-import { overlays } from "@/constants.tsx";
+import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx';
+import { overlays } from '@/constants.tsx';
 
 type formType = {
     building: string;
     floor: number;
 };
-
 
 const MapEditor = () => {
     const trpc = useTRPC();
@@ -22,13 +21,19 @@ const MapEditor = () => {
     const [form, setForm] = useState<formType | null>(null);
 
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
-    const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
+    const [AdvancedMarker, setAdvancedMarker] = useState<
+        typeof google.maps.marker.AdvancedMarkerElement | null
+    >(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
-            const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-            const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+            const { InfoWindow } = (await google.maps.importLibrary(
+                'maps'
+            )) as google.maps.MapsLibrary;
+            const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
+                'marker'
+            )) as google.maps.MarkerLibrary;
 
             setInfoWindow(new InfoWindow());
             setAdvancedMarker(() => AdvancedMarkerElement);
@@ -36,36 +41,35 @@ const MapEditor = () => {
         };
 
         loadGoogleLibraries();
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (!mapInstance.current || !AdvancedMarker) return;
 
         const marker = new AdvancedMarker({
-            position : { lat: 42.3262, lng: -71.1497 },
+            position: { lat: 42.3262, lng: -71.1497 },
             map: mapInstance.current,
             gmpClickable: true,
         });
         return () => marker.setMap(null); // Cleanup on unmount or dependency change
     }, [AdvancedMarker]);
 
-        useEffect(() => {
-        if(!form) return;
-        if(form.building == "Patriot Place"){
-            mapInstance.current?.setCenter({ lat: 42.09280, lng: -71.266 });
-        }else{
-            mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
+    useEffect(() => {
+        if (!form) return;
+        if (form.building == 'Patriot Place') {
+            mapInstance.current?.setCenter({ lat: 42.0928, lng: -71.266 });
+        } else {
+            mapInstance.current?.setCenter({ lat: 42.326, lng: -71.1499 });
         }
         setImageIndex(form.floor - 1);
         console.log(form.floor);
-
     }, [form]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
             const map = new google.maps.Map(mapRef.current, {
                 zoom: 19,
-                center: { lat: 42.09280, lng: -71.266 },
+                center: { lat: 42.0928, lng: -71.266 },
                 disableDefaultUI: false,
                 mapId: '57f41020f9b31f57',
             });
@@ -82,7 +86,7 @@ const MapEditor = () => {
     useEffect(() => {
         if (!mapInstance.current) return;
 
-        overlaysRef.current.forEach(o => o.setMap(null));
+        overlaysRef.current.forEach((o) => o.setMap(null));
         overlaysRef.current = [];
 
         overlays[imageIndex].forEach((overlayData) => {
@@ -98,10 +102,6 @@ const MapEditor = () => {
         });
     }, [imageIndex]);
 
-
-
-
-
     return (
         <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
             <div className="flex justify-start mb-2">
@@ -111,18 +111,18 @@ const MapEditor = () => {
             <Navbar />
 
             <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
-                <MapEditorSelectForm onSubmit={(form) => {
-                    setForm(form);
-                }} />
-
+                <MapEditorSelectForm
+                    onSubmit={(form) => {
+                        setForm(form);
+                    }}
+                />
                 <div
                     id="google-map-container"
                     className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
                     ref={mapRef}
                     style={{ width: '100%', height: '600px' }}
                 />
-
-3
+                3
             </div>
 
             <Footer />

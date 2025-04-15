@@ -1,37 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-const buildings =["Patriot Place", "Chestnut Hill"];
-const floors = [1,2,3,4,5];
-
+const buildings = ['Patriot Place', 'Chestnut Hill'];
+const floors = [1, 2, 3, 4, 5];
 
 export default function MapEditorSelectForm({ onSubmit }) {
-
     useEffect(() => {
         //useeffect for setting MGBHospitals once backend is made
         //should run on mount
     }, []);
 
     const [form, setForm] = useState({
-        building: "",
+        building: '',
         floor: 1,
     });
 
-    const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
+    const [submittedRequests, setSubmittedRequests] = useState<(typeof form)[]>([]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
         setForm({ ...form, [name]: value });
     };
 
-
-
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         setSubmittedRequests((prevRequests) => [...prevRequests, form]);
         onSubmit(form);
     };
-
-
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-md rounded-2xl">
@@ -78,7 +72,6 @@ export default function MapEditorSelectForm({ onSubmit }) {
                     Submit
                 </button>
             </form>
-
         </div>
     );
 }

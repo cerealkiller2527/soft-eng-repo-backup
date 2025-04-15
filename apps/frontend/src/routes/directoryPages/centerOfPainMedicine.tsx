@@ -1,14 +1,14 @@
 import React from 'react';
 import '../../styles/directoryPagesStyles.css';
-import {useTRPC} from "@/database/trpc.ts";
+import { useTRPC } from '@/database/trpc.ts';
 import { useQuery } from '@tanstack/react-query';
 
-const  centerOfPainMedicine = () => {
+const centerOfPainMedicine = () => {
     const trpc = useTRPC();
 
     const department = useQuery(
         trpc.department.getDepartment.queryOptions({
-            name: "Center for Pain Medicine"
+            name: 'Center for Pain Medicine',
         })
     );
 
@@ -17,7 +17,9 @@ const  centerOfPainMedicine = () => {
             <h2>Welcome to the Center of Pain Medicine!</h2>
             {department.data ? (
                 <div>
-                    <p><strong>Phone Number:</strong> {department.data.phoneNumber}</p>
+                    <p>
+                        <strong>Phone Number:</strong> {department.data.phoneNumber}
+                    </p>
 
                     <div>
                         <strong>Services:</strong>

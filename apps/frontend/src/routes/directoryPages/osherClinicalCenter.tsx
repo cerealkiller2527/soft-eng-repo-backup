@@ -1,14 +1,14 @@
 import React from 'react';
 import '../../styles/directoryPagesStyles.css';
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from "../../database/trpc.ts";
+import { useTRPC } from '../../database/trpc.ts';
 
-const  osherClinicalCenter = () => {
+const osherClinicalCenter = () => {
     const trpc = useTRPC();
 
     const department = useQuery(
         trpc.department.getDepartment.queryOptions({
-            name: "Osher Clinical Center for Integrative Health"
+            name: 'Osher Clinical Center for Integrative Health',
         })
     );
 
@@ -17,7 +17,9 @@ const  osherClinicalCenter = () => {
             <h2>Welcome to the Osher Clinical Center for Integrative Health!</h2>
             {department.data ? (
                 <div>
-                    <p><strong>Phone Number:</strong> {department.data.phoneNumber}</p>
+                    <p>
+                        <strong>Phone Number:</strong> {department.data.phoneNumber}
+                    </p>
 
                     <div>
                         <strong>Services:</strong>

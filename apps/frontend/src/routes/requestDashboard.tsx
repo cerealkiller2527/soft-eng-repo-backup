@@ -1,14 +1,12 @@
-import React from "react";
-import {useState} from "react";
-import TransportRequestForm from "../components/TransportRequestForm.tsx";
-import TransportCard from "../components/TransportCard.tsx"
-import Navbar from "../components/Navbar.tsx";
+import React from 'react';
+import { useState } from 'react';
+import TransportRequestForm from '../components/TransportRequestForm.tsx';
+import TransportCard from '../components/TransportCard.tsx';
+import Navbar from '../components/Navbar.tsx';
 import { useQuery } from '@tanstack/react-query';
-import {useTRPC} from "../database/trpc.ts";
-
+import { useTRPC } from '../database/trpc.ts';
 
 const requestDashboard = () => {
-
     type TransportRequest = {
         patientName: string;
         pickupTime: Date;
@@ -18,8 +16,8 @@ const requestDashboard = () => {
         additionalNotes: string;
     };
     const trpc = useTRPC();
-    const requests = useQuery(trpc.service.getExternalTransportation.queryOptions())
-    console.log("Fetched requests:", requests.data);
+    const requests = useQuery(trpc.service.getExternalTransportation.queryOptions());
+    console.log('Fetched requests:', requests.data);
 
     return (
         <div className="p-25">
@@ -31,21 +29,46 @@ const requestDashboard = () => {
             <div className="mt-8">
                 <h2 className="text-lg font-semibold mb-4">Submitted Requests</h2>
                 {requests.data?.length === 0 ? (
-                    <p>No requests submitted yet.</p>) : (
+                    <p>No requests submitted yet.</p>
+                ) : (
                     <div className="grid gap-4">
-                        {requests.data?.map(req => (
+                        {requests.data?.map((req) => (
                             <div
                                 key={req.id}
-                                className="border p-4 rounded-xl shadow bg-white space-y-1">
-                                <p><strong>TRANSPORT REQUEST</strong></p>
-                                <p><strong>Patient:</strong> {req.externalTransportation.patientName}</p>
-                                <p><strong>Pickup Time:</strong> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
-                                <p><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
-                                <p><strong>Pickup:</strong> {req.externalTransportation.fromWhere}</p>
-                                <p><strong>Dropoff:</strong> {req.externalTransportation.toWhere}</p>
-                                <p><strong>Notes:</strong> {req.description || "N/A"}</p>
-                                <p><strong>Created By:</strong> {req.fromEmployee}</p>
-                                <p><strong>Priority:</strong> {req.priority}</p>
+                                className="border p-4 rounded-xl shadow bg-white space-y-1"
+                            >
+                                <p>
+                                    <strong>TRANSPORT REQUEST</strong>
+                                </p>
+                                <p>
+                                    <strong>Patient:</strong>{' '}
+                                    {req.externalTransportation.patientName}
+                                </p>
+                                <p>
+                                    <strong>Pickup Time:</strong>{' '}
+                                    {new Date(
+                                        req.externalTransportation.pickupTime
+                                    ).toLocaleString()}
+                                </p>
+                                <p>
+                                    <strong>Transport Type:</strong>{' '}
+                                    {req.externalTransportation.transportType}
+                                </p>
+                                <p>
+                                    <strong>Pickup:</strong> {req.externalTransportation.fromWhere}
+                                </p>
+                                <p>
+                                    <strong>Dropoff:</strong> {req.externalTransportation.toWhere}
+                                </p>
+                                <p>
+                                    <strong>Notes:</strong> {req.description || 'N/A'}
+                                </p>
+                                <p>
+                                    <strong>Created By:</strong> {req.fromEmployee}
+                                </p>
+                                <p>
+                                    <strong>Priority:</strong> {req.priority}
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -54,6 +77,5 @@ const requestDashboard = () => {
         </div>
     );
 };
-
 
 export default requestDashboard;

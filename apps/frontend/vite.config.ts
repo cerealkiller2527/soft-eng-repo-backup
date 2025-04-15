@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import path from "path"
+import path from 'path';
 import react from '@vitejs/plugin-react-swc';
 import eslint from 'vite-plugin-eslint';
 import tailwindcss from '@tailwindcss/vite';
@@ -10,7 +10,7 @@ export default defineConfig({
     resolve: {
         preserveSymlinks: true,
         alias: {
-            "@": path.resolve(__dirname, "./src"),
+            '@': path.resolve(__dirname, './src'),
         },
     },
     server: {

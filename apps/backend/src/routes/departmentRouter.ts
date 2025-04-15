@@ -16,6 +16,12 @@ export const departmentRouter = t.router({
                         service: true,
                     },
                 },
+                node: {
+                    select: {
+                        floor: true,
+                        suite: true,
+                    },
+                },
             },
         });
     }),

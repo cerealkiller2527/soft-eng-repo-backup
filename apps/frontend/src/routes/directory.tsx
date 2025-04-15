@@ -1,13 +1,13 @@
 import React from 'react';
-import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer";
+import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar.tsx';
+import Footer from '../components/Footer';
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from "../components/ui/accordion";
+} from '../components/ui/accordion';
 
 interface AccordionItemData {
     id: string;
@@ -17,15 +17,17 @@ interface AccordionItemData {
 
 const DirectoryPage: React.FC = () => {
     // Button styling
-    const buttonClass = "flex items-center justify-center text-center text-[#012D5A] " +
-        "p-4 h-32 w-64 text-base leading-tight whitespace-normal border border-[#012D5A] " +
-        "break-words transition-all duration-200 hover:bg-[#012D5A]/5 rounded-lg";
-    const buttonContainerClass = "flex flex-wrap justify-center gap-4 my-6 w-full";
+    const buttonClass =
+        'flex items-center justify-center text-center text-[#012D5A] ' +
+        'p-4 h-32 w-64 text-base leading-tight whitespace-normal border border-[#012D5A] ' +
+        'break-words transition-all duration-200 hover:bg-[#012D5A]/5 rounded-lg';
+    const buttonContainerClass = 'flex flex-wrap justify-center gap-4 my-6 w-full';
 
     // Accordion styling
-    const accordionContentClass = "px-2 pt-2 pb-6";
-    const accordionTriggerClass = "w-full py-4 text-[#012D5A] text-left text-xl font-normal " +
-        "hover:no-underline border-b border-[#012D5A]/20 hover:bg-gray-50 px-0";
+    const accordionContentClass = 'px-2 pt-2 pb-6';
+    const accordionTriggerClass =
+        'w-full py-4 text-[#012D5A] text-left text-xl font-normal ' +
+        'hover:no-underline border-b border-[#012D5A]/20 hover:bg-gray-50 px-0';
 
     const accordionItems: AccordionItemData[] = [
         {
@@ -54,7 +56,7 @@ const DirectoryPage: React.FC = () => {
                         </Link>
                     </div>
                 </div>
-            )
+            ),
         },
         {
             id: 'section2',
@@ -88,7 +90,7 @@ const DirectoryPage: React.FC = () => {
                         </Link>
                     </div>
                 </div>
-            )
+            ),
         },
         {
             id: 'section3',
@@ -110,41 +112,41 @@ const DirectoryPage: React.FC = () => {
                         </Link>
                     </div>
                 </div>
-            )
-        }
+            ),
+        },
     ];
 
     return (
         <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
-            <br/>
+            <br />
             <div className="flex-grow p-4">
-            <Navbar />
+                <Navbar />
 
-            {/* Header */}
-            <div className="max-w-4xl mx-auto mb-8">
-                <h1 className="text-3xl font-light text-[#012D5A] mb-2">
-                    Services at Brigham and Women's Hospital
-                </h1>
-                <div className="h-px bg-[#012D5A]/20 w-full"></div>
-            </div>
+                {/* Header */}
+                <div className="max-w-4xl mx-auto mb-8">
+                    <h1 className="text-3xl font-light text-[#012D5A] mb-2">
+                        Services at Brigham and Women's Hospital
+                    </h1>
+                    <div className="h-px bg-[#012D5A]/20 w-full"></div>
+                </div>
 
-            {/* Accordion */}
-            <div className="max-w-4xl mx-auto">
-                <Accordion type="single" collapsible className="w-full space-y-1">
-                    {accordionItems.map((item) => (
-                        <AccordionItem key={item.id} value={item.id} className="border-none">
-                            <AccordionTrigger className={accordionTriggerClass}>
-                                {item.title}
-                            </AccordionTrigger>
-                            <AccordionContent className={accordionContentClass}>
-                                {item.content}
-                            </AccordionContent>
-                        </AccordionItem>
-                    ))}
-                </Accordion>
+                {/* Accordion */}
+                <div className="max-w-4xl mx-auto">
+                    <Accordion type="single" collapsible className="w-full space-y-1">
+                        {accordionItems.map((item) => (
+                            <AccordionItem key={item.id} value={item.id} className="border-none">
+                                <AccordionTrigger className={accordionTriggerClass}>
+                                    {item.title}
+                                </AccordionTrigger>
+                                <AccordionContent className={accordionContentClass}>
+                                    {item.content}
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
+                </div>
             </div>
-            </div>
-            <Footer/>
+            <Footer />
         </div>
     );
 };

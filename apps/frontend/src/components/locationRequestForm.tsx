@@ -1,24 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-const buildings =["Patriot Place", "Chestnut Hill"];
-const MGBHospitals = ["Reception"];
-const transport = ["Public Transport", "Walking", "Driving"];
+const buildings = ['Patriot Place', 'Chestnut Hill'];
+const MGBHospitals = ['Reception'];
+const transport = ['Public Transport', 'Walking', 'Driving'];
 
 export default function LocationRequestForm({ onSubmit }) {
-
     useEffect(() => {
         //useeffect for setting MGBHospitals once backend is made
         //should run on mount
     }, []);
 
     const [form, setForm] = useState({
-        location: "",
-        destination: "",
-        transport: "",
-        building: "",
+        location: '',
+        destination: '',
+        transport: '',
+        building: '',
     });
 
-    const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
+    const [submittedRequests, setSubmittedRequests] = useState<(typeof form)[]>([]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -32,41 +31,41 @@ export default function LocationRequestForm({ onSubmit }) {
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
-        const requiredFields = ["location", "destination"];
+        const requiredFields = ['location', 'destination'];
         const missingFields = requiredFields.filter((field) => !form[field as keyof typeof form]);
         if (missingFields.length > 0) {
-            alert("Please fill all required fields.");
+            alert('Please fill all required fields.');
             return;
         }
 
         // Geocode the location
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: form.location }, (results, status) => {
-            if (status === "OK") {
+            if (status === 'OK') {
                 const origin = results[0].geometry.location;
                 console.log(results[0].geometry.location);
                 // Call the parent component's onSubmit with the new origin
                 onSubmit(form);
                 setSubmittedRequests((prevRequests) => [...prevRequests, form]);
-                console.log("Form submitted successfully.", form);
+                console.log('Form submitted successfully.', form);
             } else {
-                alert("Geocode was not successful for the following reason: " + status);
+                alert('Geocode was not successful for the following reason: ' + status);
             }
         });
     };
 
     // Initialize Autocomplete
     useEffect(() => {
-        if (typeof google !== "undefined" && google.maps && google.maps.places) {
-            const input = document.getElementById("location-input") as HTMLInputElement;
+        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+            const input = document.getElementById('location-input') as HTMLInputElement;
             const autocomplete = new google.maps.places.Autocomplete(input);
 
-            autocomplete.addListener("place_changed", () => {
+            autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
                 if (place.geometry) {
                     setForm((prevForm) => ({
                         ...prevForm,
-                        location: place.formatted_address || "",
+                        location: place.formatted_address || '',
                     }));
                 }
             });

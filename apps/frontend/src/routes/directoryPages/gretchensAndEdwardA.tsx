@@ -1,25 +1,25 @@
 import React from 'react';
 import '../../styles/directoryPagesStyles.css';
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from "../../database/trpc.ts";
+import { useTRPC } from '../../database/trpc.ts';
 
-const  gretchensAndEdwardA = () => {
+const gretchensAndEdwardA = () => {
     const trpc = useTRPC();
 
     const department = useQuery(
         trpc.department.getDepartment.queryOptions({
-            name: "Gretchen S. and Edward A. Fish Center for Women's Health"
+            name: "Gretchen S. and Edward A. Fish Center for Women's Health",
         })
     );
 
     return (
         <div>
-            <h2>Welcome to the Gretchen S. and
-                Edward A. Fish Center
-                for Women’s Health!</h2>
+            <h2>Welcome to the Gretchen S. and Edward A. Fish Center for Women’s Health!</h2>
             {department.data ? (
                 <div>
-                    <p><strong>Phone Number:</strong> {department.data.phoneNumber}</p>
+                    <p>
+                        <strong>Phone Number:</strong> {department.data.phoneNumber}
+                    </p>
 
                     <div>
                         <strong>Services:</strong>

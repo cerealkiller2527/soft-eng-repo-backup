@@ -1,13 +1,13 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from "../../database/trpc.ts";
+import { useTRPC } from '../../database/trpc.ts';
 
-const  brighamObstetrics = () => {
+const brighamObstetrics = () => {
     const trpc = useTRPC();
 
     const department = useQuery(
         trpc.department.getDepartment.queryOptions({
-            name: "Brigham Obstetrics and Gynecology Group (BOGG)"
+            name: 'Brigham Obstetrics and Gynecology Group (BOGG)',
         })
     );
 
@@ -16,7 +16,9 @@ const  brighamObstetrics = () => {
             <h2>Welcome to the Brigham Obstetrics and Gynecology Group!</h2>
             {department.data ? (
                 <div>
-                    <p><strong>Phone Number:</strong> {department.data.phoneNumber}</p>
+                    <p>
+                        <strong>Phone Number:</strong> {department.data.phoneNumber}
+                    </p>
 
                     <div>
                         <strong>Services:</strong>

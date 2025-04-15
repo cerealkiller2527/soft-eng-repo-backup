@@ -1,32 +1,30 @@
-import React, {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 
 const Login: React.FC = () => {
     const trpc = useTRPC();
-    const [email, setEmail] = useState("");
-    const[transition, setTransition] = useState(false);
+    const [email, setEmail] = useState('');
+    const [transition, setTransition] = useState(false);
 
-    const[username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const[confirmPassword, setConfirmPassword] = useState("");
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     //const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
 
-
     const checkLogin = useMutation(
-
         trpc.login.checkLogin.mutationOptions({
             onSuccess: (data) => {
                 console.log('Login success', data);
-                navigate("/Directory");
+                navigate('/Directory');
             },
             onError: (error) => {
                 console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
+                alert('Username or password is incorrect!');
             },
         })
     );
@@ -34,50 +32,61 @@ const Login: React.FC = () => {
         trpc.login.addLogin.mutationOptions({
             onSuccess: (data) => {
                 console.log('Add user', data);
-                alert("Account created successfully! You can now log in.");
+                alert('Account created successfully! You can now log in.');
                 setIsSignUp(false); // Switch to login form after sign-up
             },
             onError: (error) => {
                 console.error('Unable to add user', error);
-                alert("Unable to add user! Try again later.");
-            }
+                alert('Unable to add user! Try again later.');
+            },
         })
-    )
+    );
     const handleSignUp = () => {
-        if(password!== confirmPassword){
-            alert("Password do not match!");
+        if (password !== confirmPassword) {
+            alert('Password do not match!');
             return;
         }
 
         addUser.mutate({
             username: username,
             password: password,
-            email: email
-        })
-
+            email: email,
+        });
     };
 
     return (
-
-//dimensions for the hero image: 1152px width 1080px height
+        //dimensions for the hero image: 1152px width 1080px height
         <div className="h-screen flex">
-            <div className = "w-3/5 bg-cover bg-center opacity-90" style={{backgroundImage:"url('/newImageHero.png')"}}>
-                <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-4 left-4 w-92 h-auto"/>
+            <div
+                className="w-3/5 bg-cover bg-center opacity-90"
+                style={{ backgroundImage: "url('/newImageHero.png')" }}
+            >
+                <img
+                    src="/hospitalLogo.png"
+                    alt="Hospital Logo"
+                    className="absolute top-4 left-4 w-92 h-auto"
+                />
 
-                <div onMouseEnter={() => {
-                    setTransition(true);
-                }} className={`flex flex-col items-center text-center text-white p-6 rounded-lg mt-90 mr-10 transition-all duration-1000 ease-in-out ${transition? "opacity-100 translate-y-1": "opacity-0 translate-y-8 "}`}>
+                <div
+                    onMouseEnter={() => {
+                        setTransition(true);
+                    }}
+                    className={`flex flex-col items-center text-center text-white p-6 rounded-lg mt-90 mr-10 transition-all duration-1000 ease-in-out ${transition ? 'opacity-100 translate-y-1' : 'opacity-0 translate-y-8 '}`}
+                >
                     <h1 className="text-4xl font-bold ">Accessing Health Care Made Easy</h1>
-                    <p className="text-lg mt-2 y-0">Access maps, request services, and more—all in one application now.</p>
+                    <p className="text-lg mt-2 y-0">
+                        Access maps, request services, and more—all in one application now.
+                    </p>
                 </div>
             </div>
 
-
             <div className="w-2/5 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
-                <div >
+                <div>
                     {isSignUp ? (
                         <>
-                            <h1 className="text-2xl text-gray-800 mb-4 text-center">Create Account</h1>
+                            <h1 className="text-2xl text-gray-800 mb-4 text-center">
+                                Create Account
+                            </h1>
                             <p className="text-sm text-gray-500 mb-6 text-center">
                                 Please enter the below details to sign up.
                             </p>
@@ -111,7 +120,6 @@ const Login: React.FC = () => {
                                 className="w-full p-2 mb-2 border border-gray-300 rounded-md"
                             />
 
-
                             <button
                                 onClick={handleSignUp}
                                 className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
@@ -119,20 +127,18 @@ const Login: React.FC = () => {
                                 Sign Up
                             </button>
                             <p className="mt-4 text-sm text-center">
-                                Already have an account?{" "}
+                                Already have an account?{' '}
                                 <span
                                     onClick={() => setIsSignUp(false)}
                                     className="text-blue-900 hover:underline cursor-pointer"
                                 >
-                Sign In
-              </span>
+                                    Sign In
+                                </span>
                             </p>
                         </>
                     ) : (
                         <>
                             <h1 className="text-2xl text-gray-800 mb-4 text-center">Sign In</h1>
-
-
 
                             <input
                                 type="text"
@@ -149,26 +155,27 @@ const Login: React.FC = () => {
                                 className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <button
-                                onClick={()=>checkLogin.mutate({
-                                    username: username,
-                                    password: password
-                                })}
+                                onClick={() =>
+                                    checkLogin.mutate({
+                                        username: username,
+                                        password: password,
+                                    })
+                                }
                                 className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
                             >
                                 Sign In
                             </button>
                             <p className="mt-4 text-sm text-center">
-                                Don't have an account?{" "}
+                                Don't have an account?{' '}
                                 <span
                                     onClick={() => setIsSignUp(true)}
                                     className="text-blue-900 hover:underline cursor-pointer"
                                 >
-                Create Account
-              </span>
+                                    Create Account
+                                </span>
                             </p>
                         </>
                     )}
-
                 </div>
             </div>
         </div>
