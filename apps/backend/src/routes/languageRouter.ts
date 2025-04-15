@@ -14,11 +14,12 @@ export const languageRouter = t.router({
                 endTime: z.coerce.date().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
+                status: z.nativeEnum(Status).optional(),
                 employee: z.string().optional(),
             })
         )
         .query(async ({ input }) => {
-            const { language, location, startTime, endTime, additionalNotes, priority, employee } =
+            const { language, location, startTime, endTime, additionalNotes, priority, status, employee } =
                 input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
@@ -29,6 +30,7 @@ export const languageRouter = t.router({
                     ...(endTime && { language: { endTime: endTime } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
+                    ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {
