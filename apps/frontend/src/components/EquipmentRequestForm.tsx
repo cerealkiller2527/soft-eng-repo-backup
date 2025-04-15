@@ -39,7 +39,9 @@ const formSchema = z.object({
     additionalNotes: z.string().optional(),
 })
 
-export default function EquipmentRequestForm() {
+export default function EquipmentRequestForm({  onFormSubmit,}: {
+    onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+}) {
     const trpc = useTRPC()
     const addReq = useMutation(trpc.service.addEquipmentRequest.mutationOptions({
         onSuccess: () => {
@@ -67,7 +69,8 @@ export default function EquipmentRequestForm() {
             equipment: values.equipment,
             location: values.location,
             additionalNotes: values.additionalNotes,
-        })
+        });
+        onFormSubmit?.(values);
     }
 
     return (
@@ -83,6 +86,7 @@ export default function EquipmentRequestForm() {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
+                    <p>Created by Will and Christan</p>
                     <FormField
                         control={form.control}
                         name="employeeName"

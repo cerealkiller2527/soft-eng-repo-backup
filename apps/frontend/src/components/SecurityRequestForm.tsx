@@ -23,7 +23,11 @@ const formSchema = z.object({
     additionalNotes: z.string(),
 })
 
-export default function SecurityRequestForm() {
+export default function SecurityRequestForm({  onFormSubmit,}: {
+    onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+}) {
+
+
     const trpc = useTRPC();
     const addReq = useMutation(trpc.service.addSecurityRequest.mutationOptions({
         onSuccess: (data) => {
@@ -50,12 +54,15 @@ export default function SecurityRequestForm() {
             additionalNotes: values.additionalNotes,
             priority: values.priority,
         });
+        onFormSubmit?.(values);
     }
 
     return (
         <Form {...form}>
+            <h2>Security Request Form</h2>
+            <p>Created by Sahana and Tina</p>
+            <br />
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
                 <FormField
                     control={form.control}
                     name="employeeName"

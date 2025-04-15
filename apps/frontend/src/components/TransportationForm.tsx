@@ -11,6 +11,7 @@ import { z } from "zod"
     import {queryClient, useTRPC} from "@/database/trpc.ts";
     import { useMutation } from '@tanstack/react-query';
 
+
     const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
         "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
     const transportTypes = ["Ambulance", "Shuttle", "Private Transport", "Helicopter"];
@@ -30,7 +31,9 @@ import { z } from "zod"
         additionalNotes: z.string(),
     })
 
-    export default function TrialForm() {
+    export default function TransportationForm({  onFormSubmit,}: {
+        onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+    }) {
 
         const trpc = useTRPC();
         const addReq = useMutation(trpc.service.addTransportationRequest.mutationOptions({
@@ -66,11 +69,15 @@ import { z } from "zod"
                 additionalNotes: values.additionalNotes,
                 priority: values.priority,
             });
+            onFormSubmit?.(values);
 
         }
 
         return (
             <Form {...form}>
+                <h2>Transportation Request Form</h2>
+                <p>Created by Matt Nickerson (Iteration 1)</p>
+                <br />
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
                         control={form.control}

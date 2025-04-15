@@ -33,7 +33,7 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
                         >
                             x
                         </button>
-                        <EquipmentForm />
+                        <EquipmentForm onFormSubmit={handleFormSubmit} />
                     </div>
                 </div>
             )}

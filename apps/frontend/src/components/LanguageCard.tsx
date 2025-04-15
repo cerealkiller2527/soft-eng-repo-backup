@@ -1,12 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import SecurityServiceRequest from "../components/SecurityRequestForm.tsx";
 import transportImage from "../../public/SecurityService.png"
+import LanguageRequestForm from "./LanguageRequestForm";
 
 
 
-
-export default function SecurityCard({ onAddRequest }: { onAddRequest: (data: object) => void}) {
+export default function LanguageCard({ onAddRequest }: { onAddRequest: (data: object) => void}) {
 
     // useState to check if pop up should be open or not
     const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +20,7 @@ export default function SecurityCard({ onAddRequest }: { onAddRequest: (data: ob
         <div>
             <button onClick={() => {
                 setIsOpen(true);
-            }} className="text-xl font-bold text-center items-center flex flex-col p-12 bg-[#012D5A] bg-opacity-10 text-white rounded-xl hover:bg-white hover:text-[#012D5A] border border-4 border-[#012D5A]">Security
+            }} className="text-xl font-bold text-center items-center flex flex-col p-12 bg-[#012D5A] bg-opacity-10 text-white rounded-xl hover:bg-white hover:text-[#012D5A] border border-4 border-[#012D5A]">Language
                 <img src="/SecurityService.png"
                      alt="Security"
                      className="w-12 h-12 object-contain flex items-center"
@@ -35,7 +34,7 @@ export default function SecurityCard({ onAddRequest }: { onAddRequest: (data: ob
                         >
                             x
                         </button>
-                        <SecurityServiceRequest onFormSubmit={handleFormSubmit} />
+                        <LanguageRequestForm onFormSubmit={handleFormSubmit} />
                     </div>
                 </div>
             )}

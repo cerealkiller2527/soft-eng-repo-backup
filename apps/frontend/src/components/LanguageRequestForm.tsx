@@ -14,7 +14,7 @@ import { useMutation } from '@tanstack/react-query';
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
 
-const priority = ["LOW", "INTERMEDIATE", "HIGH", "URGENT"];
+const priority = ["Low", "Medium", "High", "Emergency"];
 
 const formSchema = z.object({
     employeeName: z.string(),
@@ -26,7 +26,9 @@ const formSchema = z.object({
     additionalNotes: z.string(),
 })
 
-export default function LanguageRequestForm () {
+export default function LanguageRequestForm ({  onFormSubmit,}: {
+    onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+}) {
 
     const trpc = useTRPC();
     const addReq = useMutation(trpc.service.addLanguageRequest.mutationOptions({
@@ -59,11 +61,13 @@ export default function LanguageRequestForm () {
             additionalNotes: values.additionalNotes,
             priority: values.priority,
         });
-
+        onFormSubmit?.(values);
     }
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <h2>Language Request Form </h2>
+                <p>Created by Brandon and Bobby</p>
                 <FormField
                     control={form.control}
                     name="employeeName"
