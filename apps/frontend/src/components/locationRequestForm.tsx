@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 const MGBHospitals = ["Reception"];
+const transport = ["Public Transport", "Walking", "Driving"];
 
 export default function LocationRequestForm({ onSubmit }) {
 
@@ -12,6 +13,7 @@ export default function LocationRequestForm({ onSubmit }) {
     const [form, setForm] = useState({
         location: "",
         destination: "",
+        transport: "",
     });
 
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
@@ -42,7 +44,7 @@ export default function LocationRequestForm({ onSubmit }) {
                 const origin = results[0].geometry.location;
                 console.log(results[0].geometry.location);
                 // Call the parent component's onSubmit with the new origin
-                onSubmit(origin, form.destination);
+                onSubmit(form);
                 setSubmittedRequests((prevRequests) => [...prevRequests, form]);
                 console.log("Form submitted successfully.", form);
             } else {
@@ -98,6 +100,20 @@ export default function LocationRequestForm({ onSubmit }) {
                     {MGBHospitals.map((hospital) => (
                         <option key={hospital} value={hospital}>
                             {hospital}
+                        </option>
+                    ))}
+                </select>
+                <label className="p-2 text-gray-800">Transport Type:</label>
+                <select
+                    name="transport"
+                    value={form.transport}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100"
+                >
+                    <option value="">Select Transport Type</option>
+                    {transport.map((transportType) => (
+                        <option key={transportType} value={transportType}>
+                            {transportType}
                         </option>
                     ))}
                 </select>
