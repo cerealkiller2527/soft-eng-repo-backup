@@ -14,6 +14,7 @@ import { useMutation } from '@tanstack/react-query';
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];
 
+const priority = ["Low","Medium","High","Emergency"]
 
 const formSchema = z.object({
     employeeName: z.string(),
@@ -51,12 +52,87 @@ export default function SecurityRequestForm() {
         });
     }
 
-        return (
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
-                </form>
-            </Form>
-        )
+                <FormField
+                    control={form.control}
+                    name="employeeName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Employee Name</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Enter your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
+
+                <FormField
+                    control={form.control}
+                    name="priority"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Priority</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a priority" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {priority.map((p) => (
+                                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Location</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a location" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {MGBHospitals.map((loc) => (
+                                        <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="additionalNotes"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Additional Notes</FormLabel>
+                            <FormControl>
+                                <Textarea placeholder="Please mention the security service needed here" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <Button type="submit">Submit Request</Button>
+            </form>
+        </Form>
+    )
 }
