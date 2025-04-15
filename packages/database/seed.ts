@@ -60,21 +60,22 @@ async function main() {
     });
 
     const chestnutNodes = [
-        { suite: '0', description: '1top stairs', lat: 42.325966, long: -71.149486, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1b', lat: 42.325966, long: -71.149355, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1a', lat: 42.325963, long: -71.149338, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1c', lat: 42.325949, long: -71.149502, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1d', lat: 42.326078, long: -71.149503, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1e', lat: 42.326075, long: -71.149566, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1f', lat: 42.325768, long: -71.149368, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance', lat: 42.326195, long: -71.149488, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance outside', lat: 42.326268, long: -71.149515, floor: 1, type: "Location" },
-        { suite: '0', description: '1g', lat: 42.325934, long: -71.150081, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1h', lat: 42.325934, long: -71.150081, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom stairs', lat: 42.326126, long: -71.149486, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1right entrance', lat: 42.325982, long: -71.149266, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1right entrance outside', lat: 42.325984, long: -71.149203, floor: 1, type: "Entrance" },
-        { suite: '0', description: 'reception', lat: 42.326007, long: -71.149354, floor: 1, type: "Location" },
+        { suite: '0', description: '1top entrance outside', lat: 42.32623496574831, long: -71.14950957972837, floor: 1, type: "Entrance" },
+        { suite: '0', description: '1top entrance', lat: 42.32620375463355, long: -71.14950766082836, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1c', lat: 42.32613778563545, long: -71.1494999852283, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1multi specialty clinic', lat: 42.32615339121115, long: -71.1495997680289, floor: 1, type: "Location" },
+        { suite: '0', description: '1b', lat: 42.32597321751075, long: -71.14949614742828, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1a', lat: 42.32597889228084, long: -71.14935894607748, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1d', lat: 42.32576254130898, long: -71.14935222992743, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1e', lat: 42.32574906368282, long: -71.14954028212856, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1radiology', lat: 42.32577601893224, long: -71.14954220102855, floor: 1, type: "Location" },
+        { suite: '0', description: '1right entrance', lat: 42.32598456705039, long: -71.1492591632769, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 42.325987404435004, long: -71.14921598802664, floor: 1, type: "Location" },
+        { suite: '0', description: '1drop off', lat: 42.326295063631804, long: -71.1494980200208, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1lot1', lat: 42.326294043305104, long: -71.1495987024141, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1lot2', lat: 42.32638877194042, long: -71.14960193256016, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1parking', lat: 42.32636329870798, long: -71.14976451657915, floor: 1, type: "Intermediary" },
+
     ]
     const pat20Floor1Nodes = [
         /**
@@ -531,20 +532,23 @@ async function main() {
     const edges = await prisma.edge.createMany({
         data: [
             // chestnut hill
-            { fromNodeId: allNodes[0].id, toNodeId: allNodes[1].id },
-            { fromNodeId: allNodes[1].id, toNodeId: allNodes[2].id },
-            { fromNodeId: allNodes[2].id, toNodeId: allNodes[3].id },
-            { fromNodeId: allNodes[3].id, toNodeId: allNodes[4].id },
-            { fromNodeId: allNodes[4].id, toNodeId: allNodes[5].id },
-            { fromNodeId: allNodes[5].id, toNodeId: allNodes[6].id },
-            { fromNodeId: allNodes[6].id, toNodeId: allNodes[7].id },
-            { fromNodeId: allNodes[7].id, toNodeId: allNodes[8].id },
-            { fromNodeId: allNodes[8].id, toNodeId: allNodes[9].id },
-            { fromNodeId: allNodes[9].id, toNodeId: allNodes[10].id },
-            { fromNodeId: allNodes[10].id, toNodeId: allNodes[11].id },
-            { fromNodeId: allNodes[11].id, toNodeId: allNodes[12].id },
-            { fromNodeId: allNodes[12].id, toNodeId: allNodes[13].id },
-            { fromNodeId: allNodes[13].id, toNodeId: allNodes[14].id },
+            edgeFromTo("1top entrance outside", "1drop off"),
+            edgeFromTo("1drop off", "1lot1"),
+            edgeFromTo("1lot1", "1lot2"),
+            edgeFromTo("1lot2", "1parking"),
+            edgeFromTo("1top entrance outside", "1top entrance"),
+            edgeFromTo("1top entrance", "1c"),
+            edgeFromTo("1top entrance", "1multi specialty clinic"),
+            edgeFromTo("1c", "1multi specialty clinic"),
+            edgeFromTo("1c", "1b"),
+            edgeFromTo("1b", "1a"),
+            edgeFromTo("1a", "1laboratory"),
+            edgeFromTo("1a", "1right entrance"),
+            edgeFromTo("1laboratory", "1right entrance"),
+            edgeFromTo("1right entrance outside", "1right entrance"),
+            edgeFromTo("1a", "1d"),
+            edgeFromTo("1d", "1e"),
+            edgeFromTo("1e", "1radiology"),
 
             // 20 patriot pl, floor 1
             //  A
