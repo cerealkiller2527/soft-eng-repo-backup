@@ -187,6 +187,11 @@ async function main() {
             { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
             { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
     ]
+    const pat22TempFloor1Nodes= [
+            { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
+            { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
+            { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+    ]
 
     // Create nodes first
     const chestnutNodesSeeded = await Promise.all(
@@ -236,6 +241,20 @@ async function main() {
     );
     const pat22Floor4NodesSeeded = await Promise.all(
         pat22Floor4Nodes.map((node) =>
+            prisma.node.create({
+                data: {
+                    description: node.description,
+                    lat: node.lat,
+                    long: node.long,
+                    floor: node.floor,
+                    suite: node.suite,
+                    type: toNodeType(node.type),
+                    buildingId: patriotPlace22Building.id,
+                },
+            })
+        )
+    );const pat22TempFloor1NodesSeeded = await Promise.all(
+        pat22TempFloor1Nodes.map((node) =>
             prisma.node.create({
                 data: {
                     description: node.description,
@@ -578,6 +597,13 @@ async function main() {
             edgeFromTo("4a1", "4a2"),
             edgeFromTo("4a1", "4phlebotomy"),
             edgeFromTo("4a1", "4elevator"),
+            // Temp Floor 1 -> 3
+            edgeFromTo("1elevator", "3elevator"),
+            // Temp Floor 1 -> 4
+            edgeFromTo("1elevator", "4elevator"),
+            // Temp Floor 1
+            edgeFromTo("1entrance outside", "1entrance"),
+            edgeFromTo("1entrance", "1elevator"),
         ]
     });
     
