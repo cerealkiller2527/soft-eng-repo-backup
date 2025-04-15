@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAllDepartments, checkPrismaModels } from '../database/trpc';
 
+
+
+// NOTE FROM WILL: This page is redundant now since we no longer call it in directory, I'm leaving it here
+// in case you need it to debug something again
+
 // Define department interfaces
 interface DepartmentService {
     service: {
