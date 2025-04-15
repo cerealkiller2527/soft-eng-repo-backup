@@ -103,7 +103,7 @@ async function main() {
         { suite: '0', description: '1a9', lat: 42.092666, long: -71.265790, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a10', lat: 42.092680, long: -71.265739, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1right stairs', lat: 42.092690, long: -71.265615, floor : 1, type: "Staircase" },
-        { suite: '0', description: '1elevator', lat: 42.092717, long: -71.265685, floor : 1, type: "Elevator" },
+        { suite: '0', description: '120elevator', lat: 42.092717, long: -71.265685, floor : 1, type: "Elevator" },
         { suite: '0', description: '1a11', lat: 42.092694, long: -71.265939, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a12', lat: 42.092739, long: -71.265955, floor : 1 , type: "Intermediary" },
         // B
@@ -168,7 +168,7 @@ async function main() {
         { suite: '0', description: '3a4', lat: 42.092505, long: -71.266806, floor: 3, type: "Intermediary" },
         { suite: '0', description: '3multi specialty', lat: 42.092496, long: -71.266790, floor: 3, type: "Location" },
         { suite: '0', description: '3middle stairs', lat: 42.092532, long: -71.266775, floor: 3, type: "Staircase" },
-        { suite: '0', description: '3elevator', lat: 42.092589, long: -71.266719, floor: 3, type: "Elevator" },
+        { suite: '0', description: '322elevator', lat: 42.092589, long: -71.266719, floor: 3, type: "Elevator" },
         { suite: '0', description: '3a5', lat: 42.092610, long: -71.266686, floor: 3, type: "Intermediary" },
         { suite: '0', description: '3a6', lat: 42.092642, long: -71.266661, floor: 3, type: "Intermediary" },
         { suite: '0', description: '3a7', lat: 42.092679, long: -71.266727, floor: 3, type: "Intermediary" },
@@ -185,12 +185,12 @@ async function main() {
             { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
             { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
             { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
-            { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
+            { suite: '0', description: '420elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
     ]
     const pat22TempFloor1Nodes= [
             { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
             { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+            { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
     ]
 
     // Create nodes first
@@ -503,7 +503,7 @@ async function main() {
             edgeFromTo("1a8", "1urology/cardiology"),
             edgeFromTo("1a8", "1a9"),
             edgeFromTo("1a9", "1a10"),
-            edgeFromTo("1a10", "1elevator"),
+            edgeFromTo("1a10", "120elevator"),
             edgeFromTo("1a10", "1right stairs"),
             //  A -> B
             edgeFromTo("1a3", "1b2"),
@@ -583,8 +583,8 @@ async function main() {
             edgeFromTo("3a3", "3a4"),
             edgeFromTo("3a4", "3multi specialty"),
             edgeFromTo("3a4", "3middle stairs"),
-            edgeFromTo("3middle stairs", "3elevator"),
-            edgeFromTo("3elevator", "3a5"),
+            edgeFromTo("3middle stairs", "322elevator"),
+            edgeFromTo("322elevator", "3a5"),
             edgeFromTo("3a5", "3a6"),
             edgeFromTo("3a6", "3a7"),
             edgeFromTo("3a7", "3b1"),
@@ -594,7 +594,7 @@ async function main() {
             edgeFromTo("3a4", "3b5"),
             edgeFromTo("3a5", "3right stairs"),
             // Floor 3 -> Floor 4
-            edgeFromTo("3elevator", "4elevator"),
+            edgeFromTo("322elevator", "422elevator"),
             edgeFromTo("3left stairs", "4left stairs"),
             edgeFromTo("3middle stairs", "4middle stairs"),
             // Floor 4
@@ -602,14 +602,14 @@ async function main() {
             edgeFromTo("4middle stairs", "4a1"),
             edgeFromTo("4a1", "4a2"),
             edgeFromTo("4a1", "4phlebotomy"),
-            edgeFromTo("4a1", "4elevator"),
+            edgeFromTo("4a1", "422elevator"),
             // Temp Floor 1 -> 3
-            edgeFromTo("1elevator", "3elevator"),
+            edgeFromTo("122elevator", "322elevator"),
             // Temp Floor 1 -> 4
-            edgeFromTo("1elevator", "4elevator"),
+            edgeFromTo("122elevator", "422elevator"),
             // Temp Floor 1
             edgeFromTo("1entrance outside", "1entrance"),
-            edgeFromTo("1entrance", "1elevator"),
+            edgeFromTo("1entrance", "122elevator"),
         ]
     });
     
