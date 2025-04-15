@@ -1,25 +1,18 @@
 import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import { employeeRouter } from './routes/employeeRouter';
+import { mapInfoRouter } from './routes/mapInfoRouter';
 import { serviceRouter } from './routes/serviceRouter';
-import { loginRouter } from './routes/loginRouter.ts';
-import { searchRouter } from './routes/search.ts';
-import { csvRouter } from './routes/csvRouter.ts';
+
 import express from 'express';
 import logger from 'morgan';
-import { departmentRouter } from './routes/departmentRouter.ts';
 
 // created for each request
 const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
 type Context = Awaited<ReturnType<typeof createContext>>;
 const t = initTRPC.context<Context>().create();
 const appRouter = t.router({
-    employee: employeeRouter,
     service: serviceRouter,
-    login: loginRouter,
-    csv: csvRouter,
-    department: departmentRouter,
-    search: searchRouter,
+    mapInfo: mapInfoRouter,
 });
 const app = express();
 app.use(
