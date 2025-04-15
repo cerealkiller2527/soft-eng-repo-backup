@@ -39,11 +39,13 @@ const requestDashboard = () => {
                                 className="border p-4 rounded-xl shadow bg-white space-y-1">
                                 <p><strong>TRANSPORT REQUEST</strong></p>
                                 <p><strong>Patient:</strong> {req.externalTransportation.patientName}</p>
-                                <p><strong>Pickup Time:</strong> {req.externalTransportation.pickupTime.toString()}</p>
+                                <p><strong>Pickup Time:</strong> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
                                 <p><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
                                 <p><strong>Pickup:</strong> {req.externalTransportation.fromWhere}</p>
                                 <p><strong>Dropoff:</strong> {req.externalTransportation.toWhere}</p>
                                 <p><strong>Notes:</strong> {req.description || "N/A"}</p>
+                                <p><strong>Created By:</strong> {req.fromEmployee}</p>
+                                <p><strong>Priority:</strong> {req.priority}</p>
                             </div>
                         ))}
                     </div>

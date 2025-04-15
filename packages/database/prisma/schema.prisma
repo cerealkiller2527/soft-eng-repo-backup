@@ -27,6 +27,22 @@ enum RequestType {
   SECURITY
 }
 
+enum Priority {
+  Low
+  Medium
+  High
+  Emergency
+}
+
+enum nodeType {
+  Entrance
+  Intermediary
+  Staircase
+  Elevator
+  Location
+  Help_Desk
+}
+
 model User {
   username String @id
   password String
@@ -39,7 +55,7 @@ model Employee {
   employeeType   String
   canService     RequestType[]
   language       String[]
-  ServiceRequest ServiceRequest[]
+  ServiceRequest ServiceRequest[] @relation("assign to")
 }
 
 model ServiceRequest {
@@ -49,8 +65,10 @@ model ServiceRequest {
   dateUpdated            DateTime?
   status                 Status
   description            String
-  employeeID             Int?
-  assignedTo             Employee?               @relation(fields: [employeeID], references: [id])
+  assignedEmployeeID     Int?
+  assignedTo             Employee?               @relation("assign to", fields: [assignedEmployeeID], references: [id])
+  fromEmployee           String
+  priority               Priority
   audioVisual            AudioVisual?
   externalTransportation ExternalTransportation?
   equipmentDelivery      EquipmentDelivery?
@@ -82,7 +100,6 @@ model EquipmentDelivery {
   deadline       DateTime
   equipments     String[]
   toWhere        String
-  fromWhere      String
 }
 
 model Language {
@@ -98,7 +115,6 @@ model Security {
   id             Int            @id
   serviceRequest ServiceRequest @relation(fields: [id], references: [id], onDelete: Cascade)
   location       String
-  riskLevel      Int
 }
 
 model Score {
@@ -116,21 +132,17 @@ model Edge {
 }
 
 model Node {
-  id          Int       @id @default(autoincrement())
-  description String
-  x           Int
-  y           Int
-  Location    Location?
-  fromEdge    Edge[]    @relation("fromNode")
-  toEdge      Edge[]    @relation("toNode")
-}
-
-model Location {
   id           Int         @id @default(autoincrement())
+  type         nodeType
+  description  String
+  lat          Float
+  long         Float
   suite        String
   floor        Int
-  nodeID       Int?        @unique
-  node         Node?       @relation(fields: [nodeID], references: [id])
+  fromEdge     Edge[]      @relation("fromNode")
+  toEdge       Edge[]      @relation("toNode")
+  buildingId   Int
+  building     Building    @relation(fields: [buildingId], references: [id])
   departmentId Int?
   Department   Department? @relation(fields: [departmentId], references: [id])
 }
@@ -140,10 +152,9 @@ model Department {
   name               String
   description        String?
   phoneNumber        String
-  Location           Location[]
+  node               Node[]
   DepartmentServices DepartmentServices[]
-  buildingID         Int                  @default(1)
-  building           Building             @relation(fields: [buildingID], references: [id])
+  buildingID         Int
 }
 
 model Service {
@@ -162,9 +173,9 @@ model DepartmentServices {
 }
 
 model Building {
-  id          Int          @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   name        String
   address     String
   phoneNumber String
-  Department  Department[]
+  Node        Node[]
 }
