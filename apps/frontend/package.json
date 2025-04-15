@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "@types/node": "^22.13.3",
+        "@types/papaparse": "^5",
         "@types/prop-types": "^15.7.5",
         "@types/react": "^18.0.37",
         "@types/react-dom": "^18.0.11",
@@ -50,6 +51,7 @@
         "eslint-plugin-react-compiler": "19.0.0-beta-aeaed83-20250323",
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-react-refresh": "^0.4.19",
+        "papaparse": "^5.5.2",
         "prettier": "*",
         "prettier-config-custom": "workspace:*",
         "tailwindcss": "^4.0.17",

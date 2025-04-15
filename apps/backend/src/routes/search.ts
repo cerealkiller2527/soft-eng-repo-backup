@@ -110,7 +110,7 @@ class Node {
 
         for (let neighbor of neighborNodes) {
             let myNode = await Node.getNode(neighbor.id);
-            myNode.coords = [neighbor.x, neighbor.y];
+            myNode.coords = [neighbor.lat, neighbor.long];
             this.neighbors.push(myNode);
         }
     }

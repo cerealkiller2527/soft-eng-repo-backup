@@ -38,4 +38,5 @@ app.use(
 );
 
 export default app;
-export type appRouter = typeof appRouter;
+export type AppRouter = typeof appRouter;
+export { appRouter };
