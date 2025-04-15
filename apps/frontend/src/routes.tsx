@@ -25,6 +25,7 @@ import BrighamPsychiatricSpecialities from './routes/directoryPages/brighamPsych
 import RequestDashboard from './routes/requestDashboard.tsx';
 import CSVPage from './routes/csv.tsx';
 import LandingPage from "./routes/landingPage.tsx";
+import MapEditor from "./routes/mapEditor.tsx"
 
 export const routes = [
     {
@@ -152,6 +153,12 @@ export const routes = [
         errorElement: <div />,
         element: <CSVPage />,
     },
+    {
+        path: '/mapeditor',
+        errorElement: <div />,
+        element: <MapEditor />,
+    },
+
 ];
 
 export const router = createBrowserRouter(routes);
