@@ -49,9 +49,9 @@ const MapEditor = () => {
         return () => marker.setMap(null); // Cleanup on unmount or dependency change
     }, [AdvancedMarker]);
 
-        useEffect(() => {
+    useEffect(() => {
         if(!form) return;
-        if(form.building == "Patriot Place"){
+        if(form.building == "22 Patriot Place"){
             mapInstance.current?.setCenter({ lat: 42.09280, lng: -71.266 });
         }else{
             mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });

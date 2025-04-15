@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-const buildings =["Patriot Place", "Chestnut Hill"];
-const floors = [1,2,3,4,5];
+const buildings =["22 Patriot Place" ,"20 Patriot Place", "Chestnut Hill"];
+const floors = [1,2,3,4];
 
 
 export default function MapEditorSelectForm({ onSubmit }) {

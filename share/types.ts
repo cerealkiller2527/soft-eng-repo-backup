@@ -1,4 +1,5 @@
 export type pNodeDTO = {
+    floor: number;
     id: number;
     description: string;
     longitude: number;

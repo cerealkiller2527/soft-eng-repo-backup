@@ -65,29 +65,5 @@ export const overlays: OverlayImage[][] = [
         },
 
     ],
-    [
-        {
-            imageUrl: "/chestnutFloorOne.png",
-            bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
-            },
-        },
-
-    ],
-    [
-        {
-            imageUrl: "/chestnutFloorOne.png",
-            bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
-            },
-        },
-
-    ],
 
 ];
