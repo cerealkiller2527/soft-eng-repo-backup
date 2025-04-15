@@ -93,7 +93,6 @@ const DirectoryPage: React.FC = () => {
                 <div className="flex-grow p-4 flex items-center justify-center">
                     <p>Loading...</p>
                 </div>
-                <DirectoryDebug />
                 <Footer />
             </div>
         );
@@ -107,7 +106,6 @@ const DirectoryPage: React.FC = () => {
                 <div className="flex-grow p-4 flex items-center justify-center">
                     <p className="text-red-500">Failed to load directory data.</p>
                 </div>
-                <DirectoryDebug />
                 <Footer />
             </div>
         );
@@ -168,7 +166,6 @@ const DirectoryPage: React.FC = () => {
                         </button>
                     </div>
                 </div>
-                <DirectoryDebug />
                 <Footer />
             </div>
         );
@@ -191,7 +188,6 @@ const DirectoryPage: React.FC = () => {
                         Return to Directory
                     </button>
                 </div>
-                <DirectoryDebug />
                 <Footer />
             </div>
         );
@@ -259,9 +255,6 @@ const DirectoryPage: React.FC = () => {
                         ))}
                     </Accordion>
                 </div>
-                
-                {/* Debug Component */}
-                <DirectoryDebug />
             </div>
             <Footer/>
         </div>
