@@ -60,26 +60,21 @@ async function main() {
     });
 
     const chestnutNodes = [
-        { suite: '0', description: '1top stairs', lat: 272, long: 110, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1b', lat: 272, long: 130, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1a', lat: 190, long: 130, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1c', lat: 190, long: 239, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1d', lat: 163, long: 239, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1e', lat: 163, long: 360, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1f', lat: 275, long: 360, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance', lat: 275, long: 390, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance outside', lat: 275, long: 450, floor: 1, type: "Location" },
-        { suite: '0', description: '1g', lat: 275, long: 315, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1h', lat: 357, long: 315, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom stairs', lat: 357, long: 300, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1right entrance', lat: 400, long: 315, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1right entrance outside', lat: 450, long: 315, floor: 1, type: "Location" },
-        { suite: '0', description: 'reception', lat: 25, long: 25, floor: 1, type: "Location" },
-        { suite: '0', description: 'Placeholder Node 1 (Suite 204B)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 2 (Suite 317 Pharmacy)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 3 (Suite 560)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 4 (Suite 102B)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 5 (Suite 200)', lat: -1, long: -1, floor: 1, type: "Intermediary" }
+        { suite: '0', description: '1top stairs', lat: 326126, long: -71.149486, floor: 1, type: "Staircase" },
+        { suite: '0', description: '1b', lat: 42.325966, long: -71.149355, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1a', lat: 42.325963, long: -71.149338, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1c', lat: 42.325949, long: -71.149502, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1d', lat: 42.326078, long: -71.149503, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1e', lat: 42.326075, long: -71.149566, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1f', lat: 42.325768, long: -71.149368, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1bottom entrance', lat: 42.326195, long: -71.149488, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1bottom entrance outside', lat: 42.326268, long: -71.149515, floor: 1, type: "Location" },
+        { suite: '0', description: '1g', lat: 42.325934, long: -71.150081, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1h', lat: 42.325934, long: -71.150081, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1bottom stairs', lat: 42.326126, long: -71.149486, floor: 1, type: "Staircase" },
+        { suite: '0', description: '1right entrance', lat: 42.325982, long: -71.149266, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 42.325984, long: -71.149203, floor: 1, type: "Entrance" },
+        { suite: '0', description: 'reception', lat: 42.326007, long: -71.149354, floor: 1, type: "Location" },
     ]
     const pat20Floor1Nodes = [
         /**
