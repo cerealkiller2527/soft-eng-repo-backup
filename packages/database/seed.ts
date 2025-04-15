@@ -299,16 +299,12 @@ async function main() {
     // Create service requests for external transportation
     await Promise.all(
         Array.from({ length: 10 }).map(async (_, i) => {
-            const priorityValues = Object.values(Priority);
-            const priority = priorityValues[i%3];
             const request = await prisma.serviceRequest.create({
                 data: {
                     type: RequestType.EXTERNALTRANSPORTATION,
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
                     description: `Additional notes for transport request ${i + 1}`,
-                    assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
-                    priority: priority,
-                    fromEmployee: `Employee ${i}`,
+                    employeeID: i < 5 ? employees[i % employees.length].id : null,
                 },
             });
 

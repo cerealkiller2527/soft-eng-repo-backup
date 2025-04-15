@@ -1,7 +1,11 @@
+export default app;
+export type appRouter = typeof appRouter;
+
 import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { employeeRouter } from './routes/employeeRouter';
 import { serviceRouter } from './routes/serviceRouter';
+import { mapInfoRouter } from './routes/mapInfoRouter';
 import { loginRouter } from './routes/loginRouter.ts';
 import { searchRouter } from './routes/search.ts';
 import { csvRouter } from './routes/csvRouter.ts';
@@ -20,6 +24,7 @@ const appRouter = t.router({
     csv: csvRouter,
     department: departmentRouter,
     search: searchRouter,
+    mapInfo: mapInfoRouter,
 });
 const app = express();
 app.use(
