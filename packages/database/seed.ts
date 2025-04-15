@@ -37,14 +37,7 @@ async function main() {
     });
     console.log(`Created admin user: ${admin.username}`);
 
-    // Create building
-    const building = await prisma.building.create({
-        data: {
-            name: "Brigham and Women's Health Care Center",
-            address: '850 Boylston Street, Chestnut Hill, MA 02467',
-            phoneNumber: '1-800-BWH-9999',
-        }
-    });
+    // Create buildings
     const chestnutHillBuilding = await prisma.building.create({
         data: {
             name: "Chestnut Hill Medical Center",
@@ -55,8 +48,15 @@ async function main() {
     const patriotPlace20Building = await prisma.building.create({
         data: {
             name: "Brigham and Women's/Mass General Health Care Center",
-            address: '25 Boylston St, Chestnut Hill, Ma 02467',
-            phoneNumber: '(617) 482-5500',
+            address: '20 Patriot Pl, Foxboro, MA 02035',
+            phoneNumber: '(866) 378-9164',
+        }
+    });
+    const patriotPlace22Building = await prisma.building.create({
+        data: {
+            name: "Brigham and Women's/Mass General Health Care Center",
+            address: '22 Patriot Pl, Foxboro, MA 02035',
+            phoneNumber: '(866) 378-9164',
         }
     });
 
@@ -160,6 +160,33 @@ async function main() {
         { suite: '0', description: '1e7', lat: 42.092963, long: -71.266393, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1top stairs', lat: 42.092960, long: -71.266427, floor : 1, type: "Staircase" }
     ]
+    const pat22Floor3Nodes= [
+        { suite: '0', description: '3left stairs', lat: 42.092446, long: -71.266887, floor: 3, type: "Staircase" },
+        { suite: '0', description: '3a1', lat: 42.092464, long: -71.266866, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3a2', lat: 42.092472, long: -71.266881, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3a3', lat: 42.092520, long: -71.266830, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3a4', lat: 42.092505, long: -71.266806, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3multi specialty', lat: 42.092496, long: -71.266790, floor: 3, type: "Location" },
+        { suite: '0', description: '3middle stairs', lat: 42.092532, long: -71.266775, floor: 3, type: "Staircase" },
+        { suite: '0', description: '3elevator', lat: 42.092589, long: -71.266719, floor: 3, type: "Elevator" },
+        { suite: '0', description: '3a5', lat: 42.092610, long: -71.266686, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3a6', lat: 42.092642, long: -71.266661, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3a7', lat: 42.092679, long: -71.266727, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3b1', lat: 42.092719, long: -71.266783, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3b2', lat: 42.092773, long: -71.266725, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3b3', lat: 42.092795, long: -71.266771, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3b4', lat: 42.092826, long: -71.266734, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3b5', lat: 42.092847, long: -71.266733, floor: 3, type: "Intermediary" },
+        { suite: '0', description: '3right stairs', lat: 42.092855, long: -71.266709, floor: 3, type: "Staircase" },
+    ]
+    const pat22Floor4Nodes= [
+            { suite: '0', description: '4left stairs', lat: 42.092446, long: -71.266887, floor: 4, type: "Staircase" },
+            { suite: '0', description: '4a1', lat: 42.092548, long: -71.266732, floor: 4, type: "Intermediary" },
+            { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
+            { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
+            { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
+            { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
+    ]
 
     // Create nodes first
     const chestnutNodesSeeded = await Promise.all(
@@ -192,8 +219,38 @@ async function main() {
             })
         )
     );
+    const pat22Floor3NodesSeeded = await Promise.all(
+        pat22Floor3Nodes.map((node) =>
+            prisma.node.create({
+                data: {
+                    description: node.description,
+                    lat: node.lat,
+                    long: node.long,
+                    floor: node.floor,
+                    suite: node.suite,
+                    type: toNodeType(node.type),
+                    buildingId: patriotPlace22Building.id,
+                },
+            })
+        )
+    );
+    const pat22Floor4NodesSeeded = await Promise.all(
+        pat22Floor4Nodes.map((node) =>
+            prisma.node.create({
+                data: {
+                    description: node.description,
+                    lat: node.lat,
+                    long: node.long,
+                    floor: node.floor,
+                    suite: node.suite,
+                    type: toNodeType(node.type),
+                    buildingId: patriotPlace22Building.id,
+                },
+            })
+        )
+    );
 
-    const allNodes = [...chestnutNodesSeeded, ...pat20Floor1NodesSeeded];
+    const allNodes = [...chestnutNodesSeeded, ...pat20Floor1NodesSeeded, ...pat22Floor3NodesSeeded, ...pat22Floor4NodesSeeded];
 
     // Create employees for external transportation
     const employees = await Promise.all(
@@ -357,7 +414,7 @@ async function main() {
                     name: dept.name,
                     description: dept.description,
                     phoneNumber: dept.phoneNumber,
-                    buildingID: building.id,
+                    buildingID: chestnutHillBuilding.id,
                 },
             })
         )
@@ -493,7 +550,34 @@ async function main() {
             edgeFromTo("1e6", "1e7"),
             edgeFromTo("1e7", "1top stairs"),
 
-
+            // 22 Patriot Pl
+            // Floor 3
+            edgeFromTo("3left stairs", "3a1"),
+            edgeFromTo("3a1", "3a3"),
+            edgeFromTo("3a2", "3a3"),
+            edgeFromTo("3a3", "3a4"),
+            edgeFromTo("3a4", "3multi specialty"),
+            edgeFromTo("3a4", "3middle stairs"),
+            edgeFromTo("3middle stairs", "3elevator"),
+            edgeFromTo("3elevator", "3a5"),
+            edgeFromTo("3a5", "3a6"),
+            edgeFromTo("3a6", "3a7"),
+            edgeFromTo("3a7", "3b1"),
+            edgeFromTo("3a1", "3b2"),
+            edgeFromTo("3a2", "3b3"),
+            edgeFromTo("3a3", "3b4"),
+            edgeFromTo("3a4", "3b5"),
+            edgeFromTo("3a5", "3right stairs"),
+            // Floor 3 -> Floor 4
+            edgeFromTo("3elevator", "4elevator"),
+            edgeFromTo("3left stairs", "4left stairs"),
+            edgeFromTo("3middle stairs", "4middle stairs"),
+            // Floor 4
+            edgeFromTo("4left stairs", "4middle stairs"),
+            edgeFromTo("4middle stairs", "4a1"),
+            edgeFromTo("4a1", "4a2"),
+            edgeFromTo("4a1", "4phlebotomy"),
+            edgeFromTo("4a1", "4elevator"),
         ]
     });
     
