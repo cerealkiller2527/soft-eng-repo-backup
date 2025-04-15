@@ -30,24 +30,21 @@ export const csvExportRouter = t.router({
                 const serviceNames = services.map((s) => s.service?.name || '').join('; ');
 
                 return {
-                    'Node ID': node.id,
                     'Node Type': node.type,
                     'Node Description': node.description,
                     Floor: node.floor,
                     Suite: node.suite,
                     'Node (lat,long)': `(${node.lat}, ${node.long})`,
-                    'Department ID': department?.id || '',
-                    'Department Name': department?.name || '',
-                    'Phone Number': department?.phoneNumber || '',
-                    'Service ID': serviceIds,
-                    Services: serviceNames,
-                    'Building ID': building?.id || '',
-                    'Building Name': building?.name || '',
-                    'Building Address': building?.address || '',
-                    'Building Phone Number': building?.phoneNumber || '',
                     'Edge Connections (from -> to)': node.fromEdge
                         .map((e) => `${e.fromNodeId}->${e.toNodeId}`)
                         .join('; '),
+                    'Building Name': building?.name || '',
+                    'Building Address': building?.address || '',
+                    'Building Phone Number': building?.phoneNumber || '',
+                    'Department Name': department?.name || '',
+                    'Phone Number': department?.phoneNumber || '',
+                    'Department Description': department?.description || '',
+                    Services: serviceNames,
                 };
             });
 
