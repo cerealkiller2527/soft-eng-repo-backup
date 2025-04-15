@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
@@ -15,7 +15,10 @@ const Login: React.FC = () => {
     //const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
+
+
     const checkLogin = useMutation(
+
         trpc.login.checkLogin.mutationOptions({
             onSuccess: (data) => {
                 console.log('Login success', data);

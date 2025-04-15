@@ -67,6 +67,7 @@ export const mapInfoRouter = t.router({
     // ---------------------
 
     // Get departments for a building (for dropdown/selection)
+    /*
     getBuildingDepartments: t.procedure
         .input(z.object({ buildingId: z.number() }))
         .query(async ({ input }) => {
@@ -88,6 +89,8 @@ export const mapInfoRouter = t.router({
             }
         }),
 
+     */
+
     // Get basic department info by ID
     getDepartmentInfo: t.procedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
         try {
@@ -97,7 +100,6 @@ export const mapInfoRouter = t.router({
                     id: true,
                     name: true,
                     phoneNumber: true,
-                    buildingID: true,
                 },
             });
         } catch (error) {

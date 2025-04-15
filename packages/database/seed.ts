@@ -1,6 +1,4 @@
-import {$Enums, PrismaClient, RequestType, Status} from './.prisma/client';
-import nodeType = $Enums.nodeType;
-import { PrismaClient, RequestType, Status, Priority} from './.prisma/client';
+import { PrismaClient, RequestType, Status, nodeType, Priority } from './.prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -27,15 +25,15 @@ async function main() {
 
     console.log('Existing data purged.');
 
-    // Seed admin user
-    // WARNING: Storing plain text passwords is insecure. Hash passwords in real applications.
+    // Create admin user
     const admin = await prisma.user.create({
         data: {
             username: 'admin',
             password: 'admin', // Plain text - insecure!
             email: 'admin@admin.com',
-        }
+        },
     });
+
     console.log(`Created admin user: ${admin.username}`);
 
     // Create buildings
@@ -48,14 +46,14 @@ async function main() {
     });
     const patriotPlace20Building = await prisma.building.create({
         data: {
-            name: "Brigham and Women's/Mass General Health Care Center",
+            name: "20 Patriot Place",
             address: '20 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
         }
     });
     const patriotPlace22Building = await prisma.building.create({
         data: {
-            name: "Brigham and Women's/Mass General Health Care Center",
+            name: "22 Patriot Place",
             address: '22 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
         }
@@ -296,27 +294,29 @@ async function main() {
         )
     );
 
-    // Create service requests for external transportation
+    // Create external transportation service requests
     await Promise.all(
         Array.from({ length: 10 }).map(async (_, i) => {
-            const request = await prisma.serviceRequest.create({
+            const serviceRequest = await prisma.serviceRequest.create({
                 data: {
                     type: RequestType.EXTERNALTRANSPORTATION,
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
                     description: `Additional notes for transport request ${i + 1}`,
-                    employeeID: i < 5 ? employees[i % employees.length].id : null,
+                    assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
+                    fromEmployee: 'admin',
+                    priority: Priority.Medium,
                 },
             });
 
             await prisma.externalTransportation.create({
                 data: {
-                    id: request.id,
+                    id: serviceRequest.id,
                     fromWhere: `Location A${i}`,
                     toWhere: `Location B${i}`,
                     transportType: 'Wheelchair Van',
                     patientName: `Patient ${i + 1}`,
                     pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
-                }
+                },
             });
         })
     );
@@ -469,32 +469,67 @@ async function main() {
                     name: dept.name,
                     description: dept.description,
                     phoneNumber: dept.phoneNumber,
-                    buildingID: chestnutHillBuilding.id,
                 },
             })
         )
     );
 
-    // Create department-service relationships (Simplified: One service per department)
-    const departmentServiceLinks = departments.map((dept, i) => {
-        // Simple 1-to-1 link based on array index
-        if (services[i]) { // Basic check to ensure service exists at index
-            return {
-                departmentID: dept.id,
-                serviceID: services[i].id,
-            };
-        } else {
-            console.warn(`Department ${dept.name} at index ${i} missing corresponding service.`);
-            return null;
-        }
-    }).filter(Boolean) as { departmentID: number; serviceID: number }[]; // Filter out nulls and assert type
+    // Link nodes to departments based on floor/suite
+    await Promise.all(
+        departments.map(async (dept, i) => {
+            const deptData = rawDepartmentData[i];
 
-    if (departmentServiceLinks.length > 0) {
-        await prisma.departmentServices.createMany({
-            data: departmentServiceLinks,
-            skipDuplicates: true,
+            await prisma.node.updateMany({
+                where: {
+                    floor: deptData.floor,
+                    suite: deptData.suite,
+                },
+                data: {
+                    departmentId: dept.id,
+                },
+            });
+        })
+    );
+
+    // Parse and create services
+    const servicesList: { name: string; departmentIndex: number }[] = [];
+
+    rawDepartmentData.forEach((dept, index) => {
+        let services = dept.description
+            ?.split(',')
+            .flatMap((s) =>
+                s.includes(' and ') &&
+                !s.toLowerCase().includes('allergy') &&
+                !s.toLowerCase().includes('crohn')
+                    ? s.split(' and ')
+                    : [s]
+            )
+            .map((s) => s.trim());
+
+        services?.forEach((name) => {
+            if (name && name.length > 1) {
+                servicesList.push({ name, departmentIndex: index });
+            }
         });
-    }
+    });
+
+    const createdServices = await Promise.all(
+        servicesList.map((s) =>
+            prisma.service.create({
+                data: { name: s.name },
+            })
+        )
+    );
+
+    const deptServices = servicesList.map((s, i) => ({
+        departmentID: departments[s.departmentIndex].id,
+        serviceID: createdServices[i].id,
+    }));
+
+    await prisma.departmentServices.createMany({
+        data: deptServices,
+        skipDuplicates: true,
+    });
 
     // Create edges
     const edges = await prisma.edge.createMany({
@@ -648,7 +683,7 @@ async function main() {
             edgeFromTo("120/122drop off", "1entrance outside"),
         ]
     });
-    
+
     function edgeFromTo(startDesc: string, endDesc: string) {
         const startIndex = descToI(startDesc);
         const endIndex = descToI(endDesc);
@@ -656,7 +691,7 @@ async function main() {
             fromNodeId: allNodes[startIndex].id, toNodeId: allNodes[endIndex].id,
         }
     }
-    
+
 
     function descToI(description: string) {
         for(let i = 0; i < allNodes.length; i++) {
