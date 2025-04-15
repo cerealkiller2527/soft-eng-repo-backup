@@ -24,6 +24,7 @@ import BrighamPhysiciansGroup from './routes/directoryPages/brighamPhysiciansGro
 import BrighamPsychiatricSpecialities from './routes/directoryPages/brighamPsychiatricSpecialities.tsx';
 import RequestDashboard from './routes/requestDashboard.tsx';
 import CSVPage from './routes/csv.tsx';
+import LandingPage from "./routes/landingPage.tsx";
 
 export const routes = [
     {
@@ -42,9 +43,14 @@ export const routes = [
         element: <Directory />,
     },
     {
-        path: '/',
+        path: '/Login',
         errorElement: <div />,
         element: <Login />,
+    },
+    {
+        path: '/',
+        errorElement: <div />,
+        element: <LandingPage />,
     },
     {
         path: '/bccc',
