@@ -1,5 +1,6 @@
 import React from 'react';
 import TransportCard from "../components/TransportCard.tsx";
+import EquipmentCard from "../components/EquipmentCard.tsx";
 import { useState } from "react";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer.tsx";
@@ -18,6 +19,16 @@ const ServiceRequest = () => {
         dropoffTransport: string;
         additionalNotes: string;
     };
+
+    type EquipmentRequest = {
+        deadline: Date;
+        equipment: string[];
+        location: string;
+        additionalNotes: string;
+        priority: string;
+        employee: string,
+    }
+
     //This whole part is just to locally show the submitted forms on the same page, keeping here for now for consistency
     const [requests, setRequests] = useState<object[]>([]);
 
@@ -31,6 +42,7 @@ const ServiceRequest = () => {
                 <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
                 <hr />
                 <br />
+            </div>
                 <div className="mt-10">
                     <DashboardButton />
                     <br />
@@ -41,7 +53,6 @@ const ServiceRequest = () => {
                     <br />
                     <SecurityCard onAddRequest={addRequest} />
                 </div>
-
                 <div className="mt-8">
                     <h2 className="text-lg font-semibold mb-4">Submitted Requests</h2>
                     {requests.length === 0 ? (
