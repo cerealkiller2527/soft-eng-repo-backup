@@ -136,7 +136,7 @@ model Node {
   description  String
   lat          Float
   long         Float
-  suite        String
+  suite        String?
   floor        Int
   fromEdge     Edge[]      @relation("fromNode")
   toEdge       Edge[]      @relation("toNode")
