@@ -1,0 +1,130 @@
+erDiagram
+    %% User authentication table
+    USER {
+        string username PK
+        string password
+        string email
+    }
+
+    %% Employee info (canService, language are arrays in Prisma)
+    EMPLOYEE {
+        int id PK
+        string name
+        string employeeType
+        string canService
+        string language
+    }
+
+    %% Service Request (has many optional + enum fields in Prisma)
+    SERVICEREQUEST {
+        int id PK
+        string type
+        datetime dateCreated
+        datetime dateUpdated
+        string status
+        string description
+        int assignedEmployeeID
+        string fromEmployee
+        string priority
+    }
+
+    AUDIOVISUAL {
+        int id PK
+        string location
+        datetime deadline
+        string audiovisualType
+    }
+
+    EXTERNALTRANSPORTATION {
+        int id PK
+        string fromWhere
+        string toWhere
+        string transportType
+        string patientName
+        datetime pickupTime
+    }
+
+    EQUIPMENTDELIVERY {
+        int id PK
+        datetime deadline
+        string equipments
+        string toWhere
+    }
+
+    LANGUAGE {
+        int id PK
+        string location
+        string language
+        datetime startTime
+        datetime endTime
+    }
+
+    SECURITY {
+        int id PK
+        string location
+    }
+
+    SCORE {
+        int id PK
+        datetime time
+        int score
+    }
+
+    EDGE {
+        int id PK
+        int fromNodeId
+        int toNodeId
+    }
+
+    NODE {
+        int id PK
+        string type
+        string description
+        float lat
+        float long
+        string suite
+        int floor
+        int buildingId
+        int departmentId
+    }
+
+    DEPARTMENT {
+        int id PK
+        string name
+        string description
+        string phoneNumber
+        int buildingID
+    }
+
+    SERVICE {
+        int id PK
+        string name
+    }
+
+    DEPARTMENTSERVICES {
+        int departmentID PK
+        int serviceID PK
+    }
+
+    BUILDING {
+        int id PK
+        string name
+        string address
+        string phoneNumber
+    }
+
+    %% Relationships
+    EMPLOYEE ||--o{ SERVICEREQUEST : assignedTo
+    SERVICEREQUEST ||--|| AUDIOVISUAL : hasAudioVisual
+    SERVICEREQUEST ||--|| EXTERNALTRANSPORTATION : hasExtTransport
+    SERVICEREQUEST ||--|| EQUIPMENTDELIVERY : hasEquipDelivery
+    SERVICEREQUEST ||--|| LANGUAGE : hasLanguage
+    SERVICEREQUEST ||--|| SECURITY : hasSecurity
+
+    NODE ||--o{ EDGE : fromNode
+    NODE ||--o{ EDGE : toNode
+
+    BUILDING ||--o{ NODE : hasNodes
+    DEPARTMENT ||--o{ NODE : contains
+    DEPARTMENT ||--o{ DEPARTMENTSERVICES : offers
+    SERVICE ||--o{ DEPARTMENTSERVICES : includes
