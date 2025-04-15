@@ -73,17 +73,6 @@ const DirectoryPage: React.FC = () => {
         loadService();
     }, [serviceId]);
     
-    // Debug logging to see what's happening
-    console.log("Directory Data:", {
-        serviceId,
-        directoryItems,
-        serviceItem,
-        isLoadingItems,
-        isLoadingService,
-        itemsError,
-        serviceError
-    });
-    
     // Loading state
     if ((serviceId && isLoadingService) || isLoadingItems) {
         return (
