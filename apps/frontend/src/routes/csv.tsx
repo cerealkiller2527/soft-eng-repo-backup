@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Papa from 'papaparse';
+import { Button } from "../components/ui/button"
 
 // Simple interface for CSV row data
 interface DeptRow {
@@ -118,7 +119,7 @@ export default function CSV() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
-        <h1 className="text-3xl font-bold text-[#0057B8] mb-8">Department CSV Import/Export</h1>
+        <h1 className="text-3xl font-bold text-[#012D5A] mb-8">Department CSV Import/Export</h1>
         
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Import CSV</h2>
@@ -129,7 +130,7 @@ export default function CSV() {
             className="block w-full text-sm mb-4
               file:mr-4 file:py-2 file:px-4
               file:rounded-md file:border-0
-              file:bg-[#0057B8] file:text-white
+              file:bg-[#012D5A] file:text-white
               hover:file:bg-[#004795]"
           />
           
@@ -181,23 +182,23 @@ export default function CSV() {
             </div>
           )}
           
-          <button 
+          <Button
             onClick={importCSV}
             disabled={loading || !file}
-            className="bg-[#0057B8] text-white py-2 px-4 rounded-md 
+            className="bg-[#012D5A] text-white py-2 px-4 rounded-md
               hover:bg-[#004795] disabled:bg-gray-400 disabled:cursor-not-allowed mr-4"
           >
             {loading ? 'Working...' : 'Import CSV'}
-          </button>
+          </Button>
           
-          <button 
+          <Button
             onClick={exportCSV}
             disabled={loading}
-            className="bg-[#0057B8] text-white py-2 px-4 rounded-md 
+            className="bg-[#012D5A] text-white py-2 px-4 rounded-md
               hover:bg-[#004795] disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'Working...' : 'Export CSV'}
-          </button>
+          </Button>
           
           {message && (
             <p className={`mt-3 ${message.includes('failed') ? 'text-red-600' : 'text-green-600'}`}>

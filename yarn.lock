@@ -1075,7 +1075,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-slot@npm:1.2.0":
+"@radix-ui/react-slot@npm:1.2.0, @radix-ui/react-slot@npm:^1.2.0":
   version: 1.2.0
   resolution: "@radix-ui/react-slot@npm:1.2.0"
   dependencies:
@@ -4383,6 +4383,7 @@ __metadata:
   dependencies:
     "@auth0/auth0-react": "npm:^2.1.1"
     "@radix-ui/react-accordion": "npm:^1.2.3"
+    "@radix-ui/react-slot": "npm:^1.2.0"
     "@tailwindcss/vite": "npm:^4.0.17"
     "@tanstack/react-query": "npm:^5.72.0"
     "@trpc/client": "npm:^11.0.2"
@@ -7069,6 +7070,7 @@ __metadata:
     "@types/googlemaps": "npm:^3.43.3"
     "@types/morgan": "npm:^1"
     "@types/node": "npm:^22.13.3"
+    "@types/papaparse": "npm:^5"
     "@types/react": "npm:^19"
     "@types/react-datepicker": "npm:^7.0.0"
     "@types/react-dom": "npm:^19"
@@ -7087,6 +7089,7 @@ __metadata:
     husky: "npm:^9.1.7"
     morgan: "npm:^1.10.0"
     node-fetch: "npm:^3.3.2"
+    papaparse: "npm:^5.5.2"
     prettier: "npm:^3.5.3"
     prettier-config-custom: "workspace:*"
     react: "npm:^19.1.0"
