@@ -269,7 +269,13 @@ async function main() {
         )
     );
 
-    const allNodes = [...chestnutNodesSeeded, ...pat20Floor1NodesSeeded, ...pat22Floor3NodesSeeded, ...pat22Floor4NodesSeeded];
+    const allNodes = [
+        ...chestnutNodesSeeded,
+        ...pat20Floor1NodesSeeded,
+        ...pat22Floor3NodesSeeded,
+        ...pat22Floor4NodesSeeded,
+        ...pat22TempFloor1NodesSeeded
+    ];
 
     // Create employees for external transportation
     const employees = await Promise.all(
