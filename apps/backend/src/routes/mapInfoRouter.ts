@@ -149,4 +149,4 @@ export const mapInfoRouter = t.router({
         }),
 });
 
-export type MapInfoRouter = typeof mapInfoRouter;
+export type mapInfoRouter = typeof mapInfoRouter;
