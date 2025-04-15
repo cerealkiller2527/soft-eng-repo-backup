@@ -1,5 +1,7 @@
 import {$Enums, PrismaClient, RequestType, Status} from './.prisma/client';
 import nodeType = $Enums.nodeType;
+import {SearchSystem} from './../../apps/backend/src/routes/algos/SearchSystem.ts'
+import {BFS} from "../../apps/backend/src/routes/algos/BFS.ts";
 
 const prisma = new PrismaClient();
 
@@ -158,7 +160,7 @@ async function main() {
         { suite: '0', description: '1e5', lat: 42.092930, long: -71.266360, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1e6', lat: 42.092947, long: -71.266384, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1e7', lat: 42.092963, long: -71.266393, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1top stairs', lat: 42.092960, long: -71.266427, floor : 1, type: "Staircase" }
+        { suite: '0', description: '120top stairs', lat: 42.092960, long: -71.266427, floor : 1, type: "Staircase" }
     ]
     const pat22Floor3Nodes= [
         { suite: '0', description: '3left stairs', lat: 42.092446, long: -71.266887, floor: 3, type: "Staircase" },
@@ -185,12 +187,16 @@ async function main() {
             { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
             { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
             { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
-            { suite: '0', description: '420elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
+            { suite: '0', description: '422elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
     ]
     const pat22TempFloor1Nodes= [
             { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
             { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
             { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+            { suite: '0', description: '120/122drop off', lat: 42.092522, long: -71.266522, floor: 1, type: "Entrance" },
+            { suite: '0', description: '120/122parking entrance 1', lat: 42.092481, long: -71.266441, floor: 1, type: "Intermediary" },
+            { suite: '0', description: '120/122parking entrance 2', lat: 42.092439, long: -71.266355, floor: 1, type: "Intermediary" },
+            { suite: '0', description: '120/122parking', lat: 42.092361, long: -71.266417, floor: 1, type: "Location" },
     ]
 
     // Create nodes first
@@ -573,7 +579,7 @@ async function main() {
             edgeFromTo("1e4", "1e5"),
             edgeFromTo("1e5", "1e6"),
             edgeFromTo("1e6", "1e7"),
-            edgeFromTo("1e7", "1top stairs"),
+            edgeFromTo("1e7", "120top stairs"),
 
             // 22 Patriot Pl
             // Floor 3
@@ -610,6 +616,12 @@ async function main() {
             // Temp Floor 1
             edgeFromTo("1entrance outside", "1entrance"),
             edgeFromTo("1entrance", "122elevator"),
+            // Parking Lot/Drop Off
+            edgeFromTo("120/122drop off", "120/122parking entrance 1"),
+            edgeFromTo("120/122parking entrance 1", "120/122parking entrance 2"),
+            edgeFromTo("120/122parking entrance 2", "120/122parking"),
+            edgeFromTo("120/122drop off", "1left entrance outside"),
+            edgeFromTo("120/122drop off", "1entrance outside"),
         ]
     });
     
