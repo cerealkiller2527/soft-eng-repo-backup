@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import DirectoryDebug from "../components/DirectoryDebug";
 import {
     Accordion,
     AccordionContent,
