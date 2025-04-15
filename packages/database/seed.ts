@@ -1,6 +1,5 @@
-import {$Enums, PrismaClient, RequestType, Status} from './.prisma/client';
+import {$Enums, PrismaClient, RequestType, Status, Priority} from './.prisma/client';
 import nodeType = $Enums.nodeType;
-import { PrismaClient, RequestType, Status, Priority} from './.prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -297,29 +296,7 @@ async function main() {
     );
 
     // Create service requests for external transportation
-    await Promise.all(
-        Array.from({ length: 10 }).map(async (_, i) => {
-            const request = await prisma.serviceRequest.create({
-                data: {
-                    type: RequestType.EXTERNALTRANSPORTATION,
-                    status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
-                    description: `Additional notes for transport request ${i + 1}`,
-                    employeeID: i < 5 ? employees[i % employees.length].id : null,
-                },
-            });
 
-            await prisma.externalTransportation.create({
-                data: {
-                    id: request.id,
-                    fromWhere: `Location A${i}`,
-                    toWhere: `Location B${i}`,
-                    transportType: 'Wheelchair Van',
-                    patientName: `Patient ${i + 1}`,
-                    pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
-                }
-            });
-        })
-    );
 
     const rawDepartmentData = [
         {
