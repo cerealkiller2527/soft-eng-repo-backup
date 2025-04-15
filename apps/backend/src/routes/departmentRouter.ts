@@ -1,17 +1,24 @@
-import { Router, Request, Response } from 'express';
+import { initTRPC } from '@trpc/server';
+import { z } from 'zod';
 import PrismaClient from '../bin/prisma-client';
 
-const router = Router();
+export const t = initTRPC.create();
 
-router.get('/', async (req: Request, res: Response) => {
-    try {
-        const departments = await PrismaClient.department.findMany();
-        console.log('Departments:', departments);
-        res.json(departments);
-    } catch (err) {
-        console.error('Error fetching departments:', err);
-        res.sendStatus(500);
-    }
+export const departmentRouter = t.router({
+    getDepartment: t.procedure.input(z.object({ name: z.string() })).query(async ({ input }) => {
+        return PrismaClient.department.findFirst({
+            where: {
+                name: input.name,
+            },
+            include: {
+                DepartmentServices: {
+                    include: {
+                        service: true,
+                    },
+                },
+            },
+        });
+    }),
 });
 
-export default router;
+export type DepartmentRouter = typeof departmentRouter;

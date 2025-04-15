@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Papa from 'papaparse';
 
 // Simple interface for CSV row data
 interface DeptRow {
-  departmentId: string;
-  departmentName: string;
-  phoneNumber: string;
-  locationId: string;
-  floor: string;
-  suite: string;
-  buildingId: string;
-  buildingName: string;
-  services: string;
+  'Node Type': string;
+  'Node Description': string;
+  'Floor': string;
+  'Suite': string;
+  'Node (lat,long)': string;
+  'Department Name': string;
+  'Phone Number': string;
+  'Department Description': string;
+  'Services': string;
+  'Building Name': string;
+  'Building Address': string;
+  'Building Phone Number': string;
+  'Edge Connections (from -> to)': string;
   [key: string]: string; // Allow string indexing
 }
 
@@ -22,100 +27,28 @@ export default function CSV() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [previewData, setPreviewData] = useState<DeptRow[]>([]);
-  
-  // Parse a CSV line handling quotes
-  function parseCSV(line: string): string[] {
-    const values: string[] = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      
-      if (char === '"') {
-        if (inQuotes && line[i + 1] === '"') {
-          current += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
-      } else if (char === ',' && !inQuotes) {
-        values.push(current);
-        current = '';
-      } else {
-        current += char;
-      }
-    }
-    
-    values.push(current);
-    return values.map(v => v.trim());
-  }
-  
-  // Map CSV headers to object properties
-  function headerToKey(header: string): string {
-    const map: Record<string, string> = {
-      'Department ID': 'departmentId',
-      'Department Name': 'departmentName',
-      'Phone Number': 'phoneNumber',
-      'Location ID': 'locationId',
-      'Floor': 'floor',
-      'Suite': 'suite',
-      'Building ID': 'buildingId',
-      'Building Name': 'buildingName',
-      'Services': 'services'
-    };
-    
-    return map[header as keyof typeof map] || header;
-  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files?.length) return;
-    
+
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
     setMessage('');
-    
-    try {
-      const text = await selectedFile.text();
-      setCsvText(text);
-      
-      // Parse for preview
-      const rows = text.split('\n');
-      if (rows.length < 2) return;
-      
-      const headers = parseCSV(rows[0]);
-      const preview: DeptRow[] = [];
-      
-      for (let i = 1; i < rows.length; i++) {
-        if (!rows[i].trim()) continue;
-        
-        const values = parseCSV(rows[i]);
-        const row: DeptRow = {
-          departmentId: '',
-          departmentName: '',
-          phoneNumber: '',
-          locationId: '',
-          floor: '',
-          suite: '',
-          buildingId: '',
-          buildingName: '',
-          services: ''
-        };
-        
-        headers.forEach((header, idx) => {
-          const key = headerToKey(header);
-          if (key && idx < values.length) {
-            row[key] = values[idx].replace(/^"|"$/g, '');
-          }
-        });
-        
-        preview.push(row);
-      }
-      
-      setPreviewData(preview);
-    } catch (err) {
-      setMessage('Could not parse file');
-    }
+
+    const text = await selectedFile.text();
+    setCsvText(text);
+
+    Papa.parse<DeptRow>(text, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (result) => {
+        setPreviewData(result.data);
+      },
+      error: (err: Error) => {
+        console.error(err);
+        setMessage('Could not parse file');
+      },
+    });
   }
 
   async function importCSV() {
@@ -209,27 +142,38 @@ export default function CSV() {
               <table className="min-w-full bg-white border">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="py-2 px-3 border">ID</th>
-                    <th className="py-2 px-3 border">Department</th>
-                    <th className="py-2 px-3 border">Phone</th>
-                    <th className="py-2 px-3 border">Location</th>
+                    <th className="py-2 px-3 border">Node Type</th>
+                    <th className="py-2 px-3 border">Node Description</th>
+                    <th className="py-2 px-3 border">Edge Connections (from -&gt; to)</th>
+                    <th className="py-2 px-3 border">Node (lat,long)</th>
                     <th className="py-2 px-3 border">Floor</th>
                     <th className="py-2 px-3 border">Suite</th>
-                    <th className="py-2 px-3 border">Building</th>
+                    <th className="py-2 px-3 border">Building Name</th>
+                    <th className="py-2 px-3 border">Building Address</th>
+                    <th className="py-2 px-3 border">Building Phone Number</th>
+                    <th className="py-2 px-3 border">Department Name</th>
+                    <th className="py-2 px-3 border">Phone Number</th>
+                    <th className="py-2 px-3 border">Department Description</th>
                     <th className="py-2 px-3 border">Services</th>
+
                   </tr>
                 </thead>
                 <tbody>
                   {previewData.map((row, i) => (
                     <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                      <td className="py-2 px-3 border">{row.departmentId}</td>
-                      <td className="py-2 px-3 border">{row.departmentName}</td>
-                      <td className="py-2 px-3 border">{row.phoneNumber}</td>
-                      <td className="py-2 px-3 border">{row.locationId}</td>
-                      <td className="py-2 px-3 border">{row.floor}</td>
-                      <td className="py-2 px-3 border">{row.suite}</td>
-                      <td className="py-2 px-3 border">{row.buildingName}</td>
-                      <td className="py-2 px-3 border">{row.services}</td>
+                      <td className="py-2 px-3 border">{row["Node Type"]}</td>
+                      <td className="py-2 px-3 border">{row["Node Description"]}</td>
+                      <td className="py-2 px-3 border">{row["Edge Connections (from -> to)"]}</td>
+                      <td className="py-2 px-3 border">{row["Node (lat,long)"]}</td>
+                      <td className="py-2 px-3 border">{row["Floor"]}</td>
+                      <td className="py-2 px-3 border">{row["Suite"]}</td>
+                      <td className="py-2 px-3 border">{row["Building Name"]}</td>
+                      <td className="py-2 px-3 border">{row["Building Address"]}</td>
+                      <td className="py-2 px-3 border">{row["Building Phone Number"]}</td>
+                      <td className="py-2 px-3 border">{row["Department Name"]}</td>
+                      <td className="py-2 px-3 border">{row["Phone Number"]}</td>
+                      <td className="py-2 px-3 border">{row["Department Description"]}</td>
+                      <td className="py-2 px-3 border">{row["Services"]}</td>
                     </tr>
                   ))}
                 </tbody>

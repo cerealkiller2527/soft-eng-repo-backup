@@ -1,69 +1,67 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { trpcClient } from '../database/trpc.ts';
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '../database/trpc.ts';
 
 const Login: React.FC = () => {
+    const trpc = useTRPC();
     const [email, setEmail] = useState("");
-    const [transition, setTransition] = useState(false);
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const[transition, setTransition] = useState(false);
 
+    const[username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const[confirmPassword, setConfirmPassword] = useState("");
+
+    //const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
-    
-    const handleLogin = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            
-            const result = await trpcClient.login.checkLogin.mutate({
-                username,
-                password
-            });
-            
-            console.log('Login success', result);
-            navigate("/Directory");
-        } catch (err) {
-            console.error('Username or password is incorrect!', err);
-            setError("Username or password is incorrect!");
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    const handleSignUp = async () => {
-        if (password !== confirmPassword) {
-            setError("Passwords do not match!");
+
+
+    const checkLogin = useMutation(
+
+        trpc.login.checkLogin.mutationOptions({
+            onSuccess: (data) => {
+                console.log('Login success', data);
+                navigate("/Directory");
+            },
+            onError: (error) => {
+                console.error('Username or password is incorrect!', error);
+                alert("Username or password is incorrect!");
+            },
+        })
+    );
+    const addUser = useMutation(
+        trpc.login.addLogin.mutationOptions({
+            onSuccess: (data) => {
+                console.log('Add user', data);
+                alert("Account created successfully! You can now log in.");
+                setIsSignUp(false); // Switch to login form after sign-up
+            },
+            onError: (error) => {
+                console.error('Unable to add user', error);
+                alert("Unable to add user! Try again later.");
+            }
+        })
+    )
+    const handleSignUp = () => {
+        if(password!== confirmPassword){
+            alert("Password do not match!");
             return;
         }
 
-        try {
-            setLoading(true);
-            setError(null);
-            
-            const result = await trpcClient.login.addLogin.mutate({
-                username,
-                password,
-                email
-            });
-            
-            console.log('Add user', result);
-            alert("Account created successfully! You can now log in.");
-            setIsSignUp(false); // Switch to login form after sign-up
-        } catch (err) {
-            console.error('Unable to add user', err);
-            setError("Unable to add user! Try again later.");
-        } finally {
-            setLoading(false);
-        }
+        addUser.mutate({
+            username: username,
+            password: password,
+            email: email
+        })
+
     };
 
     return (
+
+//dimensions for the hero image: 1152px width 1080px height
         <div className="h-screen flex">
-            <div className="w-3/5 bg-cover bg-center opacity-90" style={{backgroundImage:"url('/newImageHero.png')"}}>
+            <div className = "w-3/5 bg-cover bg-center opacity-90" style={{backgroundImage:"url('/newImageHero.png')"}}>
                 <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-4 left-4 w-92 h-auto"/>
 
                 <div onMouseEnter={() => {
@@ -74,14 +72,9 @@ const Login: React.FC = () => {
                 </div>
             </div>
 
+
             <div className="w-2/5 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
-                {error && (
-                    <div className="w-full p-2 mb-4 bg-red-100 text-red-700 rounded-md text-center">
-                        {error}
-                    </div>
-                )}
-                
-                <div>
+                <div >
                     {isSignUp ? (
                         <>
                             <h1 className="text-2xl text-gray-800 mb-4 text-center">Create Account</h1>
@@ -118,12 +111,12 @@ const Login: React.FC = () => {
                                 className="w-full p-2 mb-2 border border-gray-300 rounded-md"
                             />
 
+
                             <button
                                 onClick={handleSignUp}
-                                disabled={loading}
-                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all disabled:opacity-50"
+                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
                             >
-                                {loading ? "Creating account..." : "Sign Up"}
+                                Sign Up
                             </button>
                             <p className="mt-4 text-sm text-center">
                                 Already have an account?{" "}
@@ -131,13 +124,15 @@ const Login: React.FC = () => {
                                     onClick={() => setIsSignUp(false)}
                                     className="text-blue-900 hover:underline cursor-pointer"
                                 >
-                                    Sign In
-                                </span>
+                Sign In
+              </span>
                             </p>
                         </>
                     ) : (
                         <>
                             <h1 className="text-2xl text-gray-800 mb-4 text-center">Sign In</h1>
+
+
 
                             <input
                                 type="text"
@@ -154,11 +149,13 @@ const Login: React.FC = () => {
                                 className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <button
-                                onClick={handleLogin}
-                                disabled={loading}
-                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all disabled:opacity-50"
+                                onClick={()=>checkLogin.mutate({
+                                    username: username,
+                                    password: password
+                                })}
+                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
                             >
-                                {loading ? "Signing in..." : "Sign In"}
+                                Sign In
                             </button>
                             <p className="mt-4 text-sm text-center">
                                 Don't have an account?{" "}
@@ -166,11 +163,12 @@ const Login: React.FC = () => {
                                     onClick={() => setIsSignUp(true)}
                                     className="text-blue-900 hover:underline cursor-pointer"
                                 >
-                                    Create Account
-                                </span>
+                Create Account
+              </span>
                             </p>
                         </>
                     )}
+
                 </div>
             </div>
         </div>

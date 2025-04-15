@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 
-const MGBHospitals = ["Chestnut Hill", "20 Patriots Place", "22 Patriots Place"];
+const buildings =["Patriot Place", "Chestnut Hill"];
+const MGBHospitals = ["Reception"];
+const transport = ["Public Transport", "Walking", "Driving"];
 
 export default function LocationRequestForm({ onSubmit }) {
 
@@ -12,6 +14,8 @@ export default function LocationRequestForm({ onSubmit }) {
     const [form, setForm] = useState({
         location: "",
         destination: "",
+        transport: "",
+        building: "",
     });
 
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
@@ -42,7 +46,7 @@ export default function LocationRequestForm({ onSubmit }) {
                 const origin = results[0].geometry.location;
                 console.log(results[0].geometry.location);
                 // Call the parent component's onSubmit with the new origin
-                onSubmit(origin, form.destination);
+                onSubmit(form);
                 setSubmittedRequests((prevRequests) => [...prevRequests, form]);
                 console.log("Form submitted successfully.", form);
             } else {
@@ -73,10 +77,10 @@ export default function LocationRequestForm({ onSubmit }) {
         <div className="max-w-md mx-auto bg-white shadow-md rounded-2xl">
             <div className="bg-gray-200 w-full p-4 rounded-t-2xl rounded-b-xl">
                 <h2 className="text-xl font-semibold">Location Request</h2>
-                <p>Select the input location and destination.</p>
+                <p>Select the starting address and destination.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6 p-4">
-                <label className="p-2 text-gray-800">Input Location:</label>
+                <label className="p-2 text-gray-800">Enter your starting address:</label>
                 <input
                     id="location-input"
                     type="text"
@@ -87,6 +91,21 @@ export default function LocationRequestForm({ onSubmit }) {
                     placeholder="Enter location"
                 />
                 <br />
+                <label className="p-2 text-gray-800">Building:</label>
+                <select
+                    name="building"
+                    value={form.building}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100"
+                >
+                    <option value="">Select Building</option>
+                    {buildings.map((building) => (
+                        <option key={building} value={building}>
+                            {building}
+                        </option>
+                    ))}
+                </select>
+
                 <label className="p-2 text-gray-800">Destination:</label>
                 <select
                     name="destination"
@@ -98,6 +117,20 @@ export default function LocationRequestForm({ onSubmit }) {
                     {MGBHospitals.map((hospital) => (
                         <option key={hospital} value={hospital}>
                             {hospital}
+                        </option>
+                    ))}
+                </select>
+                <label className="p-2 text-gray-800">Transport Type:</label>
+                <select
+                    name="transport"
+                    value={form.transport}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100"
+                >
+                    <option value="">Select Transport Type</option>
+                    {transport.map((transportType) => (
+                        <option key={transportType} value={transportType}>
+                            {transportType}
                         </option>
                     ))}
                 </select>
