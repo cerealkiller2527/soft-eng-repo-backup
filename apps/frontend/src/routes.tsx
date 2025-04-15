@@ -54,9 +54,9 @@ export const routes = [
         path: '/FloorPlan',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
+
             <FloorPlan />
-            </ProtectedRoute>
+
         ),
     },
     {
