@@ -1,6 +1,11 @@
-import { PrismaClient, RequestType, Status } from './.prisma/client';
+import {$Enums, PrismaClient, RequestType, Status} from './.prisma/client';
+import nodeType = $Enums.nodeType;
 
 const prisma = new PrismaClient();
+
+function toNodeType(value: string): nodeType {
+    return nodeType[value as keyof typeof nodeType];
+}
 
 async function main() {
     // Delete all existing data in correct order
@@ -14,7 +19,6 @@ async function main() {
     await prisma.edge.deleteMany();
     await prisma.departmentServices.deleteMany();
     await prisma.service.deleteMany();
-    await prisma.location.deleteMany();
     await prisma.department.deleteMany();
     await prisma.node.deleteMany();
     await prisma.building.deleteMany();
@@ -41,141 +45,155 @@ async function main() {
             phoneNumber: '1-800-BWH-9999',
         }
     });
+    const chestnutHillBuilding = await prisma.building.create({
+        data: {
+            name: "Chestnut Hill Medical Center",
+            address: '25 Boylston St, Chestnut Hill, Ma 02467',
+            phoneNumber: '(617) 482-5500',
+        }
+    });
+    const patriotPlace20Building = await prisma.building.create({
+        data: {
+            name: "Brigham and Women's/Mass General Health Care Center",
+            address: '25 Boylston St, Chestnut Hill, Ma 02467',
+            phoneNumber: '(617) 482-5500',
+        }
+    });
+
+    const chestnutNodes = [
+        { suite: '0', description: '1top stairs', lat: 272, long: 110, floor: 1, type: "Staircase" },
+        { suite: '0', description: '1b', lat: 272, long: 130, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1a', lat: 190, long: 130, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1c', lat: 190, long: 239, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1d', lat: 163, long: 239, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1e', lat: 163, long: 360, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1f', lat: 275, long: 360, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1bottom entrance', lat: 275, long: 390, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1bottom entrance outside', lat: 275, long: 450, floor: 1, type: "Location" },
+        { suite: '0', description: '1g', lat: 275, long: 315, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1h', lat: 357, long: 315, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1bottom stairs', lat: 357, long: 300, floor: 1, type: "Staircase" },
+        { suite: '0', description: '1right entrance', lat: 400, long: 315, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 450, long: 315, floor: 1, type: "Location" },
+        { suite: '0', description: 'reception', lat: 25, long: 25, floor: 1, type: "Location" },
+        { suite: '0', description: 'Placeholder Node 1 (Suite 204B)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
+        { suite: '0', description: 'Placeholder Node 2 (Suite 317 Pharmacy)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
+        { suite: '0', description: 'Placeholder Node 3 (Suite 560)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
+        { suite: '0', description: 'Placeholder Node 4 (Suite 102B)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
+        { suite: '0', description: 'Placeholder Node 5 (Suite 200)', lat: -1, long: -1, floor: 1, type: "Intermediary" }
+    ]
+    const pat20Floor1Nodes = [
+        /**
+         * arranged in rough grid
+         * a through e, a is bottom part of the map, e is top
+         */
+        // A
+        { suite: '0', description: '1left entrance outside', lat: 42.092500, long: -71.266366,floor : 1, type: "Location" },
+        { suite: '0', description: '1left entrance', lat: 42.092517, long: -71.266300,floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a1', lat: 42.092543, long: -71.266254,floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a2', lat: 42.092605, long: -71.266194,floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a3', lat: 42.092619, long: -71.266139, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a4', lat: 42.092583, long: -71.266126, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a5', lat: 42.092609, long: -71.266041, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1middle stairs', lat: 42.092651, long: -71.266064, floor : 1, type: "Staircase" },
+        { suite: '0', description: '1a6', lat: 42.092651, long: -71.266064, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a7', lat: 42.092663, long: -71.265888, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a8', lat: 42.092717, long: -71.265898, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1urology/cardiology', lat: 42.092720, long: -71.265919, floor : 1, type: "Location" },
+        { suite: '0', description: '1a9', lat: 42.092666, long: -71.265790, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a10', lat: 42.092680, long: -71.265739, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1right stairs', lat: 42.092690, long: -71.265615, floor : 1, type: "Staircase" },
+        { suite: '0', description: '1elevator', lat: 42.092717, long: -71.265685, floor : 1, type: "Elevator" },
+        { suite: '0', description: '1a11', lat: 42.092694, long: -71.265939, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a12', lat: 42.092739, long: -71.265955, floor : 1 , type: "Intermediary" },
+        // B
+        { suite: '0', description: '1radiology', lat: 42.092710, long: -71.266262, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b17', lat: 42.092734, long: -71.266173, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b1', lat: 42.092680, long: -71.266249, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b2', lat: 42.092705, long: -71.266140, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b3', lat: 42.092731, long: -71.266147, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b4', lat: 42.092742, long: -71.266117, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1blood/urgent', lat: 42.092761, long: -71.266043, floor : 1, type: "Location" },
+        { suite: '0', description: '1b5', lat: 42.092749, long: -71.265954, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b6', lat: 42.092774, long: -71.265858, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b7', lat: 42.092786, long: -71.265820, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b8', lat: 42.092803, long: -71.265870, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b9', lat: 42.092791, long: -71.265787, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b10', lat: 42.092803, long: -71.265754, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b11', lat: 42.092803, long: -71.265754, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b12', lat: 42.092803, long: -71.265754, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b13', lat: 42.092821, long: -71.265723, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b14', lat: 42.092821, long: -71.265723, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b15', lat: 42.092835, long: -71.265595, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1right entrance', lat: 42.092835, long: -71.265595, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 42.092835, long: -71.265595, floor : 1, type: "Location" },
+        { suite: '0', description: '1b16', lat: 42.092864, long: -71.265632, floor : 1 , type: "Intermediary" },
+        // C
+        { suite: '0', description: '1c1', lat: 42.092778, long: -71.266254, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1pharmacy', lat: 42.092788, long: -71.266211, floor : 1, type: "Location" },
+        { suite: '0', description: '1c2', lat: 42.092836, long: -71.266267, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c3', lat: 42.092846, long: -71.266212, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c4', lat: 42.092860, long: -71.266150, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c5', lat: 42.092839, long: -71.266153, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c6', lat: 42.092874, long: -71.266087, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c7', lat: 42.092848, long: -71.266089, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c8', lat: 42.092869, long: -71.265967, floor : 1 , type: "Intermediary" },
+        // D
+        { suite: '0', description: '1d1', lat: 42.092817, long: -71.266270, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d2', lat: 42.092821, long: -71.266236, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d3', lat: 42.092837, long: -71.266243, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d4', lat: 42.092860, long: -71.266254, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d5', lat: 42.092892, long: -71.266017, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d6', lat: 42.092892, long: -71.266017, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d7', lat: 42.092871, long: -71.265968, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d8', lat: 42.092871, long: -71.265968, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d9', lat: 42.092871, long: -71.265968, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d10', lat: 42.092852, long: -71.265911, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1d11', lat: 42.092892, long: -71.266017, floor : 1 , type: "Intermediary" },
+        // E
+        { suite: '0', description: '1e1', lat: 42.092886, long: -71.266333, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1e2', lat: 42.092917, long: -71.266278, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1e3', lat: 42.092940, long: -71.266120, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1e4', lat: 42.092920, long: -71.266343, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1e5', lat: 42.092930, long: -71.266360, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1e6', lat: 42.092947, long: -71.266384, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1e7', lat: 42.092963, long: -71.266393, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1top stairs', lat: 42.092960, long: -71.266427, floor : 1, type: "Staircase" }
+    ]
 
     // Create nodes first
-    await prisma.node.createMany({
-        data: [
-            // Chestnut Hill
-            { description: '1top stairs', x: 272, y: 110 },
-            { description: '1b', x: 272, y: 130 },
-            { description: '1a', x: 190, y: 130 },
-            { description: '1c', x: 190, y: 239 },
-            { description: '1d', x: 163, y: 239 },
-            { description: '1e', x: 163, y: 360 },
-            { description: '1f', x: 275, y: 360 },
-            { description: '1bottom entrance', x: 275, y: 390 },
-            { description: '1bottom entrance outside', x: 275, y: 450 },
-            { description: '1g', x: 275, y: 315 },
-            { description: '1h', x: 357, y: 315 },
-            { description: '1bottom stairs', x: 357, y: 300 },
-            { description: '1right entrance', x: 400, y: 315 },
-            { description: '1right entrance outside', x: 450, y: 315 },
-            { description: 'reception', x: 25, y: 25 },
-            { description: 'Placeholder Node 1 (Suite 204B)', x: -1, y: -1 },
-            { description: 'Placeholder Node 2 (Suite 317 Pharmacy)', x: -1, y: -1 },
-            { description: 'Placeholder Node 3 (Suite 560)', x: -1, y: -1 },
-            { description: 'Placeholder Node 4 (Suite 102B)', x: -1, y: -1 },
-            { description: 'Placeholder Node 5 (Suite 200)', x: -1, y: -1 },
+    const chestnutNodesSeeded = await Promise.all(
+        chestnutNodes.map((node) =>
+            prisma.node.create({
+                data: {
+                    description: node.description,
+                    lat: node.lat,
+                    long: node.long,
+                    floor: node.floor,
+                    suite: node.suite,
+                    type: toNodeType(node.type),
+                    buildingId: chestnutHillBuilding.id,
+                },
+            })
+        )
+    );
+    const pat20Floor1NodesSeeded = await Promise.all(
+        pat20Floor1Nodes.map((node) =>
+            prisma.node.create({
+                data: {
+                    description: node.description,
+                    lat: node.lat,
+                    long: node.long,
+                    floor: node.floor,
+                    suite: node.suite,
+                    type: toNodeType(node.type),
+                    buildingId: patriotPlace20Building.id,
+                },
+            })
+        )
+    );
 
-            // Patriot Place Floor 1
-            /**
-             * arranged in rough grid
-             * a through e, a is bottom part of the map, e is top
-             */
-            // A
-            { description: '1left entrance outside', x: 42.092500, y: -71.266366 },
-            { description: '1left entrance', x: 42.092517, y: -71.266300 },
-            { description: '1a1', x: 42.092543, y: -71.266254 },
-            { description: '1a2', x: 42.092605, y: -71.266194 },
-            { description: '1a3', x: 42.092619, y: -71.266139 },
-            { description: '1a4', x: 42.092583, y: -71.266126 },
-            { description: '1a5', x: 42.092609, y: -71.266041 },
-            { description: '1middle stairs', x: 42.092651, y: -71.266064 },
-            { description: '1a6', x: 42.092651, y: -71.266064 },
-            { description: '1a7', x: 42.092663, y: -71.265888 },
-            { description: '1a8', x: 42.092717, y: -71.265898 },
-            { description: '1urology/cardiology', x: 42.092720, y: -71.265919 },
-            { description: '1a9', x: 42.092666, y: -71.265790 },
-            { description: '1a10', x: 42.092680, y: -71.265739 },
-            { description: '1right stairs', x: 42.092690, y: -71.265615 },
-            { description: '1elevator', x: 42.092717, y: -71.265685 },
-            { description: '1a11', x: 42.092694, y: -71.265939 },
-            { description: '1a12', x: 42.092739, y: -71.265955 },
-            // B
-            { description: '1radiology', x: 42.092710, y: -71.266262 },
-            { description: '1b17', x: 42.092734, y: -71.266173 },
-            { description: '1b1', x: 42.092680, y: -71.266249 },
-            { description: '1b2', x: 42.092705, y: -71.266140 },
-            { description: '1b3', x: 42.092731, y: -71.266147 },
-            { description: '1b4', x: 42.092742, y: -71.266117 },
-            { description: '1blood/urgent', x: 42.092761, y: -71.266043 },
-            { description: '1b5', x: 42.092749, y: -71.265954 },
-            { description: '1b6', x: 42.092774, y: -71.265858 },
-            { description: '1b7', x: 42.092786, y: -71.265820 },
-            { description: '1b8', x: 42.092803, y: -71.265870 },
-            { description: '1b9', x: 42.092791, y: -71.265787 },
-            { description: '1b10', x: 42.092803, y: -71.265754 },
-            { description: '1b11', x: 42.092803, y: -71.265754 },
-            { description: '1b12', x: 42.092803, y: -71.265754 },
-            { description: '1b13', x: 42.092821, y: -71.265723 },
-            { description: '1b14', x: 42.092821, y: -71.265723 },
-            { description: '1b15', x: 42.092835, y: -71.265595 },
-            { description: '1right entrance', x: 42.092835, y: -71.265595 },
-            { description: '1right entrance outside', x: 42.092835, y: -71.265595 },
-            { description: '1b16', x: 42.092864, y: -71.265632 },
-            // C
-            { description: '1c1', x: 42.092778, y: -71.266254 },
-            { description: '1pharmacy', x: 42.092788, y: -71.266211 },
-            { description: '1c2', x: 42.092836, y: -71.266267 },
-            { description: '1c3', x: 42.092846, y: -71.266212 },
-            { description: '1c4', x: 42.092860, y: -71.266150 },
-            { description: '1c5', x: 42.092839, y: -71.266153 },
-            { description: '1c6', x: 42.092874, y: -71.266087 },
-            { description: '1c7', x: 42.092848, y: -71.266089 },
-            { description: '1c8', x: 42.092869, y: -71.265967 },
-            // D
-            { description: '1d1', x: 42.092817, y: -71.266270 },
-            { description: '1d2', x: 42.092821, y: -71.266236 },
-            { description: '1d3', x: 42.092837, y: -71.266243 },
-            { description: '1d4', x: 42.092860, y: -71.266254 },
-            { description: '1d5', x: 42.092892, y: -71.266017 },
-            { description: '1d6', x: 42.092892, y: -71.266017 },
-            { description: '1d7', x: 42.092871, y: -71.265968 },
-            { description: '1d8', x: 42.092871, y: -71.265968 },
-            { description: '1d9', x: 42.092871, y: -71.265968 },
-            { description: '1d10', x: 42.092852, y: -71.265911 },
-            { description: '1d11', x: 42.092892, y: -71.266017 },
-            // E
-            { description: '1e1', x: 42.092886, y: -71.266333 },
-            { description: '1e2', x: 42.092917, y: -71.266278 },
-            { description: '1e3', x: 42.092940, y: -71.266120 },
-            { description: '1e4', x: 42.092920, y: -71.266343 },
-            { description: '1e5', x: 42.092930, y: -71.266360 },
-            { description: '1e6', x: 42.092947, y: -71.266384 },
-            { description: '1e7', x: 42.092963, y: -71.266393 },
-            { description: '1top stairs', x: 42.092960, y: -71.266427 },
-
-        ]
-    });
-
-    // Get all created nodes
-    const allNodes = await prisma.node.findMany();
-
-    // Create locations with unique nodeIDs
-    await prisma.location.createMany({
-        data: [
-            { suite: '301', floor: 3, nodeID: allNodes[0].id },
-            { suite: '540', floor: 5, nodeID: allNodes[1].id },
-            { suite: '210', floor: 2, nodeID: allNodes[2].id },
-            { suite: '317', floor: 3, nodeID: allNodes[3].id },
-            { suite: '575', floor: 5, nodeID: allNodes[4].id },
-            { suite: '428', floor: 4, nodeID: allNodes[5].id },
-            { suite: '530', floor: 5, nodeID: allNodes[6].id },
-            { suite: '303', floor: 3, nodeID: allNodes[7].id },
-            { suite: '320', floor: 3, nodeID: allNodes[8].id },
-            { suite: '201', floor: 2, nodeID: allNodes[9].id },
-            { suite: '202', floor: 2, nodeID: allNodes[10].id },
-            { suite: '402', floor: 4, nodeID: allNodes[11].id },
-            { suite: '100', floor: 1, nodeID: allNodes[12].id },
-            { suite: '130', floor: 1, nodeID: allNodes[13].id },
-            { suite: '422', floor: 4, nodeID: allNodes[14].id },
-            { suite: '204B', floor: 2, nodeID: allNodes[15].id },
-            { suite: '317', floor: 3, nodeID: allNodes[16].id },
-            { suite: '560', floor: 5, nodeID: allNodes[17].id },
-            { suite: '102B', floor: 1, nodeID: allNodes[18].id },
-            { suite: '200', floor: 2, nodeID: allNodes[19].id },
-        ]
-    });
+    const allNodes = [...chestnutNodesSeeded, ...pat20Floor1NodesSeeded];
 
     // Create employees for external transportation
     const employees = await Promise.all(
@@ -189,31 +207,6 @@ async function main() {
                 },
             })
         )
-    );
-
-    // Create service requests for external transportation
-    await Promise.all(
-        Array.from({ length: 10 }).map(async (_, i) => {
-            const request = await prisma.serviceRequest.create({
-                data: {
-                    type: RequestType.EXTERNALTRANSPORTATION,
-                    status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
-                    description: `Additional notes for transport request ${i + 1}`,
-                    employeeID: i < 5 ? employees[i % employees.length].id : null,
-                },
-            });
-
-            await prisma.externalTransportation.create({
-                data: {
-                    id: request.id,
-                    fromWhere: `Location A${i}`,
-                    toWhere: `Location B${i}`,
-                    transportType: 'Wheelchair Van',
-                    patientName: `Patient ${i + 1}`,
-                    pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
-                }
-            });
-        })
     );
 
     const rawDepartmentData = [
@@ -368,37 +361,6 @@ async function main() {
                 },
             })
         )
-    );
-
-    // Get all locations to facilitate linking
-    const allLocations = await prisma.location.findMany();
-
-    // Link locations to departments (Simplified Logic - Last Write Wins for Shared Suites)
-    await Promise.all(
-        departments.map(async (departmentEntry) => {
-            // Find the corresponding raw data entry to get suite/floor info
-            const deptRawData = rawDepartmentData.find(d => d.name === departmentEntry.name && d.phoneNumber === departmentEntry.phoneNumber);
-            if (!deptRawData) {
-                console.warn(`Could not find raw data for department: ${departmentEntry.name} to link location.`);
-                return;
-            }
-
-            // Update any location matching the floor and suite
-            // Note: If multiple departments share a floor/suite, the last one processed will set the departmentId
-            const updateResult = await prisma.location.updateMany({
-                where: {
-                    floor: deptRawData.floor,
-                    suite: deptRawData.suite,
-                },
-                data: {
-                    departmentId: departmentEntry.id,
-                },
-            });
-
-            if (updateResult.count === 0) {
-                console.warn(`No location found for Floor ${deptRawData.floor}, Suite ${deptRawData.suite} (Department: ${deptRawData.name})`);
-            }
-        })
     );
 
     // Create department-service relationships (Simplified: One service per department)

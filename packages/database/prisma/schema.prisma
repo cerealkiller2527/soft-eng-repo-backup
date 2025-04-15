@@ -140,8 +140,8 @@ model Node {
   floor        Int
   fromEdge     Edge[]      @relation("fromNode")
   toEdge       Edge[]      @relation("toNode")
-  buildingInt  Int
-  building     Building    @relation(fields: [buildingInt], references: [id])
+  buildingId   Int
+  building     Building    @relation(fields: [buildingId], references: [id])
   departmentId Int?
   Department   Department? @relation(fields: [departmentId], references: [id])
 }
