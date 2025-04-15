@@ -26,6 +26,7 @@ import RequestDashboard from './routes/requestDashboard.tsx';
 import CSVPage from './routes/csv.tsx';
 import LandingPage from "./routes/landingPage.tsx";
 import MapEditor from "./routes/mapEditor.tsx"
+import MapInfoTest from "./routes/mapinfotest.tsx";
 
 export const routes = [
     {
@@ -158,7 +159,11 @@ export const routes = [
         errorElement: <div />,
         element: <MapEditor />,
     },
-
+    {
+        path: '/mapinfotest',
+        errorElement: <div />,
+        element: <MapInfoTest />,
+    },
 ];
 
 export const router = createBrowserRouter(routes);

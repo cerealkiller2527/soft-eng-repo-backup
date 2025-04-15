@@ -21,7 +21,7 @@ export const searchRouter = t.router({
 
             try {
                 const s = new SearchSystem(new BFS());
-                const nodePath = await s.path('1bottom entrance outside', '1a');
+                const nodePath = await s.path('1entrance outside', '4phlebotomy');
 
                 // convert each pNode to pNodeDTO
                 const pNodeDTOS: pNodeDTO[] = nodePath.map((node) => ({
