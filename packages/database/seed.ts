@@ -60,7 +60,7 @@ async function main() {
     });
 
     const chestnutNodes = [
-        { suite: '0', description: '1top stairs', lat: 326126, long: -71.149486, floor: 1, type: "Staircase" },
+        { suite: '0', description: '1top stairs', lat: 42.325966, long: -71.149486, floor: 1, type: "Staircase" },
         { suite: '0', description: '1b', lat: 42.325966, long: -71.149355, floor: 1, type: "Intermediary" },
         { suite: '0', description: '1a', lat: 42.325963, long: -71.149338, floor: 1, type: "Intermediary" },
         { suite: '0', description: '1c', lat: 42.325949, long: -71.149502, floor: 1, type: "Intermediary" },
