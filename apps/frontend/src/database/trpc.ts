@@ -6,7 +6,7 @@ export const queryClient = new QueryClient();
 export const trpcClient = createTRPCClient<appRouter>({
     links: [
         httpBatchLink({
-            url: 'http://localhost:3000/api', // Express server
+            url: "/api" // Express server
         }),
     ],
 });

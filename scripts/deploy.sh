@@ -9,7 +9,8 @@ GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
 
 # Login to AWS ECR
 echo "Logging in to AWS ECR..."
-aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+#aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+# ^ this is commented out because amazon ECR docker credential helper is being used... MANY authorization errors with the above line!
 
 # Build the Docker image with production target and environment variables
 echo "Building Docker image..."
@@ -19,6 +20,7 @@ docker build --platform=linux/amd64 --provenance=false --target production \
   --build-arg BACKEND_PORT=$BACKEND_PORT \
   --build-arg BACKEND_SOURCE=$BACKEND_SOURCE \
   --build-arg BACKEND_URL=$BACKEND_URL \
+  --no-cache \
   -t $REPOSITORY_URI:$GIT_COMMIT_HASH \
   -f ./docker/Dockerfile .
 
