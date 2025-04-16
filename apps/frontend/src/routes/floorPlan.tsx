@@ -4,8 +4,6 @@ import Footer from "../components/Footer";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
-const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
 import { overlays } from "@/constants.tsx";
 
 import {pNodeDTO} from "../../../../share/types.ts";
@@ -42,12 +40,34 @@ const FloorPlan = () => {
     const [pathCoords, setPathCoords] = useState([
         { x: 275, y: 450 },
     ]);
+    const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
+    const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
+    const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
 
-    const marker = new AdvancedMarkerElement({
-        position : { lat: 42.3262, lng: -71.1497 },
-        map: mapInstance.current,
-        gmpClickable: true,
-    });
+    useEffect(() => {
+        const loadGoogleLibraries = async () => {
+            const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+            const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+
+            setInfoWindow(new InfoWindow());
+            setAdvancedMarker(() => AdvancedMarkerElement);
+            setPin(() => PinElement);
+        };
+
+        loadGoogleLibraries();
+    }, [])
+
+    useEffect(() => {
+        if (!mapInstance.current || !AdvancedMarker) return;
+
+        const marker = new AdvancedMarker({
+            position : { lat: 42.3262, lng: -71.1497 },
+            map: mapInstance.current,
+            gmpClickable: true,
+        });
+
+        return () => marker.setMap(null); // Cleanup on unmount or dependency change
+    }, [AdvancedMarker]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -105,7 +125,7 @@ const FloorPlan = () => {
             },
             onError: (error) => {
                 console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
+                alert("pathfinding nodes aint correct!");
             },
         })
     );
