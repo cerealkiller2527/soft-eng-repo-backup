@@ -78,7 +78,7 @@ export const mapEditorRouter = t.router({
                         toY: toNode?.long || 0,
                     };
                 });
-
+                console.log(input.floor);
                 // Return everything needed to render the map
                 return {
                     nodes: formattedNodes,

@@ -27,6 +27,12 @@ export default function MapEditorSelectForm({ onSubmit }) {
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
+        const requiredFields = ["building", "floor"];
+        const missingFields = requiredFields.filter((field) => !form[field as keyof typeof form]);
+        if (missingFields.length > 0) {
+            alert("Please fill all required fields.");
+            return;
+        }
         setSubmittedRequests((prevRequests) => [...prevRequests, form]);
         onSubmit(form);
     };

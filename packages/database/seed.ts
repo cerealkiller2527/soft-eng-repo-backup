@@ -176,22 +176,22 @@ async function main() {
         { suite: '0', description: '3right stairs', lat: 42.092855, long: -71.266709, floor: 3, type: "Staircase" },
     ]
     const pat22Floor4Nodes= [
-            { suite: '0', description: '4left stairs', lat: 42.092446, long: -71.266887, floor: 4, type: "Staircase" },
-            { suite: '0', description: '4a1', lat: 42.092548, long: -71.266732, floor: 4, type: "Intermediary" },
-            { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
-            { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
-            { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
-            { suite: '0', description: '422elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
+        { suite: '0', description: '4left stairs', lat: 42.092446, long: -71.266887, floor: 4, type: "Staircase" },
+        { suite: '0', description: '4a1', lat: 42.092548, long: -71.266732, floor: 4, type: "Intermediary" },
+        { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
+        { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
+        { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
+        { suite: '0', description: '422elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
     ]
     const pat22TempFloor1Nodes= [
-            { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
-            { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
-            { suite: '0', description: '222elevator', lat: 42.092589, long: -71.266719, floor: 2, type: "Elevator" },
-            { suite: '0', description: '120/122drop off', lat: 42.092522, long: -71.266522, floor: 1, type: "Entrance" },
-            { suite: '0', description: '120/122parking entrance 1', lat: 42.092481, long: -71.266441, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '120/122parking entrance 2', lat: 42.092439, long: -71.266355, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '120/122parking', lat: 42.092361, long: -71.266417, floor: 1, type: "Location" },
+        { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
+        { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+        { suite: '0', description: '222elevator', lat: 42.092589, long: -71.266719, floor: 2, type: "Elevator" },
+        { suite: '0', description: '120/122drop off', lat: 42.092522, long: -71.266522, floor: 1, type: "Entrance" },
+        { suite: '0', description: '120/122parking entrance 1', lat: 42.092481, long: -71.266441, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '120/122parking entrance 2', lat: 42.092439, long: -71.266355, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '120/122parking', lat: 42.092361, long: -71.266417, floor: 1, type: "Location" },
     ]
 
     // Create nodes first
