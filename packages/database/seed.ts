@@ -75,7 +75,6 @@ async function main() {
         { suite: '0', description: '1lot1', lat: 42.326294043305104, long: -71.1495987024141, floor: 1, type: "Intermediary" },
         { suite: '0', description: '1lot2', lat: 42.32638877194042, long: -71.14960193256016, floor: 1, type: "Intermediary" },
         { suite: '0', description: '1parking', lat: 42.32636329870798, long: -71.14976451657915, floor: 1, type: "Intermediary" },
-
     ]
     const pat20Floor1Nodes = [
         /**
@@ -95,6 +94,7 @@ async function main() {
         { suite: '0', description: '1a7', lat: 42.092663, long: -71.265888, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a8', lat: 42.092717, long: -71.265898, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1urology/cardiology', lat: 42.092720, long: -71.265919, floor : 1, type: "Location" },
+        { suite: '0', description: '1urology/cardiology2', lat: 42.092721, long: -71.265919, floor : 1, type: "Location" },
         { suite: '0', description: '1a9', lat: 42.092666, long: -71.265790, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a10', lat: 42.092680, long: -71.265739, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1right stairs', lat: 42.092690, long: -71.265615, floor : 1, type: "Staircase" },
@@ -102,13 +102,14 @@ async function main() {
         { suite: '0', description: '1a11', lat: 42.092694, long: -71.265939, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a12', lat: 42.092739, long: -71.265955, floor : 1 , type: "Intermediary" },
         // B
-        { suite: '0', description: '1radiology', lat: 42.092710, long: -71.266262, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '120radiology', lat: 42.092710, long: -71.266262, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b17', lat: 42.092734, long: -71.266173, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b1', lat: 42.092680, long: -71.266249, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b2', lat: 42.092705, long: -71.266140, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b3', lat: 42.092731, long: -71.266147, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b4', lat: 42.092742, long: -71.266117, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1blood/urgent', lat: 42.092761, long: -71.266043, floor : 1, type: "Location" },
+        { suite: '0', description: '1blood/urgent2', lat: 42.092762, long: -71.266043, floor : 1, type: "Location" },
         { suite: '0', description: '1b5', lat: 42.092749, long: -71.265954, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b6', lat: 42.092774, long: -71.265858, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b7', lat: 42.092786, long: -71.265820, floor : 1 , type: "Intermediary" },
@@ -566,6 +567,7 @@ async function main() {
             edgeFromTo("1a6", "1a7"),
             edgeFromTo("1a7", "1a8"),
             edgeFromTo("1a8", "1urology/cardiology"),
+            edgeFromTo("1a8", "1urology/cardiology2"),
             edgeFromTo("1a8", "1a9"),
             edgeFromTo("1a9", "1a10"),
             edgeFromTo("1a10", "120elevator"),
@@ -581,10 +583,11 @@ async function main() {
             edgeFromTo("1b2", "1b3"),
             edgeFromTo("1b3", "1b4"),
             edgeFromTo("1b4", "1blood/urgent"),
+            edgeFromTo("1b4", "1blood/urgent2"),
             edgeFromTo("1b3", "1b17"),
             edgeFromTo("1b3", "1b17"),
-            edgeFromTo("1radiology", "1b17"),
-            edgeFromTo("1b1", "1radiology"),
+            edgeFromTo("120radiology", "1b17"),
+            edgeFromTo("1b1", "120radiology"),
             edgeFromTo("1b2", "1b5"),
             edgeFromTo("1b5", "1b6"),
             edgeFromTo("1b6", "1b7"),
