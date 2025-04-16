@@ -4,7 +4,7 @@ import TransportRequest from "../routes/serviceRequest.tsx";
 import transportImage from "../../public/transport.png"
 import LanguageRequestForm from "../components/LanguageRequestForm.tsx";
 import TransportationForm from "@/components/TransportationForm.tsx";
-import {Button} from "../components/ui/button";
+import { Button } from "../components/ui/button";
 
 
 export default function TransportCard({ onAddRequest }: { onAddRequest: (data: object) => void}) {
@@ -22,7 +22,7 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
     <div>
         <Button onClick={() => {
             setIsOpen(true);
-        }} className="bg-[#012D5A] text-xl font-bold text-center items-center flex flex-col p-19 hover:bg-white bg-opacity-10 text-[#012D5A] rounded-xl hover:text-white border border-4 border-[#012D5A]">Transport
+        }} className="bg-[#012D5A] text-xl font-bold text-center items-center flex flex-col p-19 hover:bg-[#012D5A] bg-opacity-10 text-[#012D5A] rounded-xl hover:text-white border border-4 border-[#012D5A]">Transport
             <img src="/transport.png"
             alt="Transport"
             className="w-12 h-12 object-contain flex items-center"
