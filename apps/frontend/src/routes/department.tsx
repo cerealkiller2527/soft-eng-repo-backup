@@ -1,175 +1,157 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { useTRPC } from "../database/trpc.ts";
 
-interface Department {
-    id: string;
-    name: string;
-    phoneNumber: string;
-    DepartmentServices: Array<{
-        service: {
-            name: string;
-        };
-    }>;
-    node: Array<{
-        suite: string;
-        floor: number;
-        building: {
-            name: string;
-            address: string;
-            phoneNumber: string;
-        };
-    }>;
-}
+const BuildingSchema = z.object({
+    name: z.string(),
+    address: z.string(),
+    phoneNumber: z.string()
+});
+
+const LocationSchema = z.object({
+    suite: z.string(),
+    floor: z.number(),
+    building: BuildingSchema
+});
+
+const ServiceSchema = z.object({
+    service: z.object({
+        name: z.string()
+    })
+});
+
+const DepartmentSchema = z.object({
+    id: z.number(),
+    name: z.string(),
+    phoneNumber: z.string(),
+    description: z.string().optional(),
+    DepartmentServices: z.array(ServiceSchema),
+    node: z.array(LocationSchema)
+});
+
+type Department = z.infer<typeof DepartmentSchema>;
 
 const DepartmentPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const trpc = useTRPC();
-
-    const { data: department, isLoading, error } = useQuery(
+    const { data: departmentData, isLoading, error } = useQuery(
         trpc.directories.getDepartmentById.queryOptions({ id: Number(id) })
     );
 
-    if (isLoading) {
+    // Validate department data
+    const departmentResult = DepartmentSchema.safeParse(departmentData);
+    const department = departmentResult.success ? departmentResult.data : null;
+    const hasError = !departmentResult.success || error;
+
+    if (isLoading || hasError || !department) {
         return (
-            <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
+            <div className="min-h-screen bg-white pt-20">
                 <Navbar />
-                <div className="flex-grow p-4">
-                    <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto p-4">
+                    {isLoading ? (
                         <div className="text-center py-8">Loading department information...</div>
-                    </div>
-                </div>
-                <Footer />
-            </div>
-        );
-    }
-
-    if (error || !department) {
-        return (
-            <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
-                <Navbar />
-                <div className="flex-grow p-4">
-                    <div className="max-w-4xl mx-auto">
+                    ) : (
                         <div className="text-center py-8 text-red-500">
-                            Error loading department information
+                            {!departmentResult.success ? 
+                                "Invalid department data received" : 
+                                "Error loading department information"
+                            }
                         </div>
-                    </div>
+                    )}
                 </div>
                 <Footer />
             </div>
         );
     }
 
-    // Group services by removing parentheses and splitting by commas and "and"
     const services = department.description
         ?.split(/[(),]/)
         .flatMap(s => s.split(" and "))
         .map(s => s.trim())
-        .filter(s => s.length > 0);
+        .filter(Boolean);
 
     return (
-        <div className="flex flex-col min-h-screen bg-white overflow-y-auto pt-20">
-            <div className="flex-grow p-4">
-                <Navbar />
+        <div className="min-h-screen bg-white pt-20">
+            <Navbar />
+            <main className="max-w-4xl mx-auto p-4">
+                <h1 className="text-3xl font-light text-[#012D5A] mb-4">{department.name}</h1>
+                <hr className="border-[#012D5A]/20 mb-6" />
 
-                {/* Header */}
-                <div className="max-w-4xl mx-auto mb-8">
-                    <h1 className="text-3xl font-light text-[#012D5A] mb-2">
-                        {department.name}
-                    </h1>
-                    <div className="h-px bg-[#012D5A]/20 w-full"></div>
-                </div>
+                <div className="grid gap-6">
+                    {department.phoneNumber && (
+                        <section className="bg-white rounded-lg shadow-sm p-6">
+                            <h2 className="text-xl font-semibold text-[#012D5A] mb-4">Contact</h2>
+                            <a href={`tel:${department.phoneNumber}`} 
+                               className="text-[#012D5A] hover:underline">
+                                {department.phoneNumber}
+                            </a>
+                        </section>
+                    )}
 
-                {/* Department Information */}
-                <div className="max-w-4xl mx-auto">
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Contact Information */}
-                            <div>
-                                <h2 className="text-xl font-semibold text-[#012D5A] mb-4">
-                                    Contact Information
-                                </h2>
-                                {department.phoneNumber && (
-                                    <div className="mb-2">
-                                        <span className="font-medium">Phone:</span>{" "}
-                                        <a href={`tel:${department.phoneNumber}`} className="text-[#012D5A] hover:underline">
-                                            {department.phoneNumber}
-                                        </a>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Location Information */}
-                            {department.node.length > 0 && (
-                                <div>
-                                    <h2 className="text-xl font-semibold text-[#012D5A] mb-4">
-                                        Location
-                                    </h2>
-                                    {department.node.map((location, index) => (
-                                        <div key={index} className="bg-gray-50 rounded-lg p-4 mb-4">
-                                            <div className="font-medium text-lg text-[#012D5A] mb-3">
-                                                {location.building.name}
-                                            </div>
-                                            <div className="space-y-3">
-                                                <div className="flex items-baseline">
-                                                    <span className="font-medium w-32">Address:</span>
-                                                    <a 
-                                                        href={`https://maps.google.com/?q=${encodeURIComponent(location.building.address)}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-[#012D5A] hover:underline"
-                                                    >
+                    {department.node.length > 0 && (
+                        <section className="bg-white rounded-lg shadow-sm p-6">
+                            <h2 className="text-xl font-semibold text-[#012D5A] mb-4">Locations</h2>
+                            <div className="space-y-6">
+                                {department.node.map((location, index) => (
+                                    <div key={index} className="bg-gray-50 rounded-lg p-4">
+                                        <h3 className="font-medium text-lg text-[#012D5A] mb-3">
+                                            {location.building.name}
+                                        </h3>
+                                        <dl className="space-y-3">
+                                            <div className="flex">
+                                                <dt className="w-32 font-medium">Address</dt>
+                                                <dd>
+                                                    <a href={`https://maps.google.com/?q=${encodeURIComponent(location.building.address)}`}
+                                                       target="_blank"
+                                                       rel="noopener noreferrer"
+                                                       className="text-[#012D5A] hover:underline">
                                                         {location.building.address}
                                                     </a>
-                                                </div>
-                                                <div className="flex items-baseline">
-                                                    <span className="font-medium w-32">Building Phone:</span>
-                                                    <a 
-                                                        href={`tel:${location.building.phoneNumber}`} 
-                                                        className="text-[#012D5A] hover:underline"
-                                                    >
+                                                </dd>
+                                            </div>
+                                            <div className="flex">
+                                                <dt className="w-32 font-medium">Phone</dt>
+                                                <dd>
+                                                    <a href={`tel:${location.building.phoneNumber}`}
+                                                       className="text-[#012D5A] hover:underline">
                                                         {location.building.phoneNumber}
                                                     </a>
-                                                </div>
-                                                <div className="flex items-baseline">
-                                                    <span className="font-medium w-32">Floor:</span>
-                                                    <span>{location.floor}</span>
-                                                </div>
-                                                <div className="flex items-baseline">
-                                                    <span className="font-medium w-32">Suite:</span>
-                                                    <span>{location.suite}</span>
-                                                </div>
+                                                </dd>
                                             </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                                            <div className="flex">
+                                                <dt className="w-32 font-medium">Floor</dt>
+                                                <dd>{location.floor}</dd>
+                                            </div>
+                                            <div className="flex">
+                                                <dt className="w-32 font-medium">Suite</dt>
+                                                <dd>{location.suite}</dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
-                    {/* Services */}
-                    {services && services.length > 0 && (
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <h2 className="text-xl font-semibold text-[#012D5A] mb-4">
-                                Services Offered
-                            </h2>
+                    {services?.length > 0 && (
+                        <section className="bg-white rounded-lg shadow-sm p-6">
+                            <h2 className="text-xl font-semibold text-[#012D5A] mb-4">Services</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {services.map((service, index) => (
-                                    <div 
-                                        key={index}
-                                        className="p-4 border border-[#012D5A]/20 rounded-lg hover:bg-[#012D5A]/5 transition-colors"
-                                    >
+                                    <div key={index}
+                                         className="p-4 bg-gray-50 rounded-lg hover:bg-[#012D5A]/5 transition-colors">
                                         {service}
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </section>
                     )}
                 </div>
-            </div>
+            </main>
             <Footer />
         </div>
     );

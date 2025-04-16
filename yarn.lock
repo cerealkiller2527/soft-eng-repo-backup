@@ -4428,6 +4428,7 @@ __metadata:
     vite: "npm:^6.2.3"
     vite-plugin-eslint: "npm:^1.8.1"
     vitest: "npm:^3.0.9"
+    zod: "npm:^3.24.2"
   languageName: unknown
   linkType: soft
 
