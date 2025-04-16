@@ -36,6 +36,7 @@ const FloorPlan = () => {
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
+    const [driving, setDriving] = useState<boolean>(true);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -50,17 +51,7 @@ const FloorPlan = () => {
         loadGoogleLibraries();
     }, [])
 
-    useEffect(() => {
-        if (!mapInstance.current || !AdvancedMarker) return;
 
-        const marker = new AdvancedMarker({
-            position : { lat: 42.3262, lng: -71.1497 },
-            map: mapInstance.current,
-            gmpClickable: true,
-        });
-
-        return () => marker.setMap(null); // Cleanup on unmount or dependency change
-    }, [AdvancedMarker]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -101,7 +92,7 @@ const FloorPlan = () => {
         const polyline = new google.maps.Polyline({
             path: filteredCoords,
             geodesic: true,
-            strokeColor: "#FF0000",
+            strokeColor: "#00d9ff",
             strokeOpacity: 1.0,
             strokeWeight: 4,
         });
@@ -161,14 +152,19 @@ const FloorPlan = () => {
         if (!form) return;
 
         search.mutate({
-            startDesc: '1bottom entrance',
-            endDesc: 'reception',
+            endDesc: form.destination,
+            location: form.building,
+            driving: driving
         });
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
-            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT; break;
-            case "Walking": travelMode = google.maps.TravelMode.WALKING; break;
+            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT;
+            setDriving(false)
+            break;
+            case "Walking": travelMode = google.maps.TravelMode.WALKING;
+            setDriving(false)
+            break;
         }
 
         if(form.building == "Patriot Place"){
@@ -182,11 +178,11 @@ const FloorPlan = () => {
 
         if (form.location && mapInstance.current && directionsRenderer.current) {
             const directionsService = new google.maps.DirectionsService();
-            let address = "850 Boylston St Chestnut Hill, MA 02467";
+            let address = {lat: 42.32629494233723, lng: -71.14950206654193};
             if(form.building ==  "20 Patriot Place"){
-                address = "20 Patriot Pl, Foxborough, MA 02035";
+                address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }else if(form.building ==  "22 Patriot Place"){
-                address = "22 Patriot Pl, Foxborough, MA 02035";
+                address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }
             directionsService.route(
                 {
@@ -217,33 +213,41 @@ const FloorPlan = () => {
     };
 
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
-            <div className="flex justify-start mb-2">
+        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col">
+            {/* Header */}
+            <div className="flex justify-start mb-2 p-2">
                 <img src="/BrighamAndWomensLogo.png" alt="Logo" className="h-12 ml-2" />
             </div>
 
+            {/* Navbar */}
             <Navbar />
 
-            <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
-                <LocationRequestForm onSubmit={(form) => setForm(form)} />
-
+            {/* Main content fills screen excluding navbar/footer */}
+            <div className="relative flex-1">
+                {/* Google Map full size */}
                 <div
                     id="google-map-container"
-                    className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
+                    className="absolute inset-0 z-0"
                     ref={mapRef}
-                    style={{ width: '100%', height: '600px' }}
+                    style={{ width: '100%', height: '100%' }}
                 />
-                <div className="mt-4 flex justify-center">
+
+                {/* Overlay UI elements */}
+                <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
+                    <LocationRequestForm onSubmit={(form) => setForm(form)} />
+                </div>
+
+                <div className="absolute top-4 right-4 z-10">
                     <button
                         onClick={handleImageSwitch}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md"
                     >
-                        Floor : {imageIndex + 1}
+                        Floor: {imageIndex + 1}
                     </button>
                 </div>
 
                 {eta && (
-                    <div className="absolute top-25 left-120 bg-white border border-gray-300 rounded p-3 shadow-md z-10 w-64">
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-300 rounded p-3 shadow-md z-10 w-64">
                         <div className="flex justify-between items-center mb-2">
                             <strong>ETA:</strong>
                         </div>
@@ -252,6 +256,7 @@ const FloorPlan = () => {
                 )}
             </div>
 
+            {/* Footer */}
             <Footer />
         </div>
     );

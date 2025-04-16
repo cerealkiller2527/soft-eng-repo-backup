@@ -20,12 +20,12 @@ export class SearchSystem {
         let parkingReturnPath: pNode[] = [];
 
         // find location
-        if (location === 'chestnut hill' || location == 'chestnut') {
+        if (location === 'Chestnut Hill Medical Center' || location == 'chestnut') {
             startDescription = '1drop off';
             parkingDescription = '1parking';
         } else if (
-            location === '20 patriot' ||
-            location === '22 patriot' ||
+            location === '20 Patriot Place' ||
+            location === '22 Patriot Place' ||
             location === 'patriot place'
         ) {
             startDescription = '120/122drop off';

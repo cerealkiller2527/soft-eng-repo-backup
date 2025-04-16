@@ -24,7 +24,6 @@ const Login: React.FC = () => {
 
     const from = location.state?.from?.pathname || '/Directory';
 
-
     const checkLogin = useMutation(
 
         trpc.login.checkLogin.mutationOptions({

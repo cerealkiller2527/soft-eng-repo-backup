@@ -130,7 +130,7 @@ export const mapInfoRouter = t.router({
                 // First find the building by name
                 const building = await PrismaClient.building.findFirst({
                     where: { name: input.buildingName },
-                    select: { id: true }
+                    select: { id: true },
                 });
 
                 if (!building) {
@@ -141,24 +141,13 @@ export const mapInfoRouter = t.router({
                 return await PrismaClient.node.findMany({
                     where: { buildingId: building.id },
                     select: {
-                        id: true,
-                        floor: true,
-                        suite: true,
                         type: true,
                         description: true,
-                        lat: true,
-                        long: true
                     },
-                    orderBy: [
-                        { floor: 'asc' },
-                        { suite: 'asc' }
-                    ]
+                    orderBy: [{ floor: 'asc' }, { suite: 'asc' }],
                 });
             } catch (error) {
-                console.error(
-                    `Error fetching nodes for building '${input.buildingName}':`,
-                    error
-                );
+                console.error(`Error fetching nodes for building '${input.buildingName}':`, error);
                 throw new Error('Failed to fetch building nodes');
             }
         }),
