@@ -37,9 +37,6 @@ import { z } from "zod"
 
         const trpc = useTRPC();
         const addReq = useMutation(trpc.service.externalTransportationRouter.addExternalTransportationRequest.mutationOptions({
-            onSuccess: (data) => {
-                queryClient.invalidateQueries({ queryKey: ['service.getExternalTransportation'] });
-            }
         }))
 
         const form = useForm<z.infer<typeof formSchema>>({

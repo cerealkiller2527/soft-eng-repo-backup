@@ -25,7 +25,7 @@ export default function TransportRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requests = useQuery(trpc.service.externalTransportationRouter.getExternalTransportationRequests.queryOptions())
+    const requests = useQuery(trpc.service.externalTransportationRouter.getExternalTransportationRequests.queryOptions({}))
     console.log("Fetched requests:", requests.data);
 
 
@@ -45,6 +45,7 @@ export default function TransportRequestDisplay() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
+
                     {requests.data?.map((req) => (
                         <TableRow key={req.id}>
                             <TableCell> {req.fromEmployee}</TableCell>

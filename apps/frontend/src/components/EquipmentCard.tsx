@@ -19,7 +19,7 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
         <div>
             <button onClick={() => {
                 setIsOpen(true);
-            }} className="text-xl font-bold text-center items-center flex flex-col p-12 bg-[#012D5A] bg-opacity-10 text-white rounded-xl hover:bg-white hover:text-[#012D5A] border border-4 border-[#012D5A]">Equipment
+            }} className="text-xl font-bold text-center items-center flex flex-col p-20 bg-[#012D5A] bg-opacity-10 text-white rounded-xl hover:text-white  border border-4 border-[#012D5A]">Equipment
                 <img src="/Equipment.png"
                      alt="Equipment"
                      className="w-12 h-12 object-contain flex items-center"

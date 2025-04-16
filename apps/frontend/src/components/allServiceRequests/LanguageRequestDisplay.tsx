@@ -24,7 +24,7 @@ export default function LanguageRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requests = useQuery(trpc.service.languageRouter.getLanguageRequests.queryOptions());
+    const requests = useQuery(trpc.service.languageRouter.getLanguageRequests.queryOptions({}));
     console.log("Fetched requests:", requests.data);
 
 
