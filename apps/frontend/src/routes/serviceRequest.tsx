@@ -57,8 +57,11 @@ const ServiceRequest = () => {
                 <hr />
                 <br />
             </div>
+            <div className="flex flex-wrap justify-center">
+                <DashboardButton />
+            </div>
+            <div className={"flex flex-wrap justify-center gap-4 my-6 w-full"}>
                 <div className="mt-10">
-                    <DashboardButton />
                     <br />
                     <TransportCard onAddRequest={addTransportRequest} />
                 </div>
@@ -67,107 +70,15 @@ const ServiceRequest = () => {
                     <br />
                     <SecurityCard onAddRequest={addSecurityRequest} />
                 </div>
-            <div className="mt-10">
-                <br />
-                <LanguageCard onAddRequest={addLanguageRequest} />
-            </div>
-            <div className="mt-10">
-                <br />
-                <EquipmentCard onAddRequest={addEquipmentRequest} />
-            </div>
-                <div className="mt-8">
-                    <h2 className="text-lg font-semibold mb-4">Submitted Requests</h2>
-                    <hr />
+                <div className="mt-10">
                     <br />
-                    <div>
-                    <h2 className="text-md font-semibold mb-4"> Transportation Requests </h2>
-                    {transportRequests.length === 0 ? (
-                        <p>No requests submitted yet.</p>) : (
-                        <div className="grid gap-4">
-                            {transportRequests.map((req, i) => (
-                                <div
-                                    key={i}
-                                    className="border p-4 rounded-xl shadow bg-white space-y-1">
-                                    <p><strong>TRANSPORT REQUEST</strong></p>
-                                    <p><strong>Employee:</strong> {req.employeeName}</p>
-                                    <p><strong>Patient:</strong> {req.patientName}</p>
-                                    <p><strong>Priority:</strong> {req.priority}</p>
-                                    <p><strong>Pickup Time:</strong> {req.pickupTime.toLocaleString()}</p>
-                                    <p><strong>Transport Type:</strong> {req.transportType}</p>
-                                    <p><strong>Pickup:</strong> {req.pickupTransport}</p>
-                                    <p><strong>Dropoff:</strong> {req.dropoffTransport}</p>
-                                    <p><strong>Notes:</strong> {req.additionalNotes || "N/A"}</p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    </div>
-                    <br />
-                    <div>
-                        <h2 className="text-md font-semibold mb-4"> Equipment Requests </h2>
-                        {equipmentRequests.length === 0 ? (
-                            <p>No requests submitted yet.</p>) : (
-                            <div className="grid gap-4">
-                                {equipmentRequests.map((req, i) => (
-                                    <div
-                                        key={i}
-                                        className="border p-4 rounded-xl shadow bg-white space-y-1">
-                                        <p><strong>EQUIPMENT REQUEST</strong></p>
-                                        <p><strong>Employee:</strong> {req.employeeName}</p>
-                                        <p><strong>Priority:</strong> {req.priority}</p>
-                                        <p><strong>Deadline:</strong> {req.deadline.toLocaleString()}</p>
-                                        <p><strong>Equipment:</strong> {req.equipment.join(", ")}</p>
-                                        <p><strong>Location:</strong> {req.location}</p>
-                                        <p><strong>Notes:</strong> {req.additionalNotes || "N/A"}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <br />
-                    <div>
-                        <h2 className="text-md font-semibold mb-4"> Security Requests </h2>
-                        {securityRequests.length === 0 ? (
-                            <p>No requests submitted yet.</p>) : (
-                            <div className="grid gap-4">
-                                {securityRequests.map((req, i) => (
-                                    <div
-                                        key={i}
-                                        className="border p-4 rounded-xl shadow bg-white space-y-1">
-                                        <p><strong>SECURITY REQUEST</strong></p>
-                                        <p><strong>Employee:</strong> {req.employeeName}</p>
-                                        <p><strong>Priority:</strong> {req.priority}</p>
-                                        <p><strong>Location:</strong> {req.location}</p>
-                                        <p><strong>Notes:</strong> {req.additionalNotes || "N/A"}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                    <br />
-                    <div>
-                        <h2 className="text-md font-semibold mb-4"> Language Requests </h2>
-                        {languageRequests.length === 0 ? (
-                            <p>No requests submitted yet.</p>) : (
-                            <div className="grid gap-4">
-                                {languageRequests.map((req, i) => (
-                                    <div
-                                        key={i}
-                                        className="border p-4 rounded-xl shadow bg-white space-y-1">
-                                        <p><strong>LANGUAGE REQUEST</strong></p>
-                                        <p><strong>Employee:</strong> {req.employeeName}</p>
-                                        <p><strong>Priority:</strong> {req.priority}</p>
-                                        <p><strong>Language:</strong> {req.language}</p>
-                                        <p><strong>Start Time:</strong> {req.startTime.toLocaleString()}</p>
-                                        <p><strong>End Time:</strong> {req.endTime.toLocaleString()}</p>
-                                        <p><strong>Location:</strong> {req.location}</p>
-                                        <p><strong>Notes:</strong> {req.additionalNotes || "N/A"}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <LanguageCard onAddRequest={addLanguageRequest} />
                 </div>
+                <div className="mt-10">
+                    <br />
+                    <EquipmentCard onAddRequest={addEquipmentRequest} />
+                </div>
+            </div>
             <div>
                 <Footer />
             </div>
