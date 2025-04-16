@@ -117,12 +117,6 @@ model Security {
   location       String
 }
 
-model Score {
-  id    Int      @id @default(autoincrement())
-  time  DateTime
-  score Int
-}
-
 model Edge {
   id         Int  @id @default(autoincrement())
   fromNodeId Int
@@ -154,7 +148,6 @@ model Department {
   phoneNumber        String
   node               Node[]
   DepartmentServices DepartmentServices[]
-  buildingID         Int
 }
 
 model Service {
@@ -174,7 +167,7 @@ model DepartmentServices {
 
 model Building {
   id          Int    @id @default(autoincrement())
-  name        String
+  name        String @unique
   address     String
   phoneNumber String
   Node        Node[]

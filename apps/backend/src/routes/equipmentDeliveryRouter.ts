@@ -13,11 +13,12 @@ export const equipmentDeliveryRouter = t.router({
                 toWhere: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
+                status: z.nativeEnum(Status).optional(),
                 employee: z.string().optional(),
             })
         )
         .query(async ({ input }) => {
-            const { deadline, equipment, toWhere, additionalNotes, priority, employee } = input;
+            const { deadline, equipment, toWhere, additionalNotes, priority, status, employee } = input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
                     type: RequestType.EQUIPMENTDELIVERY,
@@ -26,6 +27,7 @@ export const equipmentDeliveryRouter = t.router({
                     ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
+                    ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {

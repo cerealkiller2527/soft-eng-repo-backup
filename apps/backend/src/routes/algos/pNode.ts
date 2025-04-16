@@ -83,7 +83,12 @@ export class pNode {
         });
 
         for (let neighbor of neighborNodes) {
-            const newNode = new pNode(neighbor.id, neighbor.x, neighbor.y, neighbor.description);
+            const newNode = new pNode(
+                neighbor.id,
+                neighbor.lat,
+                neighbor.long,
+                neighbor.description
+            );
             this.neighbors.push(newNode);
         }
     }

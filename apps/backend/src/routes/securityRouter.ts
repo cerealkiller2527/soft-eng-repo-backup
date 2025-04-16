@@ -11,17 +11,19 @@ export const securityRouter = t.router({
                 location: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
+                status: z.nativeEnum(Status).optional(),
                 employee: z.string().optional(),
             })
         )
         .query(async ({ input }) => {
-            const { location, additionalNotes, priority, employee } = input;
+            const { location, additionalNotes, priority, status, employee } = input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
                     type: RequestType.SECURITY,
                     ...(location && { security: { location: location } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
+                    ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {

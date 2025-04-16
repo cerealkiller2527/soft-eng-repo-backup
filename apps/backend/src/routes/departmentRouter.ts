@@ -11,7 +11,6 @@ export const departmentRouter = t.router({
                 name: input.name,
             },
             include: {
-                Location: true,
                 DepartmentServices: {
                     include: {
                         service: true,
