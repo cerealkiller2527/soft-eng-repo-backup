@@ -77,12 +77,20 @@ export const routes = [
     {
         path: '/mapeditor',
         errorElement: <div />,
-        element: <MapEditor />,
+        element: (
+            <ProtectedRoute>
+                <MapEditor />
+            </ProtectedRoute>
+        ),
     },
     {
         path: '/mapinfotest',
         errorElement: <div />,
-        element: <MapInfoTest />,
+        element: (
+            <ProtectedRoute>
+                <MapInfoTest />
+            </ProtectedRoute>
+        ),
     },
     {
         path: '/test',
