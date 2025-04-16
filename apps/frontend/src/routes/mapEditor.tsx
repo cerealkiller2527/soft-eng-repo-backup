@@ -25,14 +25,15 @@ const MapEditor = () => {
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
     const [nodes, setNodes] = useState<pNodeDTO[]>([]);
-    const markersRef = useRef<google.maps.Marker[]>([]);  // Ref to store markers
+    const markersRef = useRef<google.maps.Marker[]>([]);
+    const [building, setBuilding] = useState<number>(1);// Ref to store markers
     const polylinesRef = useRef<google.maps.Polyline[]>([]);
 
 
     // Mutation for fetching floor map data
     const fetchFloorMap = useQuery(
         trpc.mapEditor.getFloorMap.queryOptions({
-            buildingId: 1,
+            buildingId: Number(building),
             floor: Number(form?.floor ?? 1),
 
             onSuccess: (data) => {
@@ -50,7 +51,16 @@ const MapEditor = () => {
     );
 
     useEffect(() => {
-        if (!form || fetchFloorMap.status != 'success' ) return;
+        if(!form) return;
+        if(form.building == "22 Patriot Place"){
+            setBuilding(3);
+        }if(form.building == "20 Patriot Place"){
+            setBuilding(2);
+        }if(form.building == "Chestnut Hill"){
+            setBuilding(1);
+        }
+        if (fetchFloorMap.status != 'success' ) return;
+
         queryClient.invalidateQueries({
             queryKey: ['mapEditor.getFloorMap', { buildingId: 5, floor: form.floor }],
         });
@@ -132,7 +142,9 @@ const MapEditor = () => {
 
     useEffect(() => {
         if (!form) return;
-        if (form.building === "22 Patriot Place") {
+        if (form.building === "20 Patriot Place") {
+            mapInstance.current?.setCenter({ lat: 42.09262, lng: -71.267 });
+        }else if (form.building === "22 Patriot Place") {
             mapInstance.current?.setCenter({ lat: 42.09280, lng: -71.266 });
         } else {
             mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
