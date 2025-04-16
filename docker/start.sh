@@ -15,6 +15,9 @@ echo "POSTGRES_URL: ${POSTGRES_URL}"
 # Push schema to DB
 yarn workspace database push
 
+# seed DB
+yarn workspace database seed
+
 # Build the frontend
 echo "Building frontend..."
 cd /app/apps/frontend
