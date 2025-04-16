@@ -22,6 +22,7 @@ export default function TransportRequestDisplay() {
         pickupTransport: string;
         dropoffTransport: string;
         additionalNotes: string;
+        status: string;
     };
 
     const trpc = useTRPC();
@@ -42,20 +43,22 @@ export default function TransportRequestDisplay() {
                     <TableHead>Pickup From</TableHead>
                     <TableHead>Drop Off To</TableHead>
                     <TableHead>Additional Notes</TableHead>
+                    <TableHead>Status</TableHead>
                 </TableRow>
                 </TableHeader>
                 <TableBody>
 
                     {requests.data?.map((req) => (
                         <TableRow key={req.id}>
-                            <TableCell> {req.fromEmployee}</TableCell>
-                        <TableCell> {req.externalTransportation.patientName}</TableCell>
-                            <TableCell> {req.priority}</TableCell>
-                            <TableCell> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</TableCell>
-                            <TableCell> {req.externalTransportation.transportType}</TableCell>
-                            <TableCell> {req.externalTransportation.fromWhere}</TableCell>
-                            <TableCell> {req.externalTransportation.toWhere}</TableCell>
+                            <TableCell> {req.fromEmployee} </TableCell>
+                        <TableCell> {req.externalTransportation.patientName} </TableCell>
+                            <TableCell> {req.priority} </TableCell>
+                            <TableCell> {new Date(req.externalTransportation.pickupTime).toLocaleString()} </TableCell>
+                            <TableCell> {req.externalTransportation.transportType} </TableCell>
+                            <TableCell> {req.externalTransportation.fromWhere} </TableCell>
+                            <TableCell> {req.externalTransportation.toWhere} </TableCell>
                             <TableCell> {req.description} </TableCell>
+                            <TableCell> {req.status} </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

@@ -21,6 +21,7 @@ export default function LanguageRequestDisplay() {
         location: string,
         language: string,
         additionalNotes: string,
+        status: string,
     };
 
     const trpc = useTRPC();
@@ -40,18 +41,20 @@ export default function LanguageRequestDisplay() {
                     <TableHead>End Time</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Additional Notes</TableHead>
+                    <TableHead>Status</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {requests.data?.map((req) => (
                     <TableRow key={req.id}>
-                        <TableCell> {req.fromEmployee}</TableCell>
-                        <TableCell> {req.priority}</TableCell>
-                        <TableCell> {req.language.language}</TableCell>
-                        <TableCell> {new Date(req.language.startTime).toLocaleString()}</TableCell>
-                        <TableCell> {new Date(req.language.endTime).toLocaleString()}</TableCell>
-                        <TableCell> {req.language.location}</TableCell>
+                        <TableCell> {req.fromEmployee} </TableCell>
+                        <TableCell> {req.priority} </TableCell>
+                        <TableCell> {req.language.language} </TableCell>
+                        <TableCell> {new Date(req.language.startTime).toLocaleString()} </TableCell>
+                        <TableCell> {new Date(req.language.endTime).toLocaleString()} </TableCell>
+                        <TableCell> {req.language.location} </TableCell>
                         <TableCell> {req.description} </TableCell>
+                        <TableCell> {req.status} </TableCell>
                     </TableRow>
                 ))}
             </TableBody>

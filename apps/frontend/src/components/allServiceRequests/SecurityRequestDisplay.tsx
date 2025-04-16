@@ -18,6 +18,7 @@ export default function SecurityRequestDisplay() {
         priority: string,
         location: string,
         additionalNotes: string,
+        status: string,
     };
 
     const trpc = useTRPC();
@@ -34,15 +35,17 @@ export default function SecurityRequestDisplay() {
                     <TableHead>Priority</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Additional Notes</TableHead>
+                    <TableHead>Status</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {requests.data?.map((req) => (
                     <TableRow key={req.id}>
-                        <TableCell> {req.fromEmployee}</TableCell>
-                        <TableCell> {req.priority}</TableCell>
-                        <TableCell> {req.security.location}</TableCell>
+                        <TableCell> {req.fromEmployee} </TableCell>
+                        <TableCell> {req.priority} </TableCell>
+                        <TableCell> {req.security.location} </TableCell>
                         <TableCell> {req.description} </TableCell>
+                        <TableCell> {req.status} </TableCell>
                     </TableRow>
                 ))}
             </TableBody>

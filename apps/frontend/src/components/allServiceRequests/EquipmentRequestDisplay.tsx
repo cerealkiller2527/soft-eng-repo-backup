@@ -20,6 +20,7 @@ export default function EquipmentRequestDisplay() {
         equipment: string;
         location: string[];
         additionalNotes: string;
+        status: string;
     };
 
     const trpc = useTRPC();
@@ -38,17 +39,19 @@ export default function EquipmentRequestDisplay() {
                     <TableHead>Equipment</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Additional Notes</TableHead>
+                    <TableHead>Status</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {requests.data?.map((req) => (
                     <TableRow key={req.id}>
-                        <TableCell> {req.fromEmployee}</TableCell>
-                        <TableCell> {req.priority}</TableCell>
-                        <TableCell> {new Date(req.equipmentDelivery.deadline).toLocaleString()}</TableCell>
-                        <TableCell> {req.equipmentDelivery.equipments.join(", ")}</TableCell>
-                        <TableCell> {req.equipmentDelivery.toWhere}</TableCell>
+                        <TableCell> {req.fromEmployee} </TableCell>
+                        <TableCell> {req.priority} </TableCell>
+                        <TableCell> {new Date(req.equipmentDelivery.deadline).toLocaleString()} </TableCell>
+                        <TableCell> {req.equipmentDelivery.equipments.join(", ")} </TableCell>
+                        <TableCell> {req.equipmentDelivery.toWhere} </TableCell>
                         <TableCell> {req.description} </TableCell>
+                        <TableCell> {req.status} </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
