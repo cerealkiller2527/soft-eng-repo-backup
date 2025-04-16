@@ -2,12 +2,14 @@ import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { employeeRouter } from './routes/employeeRouter';
 import { serviceRouter } from './routes/serviceRouter';
+import { mapInfoRouter } from './routes/mapInfoRouter';
 import { loginRouter } from './routes/loginRouter.ts';
 import { searchRouter } from './routes/search.ts';
 import { csvRouter } from './routes/csvRouter.ts';
 import express from 'express';
 import logger from 'morgan';
-import { departmentRouter } from './routes/departmentRouter.ts';
+import { directoriesRouter } from './routes/directoriesRouter.ts';
+import { mapEditorRouter } from './routes/mapEditorRouter.ts';
 
 // created for each request
 const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
@@ -18,8 +20,10 @@ const appRouter = t.router({
     service: serviceRouter,
     login: loginRouter,
     csv: csvRouter,
-    department: departmentRouter,
+    directories: directoriesRouter,
     search: searchRouter,
+    mapInfo: mapInfoRouter,
+    mapEditor: mapEditorRouter,
 });
 const app = express();
 app.use(
@@ -40,4 +44,5 @@ app.use(
 );
 
 export default app;
-export type appRouter = typeof appRouter;
+export type AppRouter = typeof appRouter;
+export { appRouter };

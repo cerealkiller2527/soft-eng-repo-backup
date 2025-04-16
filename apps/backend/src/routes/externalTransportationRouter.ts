@@ -15,6 +15,7 @@ export const externalTransportationRouter = t.router({
                 dropoffTransport: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
+                status: z.nativeEnum(Status).optional(),
                 employee: z.string().optional(),
             })
         )
@@ -27,6 +28,7 @@ export const externalTransportationRouter = t.router({
                 dropoffTransport,
                 additionalNotes,
                 priority,
+                status,
                 employee,
             } = input;
             return PrismaClient.serviceRequest.findMany({
@@ -45,6 +47,7 @@ export const externalTransportationRouter = t.router({
                     }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
+                    ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {

@@ -15,15 +15,7 @@ type formType = {
     building: string;
 };
 
-type OverlayImage = {
-    imageUrl: string;
-    bounds: {
-        north: number;
-        south: number;
-        east: number;
-        west: number;
-    };
-};
+
 
 const FloorPlan = () => {
     const trpc = useTRPC();
@@ -34,11 +26,12 @@ const FloorPlan = () => {
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
+    const polylineRef = useRef<google.maps.Polyline | null>(null);
     const [endMapsLocation, setEndMapsLocation] = useState([
         {lat : 0.00 , lng : 0.00}
     ]);
     const [pathCoords, setPathCoords] = useState([
-        { x: 275, y: 450 },
+        { latitude: .00, longitude: .00, floor: 1 },
     ]);
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
@@ -90,6 +83,37 @@ const FloorPlan = () => {
     useEffect(() => {
         if (!mapInstance.current) return;
 
+        // Remove the previous polyline if it exists
+        if (polylineRef.current) {
+            polylineRef.current.setMap(null);
+            polylineRef.current = null;
+        }
+
+        // Filter the pathCoords to only those matching the current floor
+        const filteredCoords = pathCoords
+            .filter(node => node.floor === imageIndex + 1) // assuming floor index starts from 1
+            .map(node => ({ lat: node.latitude, lng: node.longitude }));
+
+        if (filteredCoords.length < 2) return; // Need at least 2 points to draw a line
+        console.log(filteredCoords);
+
+        // Create and display new polyline
+        const polyline = new google.maps.Polyline({
+            path: filteredCoords,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 4,
+        });
+
+        polyline.setMap(mapInstance.current);
+        polylineRef.current = polyline;
+
+    }, [pathCoords, imageIndex]);
+
+    useEffect(() => {
+        if (!mapInstance.current) return;
+
         overlaysRef.current.forEach(o => o.setMap(null));
         overlaysRef.current = [];
 
@@ -110,17 +134,17 @@ const FloorPlan = () => {
         trpc.search.getPath.mutationOptions({
             onSuccess: (data: pNodeDTO[]) => {
 
-
+                console.log(data);
                 const formattedCoords = data.map((node) => ({
-                    x: node.longitude,
-                    y: node.latitude,
+                    latitude: node.longitude,
+                    longitude: node.latitude,
+                    floor: node.floor
                 }));
 
                 // const formattedCoords = data.map(([x, y]) => ({ x, y }));
                 // setPathCoords(formattedCoords);
 
                 setPathCoords(formattedCoords)
-                console.log(pathCoords);
 
             },
             onError: (error) => {
@@ -131,13 +155,14 @@ const FloorPlan = () => {
     );
 
 
+
+
     useEffect(() => {
         if (!form) return;
 
         search.mutate({
             startDesc: '1bottom entrance',
             endDesc: 'reception',
-            //mapsEndLocation : endMapsLocation
         });
 
         let travelMode = google.maps.TravelMode.DRIVING;
@@ -158,8 +183,10 @@ const FloorPlan = () => {
         if (form.location && mapInstance.current && directionsRenderer.current) {
             const directionsService = new google.maps.DirectionsService();
             let address = "850 Boylston St Chestnut Hill, MA 02467";
-            if(form.building ==  "Patriot Place"){
+            if(form.building ==  "20 Patriot Place"){
                 address = "20 Patriot Pl, Foxborough, MA 02035";
+            }else if(form.building ==  "22 Patriot Place"){
+                address = "22 Patriot Pl, Foxborough, MA 02035";
             }
             directionsService.route(
                 {

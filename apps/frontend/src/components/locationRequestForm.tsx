@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const buildings =["Patriot Place", "Chestnut Hill"];
+const buildings = ["22 Patriot Place" ,"20 Patriot Place", "Chestnut Hill"];
 const MGBHospitals = ["Reception"];
 const transport = ["Public Transport", "Walking", "Driving"];
 

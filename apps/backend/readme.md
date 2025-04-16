@@ -135,3 +135,4 @@ documents the recommended structure for using this.
   the database. It also automatically disconnects WHENEVER the client exits
   s
   s
+  s

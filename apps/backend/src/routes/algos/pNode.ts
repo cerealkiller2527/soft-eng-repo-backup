@@ -8,15 +8,29 @@ export class pNode {
     description: string;
     id: number;
     neighbors: pNode[];
+    floor: number;
 
     constructor(id: number);
-    constructor(id: number, longitude: number, lattitude: number, description: string);
-    constructor(id: number, longitute?: number, lattitute?: number, description?: string) {
+    constructor(
+        id: number,
+        longitude: number,
+        lattitude: number,
+        description: string,
+        floor: number
+    );
+    constructor(
+        id: number,
+        longitute?: number,
+        lattitute?: number,
+        description?: string,
+        floor?: number
+    ) {
         this.longitude = longitute ?? -1;
         this.latitude = lattitute ?? -1;
         this.description = description ?? '';
         this.id = id;
         this.neighbors = [];
+        this.floor = floor ?? -1;
     }
 
     static async getNode(id: number) {
@@ -87,7 +101,8 @@ export class pNode {
                 neighbor.id,
                 neighbor.lat,
                 neighbor.long,
-                neighbor.description
+                neighbor.description,
+                neighbor.floor
             );
             this.neighbors.push(newNode);
         }

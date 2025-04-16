@@ -1,5 +1,4 @@
-import {$Enums, PrismaClient, RequestType, Status} from './.prisma/client';
-import nodeType = $Enums.nodeType;
+import { PrismaClient, RequestType, Status, nodeType, Priority } from './.prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -26,14 +25,15 @@ async function main() {
 
     console.log('Existing data purged.');
 
-    // seed admin user
+    // Create admin user
     const admin = await prisma.user.create({
         data: {
             username: 'admin',
             password: 'admin', // Plain text - insecure!
             email: 'admin@admin.com',
-        }
+        },
     });
+
     console.log(`Created admin user: ${admin.username}`);
 
     // Create buildings
@@ -46,40 +46,35 @@ async function main() {
     });
     const patriotPlace20Building = await prisma.building.create({
         data: {
-            name: "Brigham and Women's/Mass General Health Care Center",
+            name: "20 Patriot Place",
             address: '20 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
         }
     });
     const patriotPlace22Building = await prisma.building.create({
         data: {
-            name: "Brigham and Women's/Mass General Health Care Center",
+            name: "22 Patriot Place",
             address: '22 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
         }
     });
 
     const chestnutNodes = [
-        { suite: '0', description: '1top stairs', lat: 272, long: 110, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1b', lat: 272, long: 130, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1a', lat: 190, long: 130, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1c', lat: 190, long: 239, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1d', lat: 163, long: 239, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1e', lat: 163, long: 360, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1f', lat: 275, long: 360, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance', lat: 275, long: 390, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance outside', lat: 275, long: 450, floor: 1, type: "Location" },
-        { suite: '0', description: '1g', lat: 275, long: 315, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1h', lat: 357, long: 315, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom stairs', lat: 357, long: 300, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1right entrance', lat: 400, long: 315, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1right entrance outside', lat: 450, long: 315, floor: 1, type: "Location" },
-        { suite: '0', description: 'reception', lat: 25, long: 25, floor: 1, type: "Location" },
-        { suite: '0', description: 'Placeholder Node 1 (Suite 204B)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 2 (Suite 317 Pharmacy)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 3 (Suite 560)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 4 (Suite 102B)', lat: -1, long: -1, floor: 1, type: "Intermediary" },
-        { suite: '0', description: 'Placeholder Node 5 (Suite 200)', lat: -1, long: -1, floor: 1, type: "Intermediary" }
+        { suite: '0', description: '1top entrance outside', lat: 42.32623496574831, long: -71.14950957972837, floor: 1, type: "Entrance" },
+        { suite: '0', description: '1top entrance', lat: 42.32620375463355, long: -71.14950766082836, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1c', lat: 42.32613778563545, long: -71.1494999852283, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1multi specialty clinic', lat: 42.32615339121115, long: -71.1495997680289, floor: 1, type: "Location" },
+        { suite: '0', description: '1b', lat: 42.32597321751075, long: -71.14949614742828, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1a', lat: 42.32597889228084, long: -71.14935894607748, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1d', lat: 42.32576254130898, long: -71.14935222992743, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1e', lat: 42.32574906368282, long: -71.14954028212856, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1radiology', lat: 42.32577601893224, long: -71.14954220102855, floor: 1, type: "Location" },
+        { suite: '0', description: '1right entrance', lat: 42.32598456705039, long: -71.1492591632769, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 42.325987404435004, long: -71.14921598802664, floor: 1, type: "Location" },
+        { suite: '0', description: '1drop off', lat: 42.326295063631804, long: -71.1494980200208, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1lot1', lat: 42.326294043305104, long: -71.1495987024141, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1lot2', lat: 42.32638877194042, long: -71.14960193256016, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1parking', lat: 42.32636329870798, long: -71.14976451657915, floor: 1, type: "Intermediary" },
     ]
     const pat20Floor1Nodes = [
         /**
@@ -99,20 +94,22 @@ async function main() {
         { suite: '0', description: '1a7', lat: 42.092663, long: -71.265888, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a8', lat: 42.092717, long: -71.265898, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1urology/cardiology', lat: 42.092720, long: -71.265919, floor : 1, type: "Location" },
+        { suite: '0', description: '1urology/cardiology2', lat: 42.092721, long: -71.265919, floor : 1, type: "Location" },
         { suite: '0', description: '1a9', lat: 42.092666, long: -71.265790, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a10', lat: 42.092680, long: -71.265739, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1right stairs', lat: 42.092690, long: -71.265615, floor : 1, type: "Staircase" },
-        { suite: '0', description: '1elevator', lat: 42.092717, long: -71.265685, floor : 1, type: "Elevator" },
+        { suite: '0', description: '120elevator', lat: 42.092717, long: -71.265685, floor : 1, type: "Elevator" },
         { suite: '0', description: '1a11', lat: 42.092694, long: -71.265939, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a12', lat: 42.092739, long: -71.265955, floor : 1 , type: "Intermediary" },
         // B
-        { suite: '0', description: '1radiology', lat: 42.092710, long: -71.266262, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '120radiology', lat: 42.092710, long: -71.266262, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b17', lat: 42.092734, long: -71.266173, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b1', lat: 42.092680, long: -71.266249, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b2', lat: 42.092705, long: -71.266140, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b3', lat: 42.092731, long: -71.266147, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b4', lat: 42.092742, long: -71.266117, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1blood/urgent', lat: 42.092761, long: -71.266043, floor : 1, type: "Location" },
+        { suite: '0', description: '1blood/urgent2', lat: 42.092762, long: -71.266043, floor : 1, type: "Location" },
         { suite: '0', description: '1b5', lat: 42.092749, long: -71.265954, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b6', lat: 42.092774, long: -71.265858, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b7', lat: 42.092786, long: -71.265820, floor : 1 , type: "Intermediary" },
@@ -157,7 +154,7 @@ async function main() {
         { suite: '0', description: '1e5', lat: 42.092930, long: -71.266360, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1e6', lat: 42.092947, long: -71.266384, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1e7', lat: 42.092963, long: -71.266393, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1top stairs', lat: 42.092960, long: -71.266427, floor : 1, type: "Staircase" }
+        { suite: '0', description: '120top stairs', lat: 42.092960, long: -71.266427, floor : 1, type: "Staircase" }
     ]
     const pat22Floor3Nodes= [
         { suite: '0', description: '3left stairs', lat: 42.092446, long: -71.266887, floor: 3, type: "Staircase" },
@@ -167,7 +164,7 @@ async function main() {
         { suite: '0', description: '3a4', lat: 42.092505, long: -71.266806, floor: 3, type: "Intermediary" },
         { suite: '0', description: '3multi specialty', lat: 42.092496, long: -71.266790, floor: 3, type: "Location" },
         { suite: '0', description: '3middle stairs', lat: 42.092532, long: -71.266775, floor: 3, type: "Staircase" },
-        { suite: '0', description: '3elevator', lat: 42.092589, long: -71.266719, floor: 3, type: "Elevator" },
+        { suite: '0', description: '322elevator', lat: 42.092589, long: -71.266719, floor: 3, type: "Elevator" },
         { suite: '0', description: '3a5', lat: 42.092610, long: -71.266686, floor: 3, type: "Intermediary" },
         { suite: '0', description: '3a6', lat: 42.092642, long: -71.266661, floor: 3, type: "Intermediary" },
         { suite: '0', description: '3a7', lat: 42.092679, long: -71.266727, floor: 3, type: "Intermediary" },
@@ -184,12 +181,17 @@ async function main() {
         { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
         { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
         { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
-        { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
+        { suite: '0', description: '422elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
     ]
     const pat22TempFloor1Nodes= [
         { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
         { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '4elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+        { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+        { suite: '0', description: '222elevator', lat: 42.092589, long: -71.266719, floor: 2, type: "Elevator" },
+        { suite: '0', description: '120/122drop off', lat: 42.092522, long: -71.266522, floor: 1, type: "Entrance" },
+        { suite: '0', description: '120/122parking entrance 1', lat: 42.092481, long: -71.266441, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '120/122parking entrance 2', lat: 42.092439, long: -71.266355, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '120/122parking', lat: 42.092361, long: -71.266417, floor: 1, type: "Location" },
     ]
 
     // Create nodes first
@@ -288,6 +290,33 @@ async function main() {
                 },
             })
         )
+    );
+
+    // Create external transportation service requests
+    await Promise.all(
+        Array.from({ length: 10 }).map(async (_, i) => {
+            const serviceRequest = await prisma.serviceRequest.create({
+                data: {
+                    type: RequestType.EXTERNALTRANSPORTATION,
+                    status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
+                    description: `Additional notes for transport request ${i + 1}`,
+                    assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
+                    fromEmployee: 'admin',
+                    priority: Priority.Medium,
+                },
+            });
+
+            await prisma.externalTransportation.create({
+                data: {
+                    id: serviceRequest.id,
+                    fromWhere: `Location A${i}`,
+                    toWhere: `Location B${i}`,
+                    transportType: 'Wheelchair Van',
+                    patientName: `Patient ${i + 1}`,
+                    pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
+                },
+            });
+        })
     );
 
     const rawDepartmentData = [
@@ -438,51 +467,89 @@ async function main() {
                     name: dept.name,
                     description: dept.description,
                     phoneNumber: dept.phoneNumber,
-                    buildingID: chestnutHillBuilding.id,
                 },
             })
         )
     );
 
-    // Create department-service relationships (Simplified: One service per department)
-    const departmentServiceLinks = departments.map((dept, i) => {
-        // Simple 1-to-1 link based on array index
-        if (services[i]) { // Basic check to ensure service exists at index
-            return {
-                departmentID: dept.id,
-                serviceID: services[i].id,
-            };
-        } else {
-            console.warn(`Department ${dept.name} at index ${i} missing corresponding service.`);
-            return null;
-        }
-    }).filter(Boolean) as { departmentID: number; serviceID: number }[]; // Filter out nulls and assert type
+    // Link nodes to departments based on floor/suite
+    await Promise.all(
+        departments.map(async (dept, i) => {
+            const deptData = rawDepartmentData[i];
 
-    if (departmentServiceLinks.length > 0) {
-        await prisma.departmentServices.createMany({
-            data: departmentServiceLinks,
-            skipDuplicates: true,
+            await prisma.node.updateMany({
+                where: {
+                    floor: deptData.floor,
+                    suite: deptData.suite,
+                },
+                data: {
+                    departmentId: dept.id,
+                },
+            });
+        })
+    );
+
+    // Parse and create services
+    const servicesList: { name: string; departmentIndex: number }[] = [];
+
+    rawDepartmentData.forEach((dept, index) => {
+        let services = dept.description
+            ?.split(',')
+            .flatMap((s) =>
+                s.includes(' and ') &&
+                !s.toLowerCase().includes('allergy') &&
+                !s.toLowerCase().includes('crohn')
+                    ? s.split(' and ')
+                    : [s]
+            )
+            .map((s) => s.trim());
+
+        services?.forEach((name) => {
+            if (name && name.length > 1) {
+                servicesList.push({ name, departmentIndex: index });
+            }
         });
-    }
+    });
+
+    const createdServices = await Promise.all(
+        servicesList.map((s) =>
+            prisma.service.create({
+                data: { name: s.name },
+            })
+        )
+    );
+
+    const deptServices = servicesList.map((s, i) => ({
+        departmentID: departments[s.departmentIndex].id,
+        serviceID: createdServices[i].id,
+    }));
+
+    await prisma.departmentServices.createMany({
+        data: deptServices,
+        skipDuplicates: true,
+    });
 
     // Create edges
     const edges = await prisma.edge.createMany({
         data: [
             // chestnut hill
-            { fromNodeId: allNodes[0].id, toNodeId: allNodes[1].id },
-            { fromNodeId: allNodes[1].id, toNodeId: allNodes[2].id },
-            { fromNodeId: allNodes[2].id, toNodeId: allNodes[3].id },
-            { fromNodeId: allNodes[3].id, toNodeId: allNodes[4].id },
-            { fromNodeId: allNodes[4].id, toNodeId: allNodes[5].id },
-            { fromNodeId: allNodes[5].id, toNodeId: allNodes[6].id },
-            { fromNodeId: allNodes[6].id, toNodeId: allNodes[7].id },
-            { fromNodeId: allNodes[7].id, toNodeId: allNodes[8].id },
-            { fromNodeId: allNodes[8].id, toNodeId: allNodes[9].id },
-            { fromNodeId: allNodes[9].id, toNodeId: allNodes[10].id },
-            { fromNodeId: allNodes[10].id, toNodeId: allNodes[11].id },
-            { fromNodeId: allNodes[11].id, toNodeId: allNodes[12].id },
-            { fromNodeId: allNodes[12].id, toNodeId: allNodes[13].id },
-            { fromNodeId: allNodes[13].id, toNodeId: allNodes[14].id },
+            edgeFromTo("1top entrance outside", "1drop off"),
+            edgeFromTo("1drop off", "1lot1"),
+            edgeFromTo("1lot1", "1lot2"),
+            edgeFromTo("1lot2", "1parking"),
+            edgeFromTo("1top entrance outside", "1top entrance"),
+            edgeFromTo("1top entrance", "1c"),
+            edgeFromTo("1top entrance", "1multi specialty clinic"),
+            edgeFromTo("1c", "1multi specialty clinic"),
+            edgeFromTo("1c", "1b"),
+            edgeFromTo("1b", "1a"),
+            edgeFromTo("1a", "1a"),
+            edgeFromTo("1a", "1right entrance"),
+            edgeFromTo("1a", "1right entrance"),
+            edgeFromTo("1right entrance outside", "1right entrance"),
+            edgeFromTo("1a", "1d"),
+            edgeFromTo("1d", "1e"),
+            edgeFromTo("1e", "1radiology"),
 
             // 20 patriot pl, floor 1
             //  A
@@ -500,9 +567,10 @@ async function main() {
             edgeFromTo("1a6", "1a7"),
             edgeFromTo("1a7", "1a8"),
             edgeFromTo("1a8", "1urology/cardiology"),
+            edgeFromTo("1a8", "1urology/cardiology2"),
             edgeFromTo("1a8", "1a9"),
             edgeFromTo("1a9", "1a10"),
-            edgeFromTo("1a10", "1elevator"),
+            edgeFromTo("1a10", "120elevator"),
             edgeFromTo("1a10", "1right stairs"),
             //  A -> B
             edgeFromTo("1a3", "1b2"),
@@ -515,10 +583,11 @@ async function main() {
             edgeFromTo("1b2", "1b3"),
             edgeFromTo("1b3", "1b4"),
             edgeFromTo("1b4", "1blood/urgent"),
+            edgeFromTo("1b4", "1blood/urgent2"),
             edgeFromTo("1b3", "1b17"),
             edgeFromTo("1b3", "1b17"),
-            edgeFromTo("1radiology", "1b17"),
-            edgeFromTo("1b1", "1radiology"),
+            edgeFromTo("120radiology", "1b17"),
+            edgeFromTo("1b1", "120radiology"),
             edgeFromTo("1b2", "1b5"),
             edgeFromTo("1b5", "1b6"),
             edgeFromTo("1b6", "1b7"),
@@ -572,7 +641,7 @@ async function main() {
             edgeFromTo("1e4", "1e5"),
             edgeFromTo("1e5", "1e6"),
             edgeFromTo("1e6", "1e7"),
-            edgeFromTo("1e7", "1top stairs"),
+            edgeFromTo("1e7", "120top stairs"),
 
             // 22 Patriot Pl
             // Floor 3
@@ -582,8 +651,8 @@ async function main() {
             edgeFromTo("3a3", "3a4"),
             edgeFromTo("3a4", "3multi specialty"),
             edgeFromTo("3a4", "3middle stairs"),
-            edgeFromTo("3middle stairs", "3elevator"),
-            edgeFromTo("3elevator", "3a5"),
+            edgeFromTo("3middle stairs", "322elevator"),
+            edgeFromTo("322elevator", "3a5"),
             edgeFromTo("3a5", "3a6"),
             edgeFromTo("3a6", "3a7"),
             edgeFromTo("3a7", "3b1"),
@@ -593,7 +662,7 @@ async function main() {
             edgeFromTo("3a4", "3b5"),
             edgeFromTo("3a5", "3right stairs"),
             // Floor 3 -> Floor 4
-            edgeFromTo("3elevator", "4elevator"),
+            edgeFromTo("322elevator", "422elevator"),
             edgeFromTo("3left stairs", "4left stairs"),
             edgeFromTo("3middle stairs", "4middle stairs"),
             // Floor 4
@@ -601,14 +670,20 @@ async function main() {
             edgeFromTo("4middle stairs", "4a1"),
             edgeFromTo("4a1", "4a2"),
             edgeFromTo("4a1", "4phlebotomy"),
-            edgeFromTo("4a1", "4elevator"),
-            // Temp Floor 1 -> 3
-            edgeFromTo("1elevator", "3elevator"),
-            // Temp Floor 1 -> 4
-            edgeFromTo("1elevator", "4elevator"),
+            edgeFromTo("4a1", "422elevator"),
+            // Elevators
+            edgeFromTo("122elevator", "222elevator"),
+            edgeFromTo("222elevator", "322elevator"),
+            edgeFromTo("322elevator", "422elevator"),
             // Temp Floor 1
             edgeFromTo("1entrance outside", "1entrance"),
-            edgeFromTo("1entrance", "1elevator"),
+            edgeFromTo("1entrance", "122elevator"),
+            // Parking Lot/Drop Off
+            edgeFromTo("120/122drop off", "120/122parking entrance 1"),
+            edgeFromTo("120/122parking entrance 1", "120/122parking entrance 2"),
+            edgeFromTo("120/122parking entrance 2", "120/122parking"),
+            edgeFromTo("120/122drop off", "1left entrance outside"),
+            edgeFromTo("120/122drop off", "1entrance outside"),
         ]
     });
 

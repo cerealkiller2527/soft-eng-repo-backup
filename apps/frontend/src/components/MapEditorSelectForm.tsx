@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-const buildings =["Patriot Place", "Chestnut Hill"];
-const floors = [1,2,3,4,5];
+const buildings =["22 Patriot Place" ,"20 Patriot Place", "Chestnut Hill"];
+const floors = [1,2,3,4];
 
 
 export default function MapEditorSelectForm({ onSubmit }) {
@@ -27,6 +27,12 @@ export default function MapEditorSelectForm({ onSubmit }) {
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
+        const requiredFields = ["building", "floor"];
+        const missingFields = requiredFields.filter((field) => !form[field as keyof typeof form]);
+        if (missingFields.length > 0) {
+            alert("Please fill all required fields.");
+            return;
+        }
         setSubmittedRequests((prevRequests) => [...prevRequests, form]);
         onSubmit(form);
     };
