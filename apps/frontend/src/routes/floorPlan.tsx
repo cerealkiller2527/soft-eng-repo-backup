@@ -246,14 +246,6 @@ const FloorPlan = () => {
                     </button>
                 </div>
 
-                {eta && (
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-300 rounded p-3 shadow-md z-10 w-64">
-                        <div className="flex justify-between items-center mb-2">
-                            <strong>ETA:</strong>
-                        </div>
-                        <p>{eta}.</p>
-                    </div>
-                )}
             </div>
 
             {/* Footer */}
