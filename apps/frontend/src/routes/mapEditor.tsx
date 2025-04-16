@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from '../database/trpc.ts'; // or wherever your file is
 import { useTRPC } from '../database/trpc.ts';
 import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx'
 import { overlays } from "@/constants.tsx";
@@ -24,12 +25,15 @@ const MapEditor = () => {
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
     const [nodes, setNodes] = useState<pNodeDTO[]>([]);
+    const markersRef = useRef<google.maps.Marker[]>([]);  // Ref to store markers
+    const polylinesRef = useRef<google.maps.Polyline[]>([]);
+
 
     // Mutation for fetching floor map data
     const fetchFloorMap = useQuery(
         trpc.mapEditor.getFloorMap.queryOptions({
-            buildingId: 4,
-            floor: form?.floor ?? 1,
+            buildingId: 1,
+            floor: Number(form?.floor ?? 1),
 
             onSuccess: (data) => {
                 console.log('Floor map data:', data);
@@ -46,11 +50,55 @@ const MapEditor = () => {
     );
 
     useEffect(() => {
-        if (!form) return;
+        if (!form || fetchFloorMap.status != 'success' ) return;
+        queryClient.invalidateQueries({
+            queryKey: ['mapEditor.getFloorMap', { buildingId: 5, floor: form.floor }],
+        });
+        console.log(fetchFloorMap.data);
 
-        const data = fetchFloorMap;
-        console.log(data);
-    }, [form]); // Trigger when `form` changes
+        if (fetchFloorMap.data?.nodes) {
+            // Clear existing markers when switching floors
+            markersRef.current.forEach(marker => {
+                marker.setMap(null); // Remove the marker from the map
+            });
+            markersRef.current = []; // Reset the markers array
+
+            // Create new markers for the current floor
+            const newMarkers = fetchFloorMap.data.nodes.map((node) => {
+                const marker = new AdvancedMarker({
+                    position: { lat: node.x, lng: node.y },
+                    map: mapInstance.current,
+                    title: node.description ?? '',
+                });
+
+                markersRef.current.push(marker);  // Store the new marker in the ref
+
+                return marker;
+            });
+
+            polylinesRef.current.forEach(line => line.setMap(null));
+            polylinesRef.current = [];
+
+            // Add new polylines for the current floor
+            fetchFloorMap.data.edges.forEach((edge) => {
+                const path = [
+                    { lat: edge.fromX, lng: edge.fromY },
+                    { lat: edge.toX, lng: edge.toY },
+                ];
+
+                const polyline = new google.maps.Polyline({
+                    path,
+                    geodesic: true,
+                    strokeColor: "#4285F4",
+                    strokeOpacity: 1.0,
+                    strokeWeight: 3,
+                    map:  mapInstance.current,
+                });
+
+                polylinesRef.current.push(polyline);
+            });
+        }
+    }, [form, fetchFloorMap.status]); // Trigger when `form` changes
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
