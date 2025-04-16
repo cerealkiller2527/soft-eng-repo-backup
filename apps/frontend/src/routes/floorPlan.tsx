@@ -163,7 +163,6 @@ const FloorPlan = () => {
         search.mutate({
             startDesc: '1bottom entrance',
             endDesc: 'reception',
-            //mapsEndLocation : endMapsLocation
         });
 
         let travelMode = google.maps.TravelMode.DRIVING;
