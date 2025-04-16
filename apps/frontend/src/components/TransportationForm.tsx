@@ -10,6 +10,8 @@ import { z } from "zod"
     import { Input } from "@/components/ui/input"
     import {queryClient, useTRPC} from "@/database/trpc.ts";
     import { useMutation } from '@tanstack/react-query';
+    import ReactDatePicker from "react-datepicker";
+    import 'react-datepicker/dist/react-datepicker.css';
 
 
     const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
@@ -24,12 +26,13 @@ import { z } from "zod"
         employeeName: z.string(),
         patientName: z.string(),
         priority: z.string(),
-        pickupTime: z.coerce.date(),
+        pickupTime: z.date(),
         transportType: z.string(),
         pickupTransport: z.string(),
         dropoffTransport: z.string(),
         additionalNotes: z.string(),
     })
+
 
     export default function TransportationForm({  onFormSubmit,}: {
         onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
@@ -159,23 +162,24 @@ import { z } from "zod"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
                                 <FormLabel>Pick Up Time/Date</FormLabel>
-                                <DatetimePicker
-                                    value={field.value}
-                                    onChange={(date) => {
-                                        console.log("Picked:", date);
-                                        field.onChange(new Date(date));
-                                    }}
-                                    format={[
-                                        ["months", "days", "years"],
-                                        ["hours", "minutes", "am/pm"],
-                                    ]}
-                                />
+                                <FormControl>
+                                    <ReactDatePicker
+                                        selected={field.value}
+                                        onChange={(date) => field.onChange(date)}
+                                        showTimeSelect
+                                        placeholder = "MM/DD/YYYY, HH:MM AM/PM"
+                                        dateFormat="Pp"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+                                        popperClassName="!z-50"
+                                        calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
+                                        dayClassName={() => "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"}
+                                    />
+                                </FormControl>
                                 <FormDescription>Add the date and time of pickup.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-
                     <FormField
                         control={form.control}
                         name="pickupTransport"

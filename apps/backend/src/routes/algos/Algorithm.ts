@@ -18,7 +18,7 @@ export abstract class Algorithm {
         if (!node) {
             return new pNode(-1);
         } else {
-            return new pNode(node.id, node.lat, node.long, node.description);
+            return new pNode(node.id, node.lat, node.long, node.description, node.floor);
         }
     }
 }

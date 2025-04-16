@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import {
     Form,
-    FormControl,
+    FormControl, FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -19,6 +19,8 @@ import {
     SelectItem,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import ReactDatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker.css';
 import { DatetimePicker } from "@/components/ui/datetimepicker.tsx"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -67,7 +69,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
             priority: values.priority,
             deadline: new Date(values.deadline),
             equipment: values.equipment,
-            location: values.location,
+            toWhere: values.location,
             additionalNotes: values.additionalNotes,
         });
         onFormSubmit?.(values);
@@ -126,17 +128,21 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         name="deadline"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Deadline</FormLabel>
-                                <DatetimePicker
-                                    value={field.value}
-                                    onChange={(date) => {
-                                        field.onChange(date);
-                                    }}
-                                    format={[
-                                        ["months", "days", "years"],
-                                        ["hours", "minutes", "am/pm"],
-                                    ]}
-                                />
+                                <FormLabel>Pick Up Time/Date</FormLabel>
+                                <FormControl>
+                                    <ReactDatePicker
+                                        selected={field.value}
+                                        onChange={(date) => field.onChange(date)}
+                                        showTimeSelect
+                                        placeholder = "MM/DD/YYYY, HH:MM AM/PM"
+                                        dateFormat="Pp"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+                                        popperClassName="!z-50"
+                                        calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
+                                        dayClassName={() => "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"}
+                                    />
+                                </FormControl>
+                                <FormDescription>Add the date and time of pickup.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
