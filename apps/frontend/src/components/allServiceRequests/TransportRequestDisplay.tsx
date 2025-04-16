@@ -25,7 +25,7 @@ export default function TransportRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requests = useQuery(trpc.service.getExternalTransportation.queryOptions())
+    const requests = useQuery(trpc.service.externalTransportationRouter.getExternalTransportationRequests.queryOptions())
     console.log("Fetched requests:", requests.data);
 
 

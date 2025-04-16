@@ -36,7 +36,7 @@ import { z } from "zod"
     }) {
 
         const trpc = useTRPC();
-        const addReq = useMutation(trpc.service.addTransportationRequest.mutationOptions({
+        const addReq = useMutation(trpc.service.externalTransportationRouter.addExternalTransportationRequest.mutationOptions({
             onSuccess: (data) => {
                 queryClient.invalidateQueries({ queryKey: ['service.getExternalTransportation'] });
             }
@@ -166,7 +166,7 @@ import { z } from "zod"
                                     value={field.value}
                                     onChange={(date) => {
                                         console.log("Picked:", date);
-                                        field.onChange(date);
+                                        field.onChange(new Date(date));
                                     }}
                                     format={[
                                         ["months", "days", "years"],

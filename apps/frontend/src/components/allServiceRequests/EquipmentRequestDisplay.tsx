@@ -23,7 +23,7 @@ export default function EquipmentRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requests = useQuery(trpc.service.getEquipmentDelivery.queryOptions());
+    const requests = useQuery(trpc.service.equipmentDeliveryRouter.getEquipmentDeliveryRequests.queryOptions());
     console.log("Fetched requests:", requests.data);
 
 

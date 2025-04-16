@@ -29,7 +29,7 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
 
 
     const trpc = useTRPC();
-    const addReq = useMutation(trpc.service.addSecurityRequest.mutationOptions({
+    const addReq = useMutation(trpc.service.securityRouter.addSecurityRequest.mutationOptions({
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['service.getSecurityRequest'] });
         }

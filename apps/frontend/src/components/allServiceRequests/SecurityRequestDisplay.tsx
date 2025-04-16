@@ -21,7 +21,7 @@ export default function SecurityRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requests = useQuery(trpc.service.getSecurity.queryOptions())
+    const requests = useQuery(trpc.service.securityRouter.getSecurityRequests.queryOptions())
     console.log("Fetched requests:", requests.data);
 
 

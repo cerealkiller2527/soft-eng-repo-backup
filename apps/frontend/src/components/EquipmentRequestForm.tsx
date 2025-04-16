@@ -43,7 +43,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
     onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
 }) {
     const trpc = useTRPC()
-    const addReq = useMutation(trpc.service.addEquipmentRequest.mutationOptions({
+    const addReq = useMutation(trpc.service.equipmentDeliveryRouter.addEquipmentDeliveryRequest.mutationOptions({
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['service.getEquipmentRequests'] })
         }
