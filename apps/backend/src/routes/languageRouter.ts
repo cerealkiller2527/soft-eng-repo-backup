@@ -19,8 +19,16 @@ export const languageRouter = t.router({
             })
         )
         .query(async ({ input }) => {
-            const { language, location, startTime, endTime, additionalNotes, priority, status, employee } =
-                input;
+            const {
+                language,
+                location,
+                startTime,
+                endTime,
+                additionalNotes,
+                priority,
+                status,
+                employee,
+            } = input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
                     type: RequestType.LANGUAGE,

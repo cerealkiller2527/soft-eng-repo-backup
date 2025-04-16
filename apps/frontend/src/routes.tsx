@@ -40,11 +40,8 @@ export const routes = [
     {
         path: '/FloorPlan',
         errorElement: <div />,
-        element: (
+        element: <FloorPlan />,
 
-            <FloorPlan />
-
-        ),
     },
     {
         path: '/',
@@ -77,12 +74,18 @@ export const routes = [
     {
         path: '/mapeditor',
         errorElement: <div />,
-        element: <MapEditor />,
+        element: (
+            <ProtectedRoute>
+                <MapEditor />
+            </ProtectedRoute>
+        ),
     },
     {
         path: '/mapinfotest',
         errorElement: <div />,
-        element: <MapInfoTest />,
+        element: (
+                <MapInfoTest />
+        ),
     },
     {
         path: '/test',

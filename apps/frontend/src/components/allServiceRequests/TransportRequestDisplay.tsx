@@ -31,7 +31,8 @@ export default function TransportRequestDisplay() {
 
 
     return (
-        <Table>
+        <div className="p-6 md:p-10 max-w-full overflow-x-auto">
+        <Table className="min-w-[1000px] border border-gray-200 rounded-xl shadow-sm">
             <TableCaption>A list of Transportation Requests</TableCaption>
             <TableHeader>
                 <TableRow>
@@ -63,5 +64,6 @@ export default function TransportRequestDisplay() {
                         ))}
                     </TableBody>
                 </Table>
+        </div>
     )
 }
