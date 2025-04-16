@@ -42,6 +42,7 @@ export const csvImportRouter = t.router({
                             phoneNumber: record['Building Phone Number'] || '',
                         },
                         create: {
+                            id : 1,
                             name: buildingName,
                             address: record['Building Address'] || '',
                             phoneNumber: record['Building Phone Number'] || '',

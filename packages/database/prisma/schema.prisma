@@ -166,7 +166,7 @@ model DepartmentServices {
 }
 
 model Building {
-  id          Int    @id @default(autoincrement())
+  id          Int    @id
   name        String @unique
   address     String
   phoneNumber String

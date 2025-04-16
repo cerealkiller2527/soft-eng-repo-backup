@@ -40,6 +40,7 @@ async function main() {
     // Create buildings
     const chestnutHillBuilding = await prisma.building.create({
         data: {
+            id : 1,
             name: "Chestnut Hill Medical Center",
             address: '25 Boylston St, Chestnut Hill, Ma 02467',
             phoneNumber: '(617) 482-5500',
@@ -47,6 +48,7 @@ async function main() {
     });
     const patriotPlace20Building = await prisma.building.create({
         data: {
+            id: 2,
             name: "20 Patriot Place",
             address: '20 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
@@ -54,6 +56,7 @@ async function main() {
     });
     const patriotPlace22Building = await prisma.building.create({
         data: {
+            id : 3,
             name: "22 Patriot Place",
             address: '22 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
