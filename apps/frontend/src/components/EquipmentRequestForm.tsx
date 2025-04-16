@@ -77,11 +77,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
         <div className="transform scale-90 sm:scale-100 w-full max-w-md mx-auto bg-white shadow-md rounded-2xl px-4">
             <div className="w-full p-4 rounded-t-2xl rounded-b-xl">
                 <h2 className="text-xl font-semibold">Equipment Service Request</h2>
-                <p>Select the following requests needed.</p>
-                <p>
-                    Created by: Will Schieffer (based on transport request by Matt Nickerson) -
-                    Iteration 2
-                </p>
             </div>
 
             <Form {...form}>

@@ -2494,6 +2494,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5":
+  version: 5.3.15
+  resolution: "@types/papaparse@npm:5.3.15"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/9333e980b9ed4102f80b1791b6dfefb23fb4d27252b2b6ee6084b2cd847cbe802cfb838d46b4f6b4cb035f9225e0323034c956ee21bbcbcb4cbdb663302d5eeb
+  languageName: node
+  linkType: hard
+
 "@types/pg@npm:^8.10.1":
   version: 8.11.11
   resolution: "@types/pg@npm:8.11.11"
@@ -3261,6 +3270,8 @@ __metadata:
     backend: "npm:^0.0.0"
     common: "npm:*"
     cookie-parser: "npm:~1.4.4"
+    csv: "npm:^6.3.11"
+    csv-parse: "npm:^5.6.0"
     database: "npm:*"
     dotenv: "npm:*"
     dotenv-cli: "npm:*"
@@ -3828,6 +3839,39 @@ __metadata:
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10c0/80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
+  languageName: node
+  linkType: hard
+
+"csv-generate@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "csv-generate@npm:4.4.2"
+  checksum: 10c0/6345b11e8a3fdc485896206cbabd0064046c0fa1ac66c280498abe66c35d8f3e14aa6a58d948261e1c477cb3afcbe82fa98a940910ce63c868af9261d07c5f01
+  languageName: node
+  linkType: hard
+
+"csv-parse@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "csv-parse@npm:5.6.0"
+  checksum: 10c0/52f5e6c45359902e0c8e57fc2eeed41366dc6b6d283b495b538dd50c8e8510413d6f924096ea056319cbbb8ed26e111c3a3485d7985c021bcf5abaa9e92425c7
+  languageName: node
+  linkType: hard
+
+"csv-stringify@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "csv-stringify@npm:6.5.2"
+  checksum: 10c0/8d2c601ce99c4baf5009abb16a9021cfd8d91a7be660f54343cba566ee5057d0ef517e0afde91e7e8803aeafb81268f6f04e47cb272462553b12f8e65c9c0674
+  languageName: node
+  linkType: hard
+
+"csv@npm:^6.3.11":
+  version: 6.3.11
+  resolution: "csv@npm:6.3.11"
+  dependencies:
+    csv-generate: "npm:^4.4.2"
+    csv-parse: "npm:^5.6.0"
+    csv-stringify: "npm:^6.5.2"
+    stream-transform: "npm:^3.3.3"
+  checksum: 10c0/984f529928c4eb55a0b93f9d88ea4e866103c579f27a182dc08a378bc02e46fabe065a0fe1249e80b9180ce78912df46f5885824468629312dec7bdf49f55d98
   languageName: node
   linkType: hard
 
@@ -4829,6 +4873,7 @@ __metadata:
     "@trpc/tanstack-react-query": "npm:^11.0.2"
     "@types/google.maps": "npm:^3.58.1"
     "@types/node": "npm:^22.13.3"
+    "@types/papaparse": "npm:^5"
     "@types/prop-types": "npm:^15.7.5"
     "@types/react": "npm:^18.0.37"
     "@types/react-dom": "npm:^18.0.11"
@@ -4851,6 +4896,7 @@ __metadata:
     lucide-react: "npm:^0.487.0"
     match-sorter: "npm:^6.3.1"
     next-themes: "npm:^0.4.6"
+    papaparse: "npm:^5.5.2"
     prettier: "npm:*"
     prettier-config-custom: "workspace:*"
     react: "npm:^18.2.0"
@@ -6410,6 +6456,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"papaparse@npm:^5.5.2":
+  version: 5.5.2
+  resolution: "papaparse@npm:5.5.2"
+  checksum: 10c0/83b8c0cf570395581a42331cd9231194dbba43bc8c608026739f5180827506575993dc788def039a9666bc103e2a96075de8732ea8a63e507b74c02aa757bcd5
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -7705,6 +7758,13 @@ __metadata:
   version: 3.8.1
   resolution: "std-env@npm:3.8.1"
   checksum: 10c0/e9b19cca6bc6f06f91607db5b636662914ca8ec9efc525a99da6ec7e493afec109d3b017d21d9782b4369fcfb2891c7c4b4e3c60d495fdadf6861ce434e07bf8
+  languageName: node
+  linkType: hard
+
+"stream-transform@npm:^3.3.3":
+  version: 3.3.3
+  resolution: "stream-transform@npm:3.3.3"
+  checksum: 10c0/bb9f304dcd16b2ff4ced81c61f9d22f6932a45b043229172d247bc6685c713dc6892a3cebd56fa2680e21b0bd1628114469641cd2a710a5ce888838ca00ee109
   languageName: node
   linkType: hard
 

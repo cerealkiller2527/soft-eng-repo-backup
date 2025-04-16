@@ -3552,6 +3552,16 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/papaparse", [\
+      ["npm:5.3.15", {\
+        "packageLocation": "./.yarn/cache/@types-papaparse-npm-5.3.15-04716d9d35-9333e980b9.zip/node_modules/@types/papaparse/",\
+        "packageDependencies": [\
+          ["@types/papaparse", "npm:5.3.15"],\
+          ["@types/node", "npm:22.13.13"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/pg", [\
       ["npm:8.11.11", {\
         "packageLocation": "./.yarn/cache/@types-pg-npm-8.11.11-c5a8a91498-18c2585e1b.zip/node_modules/@types/pg/",\
@@ -4532,6 +4542,8 @@ const RAW_RUNTIME_STATE =
           ["backend", "npm:0.0.0"],\
           ["common", "workspace:packages/common"],\
           ["cookie-parser", "npm:1.4.7"],\
+          ["csv", "npm:6.3.11"],\
+          ["csv-parse", "npm:5.6.0"],\
           ["database", "workspace:packages/database"],\
           ["dotenv", "npm:16.4.7"],\
           ["dotenv-cli", "npm:7.4.4"],\
@@ -5176,6 +5188,46 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/csstype-npm-3.1.3-e9a1c85013-80c089d6f7.zip/node_modules/csstype/",\
         "packageDependencies": [\
           ["csstype", "npm:3.1.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["csv", [\
+      ["npm:6.3.11", {\
+        "packageLocation": "./.yarn/cache/csv-npm-6.3.11-ade67839ad-984f529928.zip/node_modules/csv/",\
+        "packageDependencies": [\
+          ["csv", "npm:6.3.11"],\
+          ["csv-generate", "npm:4.4.2"],\
+          ["csv-parse", "npm:5.6.0"],\
+          ["csv-stringify", "npm:6.5.2"],\
+          ["stream-transform", "npm:3.3.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["csv-generate", [\
+      ["npm:4.4.2", {\
+        "packageLocation": "./.yarn/cache/csv-generate-npm-4.4.2-0035c37d5d-6345b11e8a.zip/node_modules/csv-generate/",\
+        "packageDependencies": [\
+          ["csv-generate", "npm:4.4.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["csv-parse", [\
+      ["npm:5.6.0", {\
+        "packageLocation": "./.yarn/cache/csv-parse-npm-5.6.0-ac425c1790-52f5e6c453.zip/node_modules/csv-parse/",\
+        "packageDependencies": [\
+          ["csv-parse", "npm:5.6.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["csv-stringify", [\
+      ["npm:6.5.2", {\
+        "packageLocation": "./.yarn/cache/csv-stringify-npm-6.5.2-715f8a18ba-8d2c601ce9.zip/node_modules/csv-stringify/",\
+        "packageDependencies": [\
+          ["csv-stringify", "npm:6.5.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -6384,6 +6436,7 @@ const RAW_RUNTIME_STATE =
           ["@trpc/tanstack-react-query", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:11.0.4"],\
           ["@types/google.maps", "npm:3.58.1"],\
           ["@types/node", "npm:22.13.13"],\
+          ["@types/papaparse", "npm:5.3.15"],\
           ["@types/prop-types", "npm:15.7.14"],\
           ["@types/react", "npm:18.3.20"],\
           ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:18.3.5"],\
@@ -6406,6 +6459,7 @@ const RAW_RUNTIME_STATE =
           ["lucide-react", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:0.487.0"],\
           ["match-sorter", "npm:6.3.4"],\
           ["next-themes", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:0.4.6"],\
+          ["papaparse", "npm:5.5.2"],\
           ["prettier", "npm:3.5.3"],\
           ["prettier-config-custom", "workspace:configs/prettier-config-custom"],\
           ["react", "npm:18.3.1"],\
@@ -8143,6 +8197,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["papaparse", [\
+      ["npm:5.5.2", {\
+        "packageLocation": "./.yarn/cache/papaparse-npm-5.5.2-04721cfba6-83b8c0cf57.zip/node_modules/papaparse/",\
+        "packageDependencies": [\
+          ["papaparse", "npm:5.5.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["parent-module", [\
       ["npm:1.0.1", {\
         "packageLocation": "./.yarn/cache/parent-module-npm-1.0.1-1fae11b095-c63d6e8000.zip/node_modules/parent-module/",\
@@ -9784,6 +9847,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/std-env-npm-3.8.1-edc2df513e-e9b19cca6b.zip/node_modules/std-env/",\
         "packageDependencies": [\
           ["std-env", "npm:3.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["stream-transform", [\
+      ["npm:3.3.3", {\
+        "packageLocation": "./.yarn/cache/stream-transform-npm-3.3.3-d191bb343c-bb9f304dcd.zip/node_modules/stream-transform/",\
+        "packageDependencies": [\
+          ["stream-transform", "npm:3.3.3"]\
         ],\
         "linkType": "HARD"\
       }]\
