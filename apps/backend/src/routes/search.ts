@@ -30,6 +30,7 @@ export const searchRouter = t.router({
                     description: node.description,
                     latitude: node.latitude,
                     longitude: node.longitude,
+                    floor: node.floor,
                     neighbors: node.neighbors.map((neighbor) => ({
                         id: neighbor.id,
                     })),
