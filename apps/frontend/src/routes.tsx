@@ -41,8 +41,9 @@ export const routes = [
         path: '/FloorPlan',
         errorElement: <div />,
         element: (
-
-            <FloorPlan />
+            <ProtectedRoute>
+                <FloorPlan />
+            </ProtectedRoute>
 
         ),
     },
@@ -87,9 +88,7 @@ export const routes = [
         path: '/mapinfotest',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
                 <MapInfoTest />
-            </ProtectedRoute>
         ),
     },
     {
