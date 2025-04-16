@@ -75,9 +75,9 @@ const DepartmentPage: React.FC = () => {
         .filter(Boolean);
 
     return (
-        <div className="min-h-screen bg-white pt-20">
+        <div className="min-h-screen flex flex-col">
             <Navbar />
-            <main className="max-w-4xl mx-auto p-4">
+            <main className="flex-grow max-w-4xl mx-auto p-4 w-full">
                 <h1 className="text-3xl font-light text-[#012D5A] mb-4">{department.name}</h1>
                 <hr className="border-[#012D5A]/20 mb-6" />
 
