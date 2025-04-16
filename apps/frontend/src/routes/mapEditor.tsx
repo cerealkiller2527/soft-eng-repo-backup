@@ -8,6 +8,7 @@ import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx'
 import { overlays } from "@/constants.tsx";
 import { pNodeDTO } from "../../../../share/types.ts";
 
+
 type formType = {
     building: string;
     floor: number;
@@ -50,6 +51,8 @@ const MapEditor = () => {
         })
     );
 
+
+
     useEffect(() => {
         if(!form) return;
         if(form.building == "22 Patriot Place"){
@@ -81,6 +84,19 @@ const MapEditor = () => {
                     title: node.description ?? '',
                 });
 
+                marker.addListener('click', () => {
+                    infoWindow.setContent(`
+                        <div>
+                          <strong>${node.description ?? 'No description'}</strong><br/>
+                          Type: ${node.type}<br/>
+                          ID: ${node.id}
+                        </div>
+                      `);
+                    infoWindow.open({
+                        anchor: marker,
+                        map: mapInstance.current,
+                    });
+                });
                 markersRef.current.push(marker);  // Store the new marker in the ref
 
                 return marker;
