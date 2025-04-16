@@ -12,16 +12,17 @@ export const searchRouter = t.router({
     getPath: t.procedure
         .input(
             z.object({
-                startDesc: z.string(),
+                location: z.string(),
                 endDesc: z.string(),
+                driving: z.boolean(),
             })
         )
         .mutation(async ({ input }) => {
-            const { startDesc, endDesc } = input;
+            const { location, endDesc, driving } = input;
 
             try {
                 const s = new SearchSystem(new BFS());
-                const nodePath = await s.path('1entrance outside', '4phlebotomy');
+                const nodePath = await s.path(location, endDesc, driving);
 
                 // convert each pNode to pNodeDTO
                 const pNodeDTOS: pNodeDTO[] = nodePath.map((node) => ({

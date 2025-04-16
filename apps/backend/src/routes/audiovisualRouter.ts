@@ -13,11 +13,12 @@ export const audiovisualRouter = t.router({
                 audiovisualType: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
+                status: z.nativeEnum(Status).optional(),
                 employee: z.string().optional(),
             })
         )
         .query(async ({ input }) => {
-            const { location, deadline, audiovisualType, additionalNotes, priority, employee } =
+            const { location, deadline, audiovisualType, additionalNotes, priority, status, employee } =
                 input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
@@ -27,6 +28,7 @@ export const audiovisualRouter = t.router({
                     ...(audiovisualType && { audioVisual: { audiovisualType: audiovisualType } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
+                    ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {

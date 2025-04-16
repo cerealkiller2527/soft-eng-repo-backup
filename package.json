@@ -37,6 +37,8 @@
     "vitest": "^3.0.9"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@radix-ui/react-icons": "^1.3.2",
     "@react-google-maps/api": "^2.20.6",
     "@tailwindcss/vite": "^4.1.3",
     "@tanstack/react-query": "^5.72.0",
@@ -58,8 +60,11 @@
     "react": "^19.1.0",
     "react-datepicker": "^8.2.1",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.55.0",
+    "sonner": "^2.0.3",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.1.3",
+    "timescape": "^0.7.1",
     "ts-node": "^10.9.2",
     "workspace": "^0.0.1-preview.2",
     "zod": "^3.24.2"
