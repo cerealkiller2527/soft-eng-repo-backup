@@ -18,7 +18,8 @@ export const equipmentDeliveryRouter = t.router({
             })
         )
         .query(async ({ input }) => {
-            const { deadline, equipment, toWhere, additionalNotes, priority, status, employee } = input;
+            const { deadline, equipment, toWhere, additionalNotes, priority, status, employee } =
+                input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
                     type: RequestType.EQUIPMENTDELIVERY,
