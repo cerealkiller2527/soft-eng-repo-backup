@@ -1,22 +1,29 @@
 import React from "react";
 import {useState} from "react";
-import TransportRequestForm from "../components/TransportRequestForm.tsx";
-import TransportCard from "../components/TransportCard.tsx"
 import Navbar from "../components/Navbar.tsx";
 import { useQuery } from '@tanstack/react-query';
 import {useTRPC} from "../database/trpc.ts";
+import TransportRequestDisplay from "../components/allServiceRequests/TransportRequestDisplay.tsx";
+import SecurityRequestDisplay from "../components/allServiceRequests/SecurityRequestDisplay.tsx";
+import LanguageRequestDisplay from "../components/allServiceRequests/LanguageRequestDisplay.tsx";
+import EquipmentRequestDisplay from "../components/allServiceRequests/EquipmentRequestDisplay.tsx";
 
 
 const requestDashboard = () => {
 
+    //list of transport request options
     type TransportRequest = {
+        employeeName: string;
         patientName: string;
+        priority: string;
         pickupTime: Date;
         transportType: string;
         pickupTransport: string;
         dropoffTransport: string;
         additionalNotes: string;
     };
+
+    // Setup for tRPC
     const trpc = useTRPC();
     const requests = useQuery(trpc.service.getExternalTransportation.queryOptions())
     console.log("Fetched requests:", requests.data);
@@ -24,32 +31,36 @@ const requestDashboard = () => {
     return (
         <div className="p-25">
             <Navbar />
-            <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
-            <hr />
-            <br />
 
+            <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
             <div className="mt-8">
-                <h2 className="text-lg font-semibold mb-4">Submitted Requests</h2>
-                {requests.data?.length === 0 ? (
-                    <p>No requests submitted yet.</p>) : (
-                    <div className="grid gap-4">
-                        {requests.data?.map(req => (
-                            <div
-                                key={req.id}
-                                className="border p-4 rounded-xl shadow bg-white space-y-1">
-                                <p><strong>TRANSPORT REQUEST</strong></p>
-                                <p><strong>Patient:</strong> {req.externalTransportation.patientName}</p>
-                                <p><strong>Pickup Time:</strong> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
-                                <p><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
-                                <p><strong>Pickup:</strong> {req.externalTransportation.fromWhere}</p>
-                                <p><strong>Dropoff:</strong> {req.externalTransportation.toWhere}</p>
-                                <p><strong>Notes:</strong> {req.description || "N/A"}</p>
-                                <p><strong>Created By:</strong> {req.fromEmployee}</p>
-                                <p><strong>Priority:</strong> {req.priority}</p>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <br />
+                <hr />
+                <div>
+                <h2 className="font-bold">TRANSPORTATION REQUESTS</h2>
+                <TransportRequestDisplay />
+                </div>
+                <br />
+                <br />
+                <hr />
+                <div>
+                    <h2 className="font-bold">SECURITY REQUESTS</h2>
+                    <SecurityRequestDisplay />
+                </div>
+                <br />
+                <br />
+                <hr />
+                <div>
+                    <h2 className="font-bold">LANGUAGE REQUESTS</h2>
+                    <LanguageRequestDisplay />
+                </div>
+                <br />
+                <br />
+                <hr />
+                <div>
+                    <h2 className="font-bold">EQUIPMENT REQUESTS</h2>
+                    <EquipmentRequestDisplay />
+                </div>
             </div>
         </div>
     );
