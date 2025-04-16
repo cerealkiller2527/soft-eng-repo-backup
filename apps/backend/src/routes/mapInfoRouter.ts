@@ -63,34 +63,6 @@ export const mapInfoRouter = t.router({
             }
         }),
 
-    // Department Information
-    // ---------------------
-
-    // Get departments for a building (for dropdown/selection)
-    /*
-    getBuildingDepartments: t.procedure
-        .input(z.object({ buildingId: z.number() }))
-        .query(async ({ input }) => {
-            try {
-                return await PrismaClient.department.findMany({
-                    where: { buildingID: input.buildingId },
-                    select: {
-                        id: true,
-                        name: true,
-                    },
-                    orderBy: { name: 'asc' },
-                });
-            } catch (error) {
-                console.error(
-                    `Error fetching departments for building ID ${input.buildingId}:`,
-                    error
-                );
-                throw new Error('Failed to fetch building departments');
-            }
-        }),
-
-     */
-
     // Get basic department info by ID
     getDepartmentInfo: t.procedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
         try {
@@ -147,6 +119,47 @@ export const mapInfoRouter = t.router({
                     error
                 );
                 throw new Error('Failed to fetch floor departments');
+            }
+        }),
+
+    // Get all nodes with location types for a building by name
+    getNodesByBuildingName: t.procedure
+        .input(z.object({ buildingName: z.string() }))
+        .query(async ({ input }) => {
+            try {
+                // First find the building by name
+                const building = await PrismaClient.building.findFirst({
+                    where: { name: input.buildingName },
+                    select: { id: true }
+                });
+
+                if (!building) {
+                    throw new Error(`Building with name '${input.buildingName}' not found`);
+                }
+
+                // Then get all nodes for that building with their types
+                return await PrismaClient.node.findMany({
+                    where: { buildingId: building.id },
+                    select: {
+                        id: true,
+                        floor: true,
+                        suite: true,
+                        type: true,
+                        description: true,
+                        lat: true,
+                        long: true
+                    },
+                    orderBy: [
+                        { floor: 'asc' },
+                        { suite: 'asc' }
+                    ]
+                });
+            } catch (error) {
+                console.error(
+                    `Error fetching nodes for building '${input.buildingName}':`,
+                    error
+                );
+                throw new Error('Failed to fetch building nodes');
             }
         }),
 });
