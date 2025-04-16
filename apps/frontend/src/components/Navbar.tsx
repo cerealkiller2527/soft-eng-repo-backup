@@ -22,6 +22,9 @@ const Navbar = () => {
                 <Link to="/csv" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
                     CSV Import/Export
                 </Link>
+                <Link to="/mapeditor" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
+                    Map Editor
+                </Link>
                 </div>
             </nav>
         </div>

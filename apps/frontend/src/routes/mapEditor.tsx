@@ -9,6 +9,7 @@ import { overlays } from "@/constants.tsx";
 import { pNodeDTO } from "../../../../share/types.ts";
 
 
+
 type formType = {
     building: string;
     floor: number;
@@ -62,11 +63,10 @@ const MapEditor = () => {
         }if(form.building == "Chestnut Hill"){
             setBuilding(1);
         }
+
         if (fetchFloorMap.status != 'success' ) return;
 
-        queryClient.invalidateQueries({
-            queryKey: ['mapEditor.getFloorMap', { buildingId: 5, floor: form.floor }],
-        });
+
         console.log(fetchFloorMap.data);
 
         if (fetchFloorMap.data?.nodes) {
@@ -124,7 +124,11 @@ const MapEditor = () => {
                 polylinesRef.current.push(polyline);
             });
         }
-    }, [form, fetchFloorMap.status]); // Trigger when `form` changes
+
+        queryClient.invalidateQueries({
+            queryKey: ['mapEditor.getFloorMap', { buildingId: 5, floor: form.floor }],
+        });
+    }, [form, fetchFloorMap.status, fetchFloorMap.data?.nodes]); // Trigger when `form` changes
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -159,9 +163,9 @@ const MapEditor = () => {
     useEffect(() => {
         if (!form) return;
         if (form.building === "20 Patriot Place") {
-            mapInstance.current?.setCenter({ lat: 42.09262, lng: -71.267 });
-        }else if (form.building === "22 Patriot Place") {
             mapInstance.current?.setCenter({ lat: 42.09280, lng: -71.266 });
+        }else if (form.building === "22 Patriot Place") {
+            mapInstance.current?.setCenter({ lat: 42.09262, lng: -71.267 });
         } else {
             mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
         }
@@ -207,27 +211,35 @@ const MapEditor = () => {
     }, [imageIndex]);
 
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
-            <div className="flex justify-start mb-2">
-                <img src="/BrighamAndWomensLogo.png" alt="Logo" className="h-12 ml-2" />
+        <div id="floorplan" className="relative w-full h-screen overflow-hidden">
+            {/* Fullscreen Google Map */}
+            <div
+                id="google-map-container"
+                ref={mapRef}
+                className="absolute inset-0 w-full h-full z-0"
+            />
+
+            {/* Fixed Navbar at the top */}
+            <div className="fixed top-0 left-0 right-0 z-20">
+                <Navbar />
             </div>
 
-            <Navbar />
+            {/* Floating Form on the left side */}
+            <div className="absolute top-30 left-4 z-10 w-full max-w-md">
+                <div className="bg-white shadow-md rounded-2xl overflow-hidden">
 
-            <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
-                <MapEditorSelectForm onSubmit={(form) => {
-                    setForm(form);
-                }} />
 
-                <div
-                    id="google-map-container"
-                    className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
-                    ref={mapRef}
-                    style={{ width: '100%', height: '600px' }}
-                />
+                    {/* Form */}
+                    <div className="p-4">
+                        <MapEditorSelectForm onSubmit={(form) => setForm(form)} />
+                    </div>
+                </div>
             </div>
 
-            <Footer />
+            {/* Footer fixed at the bottom */}
+            <div className="fixed bottom-0 left-0 right-0 z-20">
+                <Footer />
+            </div>
         </div>
     );
 };
