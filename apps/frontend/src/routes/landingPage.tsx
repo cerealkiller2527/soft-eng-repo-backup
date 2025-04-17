@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 const Landing: React.FC = () => {
     // Images array (you can add as many as you want, code should support it)
     const images = [
-        '/HeroPageWalking.jpg',
-        '/HeroPageNavigation.jpg',
-        '/HeroPagePatriotPlace.jpg',
-        '/HeroPageChestnutHill.jpg'
+        '/HeroImageGirlSolo2.jpg',
+        '/HeroImageFaulkner.jpg',
+        '/HeroPatriotImage.jpg',
+        '/HeroImageChestnutHill.jpeg'
     ];
 
     // Useful for rotation logic
