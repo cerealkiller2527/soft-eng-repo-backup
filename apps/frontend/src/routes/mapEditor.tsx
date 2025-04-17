@@ -67,7 +67,7 @@ const MapEditor = () => {
                     ? { ...node, y: newPosition.lng, x: newPosition.lat }
                     : node
             );
-            setNodes(updatedNodes); // Update the state with the new position
+            setNodes(updatedNodes);
 
         }
     };
@@ -75,40 +75,51 @@ const MapEditor = () => {
     const handleEdgeClick = (edgeId: string) => {
         setEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
 
-        // Optionally, remove the edge from the backend
     };
 
-    const [edgeStart, setEdgeStart] = useState<Node | null>(null);
 
-    const handleMapClick = (event: google.maps.MapMouseEvent) => {
-        if (!edgeStart) {
-            const clickedNode = nodes.find((node) => node.x === event.latLng?.lng() && node.y === event.latLng?.lat());
-            if (clickedNode) {
-                setEdgeStart(clickedNode); // Store the starting node
-            }
+
+
+    const edgeStartRef = useRef<Node | null>(null);
+
+
+
+    const handleMarkerClick = (clickedNode: Node) => {
+        if (!edgeStartRef.current) {
+            edgeStartRef.current = clickedNode;
+            console.log("Edge start set to", clickedNode.id);
         } else {
-            const endNode = nodes.find((node) => node.x === event.latLng?.lng() && node.y === event.latLng?.lat());
-            if (endNode && edgeStart !== endNode) {
+            if (edgeStartRef.current.id !== clickedNode.id) {
                 const newEdge: Edge = {
-                    id: `edge-${edgeStart.id}-${endNode.id}`,
-                    fromNodeId: edgeStart.id,
-                    toNodeId: endNode.id,
-                    fromX: edgeStart.x,
-                    fromY: edgeStart.y,
-                    toX: endNode.x,
-                    toY: endNode.y,
+                    id: `edge-${edgeStartRef.current.id}-${clickedNode.id}`,
+                    fromNodeId: edgeStartRef.current.id,
+                    toNodeId: clickedNode.id,
+                    fromX: edgeStartRef.current.x,
+                    fromY: edgeStartRef.current.y,
+                    toX: clickedNode.x,
+                    toY: clickedNode.y,
                 };
-                setEdges((prevEdges) => [...prevEdges, newEdge]);
-
-                // Optionally, send the new edge to your backend
+                setEdges((prev) => [...prev, newEdge]);
+                console.log("Edge created between", edgeStartRef.current.id, "and", clickedNode.id);
             }
-            setEdgeStart(null); // Reset edge start after adding an edge
+            edgeStartRef.current = null;
         }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Backspace") {
+            if (edgeStartRef.current) {
+
+                setNodes((prev) => prev.filter((node) => node.id !== edgeStartRef.current.id));
+
+                edgeStartRef.current = null;
+            }
+        }
+    };
+    document.addEventListener("keydown", handleKeyDown);
 
 
-    // 1️⃣ Effect to update nodes/edges from fetched data
+
     useEffect(() => {
         if (fetchFloorMap.status === 'success' && fetchFloorMap.data?.nodes) {
             setNodes(fetchFloorMap.data.nodes);
@@ -116,21 +127,20 @@ const MapEditor = () => {
         }
     }, [fetchFloorMap.status, fetchFloorMap.data]);
 
-// 2️⃣ Effect to render markers after nodes are set
     useEffect(() => {
         if (!form || nodes.length === 0) return;
 
-        // set building based on form
         if (form.building === "22 Patriot Place") setBuilding(3);
         else if (form.building === "20 Patriot Place") setBuilding(2);
         else if (form.building === "Chestnut Hill") setBuilding(1);
 
-        // clear old markers and polylines
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
         polylinesRef.current.forEach(line => line.setMap(null));
         polylinesRef.current = [];
+
+        edgeStartRef.current = null;
 
         const newMarkers = nodes.map((node) => {
             const marker = new AdvancedMarker({
@@ -138,10 +148,15 @@ const MapEditor = () => {
                 map: mapInstance.current,
                 title: node.description ?? '',
                 gmpDraggable: true,
+
             });
 
             marker.addListener('dragend', () => handleMarkerDragEnd(node.id, marker));
-            marker.addListener('gmp-click', () => {
+            marker.addListener('dblclick', () => {
+                console.log(marker);
+                setNodes((prev) => prev.filter((n) => n.id !== node.id));
+            });
+            marker.addListener('mouseover', () => {
                 infoWindow.setContent(`
                 <div>
                   <strong>${node.description ?? 'No description'}</strong><br/>
@@ -153,6 +168,9 @@ const MapEditor = () => {
                     anchor: marker,
                     map: mapInstance.current,
                 });
+            });
+            marker.addListener('click', () => {
+                handleMarkerClick(node);
             });
 
             markersRef.current.push(marker);
@@ -195,7 +213,7 @@ const MapEditor = () => {
         });
 
 
-    }, [nodes]);
+    }, [nodes, edges]);
 
 
     useEffect(() => {
@@ -252,11 +270,27 @@ const MapEditor = () => {
                 mapId: '57f41020f9b31f57',
             });
 
+
+
             mapInstance.current = map;
             mapInstance.current.setOptions({
-                draggable: false, // Disable dragging
+                gestureHandling: "none", // Disable dragging
                 scrollwheel: false, // Disable scroll zooming
-                disableDoubleClickZoom: false, // Enable zoom on double-click
+            });
+
+            mapInstance.current.addListener("dblclick", (e: google.maps.MapMouseEvent) => {
+                console.log("dblclick");
+                if (!e.latLng) return;
+
+                const newNode: Node = {
+                    id: `node-${Date.now()}`, // Replace with a UUID if you prefer
+                    x: e.latLng.lat(),
+                    y: e.latLng.lng(),
+                    type: "Intermediary",
+                    description: null,
+                };
+
+                setNodes(prev => [...prev, newNode]);
             });
 
             directionsRenderer.current = new google.maps.DirectionsRenderer({
@@ -264,8 +298,6 @@ const MapEditor = () => {
             });
             directionsRenderer.current.setMap(map);
 
-            // Add map click listener for adding edges
-            google.maps.event.addListener(map, 'click', handleMapClick);
         }
     }, []);
 
