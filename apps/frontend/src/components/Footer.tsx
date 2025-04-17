@@ -11,10 +11,11 @@ const Footer = () => {
                 <a href="/privacy" className="hover:underline text-sm">Patient Privacy Notice</a>
                 <a href="/terms" className="hover:underline text-sm">Terms of Service</a>
                 <a href="/contact" className="hover:underline text-sm">Contact Us</a>
-                <a href="/" className="hover:underline text-sm">Home</a>
             </div>
             </div>
-            <img src={MSBLogo} className="h-12 justify-right" alt="Mass Ganeral Brigham Logo" />
+                <a href='/'>
+                    <img src={MSBLogo} className="h-12 justify-right" alt="Mass Ganeral Brigham Logo" />
+                </a>
         </div>
         </footer>
     );
