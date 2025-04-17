@@ -8,7 +8,6 @@ function toNodeType(value: string): nodeType {
 
 async function main() {
     // Delete all existing data in correct order
-
     await prisma.audioVisual.deleteMany();
     await prisma.externalTransportation.deleteMany();
     await prisma.equipmentDelivery.deleteMany();
@@ -40,6 +39,7 @@ async function main() {
     // Create buildings
     const chestnutHillBuilding = await prisma.building.create({
         data: {
+            id: 1,
             name: "Chestnut Hill Medical Center",
             address: '25 Boylston St, Chestnut Hill, Ma 02467',
             phoneNumber: '(617) 482-5500',
@@ -47,6 +47,7 @@ async function main() {
     });
     const patriotPlace20Building = await prisma.building.create({
         data: {
+            id: 2,
             name: "20 Patriot Place",
             address: '20 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
@@ -54,6 +55,7 @@ async function main() {
     });
     const patriotPlace22Building = await prisma.building.create({
         data: {
+            id: 3,
             name: "22 Patriot Place",
             address: '22 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
@@ -327,6 +329,7 @@ async function main() {
             phoneNumber: '(617) 732-9850',
             floor: 3,
             suite: '301',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Backup Child Care Center',
@@ -334,6 +337,7 @@ async function main() {
             phoneNumber: '(617) 732-9543',
             floor: 2,
             suite: '210',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Dermatology Associates (BDA)',
@@ -341,6 +345,7 @@ async function main() {
             phoneNumber: '(617) 732-9080',
             floor: 3,
             suite: '317',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Obstetrics and Gynecology Group (BOGG)',
@@ -348,6 +353,7 @@ async function main() {
             phoneNumber: '(617) 732-9100',
             floor: 5,
             suite: '575',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Physicians Group (BPG)',
@@ -355,6 +361,7 @@ async function main() {
             phoneNumber: '(617) 732-9900',
             floor: 4,
             suite: '428',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Psychiatric Specialties',
@@ -362,6 +369,7 @@ async function main() {
             phoneNumber: '(617) 732-9811',
             floor: 3,
             suite: '303',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Center for Pain Medicine',
@@ -369,6 +377,7 @@ async function main() {
             phoneNumber: '(617) 732-9060',
             floor: 3,
             suite: '320',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Crohn's and Colitis Center",
@@ -376,6 +385,7 @@ async function main() {
             phoneNumber: "(617) 732-6389",
             floor: 2,
             suite: '201',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Endoscopy Center",
@@ -383,6 +393,7 @@ async function main() {
             phoneNumber: "(617) 732-7426",
             floor: 2,
             suite: '202',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Gretchen S. and Edward A. Fish Center for Women's Health",
@@ -390,6 +401,7 @@ async function main() {
             phoneNumber: "(617) 732-9300",
             floor: 4,
             suite: '402',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Laboratory",
@@ -397,6 +409,8 @@ async function main() {
             phoneNumber: "(617) 732-9841",
             floor: 1,
             suite: '130',
+            buildingId: chestnutHillBuilding.id,
+            nodeDescription: "1a",
         },
         {
             name: "Multi-Specialty Clinic",
@@ -404,6 +418,8 @@ async function main() {
             phoneNumber: "(617) 732-9500",
             floor: 1,
             suite: '130',
+            buildingId: chestnutHillBuilding.id,
+            nodeDescription: "1multi specialty clinic"
         },
         {
             name: "Osher Clinical Center for Integrative Health",
@@ -411,6 +427,7 @@ async function main() {
             phoneNumber: "(617) 732-9700",
             floor: 4,
             suite: '422',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Patient Financial Services",
@@ -418,6 +435,7 @@ async function main() {
             phoneNumber: "(617) 732-9677",
             floor: 2,
             suite: '204B',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Pharmacy",
@@ -425,6 +443,7 @@ async function main() {
             phoneNumber: "(617) 732-9040",
             floor: 3,
             suite: '317',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Radiology",
@@ -432,6 +451,7 @@ async function main() {
             phoneNumber: "(617) 732-9801",
             floor: 5,
             suite: '560',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Radiology, MRI/CT scan",
@@ -439,6 +459,8 @@ async function main() {
             phoneNumber: "(617) 732-9821",
             floor: 1,
             suite: '102B',
+            buildingId: chestnutHillBuilding.id,
+            nodeDescription: "1radiology",
         },
         {
             name: "Rehabilitation Services",
@@ -446,7 +468,185 @@ async function main() {
             phoneNumber: "(617) 732-9525",
             floor: 2,
             suite: '200',
+            buildingId: chestnutHillBuilding.id
         },
+        {
+            name: "Cardiovascular Services",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1urology/cardiology",
+        },
+        {
+            name: "Radiology",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "120radiology",
+        },
+        {
+            name: "Blood Draw/ Phlebotomy",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1blood/urgent",
+        },
+        {
+            name: "Pharmacy",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1pharmacy",
+        },
+        {
+            name: "Multi Specialty Clinic",
+            description: "Cardiac Arrhythmia, Dermatology, Neurosurgery, Optometry, Pulmonology, Women's Health, Allergy, Gastroenterology, Neurology, Endocrinology, Kidney (Renal) Medicine, Ophthalmology, Rheumatology, Vein Care Services, Patient Financial Services",
+            phoneNumber: "(866) 378-9164",
+            floor: 3,
+            suite: '0',
+            buildingId: patriotPlace22Building.id,
+            nodeDescription: "3multi specialty",
+        },
+        {
+            name: "Blood Draw/Phlebotomy",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace22Building.id,
+            nodeDescription: "4phlebotomy",
+        },
+        {
+            name: "Urgent Care Center",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1blood/urgent2",
+        },
+        {
+            name: "Urology",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1urology/cardiology2",
+        },
+        {
+            name: "Orthopaedics",
+            description: "Hand and Upper Extremity, Arthroplasty, Pediatric Trauma, Physiatry, Podiatry",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Rehabilitation Services",
+            description: "Cardiac Rehab; Occupational Therapy, Hand Therapy, Upper Extremity; Physical Therapy, Speech - Language",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Clinical Lab",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Surgi-Care",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Surgical Specialties",
+            description: "Audiology; ENT, General and Gastrointestinal Surgery, Plastic Surgery, Thoracic Surgery, Vascular Surgery, Weight Management and Wellness",
+            phoneNumber: "(866) 378-9164",
+            floor: 3,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Sports Medicine Center",
+            description: "X-Ray Suite",
+            phoneNumber: "(866) 378-9164",
+            floor: 3,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Electromyography (EMG)",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Nutrition",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Pain Medicine",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Pulmonary Function Testing",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Day Surgery Center",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Community Room",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace22Building.id
+        },
+        {
+            name: "Primary Care",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace22Building.id
+        },
+
     ];
 
     // Create one service per department using the full description/name
@@ -478,13 +678,36 @@ async function main() {
         departments.map(async (dept, i) => {
             const deptData = rawDepartmentData[i];
 
-            await prisma.node.updateMany({
-                where: {
+            if (deptData.nodeDescription) {
+                const matchedNode = allNodes.find(n =>
+                    n.description === deptData.nodeDescription
+                );
+
+                if (matchedNode) {
+                    await prisma.node.update({
+                        where: { id: matchedNode.id },
+                        data: {
+                            suite: deptData.suite,
+                            departmentId: dept.id,
+                        },
+                    });
+                    return;
+                } else {
+                    console.warn(`Warning: Could not find node with description "${deptData.nodeDescription}" for department "${deptData.name}"`);
+                }
+            }
+
+            // Fallback if no nodeDescription match
+            await prisma.node.create({
+                data: {
+                    lat: 300 + dept.id,
+                    long: 100 + dept.id,
+                    description: "",
+                    type: nodeType.Location,
                     floor: deptData.floor,
                     suite: deptData.suite,
-                },
-                data: {
                     departmentId: dept.id,
+                    buildingId: deptData.buildingId,
                 },
             });
         })
