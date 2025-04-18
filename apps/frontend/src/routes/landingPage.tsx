@@ -45,11 +45,6 @@ const Landing: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // Handle dot navigation
-    const goToImage = (index: number) => {
-        setCurrentImageIndex(index);
-    };
-
     return (
         <section>
             {/* Disclaimer Alert - Slides in from top and disappears */}
