@@ -38,6 +38,7 @@ const Login: React.FC = () => {
             },
         })
     );
+    /*
     const addUser = useMutation(
         trpc.login.addLogin.mutationOptions({
             onSuccess: (data) => {
@@ -51,6 +52,10 @@ const Login: React.FC = () => {
             }
         })
     )
+
+    */
+
+    /*
     const handleSignUp = () => {
         if(password!== confirmPassword){
             alert("Password do not match!");
@@ -64,12 +69,12 @@ const Login: React.FC = () => {
         })
 
     };
-
+*/
     return (
 
 //dimensions for the hero image: 1152px width 1080px height
         <div className="h-screen flex">
-            <div className = "w-3/5 bg-cover bg-center opacity-90" style={{backgroundImage:"url('/newImageHero.png')"}}>
+            <div className = "w-2/3 bg-cover bg-center opacity-90" style={{backgroundImage:"url('/newImageHero.png')"}}>
                 <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-4 left-4 w-92 h-auto"/>
 
                 <div onMouseEnter={() => {
@@ -81,8 +86,9 @@ const Login: React.FC = () => {
             </div>
 
 
-            <div className="w-2/5 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
+            <div className="w-1/3 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
                 <div >
+                    {/*
                     {isSignUp ? (
                         <>
                             <h1 className="text-2xl text-gray-800 mb-4 text-center">Create Account</h1>
@@ -138,7 +144,10 @@ const Login: React.FC = () => {
               </span>
                             </p>
                         </>
-                    ) : (
+
+                    ) :
+                     */}
+
                         <>
                             <h1 className="text-2xl text-gray-800 mb-4 text-center">Sign In</h1>
 
@@ -163,10 +172,12 @@ const Login: React.FC = () => {
                                     username: username,
                                     password: password
                                 })}
-                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
+                                className="w-full p-2 [background-color:#012D5A] text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
                             >
-                                Sign In
+                                LOG IN
                             </button>
+
+                            {/*
                             <p className="mt-4 text-sm text-center">
                                 Don't have an account?{" "}
                                 <span
@@ -176,8 +187,10 @@ const Login: React.FC = () => {
                 Create Account
               </span>
                             </p>
+
+                            */}
                         </>
-                    )}
+
 
                 </div>
             </div>
