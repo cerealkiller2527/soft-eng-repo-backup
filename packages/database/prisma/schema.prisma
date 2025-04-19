@@ -126,19 +126,26 @@ model Edge {
 }
 
 model Node {
-  id           Int         @id @default(autoincrement())
-  type         nodeType
-  description  String
-  lat          Float
-  long         Float
-  suite        String
+  id          Int        @id @default(autoincrement())
+  type        nodeType
+  description String
+  lat         Float
+  long        Float
+  fromEdge    Edge[]     @relation("fromNode")
+  toEdge      Edge[]     @relation("toNode")
+  Location    Location[]
+}
+
+model Location {
+  id           Int         @id
   floor        Int
-  fromEdge     Edge[]      @relation("fromNode")
-  toEdge       Edge[]      @relation("toNode")
+  suite        String?
   buildingId   Int
   building     Building    @relation(fields: [buildingId], references: [id])
   departmentId Int?
   Department   Department? @relation(fields: [departmentId], references: [id])
+  nodeID       Int?
+  node         Node?       @relation(fields: [nodeID], references: [id])
 }
 
 model Department {
@@ -146,8 +153,8 @@ model Department {
   name               String
   description        String?
   phoneNumber        String
-  node               Node[]
   DepartmentServices DepartmentServices[]
+  Location           Location[]
 }
 
 model Service {
@@ -166,9 +173,9 @@ model DepartmentServices {
 }
 
 model Building {
-  id          Int    @id @default(autoincrement())
-  name        String @unique
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
   address     String
   phoneNumber String
-  Node        Node[]
+  Location    Location[]
 }
