@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Button } from "@/components/ui/button";
+import {
+    Table,
+    TableHeader,
+    TableRow,
+    TableHead,
+    TableBody,
+    TableCell,
+} from "@/components/ui/table";
 import Papa from 'papaparse';
 
 // Simple interface for CSV row data
@@ -115,98 +124,103 @@ export default function CSV() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
-        <h1 className="text-3xl font-bold text-[#0057B8] mb-8">Department CSV Import/Export</h1>
-        
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Import CSV</h2>
-          <input 
-            type="file" 
-            accept=".csv" 
-            onChange={handleFileChange}
-            className="block w-full text-sm mb-4
+      <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
+          <Navbar />
+          <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
+              <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
+                  Department CSV Import/Export
+              </h1>
+
+              <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                  <h2 className="text-xl font-semibold mb-4">Import CSV</h2>
+                  <input
+                      type="file"
+                      accept=".csv"
+                      onChange={handleFileChange}
+                      className="block w-full text-sm mb-4
               file:mr-4 file:py-2 file:px-4
               file:rounded-md file:border-0
               file:bg-[#0057B8] file:text-white
               hover:file:bg-[#004795]"
-          />
-          
-          {previewData.length > 0 && (
-            <div className="mb-4 overflow-x-auto">
-              <h3 className="text-lg font-semibold mb-2">Preview</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Showing {previewData.length} rows. Importing will clear existing records.
-              </p>
-              <table className="min-w-full bg-white border">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="py-2 px-3 border">Node Type</th>
-                    <th className="py-2 px-3 border">Node Description</th>
-                    <th className="py-2 px-3 border">Edge Connections (from -&gt; to)</th>
-                    <th className="py-2 px-3 border">Node (lat,long)</th>
-                    <th className="py-2 px-3 border">Floor</th>
-                    <th className="py-2 px-3 border">Suite</th>
-                    <th className="py-2 px-3 border">Building Name</th>
-                    <th className="py-2 px-3 border">Building Address</th>
-                    <th className="py-2 px-3 border">Building Phone Number</th>
-                    <th className="py-2 px-3 border">Department Name</th>
-                    <th className="py-2 px-3 border">Phone Number</th>
-                    <th className="py-2 px-3 border">Department Description</th>
-                    <th className="py-2 px-3 border">Services</th>
+                  />
 
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewData.map((row, i) => (
-                    <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                      <td className="py-2 px-3 border">{row["Node Type"]}</td>
-                      <td className="py-2 px-3 border">{row["Node Description"]}</td>
-                      <td className="py-2 px-3 border">{row["Edge Connections (from -> to)"]}</td>
-                      <td className="py-2 px-3 border">{row["Node (lat,long)"]}</td>
-                      <td className="py-2 px-3 border">{row["Floor"]}</td>
-                      <td className="py-2 px-3 border">{row["Suite"]}</td>
-                      <td className="py-2 px-3 border">{row["Building Name"]}</td>
-                      <td className="py-2 px-3 border">{row["Building Address"]}</td>
-                      <td className="py-2 px-3 border">{row["Building Phone Number"]}</td>
-                      <td className="py-2 px-3 border">{row["Department Name"]}</td>
-                      <td className="py-2 px-3 border">{row["Phone Number"]}</td>
-                      <td className="py-2 px-3 border">{row["Department Description"]}</td>
-                      <td className="py-2 px-3 border">{row["Services"]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          
-          <button 
-            onClick={importCSV}
-            disabled={loading || !file}
-            className="bg-[#0057B8] text-white py-2 px-4 rounded-md 
-              hover:bg-[#004795] disabled:bg-gray-400 disabled:cursor-not-allowed mr-4"
-          >
-            {loading ? 'Working...' : 'Import CSV'}
-          </button>
-          
-          <button 
-            onClick={exportCSV}
-            disabled={loading}
-            className="bg-[#0057B8] text-white py-2 px-4 rounded-md 
-              hover:bg-[#004795] disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Working...' : 'Export CSV'}
-          </button>
-          
-          {message && (
-            <p className={`mt-3 ${message.includes('failed') ? 'text-red-600' : 'text-green-600'}`}>
-              {message}
-            </p>
-          )}
-        </div>
+                  {previewData.length > 0 && (
+                      <div className="mb-4 overflow-x-auto">
+                          <h3 className="text-lg font-semibold mb-2">Preview</h3>
+                          <p className="text-sm text-gray-600 mb-4">
+                              Showing {previewData.length} rows. Importing will clear existing records.
+                          </p>
+
+                          <Table>
+                              <TableHeader>
+                                  <TableRow>
+                                      <TableHead>Node Type</TableHead>
+                                      <TableHead>Node Description</TableHead>
+                                      <TableHead>Edge Connections (from → to)</TableHead>
+                                      <TableHead>Node (lat,long)</TableHead>
+                                      <TableHead>Floor</TableHead>
+                                      <TableHead>Suite</TableHead>
+                                      <TableHead>Building Name</TableHead>
+                                      <TableHead>Building Address</TableHead>
+                                      <TableHead>Building Phone Number</TableHead>
+                                      <TableHead>Department Name</TableHead>
+                                      <TableHead>Phone Number</TableHead>
+                                      <TableHead>Department Description</TableHead>
+                                      <TableHead>Services</TableHead>
+                                  </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                  {previewData.map((row, i) => (
+                                      <TableRow key={i}>
+                                          <TableCell>{row["Node Type"]}</TableCell>
+                                          <TableCell>{row["Node Description"]}</TableCell>
+                                          <TableCell>{row["Edge Connections (from -> to)"]}</TableCell>
+                                          <TableCell>{row["Node (lat,long)"]}</TableCell>
+                                          <TableCell>{row["Floor"]}</TableCell>
+                                          <TableCell>{row["Suite"]}</TableCell>
+                                          <TableCell>{row["Building Name"]}</TableCell>
+                                          <TableCell>{row["Building Address"]}</TableCell>
+                                          <TableCell>{row["Building Phone Number"]}</TableCell>
+                                          <TableCell>{row["Department Name"]}</TableCell>
+                                          <TableCell>{row["Phone Number"]}</TableCell>
+                                          <TableCell>{row["Department Description"]}</TableCell>
+                                          <TableCell>{row["Services"]}</TableCell>
+                                      </TableRow>
+                                  ))}
+                              </TableBody>
+                          </Table>
+                      </div>
+                  )}
+
+                  <div className="flex space-x-4">
+                      <Button
+                          onClick={importCSV}
+                          disabled={loading || !file}
+                      >
+                          {loading ? "Working..." : "Import CSV"}
+                      </Button>
+                      <Button
+                          onClick={exportCSV}
+                          disabled={loading}
+                      >
+                          {loading ? "Working..." : "Export CSV"}
+                      </Button>
+                  </div>
+
+                  {message && (
+                      <p
+                          className={`mt-3 ${
+                              message.toLowerCase().includes("failed")
+                                  ? "text-red-600"
+                                  : "text-green-600"
+                          }`}
+                      >
+                          {message}
+                      </p>
+                  )}
+              </div>
+          </div>
+          <Footer />
       </div>
-      <Footer />
-    </div>
   );
 }
