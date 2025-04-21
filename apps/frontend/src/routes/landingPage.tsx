@@ -46,8 +46,7 @@ const Landing: React.FC = () => {
     }, []);
 
     return (
-        <section>
-            {/* Disclaimer Alert - Slides in from top and disappears */}
+        <section className="relative bg-[#f2f2f2]">
             {showDisclaimer && (
                 <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-8 fade-in-20 duration-300 max-w-md w-[calc(100%-2rem)]">
                     <AlertDescription className="flex items-center justify-between gap-4">
@@ -63,7 +62,7 @@ const Landing: React.FC = () => {
             )}
 
             <section
-                className="relative h-screen w-full overflow-hidden"
+                className="relative h-[90vh] w-full overflow-hidden"
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
             >
@@ -110,18 +109,42 @@ const Landing: React.FC = () => {
                     </div>
                 </div>
             </section>
-            <section className="justify-center align-center">
-                <div className="gap-4 flex-col col-6">
-                    <Card>
 
+            <section className="relative z-20 px-4 -mt-20">
+
+                <div className="absolute inset-x-0 top-0 h-full w-full max-w-6xl mx-auto">
+                    <div className="h-full bg- rounded-lg p-6 backdrop-blur-sm"></div>
+                </div>
+
+                <div className="relative z-30 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mx-auto pt-6">
+                    <Card className="h-142 bg-white shadow-lg">
+                        <CardTitle className="text-center">
+                            Test card 1
+                        </CardTitle>
+                        <CardContent className="text-lg">
+                            This text should be large!
+                        </CardContent>
                     </Card>
-                    <Card>
-
+                    <Card className="h-96 bg-white shadow-lg">
+                        <CardTitle className="text-center">
+                            Test card 2
+                        </CardTitle>
+                        <CardContent className="text-md">
+                            This text should be medium!
+                        </CardContent>
                     </Card>
-                    <Card>
-
+                    <Card className="h-48 bg-white shadow-lg">
+                        <CardTitle className="text-center">
+                            Test card 3
+                        </CardTitle>
+                        <CardContent className="text-sm">
+                            This text should be small!
+                        </CardContent>
                     </Card>
                 </div>
+
+                {/* OK, I know this is kinda scuffed butttt I don't have a better spacer */}
+                <div className="h-32 bg-[#f2f2f2]"></div>
             </section>
         </section>
     );
