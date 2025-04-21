@@ -37,10 +37,6 @@ type Edge = {
     id: string;
     fromNodeId: string;
     toNodeId: string;
-    fromX: number;
-    fromY: number;
-    toX: number;
-    toY: number;
 };
 
 const MapEditor = () => {
@@ -111,10 +107,6 @@ const MapEditor = () => {
                     id: uuidv4(),
                     fromNodeId: edgeStartRef.current.id,
                     toNodeId: clickedNode.id,
-                    fromX: edgeStartRef.current.x,
-                    fromY: edgeStartRef.current.y,
-                    toX: clickedNode.x,
-                    toY: clickedNode.y,
                 };
 
 
@@ -361,7 +353,7 @@ const MapEditor = () => {
                 if (!e.latLng) return;
 
                 const newNode: Node = {
-                    id: `node-${Date.now()}`, // Replace with a UUID if you prefer
+                    id: uuidv4(), // Replace with a UUID if you prefer
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",

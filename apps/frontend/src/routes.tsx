@@ -32,9 +32,7 @@ export const routes = [
         path: '/ServiceRequest',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
             <ServiceRequest />
-            </ProtectedRoute>
         ),
     },
     {
@@ -75,9 +73,7 @@ export const routes = [
         path: '/mapeditor',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
                 <MapEditor />
-            </ProtectedRoute>
         ),
     },
     {
