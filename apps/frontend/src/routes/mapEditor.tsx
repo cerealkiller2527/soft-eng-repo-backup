@@ -6,14 +6,26 @@ import { queryClient } from '../database/trpc.ts';
 import { useTRPC } from '../database/trpc.ts';
 import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx'
 import { overlays } from "@/constants.tsx";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {formSchema} from "../components/MapEditorSelectForm.tsx";
+import { HelpDialog } from "../components/helpDialog.tsx";
+import { v4 as uuidv4 } from 'uuid';
 
 
-type formType = {
-    building: string;
-    floor: number;
-};
+
+
+//add alert popup if changes are made and not saved
+//add save button
+
+
+type FormData = z.infer<typeof formSchema>;
+import * as z from "zod";
+
+
 
 type Node = {
+    departmentId: number;
     id: string;
     x: number;
     y: number;
@@ -38,7 +50,6 @@ const MapEditor = () => {
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
-    const [form, setForm] = useState<formType | null>(null);
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
@@ -47,6 +58,11 @@ const MapEditor = () => {
     const markersRef = useRef<google.maps.Marker[]>([]);
     const [building, setBuilding] = useState<number>(1);
     const polylinesRef = useRef<google.maps.Polyline[]>([]);
+    const [form, setForm] = useState<FormData | null>(null);
+    const [showHelpDialog, setShowHelpDialog] = useState(false);
+    const [negativeIds, setNegativeIds] = useState<number[-1]>([]);
+
+
 
     const fetchFloorMap = useQuery(
         trpc.mapEditor.getFloorMap.queryOptions({
@@ -80,6 +96,7 @@ const MapEditor = () => {
 
 
 
+
     const edgeStartRef = useRef<Node | null>(null);
 
 
@@ -91,7 +108,7 @@ const MapEditor = () => {
         } else {
             if (edgeStartRef.current.id !== clickedNode.id) {
                 const newEdge: Edge = {
-                    id: `edge-${edgeStartRef.current.id}-${clickedNode.id}`,
+                    id: uuidv4(),
                     fromNodeId: edgeStartRef.current.id,
                     toNodeId: clickedNode.id,
                     fromX: edgeStartRef.current.x,
@@ -99,6 +116,8 @@ const MapEditor = () => {
                     toX: clickedNode.x,
                     toY: clickedNode.y,
                 };
+
+
                 setEdges((prev) => [...prev, newEdge]);
                 console.log("Edge created between", edgeStartRef.current.id, "and", clickedNode.id);
             }
@@ -108,9 +127,19 @@ const MapEditor = () => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
         if (event.key === "Backspace") {
-            if (edgeStartRef.current) {
+            const nodeToDelete = edgeStartRef.current;
+            if (nodeToDelete) {
+                // Remove the node
+                setNodes((prev) => prev.filter((node) => node.id !== nodeToDelete.id));
 
-                setNodes((prev) => prev.filter((node) => node.id !== edgeStartRef.current.id));
+                // Remove edges connected to the node
+                setEdges((prev) =>
+                    prev.filter(
+                        (edge) =>
+                            edge.fromNodeId !== nodeToDelete.id &&
+                            edge.toNodeId !== nodeToDelete.id
+                    )
+                );
 
                 edgeStartRef.current = null;
             }
@@ -122,8 +151,10 @@ const MapEditor = () => {
 
     useEffect(() => {
         if (fetchFloorMap.status === 'success' && fetchFloorMap.data?.nodes) {
+            console.log(fetchFloorMap.data.nodes)
             setNodes(fetchFloorMap.data.nodes);
             setEdges(fetchFloorMap.data.edges);
+            console.log(nodes);
         }
     }, [fetchFloorMap.status, fetchFloorMap.data]);
 
@@ -137,8 +168,6 @@ const MapEditor = () => {
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
-        polylinesRef.current.forEach(line => line.setMap(null));
-        polylinesRef.current = [];
 
         edgeStartRef.current = null;
 
@@ -149,14 +178,11 @@ const MapEditor = () => {
                 title: node.description ?? '',
                 gmpDraggable: true,
 
+
             });
 
             marker.addListener('dragend', () => handleMarkerDragEnd(node.id, marker));
-            marker.addListener('dblclick', () => {
-                console.log(marker);
-                setNodes((prev) => prev.filter((n) => n.id !== node.id));
-            });
-            marker.addListener('mouseover', () => {
+            marker.addListener('click', () => {
                 infoWindow.setContent(`
                 <div>
                   <strong>${node.description ?? 'No description'}</strong><br/>
@@ -207,6 +233,19 @@ const MapEditor = () => {
             });
 
             polyline.addListener('click', () => handleEdgeClick(edge.id));
+            polyline.addListener("mouseover", () => {
+                polyline.setOptions({
+                    strokeColor: "#4285F4",
+                    strokeWeight: 4,
+                });
+            });
+
+            polyline.addListener("mouseout", () => {
+                polyline.setOptions({
+                    strokeColor: "#4285F4",
+                    strokeWeight: 2,
+                });
+            });
             polylinesRef.current.push(polyline);
 
 
@@ -259,6 +298,7 @@ const MapEditor = () => {
             mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
         }
         setImageIndex(form.floor - 1);
+        setNegativeIds(-1);
     }, [form]);
 
     useEffect(() => {
@@ -266,7 +306,7 @@ const MapEditor = () => {
             const map = new google.maps.Map(mapRef.current, {
                 zoom: 19,
                 center: { lat: 42.09280, lng: -71.266 },
-                disableDefaultUI: false,
+                disableDefaultUI: true,
                 mapId: '57f41020f9b31f57',
             });
 
@@ -274,8 +314,7 @@ const MapEditor = () => {
 
             mapInstance.current = map;
             mapInstance.current.setOptions({
-                gestureHandling: "none", // Disable dragging
-                scrollwheel: false, // Disable scroll zooming
+                disableDoubleClickZoom : true
             });
 
             mapInstance.current.addListener("dblclick", (e: google.maps.MapMouseEvent) => {
@@ -283,7 +322,7 @@ const MapEditor = () => {
                 if (!e.latLng) return;
 
                 const newNode: Node = {
-                    id: `node-${Date.now()}`, // Replace with a UUID if you prefer
+                    id: uuidv4(), // Replace with a UUID if you prefer
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
@@ -313,26 +352,60 @@ const MapEditor = () => {
                 new google.maps.LatLngBounds(
                     { lat: overlayData.bounds.south, lng: overlayData.bounds.west },
                     { lat: overlayData.bounds.north, lng: overlayData.bounds.east }
-                )
+                ), {clickable: true}
             );
             overlay.setMap(mapInstance.current);
+
+            overlay.addListener("dblclick", (e: google.maps.MapMouseEvent) => {
+                console.log("dblclick");
+                if (!e.latLng) return;
+
+                const newNode: Node = {
+                    id: `node-${Date.now()}`, // Replace with a UUID if you prefer
+                    x: e.latLng.lat(),
+                    y: e.latLng.lng(),
+                    type: "Intermediary",
+                    description: null,
+                };
+
+                setNodes(prev => [...prev, newNode]);
+            });
+
+
+            console.log(google.maps.version);
+
+
+
             overlaysRef.current.push(overlay);
         });
     }, [imageIndex]);
 
     return (
         <div id="floorplan" className="relative w-full h-screen overflow-hidden">
-            <div id="google-map-container" ref={mapRef} className="absolute inset-0 w-full h-full z-0" />
+            <div
+                id="google-map-container"
+                ref={mapRef}
+                className="absolute top-20 bottom-15 left-0 right-0 w-full z-0"
+            />
+
+            <HelpDialog />
 
             <div className="fixed top-0 left-0 right-0 z-20">
                 <Navbar />
             </div>
 
-            <div className="absolute top-10 left-10 z-20">
-                <MapEditorSelectForm onSubmit={(form) => setForm(form)} />
+            <div className="absolute top-30 left-4 z-10">
+                <div className="bg-white shadow-md rounded-2xl overflow-hidden">
+                    <div className="p-4">
+                        <MapEditorSelectForm onSubmit={(form) => setForm(form)} />
+                    </div>
+                </div>
             </div>
 
-            <Footer />
+
+            <div className="fixed bottom-0 left-0 right-0 z-20">
+                <Footer />
+            </div>
         </div>
     );
 };

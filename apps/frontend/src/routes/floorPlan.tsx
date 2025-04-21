@@ -58,7 +58,7 @@ const FloorPlan = () => {
             const map = new google.maps.Map(mapRef.current, {
                 zoom: 18,
                 center: { lat: 42.09333, lng: -71.26546 },
-                disableDefaultUI: false,
+                disableDefaultUI: true,
                 mapId: '57f41020f9b31f57',
             });
 
