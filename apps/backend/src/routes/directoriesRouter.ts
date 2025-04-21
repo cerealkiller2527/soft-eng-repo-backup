@@ -11,9 +11,12 @@ export const directoriesRouter = t.router({
                 DepartmentServices: {
                     include: { service: true },
                 },
-                node: {
-                    include: { building: true },
-                },
+                Location: {
+                    include: {
+                        building: true,
+                        node: true
+                    }
+                }
             },
             orderBy: { name: 'asc' },
         })
@@ -26,9 +29,12 @@ export const directoriesRouter = t.router({
                 DepartmentServices: {
                     include: { service: true },
                 },
-                node: {
-                    include: { building: true },
-                },
+                Location: {
+                    include: {
+                        building: true,
+                        node: true
+                    }
+                }
             },
         })
     ),
