@@ -5,7 +5,7 @@ import { parse } from 'csv-parse/sync';
 
 export const t = initTRPC.create();
 
-//trim the nodeCoord String
+// Trim the nodeCoord String
 const normalizeCoord = (coord: string) => coord.replace(/\s+/g, '');
 
 export const csvImportRouter = t.router({
@@ -48,7 +48,7 @@ export const csvImportRouter = t.router({
                         },
                     });
 
-                    // get the node info
+                    // Get the node info
                     const rawCoord = normalizeCoord(record['Node (lat,long)']);
                     if (!rawCoord) {
                         throw new TRPCError({
@@ -76,40 +76,30 @@ export const csvImportRouter = t.router({
                     const description = (record['Node Description'] || '').trim();
                     const suite = (record['Suite'] || '').trim();
 
-                    //find with there is the same lat, long, and floor
+                    // Find or create node
                     let node = await PrismaClient.node.findFirst({
-                        where: { lat, long, floor },
+                        where: { lat, long },
                     });
 
-                    // if node doesn't exist that create the node
                     if (!node) {
                         node = await PrismaClient.node.create({
                             data: {
                                 type: 'Location',
                                 lat,
                                 long,
-                                floor,
-                                suite,
                                 description,
-                                buildingId: building.id,
-                                departmentId: null, // added later
                             },
                         });
                     }
-                    //make sure the node and the building is connected
-                    await PrismaClient.node.update({
-                        where: { id: node.id },
-                        data: { buildingId: building.id },
-                    });
-                    // key the nodeCoord with the nodeId
+
+                    // Store node ID for edge creation
                     nodeMap.set(rawCoord, node.id);
 
-                    // create or update department
-                    //find department via department name and building id
+                    // Create or update department
                     let department = await PrismaClient.department.findFirst({
                         where: {
                             name: departmentName,
-                            node: {
+                            Location: {
                                 some: {
                                     buildingId: building.id,
                                 },
@@ -117,7 +107,6 @@ export const csvImportRouter = t.router({
                         },
                     });
 
-                    //if department doesn't exist create department or update info
                     if (!department) {
                         department = await PrismaClient.department.create({
                             data: {
@@ -136,30 +125,42 @@ export const csvImportRouter = t.router({
                         });
                     }
 
-                    // update node with departmentId
-                    await PrismaClient.node.update({
-                        where: { id: node.id },
-                        data: { departmentId: department.id },
+                    // Create or update location
+                    await PrismaClient.location.upsert({
+                        where: {
+                            id: node.id, // Using node ID as location ID
+                        },
+                        update: {
+                            floor,
+                            suite,
+                            buildingId: building.id,
+                            departmentId: department.id,
+                            nodeID: node.id,
+                        },
+                        create: {
+                            id: node.id,
+                            floor,
+                            suite,
+                            buildingId: building.id,
+                            departmentId: department.id,
+                            nodeID: node.id,
+                        },
                     });
 
-                    // get all the service
+                    // Handle services
                     const svcNames = (record['Services'] || '')
                         .split(';')
                         .map((s: string) => s.trim());
 
-                    //for every service
                     for (const name of svcNames) {
                         if (!name) continue;
 
-                        //find out if there is already a service in the database
                         let service = await PrismaClient.service.findFirst({ where: { name } });
 
-                        //if there isn't create one
                         if (!service) {
                             service = await PrismaClient.service.create({ data: { name } });
                         }
 
-                        //check if there is a relationship between the department and service
                         const exists = await PrismaClient.departmentServices.findFirst({
                             where: {
                                 departmentID: department.id,
@@ -167,7 +168,6 @@ export const csvImportRouter = t.router({
                             },
                         });
 
-                        // if there isn't, create it
                         if (!exists) {
                             await PrismaClient.departmentServices.create({
                                 data: {
@@ -178,8 +178,7 @@ export const csvImportRouter = t.router({
                         }
                     }
 
-                    // store all the edges
-                    //separate to different edge connection
+                    // Store edges for later creation
                     const edgeStrs = (record['Edge Connections (from -> to)'] || '')
                         .split(';')
                         .map((s: string) => s.trim());
@@ -187,18 +186,17 @@ export const csvImportRouter = t.router({
                     for (const edgeStr of edgeStrs) {
                         const match = edgeStr.match(
                             /\(([-\d.]+),\s*([-\d.]+)\)\s*->\s*\(([-\d.]+),\s*([-\d.]+)\)/
-                        ); // match to (lat, long) -> (lat, long)
+                        );
                         if (!match) continue;
 
                         const from = normalizeCoord(`(${match[1]},${match[2]})`);
                         const to = normalizeCoord(`(${match[3]},${match[4]})`);
 
-                        //store the edges
                         edgeBuffer.push({ from, to });
                     }
                 }
 
-                // create the edges from the store
+                // Create edges
                 for (const { from, to } of edgeBuffer) {
                     const fromId = nodeMap.get(from);
                     const toId = nodeMap.get(to);
@@ -208,12 +206,10 @@ export const csvImportRouter = t.router({
                         continue;
                     }
 
-                    //find if the edge exist
                     const exists = await PrismaClient.edge.findFirst({
                         where: { fromNodeId: fromId, toNodeId: toId },
                     });
 
-                    // if not add it
                     if (!exists) {
                         await PrismaClient.edge.create({
                             data: {
