@@ -137,7 +137,7 @@ model Node {
 }
 
 model Location {
-  id           Int         @id
+  id           Int         @id @default(autoincrement())
   floor        Int
   suite        String?
   buildingId   Int
