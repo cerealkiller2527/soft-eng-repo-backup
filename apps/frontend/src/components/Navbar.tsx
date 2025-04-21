@@ -5,7 +5,9 @@ const Navbar = () => {
     return(
         <div className={"bg-gray-100 py-4 w-full border-b border-gray-400 shadow-sm fixed top-0 left-0 z-50"}>
             <nav id="navbar" className="flex justify-between px-6 space-x-8 mt-2">
-                <img src={BnWLogo} alt="Hospital Logo" className={"flex justify-left  h-10 ml-2"}/>
+                <a href='/'>
+                    <img src={BnWLogo} alt="Hospital Logo" className={"flex justify-left  h-10 ml-2"}/>
+                </a>
                 <div className="flex space-x-6 ml-auto">
                 <Link to="/Login" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
                     Login
@@ -21,6 +23,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/csv" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
                     CSV Import/Export
+                </Link>
+                <Link to="/mapeditor" className={"text-[#0057B8] text-lg font-semibold hover:underline hover:text-[#009ca6]"}>
+                    Map Editor
                 </Link>
                 </div>
             </nav>

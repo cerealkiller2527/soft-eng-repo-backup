@@ -31,60 +31,36 @@ export const overlays: OverlayImage[][] = [
     ],
     [
         {
-            imageUrl: "/chestnutFloorOne.png",
+            imageUrl: "/22PatriotPlaceFloorThree.png",
             bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
+                north: 70.09309,
+                south: 70.09309,
+                east: -71.26552,
+                west: -71.26656,
             },
         },
 
     ],
     [
         {
-            imageUrl: "/chestnutFloorOne.png",
+            imageUrl: "/22PatriotPlaceFloorFour.png",
             bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
+                north: 42.09310,
+                south: 42.09224,
+                east: -71.26652,
+                west: -71.26756,
             },
         },
 
     ],
     [
         {
-            imageUrl: "/chestnutFloorOne.png",
+            imageUrl: "/22PatriotPlaceFloorFour.png",
             bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
-            },
-        },
-
-    ],
-    [
-        {
-            imageUrl: "/chestnutFloorOne.png",
-            bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
-            },
-        },
-
-    ],
-    [
-        {
-            imageUrl: "/chestnutFloorOne.png",
-            bounds: {
-                north: 42.32624046941922,
-                south: 42.32567461058454,
-                east: -71.14920891056955,
-                west: -71.15014579333681,
+                north: 42.09310,
+                south: 42.09224,
+                east: -71.26652,
+                west: -71.26756,
             },
         },
 

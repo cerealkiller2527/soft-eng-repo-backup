@@ -26,15 +26,17 @@ const FloorPlan = () => {
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
+    const polylineRef = useRef<google.maps.Polyline | null>(null);
     const [endMapsLocation, setEndMapsLocation] = useState([
         {lat : 0.00 , lng : 0.00}
     ]);
     const [pathCoords, setPathCoords] = useState([
-        { x: 275, y: 450 },
+        { latitude: .00, longitude: .00, floor: 1 },
     ]);
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
+    const [driving, setDriving] = useState<boolean>(true);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -49,17 +51,7 @@ const FloorPlan = () => {
         loadGoogleLibraries();
     }, [])
 
-    useEffect(() => {
-        if (!mapInstance.current || !AdvancedMarker) return;
 
-        const marker = new AdvancedMarker({
-            position : { lat: 42.3262, lng: -71.1497 },
-            map: mapInstance.current,
-            gmpClickable: true,
-        });
-
-        return () => marker.setMap(null); // Cleanup on unmount or dependency change
-    }, [AdvancedMarker]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -78,6 +70,37 @@ const FloorPlan = () => {
             directionsRenderer.current.setMap(map);
         }
     }, []);
+
+    useEffect(() => {
+        if (!mapInstance.current) return;
+
+        // Remove the previous polyline if it exists
+        if (polylineRef.current) {
+            polylineRef.current.setMap(null);
+            polylineRef.current = null;
+        }
+
+        // Filter the pathCoords to only those matching the current floor
+        const filteredCoords = pathCoords
+            .filter(node => node.floor === imageIndex + 1) // assuming floor index starts from 1
+            .map(node => ({ lat: node.latitude, lng: node.longitude }));
+
+        if (filteredCoords.length < 2) return; // Need at least 2 points to draw a line
+        console.log(filteredCoords);
+
+        // Create and display new polyline
+        const polyline = new google.maps.Polyline({
+            path: filteredCoords,
+            geodesic: true,
+            strokeColor: "#00d9ff",
+            strokeOpacity: 1.0,
+            strokeWeight: 4,
+        });
+
+        polyline.setMap(mapInstance.current);
+        polylineRef.current = polyline;
+
+    }, [pathCoords, imageIndex]);
 
     useEffect(() => {
         if (!mapInstance.current) return;
@@ -102,17 +125,17 @@ const FloorPlan = () => {
         trpc.search.getPath.mutationOptions({
             onSuccess: (data: pNodeDTO[]) => {
 
-
+                console.log(data);
                 const formattedCoords = data.map((node) => ({
-                    x: node.longitude,
-                    y: node.latitude,
+                    latitude: node.longitude,
+                    longitude: node.latitude,
+                    floor: node.floor
                 }));
 
                 // const formattedCoords = data.map(([x, y]) => ({ x, y }));
                 // setPathCoords(formattedCoords);
 
                 setPathCoords(formattedCoords)
-                console.log(pathCoords);
 
             },
             onError: (error) => {
@@ -123,19 +146,25 @@ const FloorPlan = () => {
     );
 
 
+
+
     useEffect(() => {
         if (!form) return;
 
         search.mutate({
-            startDesc: '1bottom entrance',
-            endDesc: 'reception',
-            //mapsEndLocation : endMapsLocation
+            endDesc: form.destination,
+            location: form.building,
+            driving: driving
         });
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
-            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT; break;
-            case "Walking": travelMode = google.maps.TravelMode.WALKING; break;
+            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT;
+            setDriving(false)
+            break;
+            case "Walking": travelMode = google.maps.TravelMode.WALKING;
+            setDriving(false)
+            break;
         }
 
         if(form.building == "Patriot Place"){
@@ -149,9 +178,11 @@ const FloorPlan = () => {
 
         if (form.location && mapInstance.current && directionsRenderer.current) {
             const directionsService = new google.maps.DirectionsService();
-            let address = "850 Boylston St Chestnut Hill, MA 02467";
-            if(form.building ==  "Patriot Place"){
-                address = "20 Patriot Pl, Foxborough, MA 02035";
+            let address = {lat: 42.32629494233723, lng: -71.14950206654193};
+            if(form.building ==  "20 Patriot Place"){
+                address = {lat: 42.09251994541246, lng: -71.26653442087988};
+            }else if(form.building ==  "22 Patriot Place"){
+                address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }
             directionsService.route(
                 {
@@ -182,41 +213,42 @@ const FloorPlan = () => {
     };
 
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 p-6">
-            <div className="flex justify-start mb-2">
+        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col">
+            {/* Header */}
+            <div className="flex justify-start mb-2 p-2">
                 <img src="/BrighamAndWomensLogo.png" alt="Logo" className="h-12 ml-2" />
             </div>
 
+            {/* Navbar */}
             <Navbar />
 
-            <div className="flex justify-center items-start bg-white shadow-xl rounded-lg p-2 mt-2">
-                <LocationRequestForm onSubmit={(form) => setForm(form)} />
-
+            {/* Main content fills screen excluding navbar/footer */}
+            <div className="relative flex-1">
+                {/* Google Map full size */}
                 <div
                     id="google-map-container"
-                    className="w-full max-w-xl border-2 border-gray-300 rounded-lg shadow-md"
+                    className="absolute inset-0 z-0"
                     ref={mapRef}
-                    style={{ width: '100%', height: '600px' }}
+                    style={{ width: '100%', height: '100%' }}
                 />
-                <div className="mt-4 flex justify-center">
+
+                {/* Overlay UI elements */}
+                <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
+                    <LocationRequestForm onSubmit={(form) => setForm(form)} />
+                </div>
+
+                <div className="absolute top-4 right-4 z-10">
                     <button
                         onClick={handleImageSwitch}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md"
                     >
-                        Floor : {imageIndex + 1}
+                        Floor: {imageIndex + 1}
                     </button>
                 </div>
 
-                {eta && (
-                    <div className="absolute top-25 left-120 bg-white border border-gray-300 rounded p-3 shadow-md z-10 w-64">
-                        <div className="flex justify-between items-center mb-2">
-                            <strong>ETA:</strong>
-                        </div>
-                        <p>{eta}.</p>
-                    </div>
-                )}
             </div>
 
+            {/* Footer */}
             <Footer />
         </div>
     );

@@ -1,22 +1,39 @@
 import { useState, useEffect } from "react";
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useTRPC } from '../database/trpc.ts';
+import {pNodeDTO} from "../../../../share/types.ts";
 
-const buildings =["Patriot Place", "Chestnut Hill"];
-const MGBHospitals = ["Reception"];
+const buildings = ["22 Patriot Place" ,"20 Patriot Place", "Chestnut Hill Medical Center"];
+
 const transport = ["Public Transport", "Walking", "Driving"];
 
 export default function LocationRequestForm({ onSubmit }) {
+    const trpc = useTRPC();
 
-    useEffect(() => {
-        //useeffect for setting MGBHospitals once backend is made
-        //should run on mount
-    }, []);
+    const [MGBHospitals, SetMGBHospitals] = useState([
+        "Reception",
+    ]);
+
+
 
     const [form, setForm] = useState({
         location: "",
         destination: "",
         transport: "",
-        building: "",
+        building: "Chestnut Hill Medical Center",
     });
+    const nodesQuery = useQuery(trpc.mapInfo.getNodesByBuildingName.queryOptions({ buildingName: form.building }));
+
+
+    useEffect(() => {
+        if (nodesQuery.data) {
+            const locations = nodesQuery.data
+                .filter((node) => node.type === "Location" && node.description)
+                .map((node) => node.description);
+
+            SetMGBHospitals(locations);
+        }
+    }, [form.building, nodesQuery.status]);
 
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
 
@@ -142,29 +159,6 @@ export default function LocationRequestForm({ onSubmit }) {
                     Submit
                 </button>
             </form>
-            {submittedRequests.length > 0 && (
-                <div className="mt-6 p-4 border-t border-gray-300">
-                    <h3 className="text-lg font-semibold">Submitted Requests</h3>
-                    {submittedRequests.map((request, index) => (
-                        <div key={index} className="mt-4 p-2 border-b border-gray-300">
-                            <div>
-                                <p>
-                                    <strong>Input Location:</strong> {request.location}
-                                    <button
-                                        onClick={() => handleDelete(index)}
-                                        className="border ml-4 text-red-500 hover:text-red-700 p-2 rounded-l rounded-r justify-end hover:text-white hover:bg-red-500 "
-                                    >
-                                        X
-                                    </button>
-                                </p>
-                                <p>
-                                    <strong>Destination:</strong> {request.destination}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
         </div>
     );
 }

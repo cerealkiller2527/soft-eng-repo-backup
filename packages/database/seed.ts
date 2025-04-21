@@ -39,6 +39,7 @@ async function main() {
     // Create buildings
     const chestnutHillBuilding = await prisma.building.create({
         data: {
+            id: 1,
             name: "Chestnut Hill Medical Center",
             address: '25 Boylston St, Chestnut Hill, Ma 02467',
             phoneNumber: '(617) 482-5500',
@@ -46,6 +47,7 @@ async function main() {
     });
     const patriotPlace20Building = await prisma.building.create({
         data: {
+            id: 2,
             name: "20 Patriot Place",
             address: '20 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
@@ -53,6 +55,7 @@ async function main() {
     });
     const patriotPlace22Building = await prisma.building.create({
         data: {
+            id: 3,
             name: "22 Patriot Place",
             address: '22 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
@@ -60,21 +63,21 @@ async function main() {
     });
 
     const chestnutNodes = [
-        { suite: '0', description: '1top stairs', lat: 42.325966, long: -71.149486, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1b', lat: 42.325966, long: -71.149355, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1a', lat: 42.325963, long: -71.149338, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1c', lat: 42.325949, long: -71.149502, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1d', lat: 42.326078, long: -71.149503, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1e', lat: 42.326075, long: -71.149566, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1f', lat: 42.325768, long: -71.149368, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance', lat: 42.326195, long: -71.149488, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom entrance outside', lat: 42.326268, long: -71.149515, floor: 1, type: "Location" },
-        { suite: '0', description: '1g', lat: 42.325934, long: -71.150081, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1h', lat: 42.325934, long: -71.150081, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1bottom stairs', lat: 42.326126, long: -71.149486, floor: 1, type: "Staircase" },
-        { suite: '0', description: '1right entrance', lat: 42.325982, long: -71.149266, floor: 1, type: "Intermediary" },
-        { suite: '0', description: '1right entrance outside', lat: 42.325984, long: -71.149203, floor: 1, type: "Entrance" },
-        { suite: '0', description: 'reception', lat: 42.326007, long: -71.149354, floor: 1, type: "Location" },
+        { suite: '0', description: '1top entrance outside', lat: 42.32623496574831, long: -71.14950957972837, floor: 1, type: "Entrance" },
+        { suite: '0', description: '1top entrance', lat: 42.32620375463355, long: -71.14950766082836, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1c', lat: 42.32613778563545, long: -71.1494999852283, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1multi specialty clinic', lat: 42.32615339121115, long: -71.1495997680289, floor: 1, type: "Location" },
+        { suite: '0', description: '1b', lat: 42.32597321751075, long: -71.14949614742828, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1a', lat: 42.32597889228084, long: -71.14935894607748, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1d', lat: 42.32576254130898, long: -71.14935222992743, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1e', lat: 42.32574906368282, long: -71.14954028212856, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1radiology', lat: 42.32577601893224, long: -71.14954220102855, floor: 1, type: "Location" },
+        { suite: '0', description: '1right entrance', lat: 42.32598456705039, long: -71.1492591632769, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 42.325987404435004, long: -71.14921598802664, floor: 1, type: "Location" },
+        { suite: '0', description: '1drop off', lat: 42.326295063631804, long: -71.1494980200208, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1lot1', lat: 42.326294043305104, long: -71.1495987024141, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1lot2', lat: 42.32638877194042, long: -71.14960193256016, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '1parking', lat: 42.32636329870798, long: -71.14976451657915, floor: 1, type: "Intermediary" },
     ]
     const pat20Floor1Nodes = [
         /**
@@ -82,33 +85,35 @@ async function main() {
          * a through e, a is bottom part of the map, e is top
          */
         // A
-        { suite: '0', description: '1left entrance outside', lat: 42.092500, long: -71.266366,floor : 1, type: "Location" },
-        { suite: '0', description: '1left entrance', lat: 42.092517, long: -71.266300,floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a1', lat: 42.092543, long: -71.266254,floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a2', lat: 42.092605, long: -71.266194,floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a3', lat: 42.092619, long: -71.266139, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a4', lat: 42.092583, long: -71.266126, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a5', lat: 42.092609, long: -71.266041, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1middle stairs', lat: 42.092651, long: -71.266064, floor : 1, type: "Staircase" },
-        { suite: '0', description: '1a6', lat: 42.092651, long: -71.266064, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a7', lat: 42.092663, long: -71.265888, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a8', lat: 42.092717, long: -71.265898, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1urology/cardiology', lat: 42.092720, long: -71.265919, floor : 1, type: "Location" },
-        { suite: '0', description: '1a9', lat: 42.092666, long: -71.265790, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1a10', lat: 42.092680, long: -71.265739, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1right stairs', lat: 42.092690, long: -71.265615, floor : 1, type: "Staircase" },
-        { suite: '0', description: '120elevator', lat: 42.092717, long: -71.265685, floor : 1, type: "Elevator" },
+        { suite: '0', description: '1left entrance outside', lat: 42.09247336762025, long: -71.26641176178101,floor : 1, type: "Location" },
+        { suite: '0', description: '1left entrance', lat: 42.092519162004315, long: -71.26635382787208,floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a1', lat: 42.09253411526544, long: -71.26633745524565,floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a2', lat: 42.09256776009002, long: -71.26629967226157,floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a3', lat: 42.09259112454105, long: -71.26627196473991, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a4', lat: 42.09254626478749, long: -71.26625433268069, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a5', lat: 42.09257990960563, long: -71.26611327620677, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1middle stairs', lat: 42.092620096448364, long: -71.26612209223639 , floor : 1, type: "Staircase" },
+        { suite: '0', description: '1a6', lat: 42.09259766658581, long: -71.26601000271695, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a7', lat: 42.09261916187092, long: -71.26592058298796, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a8', lat: 42.09263318053121, long: -71.26586138964623, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1urology/cardiology', lat: 42.092669629033466, long: -71.26587524340705, floor : 1, type: "Location" },
+        { suite: '0', description: '1urology/cardiology2', lat: 42.092669629033465, long: -71.26587524340704, floor : 1, type: "Location" },
+        { suite: '0', description: '1a9', lat: 42.092651872073446, long: -71.26577322935003, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1a10', lat: 42.092664956149726, long: -71.26570773884428, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1right stairs', lat: 42.092697666328625, long: -71.26560824365289, floor : 1, type: "Staircase" },
+        { suite: '0', description: '120elevator', lat: 42.09268458225911, long: -71.26565232380098, floor : 1, type: "Elevator" },
         { suite: '0', description: '1a11', lat: 42.092694, long: -71.265939, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1a12', lat: 42.092739, long: -71.265955, floor : 1 , type: "Intermediary" },
         // B
-        { suite: '0', description: '1radiology', lat: 42.092710, long: -71.266262, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1b17', lat: 42.092734, long: -71.266173, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1b1', lat: 42.092680, long: -71.266249, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1b2', lat: 42.092705, long: -71.266140, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1b3', lat: 42.092731, long: -71.266147, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1b4', lat: 42.092742, long: -71.266117, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1blood/urgent', lat: 42.092761, long: -71.266043, floor : 1, type: "Location" },
-        { suite: '0', description: '1b5', lat: 42.092749, long: -71.265954, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '120radiology', lat: 42.092654675804305, long: -71.2663588656033, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b17', lat: 42.0926873859885, long: -71.26631478545521, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b1', lat: 42.09262290018065, long: -71.26635256843929, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b2', lat: 42.09262850764481, long: -71.26628707793354, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b3', lat: 42.09264626461136, long: -71.26629589396316, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b4', lat: 42.09264906834246, long: -71.26627952133673, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1b5', lat: 42.09264906834246, long: -71.26627952133673, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1blood/urgent', lat: 42.09267243276353, long: -71.26623040345743, floor : 1, type: "Location" },
+        { suite: '0', description: '1blood/urgent2', lat: 42.09267243276352, long: -71.26623040345744 , floor: 1, type: "Intermediary" },
         { suite: '0', description: '1b6', lat: 42.092774, long: -71.265858, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b7', lat: 42.092786, long: -71.265820, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b8', lat: 42.092803, long: -71.265870, floor : 1 , type: "Intermediary" },
@@ -120,10 +125,10 @@ async function main() {
         { suite: '0', description: '1b14', lat: 42.092821, long: -71.265723, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1b15', lat: 42.092835, long: -71.265595, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1right entrance', lat: 42.092835, long: -71.265595, floor : 1 , type: "Intermediary" },
-        { suite: '0', description: '1right entrance outside', lat: 42.092835, long: -71.265595, floor : 1, type: "Location" },
-        { suite: '0', description: '1b16', lat: 42.092864, long: -71.265632, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1right entrance outside', lat: 42.09280140421301, long: -71.26562965401052, floor : 1, type: "Location" },
+        { suite: '0', description: '1b16', lat: 42.09283317974725, long: -71.26585383304942, floor : 1 , type: "Intermediary" },
         // C
-        { suite: '0', description: '1c1', lat: 42.092778, long: -71.266254, floor : 1 , type: "Intermediary" },
+        { suite: '0', description: '1c1', lat: 42.092715423275855, long: -71.26632737978323, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1pharmacy', lat: 42.092788, long: -71.266211, floor : 1, type: "Location" },
         { suite: '0', description: '1c2', lat: 42.092836, long: -71.266267, floor : 1 , type: "Intermediary" },
         { suite: '0', description: '1c3', lat: 42.092846, long: -71.266212, floor : 1 , type: "Intermediary" },
@@ -174,22 +179,22 @@ async function main() {
         { suite: '0', description: '3right stairs', lat: 42.092855, long: -71.266709, floor: 3, type: "Staircase" },
     ]
     const pat22Floor4Nodes= [
-            { suite: '0', description: '4left stairs', lat: 42.092446, long: -71.266887, floor: 4, type: "Staircase" },
-            { suite: '0', description: '4a1', lat: 42.092548, long: -71.266732, floor: 4, type: "Intermediary" },
-            { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
-            { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
-            { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
-            { suite: '0', description: '422elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
+        { suite: '0', description: '4left stairs', lat: 42.092446, long: -71.266887, floor: 4, type: "Staircase" },
+        { suite: '0', description: '4a1', lat: 42.092548, long: -71.266732, floor: 4, type: "Intermediary" },
+        { suite: '0', description: '4a2', lat: 42.092542, long: -71.266715, floor: 4, type: "Intermediary" },
+        { suite: '0', description: '4phlebotomy', lat: 42.092527, long: -71.266734, floor: 4, type: "Location" },
+        { suite: '0', description: '4middle stairs', lat: 42.092532, long: -71.266775, floor: 4, type: "Staircase" },
+        { suite: '0', description: '422elevator', lat: 42.092589, long: -71.266719, floor: 4, type: "Elevator" },
     ]
     const pat22TempFloor1Nodes= [
-            { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
-            { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
-            { suite: '0', description: '222elevator', lat: 42.092589, long: -71.266719, floor: 2, type: "Elevator" },
-            { suite: '0', description: '120/122drop off', lat: 42.092522, long: -71.266522, floor: 1, type: "Entrance" },
-            { suite: '0', description: '120/122parking entrance 1', lat: 42.092481, long: -71.266441, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '120/122parking entrance 2', lat: 42.092439, long: -71.266355, floor: 1, type: "Intermediary" },
-            { suite: '0', description: '120/122parking', lat: 42.092361, long: -71.266417, floor: 1, type: "Location" },
+        { suite: '0', description: '1entrance outside', lat: 42.092584, long: -71.266532, floor: 1, type: "Entrance" },
+        { suite: '0', description: '1entrance', lat: 42.092599, long: -71.266584, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '122elevator', lat: 42.092589, long: -71.266719, floor: 1, type: "Elevator" },
+        { suite: '0', description: '222elevator', lat: 42.092589, long: -71.266719, floor: 2, type: "Elevator" },
+        { suite: '0', description: '120/122drop off', lat: 42.092522, long: -71.266522, floor: 1, type: "Entrance" },
+        { suite: '0', description: '120/122parking entrance 1', lat: 42.092481, long: -71.266441, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '120/122parking entrance 2', lat: 42.092439, long: -71.266355, floor: 1, type: "Intermediary" },
+        { suite: '0', description: '120/122parking', lat: 42.092361, long: -71.266417, floor: 1, type: "Location" },
     ]
 
     // Create nodes first
@@ -324,6 +329,7 @@ async function main() {
             phoneNumber: '(617) 732-9850',
             floor: 3,
             suite: '301',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Backup Child Care Center',
@@ -331,6 +337,7 @@ async function main() {
             phoneNumber: '(617) 732-9543',
             floor: 2,
             suite: '210',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Dermatology Associates (BDA)',
@@ -338,6 +345,7 @@ async function main() {
             phoneNumber: '(617) 732-9080',
             floor: 3,
             suite: '317',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Obstetrics and Gynecology Group (BOGG)',
@@ -345,6 +353,7 @@ async function main() {
             phoneNumber: '(617) 732-9100',
             floor: 5,
             suite: '575',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Physicians Group (BPG)',
@@ -352,6 +361,7 @@ async function main() {
             phoneNumber: '(617) 732-9900',
             floor: 4,
             suite: '428',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Brigham Psychiatric Specialties',
@@ -359,6 +369,7 @@ async function main() {
             phoneNumber: '(617) 732-9811',
             floor: 3,
             suite: '303',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: 'Center for Pain Medicine',
@@ -366,6 +377,7 @@ async function main() {
             phoneNumber: '(617) 732-9060',
             floor: 3,
             suite: '320',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Crohn's and Colitis Center",
@@ -373,6 +385,7 @@ async function main() {
             phoneNumber: "(617) 732-6389",
             floor: 2,
             suite: '201',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Endoscopy Center",
@@ -380,6 +393,7 @@ async function main() {
             phoneNumber: "(617) 732-7426",
             floor: 2,
             suite: '202',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Gretchen S. and Edward A. Fish Center for Women's Health",
@@ -387,6 +401,7 @@ async function main() {
             phoneNumber: "(617) 732-9300",
             floor: 4,
             suite: '402',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Laboratory",
@@ -394,6 +409,8 @@ async function main() {
             phoneNumber: "(617) 732-9841",
             floor: 1,
             suite: '130',
+            buildingId: chestnutHillBuilding.id,
+            nodeDescription: "1a",
         },
         {
             name: "Multi-Specialty Clinic",
@@ -401,6 +418,8 @@ async function main() {
             phoneNumber: "(617) 732-9500",
             floor: 1,
             suite: '130',
+            buildingId: chestnutHillBuilding.id,
+            nodeDescription: "1multi specialty clinic"
         },
         {
             name: "Osher Clinical Center for Integrative Health",
@@ -408,6 +427,7 @@ async function main() {
             phoneNumber: "(617) 732-9700",
             floor: 4,
             suite: '422',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Patient Financial Services",
@@ -415,6 +435,7 @@ async function main() {
             phoneNumber: "(617) 732-9677",
             floor: 2,
             suite: '204B',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Pharmacy",
@@ -422,6 +443,7 @@ async function main() {
             phoneNumber: "(617) 732-9040",
             floor: 3,
             suite: '317',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Radiology",
@@ -429,6 +451,7 @@ async function main() {
             phoneNumber: "(617) 732-9801",
             floor: 5,
             suite: '560',
+            buildingId: chestnutHillBuilding.id
         },
         {
             name: "Radiology, MRI/CT scan",
@@ -436,6 +459,8 @@ async function main() {
             phoneNumber: "(617) 732-9821",
             floor: 1,
             suite: '102B',
+            buildingId: chestnutHillBuilding.id,
+            nodeDescription: "1radiology",
         },
         {
             name: "Rehabilitation Services",
@@ -443,7 +468,185 @@ async function main() {
             phoneNumber: "(617) 732-9525",
             floor: 2,
             suite: '200',
+            buildingId: chestnutHillBuilding.id
         },
+        {
+            name: "Cardiovascular Services",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1urology/cardiology",
+        },
+        {
+            name: "Radiology",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "120radiology",
+        },
+        {
+            name: "Blood Draw/ Phlebotomy",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1blood/urgent",
+        },
+        {
+            name: "Pharmacy",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1pharmacy",
+        },
+        {
+            name: "Multi Specialty Clinic",
+            description: "Cardiac Arrhythmia, Dermatology, Neurosurgery, Optometry, Pulmonology, Women's Health, Allergy, Gastroenterology, Neurology, Endocrinology, Kidney (Renal) Medicine, Ophthalmology, Rheumatology, Vein Care Services, Patient Financial Services",
+            phoneNumber: "(866) 378-9164",
+            floor: 3,
+            suite: '0',
+            buildingId: patriotPlace22Building.id,
+            nodeDescription: "3multi specialty",
+        },
+        {
+            name: "Blood Draw/Phlebotomy",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace22Building.id,
+            nodeDescription: "4phlebotomy",
+        },
+        {
+            name: "Urgent Care Center",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1blood/urgent2",
+        },
+        {
+            name: "Urology",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 1,
+            suite: '0',
+            buildingId: patriotPlace20Building.id,
+            nodeDescription: "1urology/cardiology2",
+        },
+        {
+            name: "Orthopaedics",
+            description: "Hand and Upper Extremity, Arthroplasty, Pediatric Trauma, Physiatry, Podiatry",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Rehabilitation Services",
+            description: "Cardiac Rehab; Occupational Therapy, Hand Therapy, Upper Extremity; Physical Therapy, Speech - Language",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Clinical Lab",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Surgi-Care",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 2,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Surgical Specialties",
+            description: "Audiology; ENT, General and Gastrointestinal Surgery, Plastic Surgery, Thoracic Surgery, Vascular Surgery, Weight Management and Wellness",
+            phoneNumber: "(866) 378-9164",
+            floor: 3,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Sports Medicine Center",
+            description: "X-Ray Suite",
+            phoneNumber: "(866) 378-9164",
+            floor: 3,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Electromyography (EMG)",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Nutrition",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Pain Medicine",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Pulmonary Function Testing",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Day Surgery Center",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace20Building.id
+        },
+        {
+            name: "Community Room",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace22Building.id
+        },
+        {
+            name: "Primary Care",
+            description: "",
+            phoneNumber: "(866) 378-9164",
+            floor: 4,
+            suite: '0',
+            buildingId: patriotPlace22Building.id
+        },
+
     ];
 
     // Create one service per department using the full description/name
@@ -475,16 +678,36 @@ async function main() {
         departments.map(async (dept, i) => {
             const deptData = rawDepartmentData[i];
 
+            if (deptData.nodeDescription) {
+                const matchedNode = allNodes.find(n =>
+                    n.description === deptData.nodeDescription
+                );
+
+                if (matchedNode) {
+                    await prisma.node.update({
+                        where: { id: matchedNode.id },
+                        data: {
+                            suite: deptData.suite,
+                            departmentId: dept.id,
+                        },
+                    });
+                    return;
+                } else {
+                    console.warn(`Warning: Could not find node with description "${deptData.nodeDescription}" for department "${deptData.name}"`);
+                }
+            }
+
+            // Fallback if no nodeDescription match
             await prisma.node.create({
                 data: {
-                    lat: 300+dept.id,
-                    long: 100+dept.id,
+                    lat: 300 + dept.id,
+                    long: 100 + dept.id,
                     description: "",
                     type: nodeType.Location,
                     floor: deptData.floor,
                     suite: deptData.suite,
                     departmentId: dept.id,
-                    buildingId: chestnutHillBuilding.id
+                    buildingId: deptData.buildingId,
                 },
             });
         })
@@ -544,9 +767,9 @@ async function main() {
             edgeFromTo("1c", "1multi specialty clinic"),
             edgeFromTo("1c", "1b"),
             edgeFromTo("1b", "1a"),
-            edgeFromTo("1a", "1laboratory"),
+            edgeFromTo("1a", "1a"),
             edgeFromTo("1a", "1right entrance"),
-            edgeFromTo("1laboratory", "1right entrance"),
+            edgeFromTo("1a", "1right entrance"),
             edgeFromTo("1right entrance outside", "1right entrance"),
             edgeFromTo("1a", "1d"),
             edgeFromTo("1d", "1e"),
@@ -568,6 +791,7 @@ async function main() {
             edgeFromTo("1a6", "1a7"),
             edgeFromTo("1a7", "1a8"),
             edgeFromTo("1a8", "1urology/cardiology"),
+            edgeFromTo("1a8", "1urology/cardiology2"),
             edgeFromTo("1a8", "1a9"),
             edgeFromTo("1a9", "1a10"),
             edgeFromTo("1a10", "120elevator"),
@@ -583,10 +807,11 @@ async function main() {
             edgeFromTo("1b2", "1b3"),
             edgeFromTo("1b3", "1b4"),
             edgeFromTo("1b4", "1blood/urgent"),
+            edgeFromTo("1b4", "1blood/urgent2"),
             edgeFromTo("1b3", "1b17"),
             edgeFromTo("1b3", "1b17"),
-            edgeFromTo("1radiology", "1b17"),
-            edgeFromTo("1b1", "1radiology"),
+            edgeFromTo("120radiology", "1b17"),
+            edgeFromTo("1b1", "120radiology"),
             edgeFromTo("1b2", "1b5"),
             edgeFromTo("1b5", "1b6"),
             edgeFromTo("1b6", "1b7"),
