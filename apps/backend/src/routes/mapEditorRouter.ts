@@ -1,10 +1,8 @@
 // src/routes/mapEditorRouter.ts
 import { initTRPC, TRPCError } from '@trpc/server';
-import {array, z} from 'zod';
+import { z } from 'zod';
 import PrismaClient from '../bin/prisma-client';
-import prismaClient from "../bin/prisma-client";
-import {pNodeDTO} from "../../../../share/types.ts";
-import {pNode} from "./algos/pNode.ts";
+import prismaClient from '../bin/prisma-client';
 
 // Initialize tRPC
 export const t = initTRPC.create();
@@ -27,26 +25,9 @@ export const mapEditorRouter = t.router({
         )
         .query(async ({ input }) => {
             try {
-                // Get all nodes on this floor
-                const nodes = await PrismaClient.node.findMany({
-                    where: {
-                        buildingId: input.buildingId,
-                        floor: input.floor,
-                    },
-                    include: {
-                        Department: {
-                            select: {
-                                id: true,
-                                name: true,
-                            },
-                        },
-                    },
-                    orderBy: {
-                        id: 'asc', // Sort nodes by ID for consistency
-                    },
-                });
 
-                const nodeIds = nodes.map((node) => node.id);
+                const nodes = await getNodesFromLocation(input);
+                const nodeIds = nodes.map((node) => node.id)
 
                 // Get all edges where both nodes are on this floor
                 const edges = await PrismaClient.edge.findMany({
@@ -66,9 +47,6 @@ export const mapEditorRouter = t.router({
                     y: node.long,
                     description: node.description,
                     type: node.type,
-                    suite: node.suite,
-                    departmentId: node.departmentId,
-                    departmentName: node.Department?.name,
                 }));
 
                 // Format edges for drawing lines
@@ -112,7 +90,6 @@ export const mapEditorRouter = t.router({
                 nodes: z.array(
                     z.object({
                         id: z.number(),
-                        floor: z.number(),
                         description: z.string(),
                         longitude: z.number(),
                         latitude: z.number(),
@@ -135,33 +112,36 @@ export const mapEditorRouter = t.router({
             const {buildingId, floor, nodes, edges} = input;
 
             try {
-                // get nodes to delete
-                const nodesToDelete = await prismaClient.node.findMany({
+                // get locations of nodes to delete
+                const locations = await PrismaClient.location.findMany({
                     where: {
-                        buildingId: buildingId,
-                        floor: floor,
-                        NOT: {
-                            type: {
-                                in: ["Elevator", "Staircase"]
-                            }
-                        }
+                        buildingId: input.buildingId,
+                        floor: input.floor,
+                    },
+                    include: {
+                        node: true,
                     }
-                })
+                });
+
+                // get nodes to delete from locations
+                const location = { buildingId: input.buildingId, floor: input.floor }
+                const nodes = await getNodesFromLocation(location);
+                const nodeIds = nodes.map((node) => node.id)
+
+
                 // delete nodes
                 const deletedNodesCount = await prismaClient.node.deleteMany({
                     where: {
-                        buildingId: buildingId,
-                        floor: floor,
-                        NOT: {
-                            type: {
-                                in: ["Elevator", "Staircase"]
-                            }
+                        id: {
+                            in: nodeIds
                         }
                     }
                 })
                 console.log('Deleted ', deletedNodesCount.count, ' nodes from the database')
+
                 // get ids of nodes with edges to delete
-                const deletedNodeIds = nodesToDelete.map((node) => node.id);
+                const deletedNodeIds = nodes.map((node) => node.id);
+
                 // delete edges
                 const deletedEdgesCount = await prismaClient.edge.deleteMany({
                     where: {
@@ -183,18 +163,16 @@ export const mapEditorRouter = t.router({
                         prismaClient.node.create({
                             data: {
                                 id: node.id,
-                                floor: node.floor,
                                 description: node.description,
-                                lat: node.latitude,
-                                long: node.longitude,
-                                suite: "-1",
+                                lat: node.lat,
+                                long: node.long,
                                 type: "Intermediary",
-                                buildingId: buildingId
                             }
                         })
                     )
                 );
                 console.log('Created ', nodes.length, ' nodes in the database');
+
                 //create edges in database
                 await Promise.all(
                     edges.map((edge) =>
@@ -205,7 +183,6 @@ export const mapEditorRouter = t.router({
                         }
                     }))
                 );
-                console.log('Created ', edges.length, ' edges in the database');
                 return {success: true}
             } catch (error){
                 console.error('Error adding nodes from map editor: ', error);
@@ -216,5 +193,22 @@ export const mapEditorRouter = t.router({
             }
         })
 });
+
+async function getNodesFromLocation({buildingId, floor}: {buildingId: number, floor: number}) {
+    // Get all nodes on this floor
+    const locations = await PrismaClient.location.findMany({
+        where: {
+            buildingId: buildingId,
+            floor: floor,
+        },
+        include: {
+            node: true,
+        }
+    });
+    // get the nodes at that location
+    return locations
+        .filter(location => location.node !== null)
+        .map(location => location.node!);
+}
 
 export type MapEditorRouter = typeof mapEditorRouter;
