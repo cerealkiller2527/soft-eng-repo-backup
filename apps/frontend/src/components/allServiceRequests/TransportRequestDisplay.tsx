@@ -28,10 +28,10 @@ export default function TransportRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requestsTransport = useQuery(trpc.service.externalTransportationRouter.getExternalTransportationRequests.queryOptions({}));
-    const requestsSecurity = useQuery(trpc.service.securityRouter.getSecurityRequests.queryOptions({}));
-    const requestsEquipment = useQuery(trpc.service.equipmentDeliveryRouter.getEquipmentDeliveryRequests.queryOptions({}));
-    const requestsLanguage = useQuery(trpc.service.languageRouter.getLanguageRequests.queryOptions({}));
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
 
     const combinedData = [
         ...(requestsTransport.data ?? []),

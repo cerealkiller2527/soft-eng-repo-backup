@@ -33,7 +33,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
 }) {
 
     const trpc = useTRPC();
-    const addReq = useMutation(trpc.service.languageRouter.addLanguageRequest.mutationOptions({
+    const addReq = useMutation(trpc.service.addLanguageRequest.mutationOptions({
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['service.getLanguageRequest'] });
         }
