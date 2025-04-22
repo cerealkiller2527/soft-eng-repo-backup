@@ -64,7 +64,7 @@ export default function TransportRequestDisplay() {
     return (
         <div className="p-6 md:p-10 max-w-full overflow-x-auto bg-white rounded-xl shadow-md border border-gray-200">
             <div>
-                <h1 className="text-3xl font-bold text-[#012D5A] mb-4 flex justify-center">Service Requests</h1>
+                <h1 className="text-3xl font-bold text-[#012D5A] mb-4 flex justify-center">Manage Service Requests</h1>
             <div className="flex justify-end">
             <Input className="w-40 hover:border-[#F6BD38] border-2 border-[#F6BD38] hover:border-4"
                    value={filter}
