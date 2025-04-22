@@ -58,11 +58,11 @@
         "zod": "^3.24.2"
     },
     "devDependencies": {
-        "@types/node": "^22.13.3",
-        "@types/papaparse": "^5",
+        "@types/node": "^22.14.1",
+        "@types/papaparse": "^5.3.15",
         "@types/prop-types": "^15.7.5",
-        "@types/react": "^18.0.37",
-        "@types/react-dom": "^18.0.11",
+        "@types/react": "^19.1.2",
+        "@types/react-dom": "^19.1.2",
         "@types/react-router-bootstrap": "^0.26.0",
         "@types/react-router-dom": "^5.3.3",
         "@vitejs/plugin-react-swc": "^3.0.0",
