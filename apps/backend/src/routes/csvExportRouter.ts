@@ -1,18 +1,49 @@
 import { initTRPC, TRPCError } from '@trpc/server';
-import PrismaClient from '../bin/prisma-client';
+import { z } from 'zod';
 import { stringify } from 'csv/sync';
+import prisma from '../bin/prisma-client';
 
-export const t = initTRPC.create();
+const t = initTRPC.create();
+
+const nodeTypeEnum = z.enum([
+    'Entrance',
+    'Intermediary',
+    'Staircase',
+    'Elevator',
+    'Location',
+    'Help_Desk',
+]);
+
+const CSVRowSchema = z.object({
+    'Building ID': z.string().optional(),
+    'Building Name': z.string(),
+    'Building Address': z.string(),
+    'Building Phone': z.string(),
+    'Location ID': z.string().optional(),
+    Floor: z.string(),
+    Suite: z.string().optional(),
+    'Node ID': z.string().optional(),
+    'Node Type': nodeTypeEnum,
+    'Node Description': z.string(),
+    'Node Coordinates': z.string(),
+    'From Edges': z.string(),
+    'To Edges': z.string(),
+    'Department ID': z.string().optional(),
+    'Department Name': z.string(),
+    'Department Phone': z.string(),
+    'Department Description': z.string().optional(),
+    Services: z.string(),
+});
+
+type CSVRow = z.infer<typeof CSVRowSchema>;
 
 export const csvExportRouter = t.router({
-    exportCSV: t.procedure.mutation(async () => {
+    exportCSV: t.procedure.query(async () => {
         try {
-            // Get all nodes with their complete relationships
-            const nodes = await PrismaClient.node.findMany({
+            const buildings = await prisma.building.findMany({
                 include: {
                     Location: {
                         include: {
-                            building: true,
                             Department: {
                                 include: {
                                     DepartmentServices: {
@@ -22,63 +53,64 @@ export const csvExportRouter = t.router({
                                     },
                                 },
                             },
-                        },
-                    },
-                    fromEdge: {
-                        include: {
-                            toNode: true,
-                        },
-                    },
-                    toEdge: {
-                        include: {
-                            fromNode: true,
+                            node: {
+                                include: {
+                                    fromEdge: true,
+                                    toEdge: true,
+                                },
+                            },
                         },
                     },
                 },
             });
 
-            // Map the nodes to create each row
-            const rows = nodes.flatMap((node) => {
-                return node.Location.map((location) => {
-                    const department = location.Department;
-                    const building = location.building;
+            const rows: CSVRow[] = buildings.flatMap((building) =>
+                building.Location.map((location) => ({
+                    'Building ID': building.id?.toString(),
+                    'Building Name': building.name,
+                    'Building Address': building.address,
+                    'Building Phone': building.phoneNumber,
+                    'Location ID': location.id?.toString(),
+                    Floor: location.floor?.toString(),
+                    Suite: location.suite || '',
+                    'Node ID': location.nodeID?.toString() || '',
+                    'Node Type': location.node?.type || 'Location',
+                    'Node Description': location.node?.description || '',
+                    'Node Coordinates': location.node
+                        ? `${location.node.lat}, ${location.node.long}`
+                        : '',
+                    'From Edges':
+                        location.node?.fromEdge
+                            .map((edge) => edge.toNodeId)
+                            .filter(Boolean)
+                            .join(',') || '',
+                    'To Edges':
+                        location.node?.toEdge
+                            .map((edge) => edge.fromNodeId)
+                            .filter(Boolean)
+                            .join(',') || '',
+                    'Department ID': location.departmentId?.toString() || '',
+                    'Department Name': location.Department?.name || '',
+                    'Department Phone': location.Department?.phoneNumber || '',
+                    'Department Description': location.Department?.description || '',
+                    Services:
+                        location.Department?.DepartmentServices.map((ds) => ds.service.name)
+                            .filter(Boolean)
+                            .join(',') || '',
+                }))
+            );
 
-                    // Get all services for the department
-                    const services = department?.DepartmentServices || [];
-                    const serviceNames = services.map((s) => s.service?.name || '').join('; ');
-
-                    // Get all edge connections (both from and to)
-                    const fromEdges = node.fromEdge.map((e) => `${e.fromNodeId}->${e.toNodeId}`);
-                    const toEdges = node.toEdge.map((e) => `${e.fromNodeId}->${e.toNodeId}`);
-                    const allEdges = [...fromEdges, ...toEdges].join('; ');
-
-                    return {
-                        'Node Type': node.type,
-                        'Node Description': node.description,
-                        Floor: location.floor.toString(),
-                        Suite: location.suite || '',
-                        'Node (lat,long)': `(${node.lat}, ${node.long})`,
-                        'Edge Connections (from -> to)': allEdges,
-                        'Building Name': building?.name || '',
-                        'Building Address': building?.address || '',
-                        'Building Phone Number': building?.phoneNumber || '',
-                        'Department Name': department?.name || '',
-                        'Phone Number': department?.phoneNumber || '',
-                        'Department Description': department?.description || '',
-                        Services: serviceNames,
-                    };
-                });
+            return stringify(rows, {
+                header: true,
+                columns: Object.keys(CSVRowSchema.shape),
             });
-
-            // Create the CSV
-            const csv = stringify(rows, { header: true });
-            return csv;
         } catch (error) {
-            const msg = error instanceof Error ? error.message : String(error);
             throw new TRPCError({
                 code: 'INTERNAL_SERVER_ERROR',
-                message: `Export error: ${msg}`,
+                message: error instanceof Error ? error.message : 'Failed to export CSV',
             });
         }
     }),
 });
+
+export type CSVExportRouter = typeof csvExportRouter;
