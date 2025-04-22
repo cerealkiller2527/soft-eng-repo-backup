@@ -74,24 +74,27 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
         });
         onFormSubmit?.(values);
     }
-
     return (
-        <div className="transform scale-90 sm:scale-100 w-full max-w-md mx-auto bg-white shadow-md rounded-2xl px-4">
-            <div className="w-full p-4 rounded-t-2xl rounded-b-xl">
-                <h2 className="text-xl font-semibold">Equipment Service Request</h2>
+        <div className="max-w-2xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+            <div className="text-center">
+                <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Equipment Service Request</h2>
+                <p className="text-sm text-gray-600">Created by Will and Christan</p>
             </div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-4">
-                    <p>Created by Will and Christan</p>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
                         name="employeeName"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-2">
                                 <FormLabel>Employee Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter Employee Name" {...field} />
+                                    <Input
+                                        placeholder="Enter Employee Name"
+                                        {...field}
+                                        className="w-full"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -102,7 +105,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         control={form.control}
                         name="priority"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-2">
                                 <FormLabel>Priority</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
@@ -127,22 +130,24 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         control={form.control}
                         name="deadline"
                         render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>Pick Up Time/Date</FormLabel>
+                            <FormItem className="space-y-2">
+                                <FormLabel>Deadline</FormLabel>
                                 <FormControl>
                                     <ReactDatePicker
                                         selected={field.value}
                                         onChange={(date) => field.onChange(date)}
                                         showTimeSelect
-                                        placeholder = "MM/DD/YYYY, HH:MM AM/PM"
+                                        placeholderText="MM/DD/YYYY, HH:MM AM/PM"
                                         dateFormat="Pp"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
                                         popperClassName="!z-50"
                                         calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                        dayClassName={() => "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"}
+                                        dayClassName={() =>
+                                            "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
+                                        }
                                     />
                                 </FormControl>
-                                <FormDescription>Add the date and time of pickup.</FormDescription>
+                                <FormDescription>Select the requested deadline for service.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -152,7 +157,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         control={form.control}
                         name="equipment"
                         render={() => (
-                            <FormItem>
+                            <FormItem className="space-y-2">
                                 <FormLabel>Equipment Needed</FormLabel>
                                 <div className="space-y-2">
                                     {equipmentTypes.map((item) => (
@@ -160,38 +165,23 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                                             key={item}
                                             control={form.control}
                                             name="equipment"
-                                            render={({ field }) => {
-                                                return (
-                                                    <FormItem
-                                                        key={item}
-                                                        className="flex flex-row items-start space-x-3 space-y-0"
-                                                    >
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={field.value?.includes(
-                                                                    item
-                                                                )}
-                                                                onCheckedChange={(checked) => {
-                                                                    return checked
-                                                                        ? field.onChange([
-                                                                              ...field.value,
-                                                                              item,
-                                                                          ])
-                                                                        : field.onChange(
-                                                                              field.value?.filter(
-                                                                                  (value) =>
-                                                                                      value !== item
-                                                                              )
-                                                                          );
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">
-                                                            {item}
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                );
-                                            }}
+                                            render={({ field }) => (
+                                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value?.includes(item)}
+                                                            onCheckedChange={(checked) => {
+                                                                return checked
+                                                                    ? field.onChange([...field.value, item])
+                                                                    : field.onChange(
+                                                                        field.value?.filter((value) => value !== item)
+                                                                    );
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">{item}</FormLabel>
+                                                </FormItem>
+                                            )}
                                         />
                                     ))}
                                 </div>
@@ -204,7 +194,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         control={form.control}
                         name="location"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-2">
                                 <FormLabel>Location</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
@@ -229,12 +219,12 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         control={form.control}
                         name="additionalNotes"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="space-y-2">
                                 <FormLabel>Additional Notes</FormLabel>
                                 <FormControl>
                                     <Textarea
-                                        placeholder="Enter Additional Notes"
-                                        className="resize-none"
+                                        placeholder="Enter any extra information or requests..."
+                                        className="resize-none w-full min-h-[100px]"
                                         {...field}
                                     />
                                 </FormControl>
@@ -243,11 +233,17 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                         )}
                     />
 
-                    <Button type="submit" className="w-full">
-                        Submit
-                    </Button>
+                    <div className="flex justify-center pt-4">
+                        <Button
+                            type="submit"
+                            className="px-6 py-2 text-white bg-[#012D5A] hover:bg-[#01498C] transition-colors rounded-xl shadow-md"
+                        >
+                            Submit Request
+                        </Button>
+                    </div>
                 </form>
             </Form>
         </div>
     );
+
 }

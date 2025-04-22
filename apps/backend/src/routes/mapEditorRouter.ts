@@ -2,10 +2,15 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import PrismaClient from '../bin/prisma-client';
-import { nodeType } from 'database';
+import prismaClient from '../bin/prisma-client';
 
 // Initialize tRPC
 export const t = initTRPC.create();
+
+// create zod objects for node and edge
+const node = z.object({
+    id: z.number(),
+});
 
 export const mapEditorRouter = t.router({
     // Get all nodes and edges for a floor map in a single call
@@ -18,25 +23,7 @@ export const mapEditorRouter = t.router({
         )
         .query(async ({ input }) => {
             try {
-                // Get all nodes on this floor
-                const nodes = await PrismaClient.node.findMany({
-                    where: {
-                        buildingId: input.buildingId,
-                        floor: input.floor,
-                    },
-                    include: {
-                        Department: {
-                            select: {
-                                id: true,
-                                name: true,
-                            },
-                        },
-                    },
-                    orderBy: {
-                        id: 'asc', // Sort nodes by ID for consistency
-                    },
-                });
-
+                const nodes = await getNodesFromLocation(input);
                 const nodeIds = nodes.map((node) => node.id);
 
                 // Get all edges where both nodes are on this floor
@@ -57,9 +44,6 @@ export const mapEditorRouter = t.router({
                     y: node.long,
                     description: node.description,
                     type: node.type,
-                    suite: node.suite,
-                    departmentId: node.departmentId,
-                    departmentName: node.Department?.name,
                 }));
 
                 // Format edges for drawing lines
@@ -94,6 +78,160 @@ export const mapEditorRouter = t.router({
                 });
             }
         }),
+
+    sendFloorMap: t.procedure
+        .input(
+            z.object({
+                buildingId: z.number(),
+                floor: z.number(),
+                nodes: z.array(
+                    z.object({
+                        id: z.number(),
+                        description: z.string(),
+                        longitude: z.number(),
+                        latitude: z.number(),
+                        type: z.string(),
+                    })
+                ),
+                edges: z.array(
+                    z.object({
+                        fromNodeId: z.number(),
+                        toNodeId: z.number(),
+                    })
+                ),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const { buildingId, floor, nodes, edges } = input;
+            console.log(floor);
+            try {
+                // get locations of nodes to delete
+                const locations = await PrismaClient.location.findMany({
+                    where: {
+                        buildingId: input.buildingId,
+                        floor: input.floor,
+                    },
+                    include: {
+                        node: true,
+                    },
+                });
+
+                // get nodes to delete from locations
+                const location = { buildingId: input.buildingId, floor: input.floor };
+                const nodesSecond = await getNodesFromLocation(location);
+                const nodeIds = nodesSecond.map((node) => node.id);
+                console.log(nodeIds);
+
+                await prismaClient.edge.deleteMany({
+                    where: {
+                        fromNodeId: { in: nodeIds },
+                    },
+                });
+                // delete nodes
+                const deletedNodesCount = await prismaClient.node.deleteMany({
+                    where: {
+                        id: {
+                            in: nodeIds,
+                        },
+                    },
+                });
+                console.log('Deleted ', deletedNodesCount.count, ' nodes from the database');
+
+                // get ids of nodes with edges to delete
+                const deletedNodeIds = nodes.map((node) => node.id);
+
+                // delete edges
+                const deletedEdgesCount = await prismaClient.edge.deleteMany({
+                    where: {
+                        OR: [
+                            {
+                                toNodeId: { in: deletedNodeIds },
+                            },
+                            {
+                                fromNodeId: { in: deletedNodeIds },
+                            },
+                        ],
+                    },
+                });
+                console.log('Deleted ', deletedEdgesCount.count, ' edges from the database');
+
+                // create nodes in database
+
+                const idMapping: [number, number][] = [];
+
+                await Promise.all(
+                    nodes.map(async (node) => {
+                        const createdNode = await prismaClient.node.create({
+                            data: {
+                                description: node.description,
+                                lat: node.latitude,
+                                long: node.longitude,
+                                type: 'Intermediary',
+                            },
+                        });
+
+                        await prismaClient.location.create({
+                            data: {
+                                floor: floor,
+                                buildingId: buildingId,
+                                nodeID: createdNode.id,
+                            },
+                        });
+
+                        idMapping.push([node.id, createdNode.id]);
+                        console.log(node.id, createdNode.id, 'idmapping', floor, buildingId);
+
+                        return createdNode;
+                    })
+                );
+                console.log('Created ', nodes.length, ' nodes in the database');
+                //make node creation/mapping for neg ids
+                //if from or to node in edge is negative, use lookuptable to map to new id
+                //create edges in database
+                await Promise.all(
+                    edges.map((edge) => {
+                        const fromNodeEntry = idMapping.find(
+                            ([frontendID]) => frontendID === edge.fromNodeId
+                        );
+                        const toNodeEntry = idMapping.find(
+                            ([frontendID]) => frontendID === edge.toNodeId
+                        );
+
+                        const fromNodeId = fromNodeEntry ? fromNodeEntry[1] : edge.fromNodeId;
+                        const toNodeId = toNodeEntry ? toNodeEntry[1] : edge.toNodeId;
+
+                        return prismaClient.edge.create({
+                            data: {
+                                fromNodeId: fromNodeId,
+                                toNodeId: toNodeId,
+                            },
+                        });
+                    })
+                );
+                return { success: true };
+            } catch (error) {
+                console.error('Error adding nodes from map editor: ', error);
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'Failed to update floor map in database',
+                });
+            }
+        }),
 });
+
+async function getNodesFromLocation({ buildingId, floor }: { buildingId: number; floor: number }) {
+    // Get all nodes on this floor
+    const locations = await PrismaClient.location.findMany({
+        where: {
+            buildingId: buildingId,
+            floor: floor,
+        },
+        include: {
+            node: true,
+        },
+    });
+    // get the nodes at that location
+    return locations.filter((location) => location.node !== null).map((location) => location.node!);
+}
 
 export type MapEditorRouter = typeof mapEditorRouter;
