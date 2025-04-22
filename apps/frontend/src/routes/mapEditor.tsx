@@ -161,7 +161,7 @@ const MapEditor = () => {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Backspace") {
+        if (event.key === "Delete") {
             const nodeToDelete = edgeStartRef.current;
             if (nodeToDelete) {
                 // Remove the node
@@ -221,7 +221,7 @@ const MapEditor = () => {
             marker.addListener('click', () => {
                 infoWindow.setContent(`
                 <div>
-                  <strong>${node.description ?? 'No description'}</strong><br/>
+                  <strong>${node.suite ?? 'No description'}</strong><br/>
                   Type: ${node.type}<br/>
                   ID: ${node.id}
                 </div>
