@@ -191,6 +191,7 @@ const MapEditor = () => {
         if (form.building === "22 Patriot Place") setBuilding(3);
         else if (form.building === "20 Patriot Place") setBuilding(2);
         else if (form.building === "Chestnut Hill") setBuilding(1);
+        else if (form.building === "Faulkner Hospital") setBuilding(4);
 
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
@@ -321,8 +322,10 @@ const MapEditor = () => {
             mapInstance.current?.setCenter({ lat: 42.09280, lng: -71.266 });
         } else if (form.building === "22 Patriot Place") {
             mapInstance.current?.setCenter({ lat: 42.09262, lng: -71.267 });
-        } else {
-            mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
+        } else if(form.building ==  "Faulkner Hospital"){
+            mapInstance.current?.setCenter({lat: 42.30163258195755, lng: -71.12812875693645});
+        }else{
+            mapInstance.current?.setCenter({ lat: 42.3262, lng: -71.1497 });
         }
         setImageIndex(form.floor - 1);
         countRef.current = -1;
