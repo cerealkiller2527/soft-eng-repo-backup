@@ -65,7 +65,7 @@ async function main() {
 
     const faulknerBuilding = await prisma.building.create({
         data: {
-            id: 3,
+            id: 4,
             name: "Faulkner Hospital",
             address: '1153 Centre St, Jamaica Plain, MA 02130',
             phoneNumber: '(866) 378-9164',
