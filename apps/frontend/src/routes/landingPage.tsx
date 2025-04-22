@@ -9,6 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import BnWLogo from "*.png";
 
 const Landing: React.FC = () => {
     // Images array
@@ -121,41 +122,65 @@ const Landing: React.FC = () => {
                 </div>
 
                 <div className="relative z-30 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mx-auto pt-25">
-                    <Card className="h-142 bg-white shadow-lg flex flex-col">
-                        <CardTitle className="text-center text-lg px-6">
-                            Intuitive Navigation Systems for Visitors
-                        </CardTitle>
-                        <CardContent className="text-lg px-6">
+                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0">
+                        <CardHeader className="pb-4">
+                            <CardTitle className="text-center text-lg">
+                                Intuitive Navigation Systems for Visitors
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-lg px-6 flex-grow">
                             Our webpage offers visitors and employees alike swift
                             navigation to any of our supported hospitals! Whether it
                             be by car, bus, or even walking, we have an easy way to get you here!
                         </CardContent>
-                        <CardFooter className="mt-auto w-full text-center py-2">
-                        </CardFooter>
+                        {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
+                        <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
+                            <img
+                                src="/FreeNaviHero.jpg"
+                                alt="Navigation Image"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </Card>
-                    <Card className="h-142 bg-white shadow-lg flex flex-col">
-                        <CardTitle className="text-center text-lg px-6">
-                            Quick Service Request Forms for Employees
-                        </CardTitle>
-                        <CardContent className="text-lg px-6">
+                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0">
+                        <CardHeader>
+                            <CardTitle className="text-center text-lg">
+                                Quick Service Request Forms for Employees
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-lg px-6 flex-grow">
                             Need a translator? How about some specialized equipment? Maybe a ride
                             between Hospitals? Our service request forms allow for employees to
                             quickly request all that and more, seamlessly within the webpage.
                         </CardContent>
-                        <CardFooter className="mt-auto w-full text-center py-2">
-                        </CardFooter>
+                        {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
+                        <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
+                            <img
+                                src="/FreeServiceHero.jpg"
+                                alt="Service Image"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </Card>
-                    <Card className="h-142 bg-white shadow-lg flex flex-col">
-                        <CardTitle className="text-center text-lg px-6">
-                            In-Depth Map Editor for Admins
-                        </CardTitle>
+                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0">
+                        <CardHeader>
+                            <CardTitle className="text-center text-lg">
+                                In-Depth Map Editor for Admins
+                            </CardTitle>
+                        </CardHeader>
                         <CardContent className="text-lg px-6">
                             In addition to all it's regular functionalities, our webpage offers
                             some specialized features to admins. In the unlikely event that our navigation
                             runs into an error, Admins are able to directly add nodes to the map.
                         </CardContent>
-                        <CardFooter className="mt-auto w-full text-center py-2">
-                        </CardFooter>
+                        {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
+                        <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
+                            <img
+                                src="/FreeAdminHero.jpg"
+                                alt="Navigation Image"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </Card>
                 </div>
 
