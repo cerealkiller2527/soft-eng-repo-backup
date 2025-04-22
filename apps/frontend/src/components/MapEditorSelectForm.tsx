@@ -27,7 +27,7 @@ export const formSchema = z.object({
     floor: z.string(),
 });
 
-const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill"];
+const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill", "Faulkner Hospital"];
 const floors = ["1", "2", "3", "4"];
 
 export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z.infer<typeof formSchema>) => void }) {
