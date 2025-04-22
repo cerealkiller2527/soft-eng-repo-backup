@@ -12,6 +12,15 @@ const node = z.object({
     id: z.number(),
 });
 
+const typeEnum = z.enum([
+    'Entrance',
+    'Intermediary',
+    'Staircase',
+    'Elevator',
+    'Location',
+    'Help_Desk',
+]);
+
 export const mapEditorRouter = t.router({
     // Get all nodes and edges for a floor map in a single call
     getFloorMap: t.procedure
@@ -90,11 +99,8 @@ export const mapEditorRouter = t.router({
                         description: z.string(),
                         longitude: z.number(),
                         latitude: z.number(),
-                        neighbors: z.array(
-                            z.object({
-                                id: z.number(),
-                            })
-                        ),
+                        type: z.string(),
+                        suite: z.string(),
                     })
                 ),
                 edges: z.array(
@@ -107,7 +113,7 @@ export const mapEditorRouter = t.router({
         )
         .mutation(async ({ input }) => {
             const { buildingId, floor, nodes, edges } = input;
-
+            console.log(floor);
             try {
                 // get locations of nodes to delete
                 const locations = await PrismaClient.location.findMany({
@@ -122,9 +128,15 @@ export const mapEditorRouter = t.router({
 
                 // get nodes to delete from locations
                 const location = { buildingId: input.buildingId, floor: input.floor };
-                const nodes = await getNodesFromLocation(location);
-                const nodeIds = nodes.map((node) => node.id);
+                const nodesSecond = await getNodesFromLocation(location);
+                const nodeIds = nodesSecond.map((node) => node.id);
+                console.log(nodeIds);
 
+                await prismaClient.edge.deleteMany({
+                    where: {
+                        fromNodeId: { in: nodeIds },
+                    },
+                });
                 // delete nodes
                 const deletedNodesCount = await prismaClient.node.deleteMany({
                     where: {
@@ -154,31 +166,58 @@ export const mapEditorRouter = t.router({
                 console.log('Deleted ', deletedEdgesCount.count, ' edges from the database');
 
                 // create nodes in database
+
+                const idMapping: [number, number][] = [];
+
                 await Promise.all(
-                    nodes.map((node) =>
-                        prismaClient.node.create({
+                    nodes.map(async (node) => {
+                        const createdNode = await prismaClient.node.create({
                             data: {
-                                id: node.id,
                                 description: node.description,
-                                lat: node.lat,
-                                long: node.long,
-                                type: 'Intermediary',
+                                lat: node.latitude,
+                                long: node.longitude,
+                                type: typeEnum.parse(node.type),
                             },
-                        })
-                    )
+                        });
+
+                        await prismaClient.location.create({
+                            data: {
+                                floor: floor,
+                                buildingId: buildingId,
+                                nodeID: createdNode.id,
+                                suite: node.suite,
+                            },
+                        });
+
+                        idMapping.push([node.id, createdNode.id]);
+                        console.log(node.id, createdNode.id, 'idmapping', floor, buildingId);
+
+                        return createdNode;
+                    })
                 );
                 console.log('Created ', nodes.length, ' nodes in the database');
-
+                //make node creation/mapping for neg ids
+                //if from or to node in edge is negative, use lookuptable to map to new id
                 //create edges in database
                 await Promise.all(
-                    edges.map((edge) =>
-                        prismaClient.edge.create({
+                    edges.map((edge) => {
+                        const fromNodeEntry = idMapping.find(
+                            ([frontendID]) => frontendID === edge.fromNodeId
+                        );
+                        const toNodeEntry = idMapping.find(
+                            ([frontendID]) => frontendID === edge.toNodeId
+                        );
+
+                        const fromNodeId = fromNodeEntry ? fromNodeEntry[1] : edge.fromNodeId;
+                        const toNodeId = toNodeEntry ? toNodeEntry[1] : edge.toNodeId;
+
+                        return prismaClient.edge.create({
                             data: {
-                                fromNodeId: edge.fromNodeId,
-                                toNodeId: edge.toNodeId,
+                                fromNodeId: fromNodeId,
+                                toNodeId: toNodeId,
                             },
-                        })
-                    )
+                        });
+                    })
                 );
                 return { success: true };
             } catch (error) {

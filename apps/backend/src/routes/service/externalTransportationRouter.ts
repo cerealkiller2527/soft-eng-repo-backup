@@ -1,6 +1,6 @@
 import { initTRPC } from '@trpc/server';
 import { ServiceRequest, RequestType, Status, Priority } from 'database';
-import PrismaClient from '../bin/prisma-client';
+import PrismaClient from '../../bin/prisma-client.ts';
 export const t = initTRPC.create();
 import { z } from 'zod';
 

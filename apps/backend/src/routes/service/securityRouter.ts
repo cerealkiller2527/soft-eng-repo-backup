@@ -1,6 +1,6 @@
 import { initTRPC } from '@trpc/server';
 import { ServiceRequest, RequestType, Status, Priority } from 'database';
-import PrismaClient from '../bin/prisma-client';
+import PrismaClient from '../../bin/prisma-client.ts';
 export const t = initTRPC.create();
 import { z } from 'zod';
 
@@ -84,7 +84,7 @@ export const securityRouter = t.router({
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(employee && { employee: employee }),
-                    ...(location && { security: { update: location } }),
+                    ...(location && { security: { update: { location } } }),
                 },
             });
             console.log('Update security request done.');

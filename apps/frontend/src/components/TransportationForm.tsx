@@ -39,7 +39,7 @@ import { z } from "zod"
     }) {
 
         const trpc = useTRPC();
-        const addReq = useMutation(trpc.service.externalTransportationRouter.addExternalTransportationRequest.mutationOptions({
+        const addReq = useMutation(trpc.service.addExternalTransportationRequest.mutationOptions({
         }))
 
         const form = useForm<z.infer<typeof formSchema>>({
