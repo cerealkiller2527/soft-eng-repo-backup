@@ -1,6 +1,6 @@
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { serviceRouter } from '../routes/serviceRouter.ts';
-import {RequestType, Priority, Status, Prisma} from 'database';
+import { RequestType, Priority, Status, Prisma } from 'database';
 import PrismaClient from '../bin/prisma-client.ts';
 
 //make fake data(doesn't connect to the database so that we can just test the routers)
@@ -15,28 +15,28 @@ vi.mock('../bin/prisma-client.ts', () => ({
             findMany: vi.fn(),
             create: vi.fn(),
             update: vi.fn(),
-        }
-    }
-}))
+        },
+    },
+}));
 const prisma = PrismaClient as any;
 
 //make sure we would have a clean mock data before each test
 beforeEach(() => {
     vi.clearAllMocks();
-})
+});
 
 describe('getExternalTransportationRequests', () => {
     test('filtered transportation requests', async () => {
         // return data only if patientName matches
-        prisma.serviceRequest.findMany.mockImplementation(({ where }: {where: Prisma.ServiceRequestWhereInput}) => {
-            if (
-                where.externalTransportation?.patientName === 'Patient 1'
-            ) {
-                return Promise.resolve("Filter for only Patient 1");
-            }
+        prisma.serviceRequest.findMany.mockImplementation(
+            ({ where }: { where: Prisma.ServiceRequestWhereInput }) => {
+                if (where.externalTransportation?.patientName === 'Patient 1') {
+                    return Promise.resolve('Filter for only Patient 1');
+                }
 
-            return Promise.resolve([]);
-        });
+                return Promise.resolve([]);
+            }
+        );
 
         const caller = serviceRouter.createCaller({ prisma });
 
@@ -59,7 +59,7 @@ describe('getExternalTransportationRequests', () => {
         });
 
         // should return matching data
-        expect(result).toEqual("Filter for only Patient 1");
+        expect(result).toEqual('Filter for only Patient 1');
     });
 
     test('no filters transportation requests', async () => {
@@ -86,12 +86,12 @@ test('create new transportation data', async () => {
 
     const caller = serviceRouter.createCaller({});
     const input = {
-        patientName: "Patient 1",
+        patientName: 'Patient 1',
         pickupTime: new Date('2025-08-09T09:22:18Z'),
-        transportation: "Van",
-        pickupTransport: "Chestnut",
-        dropoffTransport: "20 Place Patriot Place",
-        additionalNotes: "",
+        transportation: 'Van',
+        pickupTransport: 'Chestnut',
+        dropoffTransport: '20 Place Patriot Place',
+        additionalNotes: '',
         priority: Priority.High,
         employee: 'Emp1',
     };
@@ -112,10 +112,10 @@ test('create new transportation data', async () => {
     expect(prisma.externalTransportation.create).toHaveBeenCalledWith({
         data: {
             id: 1,
-            fromWhere: "Chestnut",
-            toWhere: "20 Place Patriot Place",
-            transportType: "Van",
-            patientName: "Patient 1",
+            fromWhere: 'Chestnut',
+            toWhere: '20 Place Patriot Place',
+            transportType: 'Van',
+            patientName: 'Patient 1',
             pickupTime: new Date('2025-08-09T09:22:18Z'),
         },
     });
@@ -132,7 +132,7 @@ test('updates transportation request with some fields', async () => {
     const input = {
         id: 1,
         priority: Priority.Medium,
-        pickupTransport: "22 Place Patriot Place",
+        pickupTransport: '22 Place Patriot Place',
         pickupTime: new Date('2025-08-09T09:30:18Z'),
     };
 
@@ -144,7 +144,7 @@ test('updates transportation request with some fields', async () => {
             priority: Priority.Medium,
             externalTransportation: {
                 update: {
-                    fromWhere: "22 Place Patriot Place",
+                    fromWhere: '22 Place Patriot Place',
                     pickupTime: new Date('2025-08-09T09:30:18Z'),
                 },
             },
@@ -153,10 +153,3 @@ test('updates transportation request with some fields', async () => {
 
     expect(result).toEqual({ message: 'Update ext. transportation request done.' });
 });
-
-
-
-
-
-
-

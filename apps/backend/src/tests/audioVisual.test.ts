@@ -1,6 +1,6 @@
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { serviceRouter } from '../routes/serviceRouter.ts';
-import {RequestType, Priority, Status, Prisma} from 'database';
+import { RequestType, Priority, Status, Prisma } from 'database';
 import PrismaClient from '../bin/prisma-client.ts';
 
 //make fake data(doesn't connect to the database so that we can just test the routers)
@@ -15,33 +15,33 @@ vi.mock('../bin/prisma-client.ts', () => ({
             findMany: vi.fn(),
             create: vi.fn(),
             update: vi.fn(),
-        }
-    }
-}))
+        },
+    },
+}));
 const prisma = PrismaClient as any;
 
 //make sure we would have a clean mock data before each test
 beforeEach(() => {
     vi.clearAllMocks();
-})
+});
 
 describe('getAudioVisualRequests', () => {
     test('filtered audioVisual requests', async () => {
         // return data only if audiovisualType matches
-        prisma.serviceRequest.findMany.mockImplementation(({ where }: {where: Prisma.ServiceRequestWhereInput}) => {
-            if (
-                where.audioVisual?.audiovisualType === 'Projector Setup'
-            ) {
-                return Promise.resolve("Filter for only Projector Setup");
-            }
+        prisma.serviceRequest.findMany.mockImplementation(
+            ({ where }: { where: Prisma.ServiceRequestWhereInput }) => {
+                if (where.audioVisual?.audiovisualType === 'Projector Setup') {
+                    return Promise.resolve('Filter for only Projector Setup');
+                }
 
-            return Promise.resolve([]);
-        });
+                return Promise.resolve([]);
+            }
+        );
 
         const caller = serviceRouter.createCaller({ prisma });
 
         const result = await caller.getAudioVisualRequests({
-            audiovisualType: "Projector Setup",
+            audiovisualType: 'Projector Setup',
         });
 
         // make sure the Prisma is called correctly
@@ -49,7 +49,7 @@ describe('getAudioVisualRequests', () => {
             where: {
                 type: RequestType.AUDIOVISUAL,
                 audioVisual: {
-                    audiovisualType: "Projector Setup",
+                    audiovisualType: 'Projector Setup',
                 },
             },
             include: {
@@ -59,7 +59,7 @@ describe('getAudioVisualRequests', () => {
         });
 
         // should return matching data
-        expect(result).toEqual("Filter for only Projector Setup");
+        expect(result).toEqual('Filter for only Projector Setup');
     });
 
     test('no filters audioVisual requests', async () => {
@@ -87,10 +87,10 @@ test('create new audioVisual data', async () => {
 
     const caller = serviceRouter.createCaller({});
     const input = {
-        location: "Room 1",
+        location: 'Room 1',
         deadline: new Date('2025-08-09T09:22:18Z'),
-        audiovisualType: "Projector Setup",
-        additionalNotes: "",
+        audiovisualType: 'Projector Setup',
+        additionalNotes: '',
         priority: Priority.High,
         employee: 'Emp1',
     };
@@ -111,9 +111,9 @@ test('create new audioVisual data', async () => {
     expect(prisma.audioVisual.create).toHaveBeenCalledWith({
         data: {
             id: 1,
-            location: "Room 1",
+            location: 'Room 1',
             deadline: new Date('2025-08-09T09:22:18Z'),
-            audiovisualType: "Projector Setup",
+            audiovisualType: 'Projector Setup',
         },
     });
 
@@ -130,7 +130,7 @@ test('updates audioVisual request with some fields', async () => {
         id: 1,
         priority: Priority.Medium,
         deadline: new Date('2025-08-09T09:30:18Z'),
-        audiovisualType: "Projector Setup"
+        audiovisualType: 'Projector Setup',
     };
 
     const result = await caller.updateAudioVisualRequest(input);
@@ -142,7 +142,7 @@ test('updates audioVisual request with some fields', async () => {
             audioVisual: {
                 update: {
                     deadline: new Date('2025-08-09T09:30:18Z'),
-                    audioVisualType: "Projector Setup"
+                    audioVisualType: 'Projector Setup',
                 },
             },
         },
@@ -150,10 +150,3 @@ test('updates audioVisual request with some fields', async () => {
 
     expect(result).toEqual({ message: 'Update audiovisual request done.' });
 });
-
-
-
-
-
-
-

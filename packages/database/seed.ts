@@ -63,6 +63,15 @@ async function main() {
         }
     });
 
+    const faulknerBuilding = await prisma.building.create({
+        data: {
+            id: 3,
+            name: "Faulkner Hospital",
+            address: '1153 Centre St, Jamaica Plain, MA 02130',
+            phoneNumber: '(866) 378-9164',
+        }
+    });
+
     const chestnutNodes = [
         { suite: '0', description: '1top entrance outside', lat: 42.32623496574831, long: -71.14950957972837, floor: 1, type: "Entrance" },
         { suite: '0', description: '1top entrance', lat: 42.32620375463355, long: -71.14950766082836, floor: 1, type: "Intermediary" },
