@@ -1,14 +1,16 @@
 import { initTRPC } from '@trpc/server';
 import { ServiceRequest, RequestType, Status, Priority } from 'database';
-import PrismaClient from '../bin/prisma-client';
+import PrismaClient from '../../bin/prisma-client.ts';
 export const t = initTRPC.create();
 import { z } from 'zod';
 
-export const securityRouter = t.router({
-    getSecurityRequests: t.procedure
+export const equipmentDeliveryRouter = t.router({
+    getEquipmentDeliveryRequests: t.procedure
         .input(
             z.object({
-                location: z.string().optional(),
+                deadline: z.coerce.date().optional(),
+                equipment: z.array(z.string()).optional(),
+                toWhere: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
                 status: z.nativeEnum(Status).optional(),
@@ -16,37 +18,42 @@ export const securityRouter = t.router({
             })
         )
         .query(async ({ input }) => {
-            const { location, additionalNotes, priority, status, employee } = input;
+            const { deadline, equipment, toWhere, additionalNotes, priority, status, employee } =
+                input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
-                    type: RequestType.SECURITY,
-                    ...(location && { security: { location: location } }),
+                    type: RequestType.EQUIPMENTDELIVERY,
+                    ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+                    ...(equipment && { equipmentDelivery: { equipments: { hasSome: equipment } } }),
+                    ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {
-                    security: true,
+                    equipmentDelivery: true,
                     assignedTo: true,
                 },
             });
         }),
 
-    addSecurityRequest: t.procedure
+    addEquipmentDeliveryRequest: t.procedure
         .input(
             z.object({
-                location: z.string(),
+                deadline: z.coerce.date(),
+                equipment: z.array(z.string()),
+                toWhere: z.string(),
                 additionalNotes: z.string(),
                 priority: z.nativeEnum(Priority),
                 employee: z.string(),
             })
         )
         .mutation(async ({ input }) => {
-            const { location, additionalNotes, priority, employee } = input;
+            const { deadline, equipment, toWhere, additionalNotes, priority, employee } = input;
             const serviceRequest = await PrismaClient.serviceRequest.create({
                 data: {
-                    type: RequestType.SECURITY,
+                    type: RequestType.EQUIPMENTDELIVERY,
                     dateCreated: new Date(Date.now()),
                     status: Status.NOTASSIGNED,
                     description: additionalNotes,
@@ -54,42 +61,56 @@ export const securityRouter = t.router({
                     priority: priority as Priority,
                 },
             });
-            await PrismaClient.security.create({
+            await PrismaClient.equipmentDelivery.create({
                 data: {
                     id: serviceRequest.id,
-                    location: location,
+                    deadline: deadline,
+                    equipments: equipment,
+                    toWhere: toWhere,
                 },
             });
-            console.log('Create security request done.');
+            console.log('Create equipment delivery request done.');
             return {
-                message: 'Create security request done.',
+                message: 'Create equipment delivery request done.',
             };
         }),
 
-    updateSecurityRequest: t.procedure
+    updateEquipmentDeliveryRequest: t.procedure
         .input(
             z.object({
                 id: z.number(),
-                location: z.string().optional(),
+                deadline: z.coerce.date().optional(),
+                equipment: z.array(z.string()).optional(),
+                toWhere: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
                 employee: z.string().optional(),
             })
         )
         .mutation(async ({ input }) => {
-            const { id, location, additionalNotes, priority, employee } = input;
+            const { id, deadline, equipment, toWhere, additionalNotes, priority, employee } = input;
             const serviceRequest = await PrismaClient.serviceRequest.update({
                 where: { id: id },
                 data: {
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(employee && { employee: employee }),
-                    ...(location && { security: { update: {location} } }),
+                    ...(deadline || equipment || toWhere
+                        ? {
+                              equipmentDelivery: {
+                                  update: {
+                                      ...(deadline && { deadline: deadline }),
+                                      ...(equipment && { equipments: equipment }), // if we want to append, then use { push: equipment }
+                                      ...(toWhere && { toWhere: toWhere }),
+                                  },
+                              },
+                          }
+                        : {}),
                 },
             });
-            console.log('Update security request done.');
+            console.log('Update equipment delivery request done.');
             return {
-                message: 'Update security request done.',
+                message: 'Update equipment delivery request done.',
             };
         }),
 });

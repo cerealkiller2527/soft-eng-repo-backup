@@ -1,16 +1,16 @@
 import { initTRPC } from '@trpc/server';
 import { ServiceRequest, RequestType, Status, Priority } from 'database';
-import PrismaClient from '../bin/prisma-client';
+import PrismaClient from '../../bin/prisma-client.ts';
 export const t = initTRPC.create();
 import { z } from 'zod';
 
-export const equipmentDeliveryRouter = t.router({
-    getEquipmentDeliveryRequests: t.procedure
+export const audiovisualRouter = t.router({
+    getAudioVisualRequests: t.procedure
         .input(
             z.object({
+                location: z.string().optional(),
                 deadline: z.coerce.date().optional(),
-                equipment: z.array(z.string()).optional(),
-                toWhere: z.string().optional(),
+                audiovisualType: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
                 status: z.nativeEnum(Status).optional(),
@@ -18,42 +18,50 @@ export const equipmentDeliveryRouter = t.router({
             })
         )
         .query(async ({ input }) => {
-            const { deadline, equipment, toWhere, additionalNotes, priority, status, employee } =
-                input;
+            const {
+                location,
+                deadline,
+                audiovisualType,
+                additionalNotes,
+                priority,
+                status,
+                employee,
+            } = input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
-                    type: RequestType.EQUIPMENTDELIVERY,
-                    ...(deadline && { equipmentDelivery: { deadline: deadline } }),
-                    ...(equipment && { equipmentDelivery: { equipments: { hasSome: equipment } } }),
-                    ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+                    type: RequestType.AUDIOVISUAL,
+                    ...(location && { audiovisual: { location: location } }),
+                    ...(deadline && { audioVisual: { deadline: deadline } }),
+                    ...(audiovisualType && { audioVisual: { audiovisualType: audiovisualType } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {
-                    equipmentDelivery: true,
+                    audioVisual: true,
                     assignedTo: true,
                 },
             });
         }),
 
-    addEquipmentDeliveryRequest: t.procedure
+    addAudioVisualRequest: t.procedure
         .input(
             z.object({
+                location: z.string(),
                 deadline: z.coerce.date(),
-                equipment: z.array(z.string()),
-                toWhere: z.string(),
+                audiovisualType: z.string(),
                 additionalNotes: z.string(),
                 priority: z.nativeEnum(Priority),
                 employee: z.string(),
             })
         )
         .mutation(async ({ input }) => {
-            const { deadline, equipment, toWhere, additionalNotes, priority, employee } = input;
+            const { location, deadline, audiovisualType, additionalNotes, priority, employee } =
+                input;
             const serviceRequest = await PrismaClient.serviceRequest.create({
                 data: {
-                    type: RequestType.EQUIPMENTDELIVERY,
+                    type: RequestType.AUDIOVISUAL,
                     dateCreated: new Date(Date.now()),
                     status: Status.NOTASSIGNED,
                     description: additionalNotes,
@@ -61,56 +69,57 @@ export const equipmentDeliveryRouter = t.router({
                     priority: priority as Priority,
                 },
             });
-            await PrismaClient.equipmentDelivery.create({
+            await PrismaClient.audioVisual.create({
                 data: {
                     id: serviceRequest.id,
+                    location: location,
                     deadline: deadline,
-                    equipments: equipment,
-                    toWhere: toWhere,
+                    audiovisualType: audiovisualType,
                 },
             });
-            console.log('Create equipment delivery request done.');
+            console.log('Create audiovisual request done.');
             return {
-                message: 'Create equipment delivery request done.',
+                message: 'Create audiovisual request done.',
             };
         }),
 
-    updateEquipmentDeliveryRequest: t.procedure
+    updateAudioVisualRequest: t.procedure
         .input(
             z.object({
                 id: z.number(),
+                location: z.string().optional(),
                 deadline: z.coerce.date().optional(),
-                equipment: z.array(z.string()).optional(),
-                toWhere: z.string().optional(),
+                audiovisualType: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
                 employee: z.string().optional(),
             })
         )
         .mutation(async ({ input }) => {
-            const { id, deadline, equipment, toWhere, additionalNotes, priority, employee } = input;
+            const { id, location, deadline, audiovisualType, additionalNotes, priority, employee } =
+                input;
             const serviceRequest = await PrismaClient.serviceRequest.update({
                 where: { id: id },
                 data: {
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(employee && { employee: employee }),
-                    ...(deadline || equipment || toWhere
+                    ...(location || deadline || audiovisualType
                         ? {
-                              equipmentDelivery: {
+                              audioVisual: {
                                   update: {
+                                      ...(location && { location: location }),
                                       ...(deadline && { deadline: deadline }),
-                                      ...(equipment && { equipments: equipment }), // if we want to append, then use { push: equipment }
-                                      ...(toWhere && { toWhere: toWhere }),
+                                      ...(audiovisualType && { audioVisualType: audiovisualType }),
                                   },
                               },
                           }
                         : {}),
                 },
             });
-            console.log('Update equipment delivery request done.');
+            console.log('Update audiovisual request done.');
             return {
-                message: 'Update equipment delivery request done.',
+                message: 'Update audiovisual request done.',
             };
         }),
 });

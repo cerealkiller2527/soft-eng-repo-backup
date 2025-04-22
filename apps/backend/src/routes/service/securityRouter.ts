@@ -1,16 +1,14 @@
 import { initTRPC } from '@trpc/server';
 import { ServiceRequest, RequestType, Status, Priority } from 'database';
-import PrismaClient from '../bin/prisma-client';
+import PrismaClient from '../../bin/prisma-client.ts';
 export const t = initTRPC.create();
 import { z } from 'zod';
 
-export const audiovisualRouter = t.router({
-    getAudioVisualRequests: t.procedure
+export const securityRouter = t.router({
+    getSecurityRequests: t.procedure
         .input(
             z.object({
                 location: z.string().optional(),
-                deadline: z.coerce.date().optional(),
-                audiovisualType: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
                 status: z.nativeEnum(Status).optional(),
@@ -18,50 +16,37 @@ export const audiovisualRouter = t.router({
             })
         )
         .query(async ({ input }) => {
-            const {
-                location,
-                deadline,
-                audiovisualType,
-                additionalNotes,
-                priority,
-                status,
-                employee,
-            } = input;
+            const { location, additionalNotes, priority, status, employee } = input;
             return PrismaClient.serviceRequest.findMany({
                 where: {
-                    type: RequestType.AUDIOVISUAL,
-                    ...(location && { audiovisual: { location: location } }),
-                    ...(deadline && { audioVisual: { deadline: deadline } }),
-                    ...(audiovisualType && { audioVisual: { audiovisualType: audiovisualType } }),
+                    type: RequestType.SECURITY,
+                    ...(location && { security: { location: location } }),
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(status && { status: status as Status }),
                     ...(employee && { employee: employee }),
                 },
                 include: {
-                    audioVisual: true,
+                    security: true,
                     assignedTo: true,
                 },
             });
         }),
 
-    addAudioVisualRequest: t.procedure
+    addSecurityRequest: t.procedure
         .input(
             z.object({
                 location: z.string(),
-                deadline: z.coerce.date(),
-                audiovisualType: z.string(),
                 additionalNotes: z.string(),
                 priority: z.nativeEnum(Priority),
                 employee: z.string(),
             })
         )
         .mutation(async ({ input }) => {
-            const { location, deadline, audiovisualType, additionalNotes, priority, employee } =
-                input;
+            const { location, additionalNotes, priority, employee } = input;
             const serviceRequest = await PrismaClient.serviceRequest.create({
                 data: {
-                    type: RequestType.AUDIOVISUAL,
+                    type: RequestType.SECURITY,
                     dateCreated: new Date(Date.now()),
                     status: Status.NOTASSIGNED,
                     description: additionalNotes,
@@ -69,57 +54,42 @@ export const audiovisualRouter = t.router({
                     priority: priority as Priority,
                 },
             });
-            await PrismaClient.audioVisual.create({
+            await PrismaClient.security.create({
                 data: {
                     id: serviceRequest.id,
                     location: location,
-                    deadline: deadline,
-                    audiovisualType: audiovisualType,
                 },
             });
-            console.log('Create audiovisual request done.');
+            console.log('Create security request done.');
             return {
-                message: 'Create audiovisual request done.',
+                message: 'Create security request done.',
             };
         }),
 
-    updateAudioVisualRequest: t.procedure
+    updateSecurityRequest: t.procedure
         .input(
             z.object({
                 id: z.number(),
                 location: z.string().optional(),
-                deadline: z.coerce.date().optional(),
-                audiovisualType: z.string().optional(),
                 additionalNotes: z.string().optional(),
                 priority: z.nativeEnum(Priority).optional(),
                 employee: z.string().optional(),
             })
         )
         .mutation(async ({ input }) => {
-            const { id, location, deadline, audiovisualType, additionalNotes, priority, employee } =
-                input;
+            const { id, location, additionalNotes, priority, employee } = input;
             const serviceRequest = await PrismaClient.serviceRequest.update({
                 where: { id: id },
                 data: {
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(employee && { employee: employee }),
-                    ...(location || deadline || audiovisualType
-                        ? {
-                              audioVisual: {
-                                  update: {
-                                      ...(location && { location: location }),
-                                      ...(deadline && { deadline: deadline }),
-                                      ...(audiovisualType && { audioVisualType: audiovisualType }),
-                                  },
-                              },
-                          }
-                        : {}),
+                    ...(location && { security: { update: {location} } }),
                 },
             });
-            console.log('Update audiovisual request done.');
+            console.log('Update security request done.');
             return {
-                message: 'Update audiovisual request done.',
+                message: 'Update security request done.',
             };
         }),
 });

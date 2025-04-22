@@ -18,8 +18,8 @@ const appRouter = t.router({
     employee: employeeRouter,
     service: serviceRouter,
     login: loginRouter,
-    csv: csvRouter,
-    directories: directoriesRouter,
+    //csv: csvRouter,
+    //directories: directoriesRouter,
     search: searchRouter,
     mapEditor: mapEditorRouter,
 });
