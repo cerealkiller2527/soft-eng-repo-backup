@@ -169,6 +169,8 @@ const FloorPlan = () => {
 
         if(form.building == "Patriot Place"){
             mapInstance.current?.setCenter({ lat: 42.09333, lng: -71.26546 });
+        }else if(form.building ==  "Faulkner Hospital"){
+            mapInstance.current?.setCenter({lat: 42.30163258195755, lng: -71.12812875693645});
         }else{
             mapInstance.current?.setCenter({ lat: 42.3262, lng: -71.1497 });
         }
@@ -183,6 +185,8 @@ const FloorPlan = () => {
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }else if(form.building ==  "22 Patriot Place"){
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
+            }else if(form.building ==  "Faulkner Hospital"){
+                address = {lat: 42.30163258195755, lng: -71.12812875693645};
             }
             directionsService.route(
                 {
@@ -194,6 +198,8 @@ const FloorPlan = () => {
                     if (status === 'OK' && result?.routes?.length > 0) {
                         directionsRenderer.current.setDirections(result);
                         const leg = result.routes[0].legs[0];
+                        const instructions = leg.steps.map(step => step.instructions);
+                        console.log(instructions);
                         setEndMapsLocation(leg.end_location);
 
 
