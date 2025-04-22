@@ -124,7 +124,12 @@ export default function CSV() {
         const selectedFile = e.target.files[0];
         setFile(selectedFile);
         setMessage('');
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        setMessage('');
 
+        const text = await selectedFile.text();
+        setCsvText(text);
         const text = await selectedFile.text();
         setCsvText(text);
 
@@ -213,6 +218,13 @@ export default function CSV() {
             });
     }, [selectedColumns]);
 
+    return (
+        <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
+            <Navbar />
+            <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
+                <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
+                    Department CSV Import/Export
+                </h1>
     return (
         <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
             <Navbar />
