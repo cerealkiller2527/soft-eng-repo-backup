@@ -21,7 +21,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-
 export const formSchema = z.object({
     building: z.string(),
     floor: z.string(),
@@ -64,6 +63,7 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
     };
 
     return (
+        <div>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
                 <FormField
@@ -121,5 +121,6 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                 <Button type="submit">Submit</Button>
             </form>
         </Form>
+        </div>
     );
 }
