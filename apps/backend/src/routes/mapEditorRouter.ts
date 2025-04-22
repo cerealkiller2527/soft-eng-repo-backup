@@ -12,6 +12,15 @@ const node = z.object({
     id: z.number(),
 });
 
+const typeEnum = z.enum([
+    'Entrance',
+    'Intermediary',
+    'Staircase',
+    'Elevator',
+    'Location',
+    'Help_Desk',
+]);
+
 export const mapEditorRouter = t.router({
     // Get all nodes and edges for a floor map in a single call
     getFloorMap: t.procedure
@@ -91,6 +100,7 @@ export const mapEditorRouter = t.router({
                         longitude: z.number(),
                         latitude: z.number(),
                         type: z.string(),
+                        suite: z.string(),
                     })
                 ),
                 edges: z.array(
@@ -166,7 +176,7 @@ export const mapEditorRouter = t.router({
                                 description: node.description,
                                 lat: node.latitude,
                                 long: node.longitude,
-                                type: 'Intermediary',
+                                type: typeEnum.parse(node.type),
                             },
                         });
 
@@ -175,6 +185,7 @@ export const mapEditorRouter = t.router({
                                 floor: floor,
                                 buildingId: buildingId,
                                 nodeID: createdNode.id,
+                                suite: node.suite,
                             },
                         });
 
