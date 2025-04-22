@@ -31,7 +31,7 @@ export class BFS implements Algorithm {
          *  * @returns {Promise<Node[]>} - the path from start to end node, or an empty list if no path is found.
          *  */
         let pathQueue: pNode[][] = [[startNode]]; // queue of paths to go through
-        let visited = new Set<Number>(); // set of visited nodes (by ID)
+        let visited = new Set<number>(); // set of visited nodes (by ID)
 
         while (pathQueue.length > 0) {
             let currentPath = pathQueue.shift(); // path we are investigating

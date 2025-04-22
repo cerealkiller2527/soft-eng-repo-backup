@@ -20,6 +20,7 @@ async function main() {
     await prisma.service.deleteMany();
     await prisma.department.deleteMany();
     await prisma.node.deleteMany();
+    await prisma.location.deleteMany();
     await prisma.building.deleteMany();
     await prisma.user.deleteMany();
 
@@ -199,78 +200,105 @@ async function main() {
 
     // Create nodes first
     const chestnutNodesSeeded = await Promise.all(
-        chestnutNodes.map((node) =>
-            prisma.node.create({
+        chestnutNodes.map(async (node) => {
+            const createdNode = await prisma.node.create({
                 data: {
                     description: node.description,
                     lat: node.lat,
                     long: node.long,
-                    floor: node.floor,
-                    suite: node.suite,
                     type: toNodeType(node.type),
+                },
+            });
+            await prisma.location.create({
+                data: {
+                    floor: node.floor,
                     buildingId: chestnutHillBuilding.id,
+                    nodeID: createdNode.id,
                 },
-            })
-        )
-    );
+            });
+            return createdNode;
+        })
+);
+
     const pat20Floor1NodesSeeded = await Promise.all(
-        pat20Floor1Nodes.map((node) =>
-            prisma.node.create({
+        pat20Floor1Nodes.map(async(node) => {
+            const createdNode = await prisma.node.create({
                 data: {
                     description: node.description,
                     lat: node.lat,
                     long: node.long,
-                    floor: node.floor,
-                    suite: node.suite,
                     type: toNodeType(node.type),
-                    buildingId: patriotPlace20Building.id,
                 },
-            })
-        )
+            });
+            await prisma.location.create({
+                data: {
+                    floor: node.floor,
+                    buildingId: patriotPlace20Building.id,
+                    nodeID: createdNode.id,
+                },
+            });
+            return createdNode;
+        })
     );
     const pat22Floor3NodesSeeded = await Promise.all(
-        pat22Floor3Nodes.map((node) =>
-            prisma.node.create({
+        pat22Floor3Nodes.map(async (node) => {
+            const createdNode = await prisma.node.create({
                 data: {
                     description: node.description,
                     lat: node.lat,
                     long: node.long,
-                    floor: node.floor,
-                    suite: node.suite,
                     type: toNodeType(node.type),
-                    buildingId: patriotPlace22Building.id,
                 },
-            })
-        )
+            });
+            await prisma.location.create({
+                data: {
+                    floor: node.floor,
+                    buildingId: patriotPlace22Building.id,
+                    nodeID: createdNode.id,
+                },
+            });
+            return createdNode;
+        })
     );
     const pat22Floor4NodesSeeded = await Promise.all(
-        pat22Floor4Nodes.map((node) =>
-            prisma.node.create({
+        pat22Floor4Nodes.map(async(node) => {
+            const createdNode = await prisma.node.create({
                 data: {
                     description: node.description,
                     lat: node.lat,
                     long: node.long,
-                    floor: node.floor,
-                    suite: node.suite,
                     type: toNodeType(node.type),
-                    buildingId: patriotPlace22Building.id,
                 },
-            })
-        )
-    );const pat22TempFloor1NodesSeeded = await Promise.all(
-        pat22TempFloor1Nodes.map((node) =>
-            prisma.node.create({
+            });
+            await prisma.location.create({
+                data: {
+                    floor: node.floor,
+                    buildingId: patriotPlace22Building.id,
+                    nodeID: createdNode.id,
+                },
+            });
+            return createdNode;
+        })
+    );
+    const pat22TempFloor1NodesSeeded = await Promise.all(
+        pat22TempFloor1Nodes.map(async (node) => {
+            const createdNode = await prisma.node.create({
                 data: {
                     description: node.description,
                     lat: node.lat,
                     long: node.long,
-                    floor: node.floor,
-                    suite: node.suite,
                     type: toNodeType(node.type),
-                    buildingId: patriotPlace22Building.id,
                 },
-            })
-        )
+            });
+            await prisma.location.create({
+                data: {
+                    floor: node.floor,
+                    buildingId: patriotPlace22Building.id,
+                    nodeID: createdNode.id,
+                },
+            });
+            return createdNode;
+        })
     );
 
     const allNodes = [
@@ -298,30 +326,74 @@ async function main() {
     // Create external transportation service requests
     await Promise.all(
         Array.from({ length: 10 }).map(async (_, i) => {
+            const reqType = Object.values(RequestType);
+            const type = reqType[i%5];
+            const priorityType = Object.values(Priority);
+            const priority = priorityType[i%3];
             const serviceRequest = await prisma.serviceRequest.create({
                 data: {
-                    type: RequestType.EXTERNALTRANSPORTATION,
+                    type: type,
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
-                    description: `Additional notes for transport request ${i + 1}`,
+                    description: `No additional note`,
                     assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
                     fromEmployee: 'admin',
-                    priority: Priority.Medium,
+                    priority: priority,
                 },
             });
-
-            await prisma.externalTransportation.create({
-                data: {
-                    id: serviceRequest.id,
-                    fromWhere: `Location A${i}`,
-                    toWhere: `Location B${i}`,
-                    transportType: 'Wheelchair Van',
-                    patientName: `Patient ${i + 1}`,
-                    pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
-                },
-            });
-        })
-    );
-
+            switch (type) {
+                case RequestType.AUDIOVISUAL:
+                    await prisma.audioVisual.create({
+                        data: {
+                            id: serviceRequest.id,
+                            location: `Room ${i + 1}`,
+                            deadline: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                            audiovisualType: `Type ${i + 1}`,
+                        }
+                    });
+                    break;
+                case RequestType.EXTERNALTRANSPORTATION:
+                    await prisma.externalTransportation.create({
+                        data: {
+                            id: serviceRequest.id,
+                            fromWhere: `Location A${i}`,
+                            toWhere: `Location B${i}`,
+                            transportType: 'Wheelchair Van',
+                            patientName: `Patient ${i + 1}`,
+                            pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
+                        },
+                    })
+                    break;
+                case RequestType.EQUIPMENTDELIVERY:
+                    await prisma.equipmentDelivery.create({
+                        data: {
+                            id: serviceRequest.id,
+                            deadline: new Date(Date.now() + 1000 * 60 * 60 * 23),
+                            equipments: [`Equipment ${i}`],
+                            toWhere: `Location ${i}`
+                        }
+                    })
+                    break;
+                case RequestType.LANGUAGE:
+                    await prisma.language.create({
+                        data: {
+                            id: serviceRequest.id,
+                            location: `Location ${i}`,
+                            language: 'Spanish',
+                            startTime: new Date(Date.now() + 1000 * 60 * 60 * 23),
+                            endTime: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                        }
+                    })
+                    break;
+                case RequestType.SECURITY:
+                    await prisma.security.create({
+                        data: {
+                            id: serviceRequest.id,
+                            location: `Room ${i + 1}`
+                        }
+                    })
+                    break;
+            }
+        }))
     const rawDepartmentData = [
         {
             name: 'Allergy and Clinical Immunology',
@@ -684,26 +756,38 @@ async function main() {
                 );
 
                 if (matchedNode) {
-                    await prisma.node.update({
-                        where: { id: matchedNode.id },
-                        data: {
-                            suite: deptData.suite,
-                            departmentId: dept.id,
+                    const existingLocation = await prisma.location.findFirst({
+                        where: {
+                            nodeID: matchedNode.id,
+                            buildingId: deptData.buildingId,
                         },
                     });
-                    return;
-                } else {
-                    console.warn(`Warning: Could not find node with description "${deptData.nodeDescription}" for department "${deptData.name}"`);
+
+                    if (existingLocation && !existingLocation.departmentId) {
+                        // If there's no department yet, update it
+                        await prisma.location.update({
+                            where: { id: existingLocation.id },
+                            data: { departmentId: dept.id },
+                        });
+                    } else {
+                        // If it already has a department, create a new location
+                        await prisma.location.create({
+                            data: {
+                                floor: deptData.floor,
+                                suite: deptData.suite,
+                                buildingId: deptData.buildingId,
+                                nodeID: matchedNode.id,
+                                departmentId: dept.id,
+                            },
+                        });
+                    }
                 }
+
             }
 
             // Fallback if no nodeDescription match
-            await prisma.node.create({
+            await prisma.location.create({
                 data: {
-                    lat: 300 + dept.id,
-                    long: 100 + dept.id,
-                    description: "",
-                    type: nodeType.Location,
                     floor: deptData.floor,
                     suite: deptData.suite,
                     departmentId: dept.id,

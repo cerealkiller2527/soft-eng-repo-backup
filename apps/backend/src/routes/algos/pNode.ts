@@ -102,7 +102,7 @@ export class pNode {
                 neighbor.lat,
                 neighbor.long,
                 neighbor.description,
-                neighbor.floor
+                0
             );
             this.neighbors.push(newNode);
         }
