@@ -2,8 +2,7 @@ import React from 'react';
 import TransportCard from "../components/TransportCard.tsx";
 import EquipmentCard from "../components/EquipmentCard.tsx";
 import { useState } from "react";
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer.tsx";
+import Layout from "../components/Layout";
 import DashboardButton from "../components/DashboardButton.tsx";
 import SecurityCard from "@/components/SecurityCard.tsx";
 import LanguageCard from "@/components/LanguageCard.tsx";
@@ -50,9 +49,9 @@ const ServiceRequest = () => {
         setSecurityRequests((prev) => [...prev, newRequest]);
     }
     return (
+        <Layout>
         <div className="flex flex-col min-h-screen bg-[#f2f2f2]">
             <div className="flex-grow pt-20 pl-20 pr-20">
-                <Navbar />
                 <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
                 <hr />
                 <br />
@@ -80,9 +79,9 @@ const ServiceRequest = () => {
                 </div>
             </div>
             <div>
-                <Footer />
             </div>
             </div>
+        </Layout>
 
 
     );

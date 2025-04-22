@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Layout from "../components/Layout";
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -115,8 +114,8 @@ export default function CSV() {
 
 
     return (
+        <Layout>
         <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
-            <Navbar />
             <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
                 <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
                     Department CSV Import/Export
@@ -200,7 +199,7 @@ export default function CSV() {
                     )}
                 </div>
             </div>
-            <Footer />
         </div>
+        </Layout>
     );
 }

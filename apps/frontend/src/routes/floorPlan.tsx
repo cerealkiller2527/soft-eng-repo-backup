@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer";
+import Layout from "../components/Layout";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
@@ -219,14 +218,8 @@ const FloorPlan = () => {
     };
 
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col">
-            {/* Header */}
-            <div className="flex justify-start mb-2 p-2">
-                <img src="/BrighamAndWomensLogo.png" alt="Logo" className="h-12 ml-2" />
-            </div>
-
-            {/* Navbar */}
-            <Navbar />
+        <Layout>
+        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-20">
 
             {/* Main content fills screen excluding navbar/footer */}
             <div className="relative flex-1">
@@ -253,10 +246,8 @@ const FloorPlan = () => {
                 </div>
 
             </div>
-
-            {/* Footer */}
-            <Footer />
         </div>
+        </Layout>
     );
 };
 
