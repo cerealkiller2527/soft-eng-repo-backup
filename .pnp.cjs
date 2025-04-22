@@ -1013,6 +1013,28 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@heroicons/react", [\
+      ["npm:2.2.0", {\
+        "packageLocation": "./.yarn/cache/@heroicons-react-npm-2.2.0-775299dcc0-f8d3cf689b.zip/node_modules/@heroicons/react/",\
+        "packageDependencies": [\
+          ["@heroicons/react", "npm:2.2.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:2.2.0", {\
+        "packageLocation": "./.yarn/__virtual__/@heroicons-react-virtual-852d8040a2/0/cache/@heroicons-react-npm-2.2.0-775299dcc0-f8d3cf689b.zip/node_modules/@heroicons/react/",\
+        "packageDependencies": [\
+          ["@heroicons/react", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:2.2.0"],\
+          ["@types/react", "npm:18.3.20"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@hookform/resolvers", [\
       ["npm:5.0.1", {\
         "packageLocation": "./.yarn/cache/@hookform-resolvers-npm-5.0.1-130a645c20-8260de1cd1.zip/node_modules/@hookform/resolvers/",\
@@ -6419,6 +6441,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["frontend", "workspace:apps/frontend"],\
           ["@auth0/auth0-react", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:2.3.0"],\
+          ["@heroicons/react", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:2.2.0"],\
           ["@hookform/resolvers", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:5.0.1"],\
           ["@radix-ui/react-accordion", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:1.2.4"],\
           ["@radix-ui/react-checkbox", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:1.1.5"],\
