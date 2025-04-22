@@ -11,6 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {formSchema} from "../components/MapEditorSelectForm.tsx";
 import { HelpDialog } from "../components/helpDialog.tsx";
 import { v4 as uuidv4 } from 'uuid';
+import { Button } from "@/components/ui/button";
+
 
 
 
@@ -26,17 +28,17 @@ import * as z from "zod";
 
 type Node = {
     departmentId: number;
-    id: string;
+    id: number;
     x: number;
     y: number;
     type: string;
-    description?: string | null;
+    description: string;
 };
 
 type Edge = {
-    id: string;
-    fromNodeId: string;
-    toNodeId: string;
+    id: number;
+    fromNodeId: number;
+    toNodeId: number;
 };
 
 const MapEditor = () => {
@@ -55,10 +57,43 @@ const MapEditor = () => {
     const [building, setBuilding] = useState<number>(1);
     const polylinesRef = useRef<google.maps.Polyline[]>([]);
     const [form, setForm] = useState<FormData | null>(null);
-    const [showHelpDialog, setShowHelpDialog] = useState(false);
-    const [negativeIds, setNegativeIds] = useState<number[-1]>([]);
+    const countRef = useRef(-1);
 
 
+
+    const setFloorMap = useMutation(
+        trpc.mapEditor.sendFloorMap.mutationOptions()
+    )
+
+    const handleSaveMap = async () => {
+        try {
+
+            const formattedNodes = nodes.map((node) => ({
+                id: node.id,
+                latitude: node.x,
+                longitude: node.y,
+                type: node.type,
+                description: node.description,
+            }));
+
+            const formattedEdges = edges.map((edge) => ({
+                fromNodeId: edge.fromNodeId,
+                toNodeId: edge.toNodeId,
+            }))
+            const result = await setFloorMap.mutateAsync({
+                buildingId: Number(building),
+                floor: imageIndex + 1,
+                nodes: formattedNodes,
+                edges: formattedEdges,
+            });
+
+            if (result.success) {
+                console.log('Floor map successfully updated');
+            }
+        } catch (error) {
+            console.error('Failed to update floor map:', error);
+        }
+    };
 
     const fetchFloorMap = useQuery(
         trpc.mapEditor.getFloorMap.queryOptions({
@@ -71,7 +106,7 @@ const MapEditor = () => {
         })
     );
 
-    const handleMarkerDragEnd = (nodeId: string, marker: google.maps.AdvancedMarkerElement) => {
+    const handleMarkerDragEnd = (nodeId: number, marker: google.maps.AdvancedMarkerElement) => {
         const newPosition = marker.position;
         if (newPosition) {
             const updatedNodes = nodes.map((node) =>
@@ -84,7 +119,7 @@ const MapEditor = () => {
         }
     };
 
-    const handleEdgeClick = (edgeId: string) => {
+    const handleEdgeClick = (edgeId: number) => {
         setEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
 
     };
@@ -104,12 +139,12 @@ const MapEditor = () => {
         } else {
             if (edgeStartRef.current.id !== clickedNode.id) {
                 const newEdge: Edge = {
-                    id: uuidv4(),
+                    id: countRef.current,
                     fromNodeId: edgeStartRef.current.id,
                     toNodeId: clickedNode.id,
                 };
 
-
+                countRef.current -= 1;
                 setEdges((prev) => [...prev, newEdge]);
                 console.log("Edge created between", edgeStartRef.current.id, "and", clickedNode.id);
             }
@@ -290,7 +325,8 @@ const MapEditor = () => {
             mapInstance.current?.setCenter({ lat: 42.3260, lng: -71.1499 });
         }
         setImageIndex(form.floor - 1);
-        setNegativeIds(-1);
+        countRef.current = -1;
+        console.log("reset")
     }, [form]);
 
     useEffect(() => {
@@ -314,13 +350,14 @@ const MapEditor = () => {
                 if (!e.latLng) return;
 
                 const newNode: Node = {
-                    id: uuidv4(), // Replace with a UUID if you prefer
+                    id: countRef.current, // Replace with a UUID if you prefer
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
-                    description: null,
+                    description: "",
                 };
 
+                countRef.current -= 1;
                 setNodes(prev => [...prev, newNode]);
             });
 
@@ -353,13 +390,13 @@ const MapEditor = () => {
                 if (!e.latLng) return;
 
                 const newNode: Node = {
-                    id: uuidv4(), // Replace with a UUID if you prefer
+                    id: countRef.current, // Replace with a UUID if you prefer
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
-                    description: null,
+                    description: "",
                 };
-
+                countRef.current -= 1;
                 setNodes(prev => [...prev, newNode]);
             });
 
@@ -385,6 +422,13 @@ const MapEditor = () => {
             <div className="fixed top-0 left-0 right-0 z-20">
                 <Navbar />
             </div>
+
+            <Button
+                className="absolute bottom-20 left-4 z-10"
+                onClick={handleSaveMap}
+            >
+                Save Map
+            </Button>
 
             <div className="absolute top-30 left-4 z-10">
                 <div className="bg-white shadow-md rounded-2xl overflow-hidden">

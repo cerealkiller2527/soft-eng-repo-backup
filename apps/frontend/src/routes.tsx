@@ -77,13 +77,6 @@ export const routes = [
         ),
     },
     {
-        path: '/mapinfotest',
-        errorElement: <div />,
-        element: (
-                <MapInfoTest />
-        ),
-    },
-    {
         path: '/test',
         errorElement: <div />,
         element: <TestDirectory />,

@@ -2,7 +2,6 @@ import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { employeeRouter } from './routes/employeeRouter';
 import { serviceRouter } from './routes/serviceRouter';
-import { mapInfoRouter } from './routes/mapInfoRouter';
 import { loginRouter } from './routes/loginRouter.ts';
 import { searchRouter } from './routes/search.ts';
 import { csvRouter } from './routes/csvRouter.ts';
@@ -19,10 +18,9 @@ const appRouter = t.router({
     employee: employeeRouter,
     service: serviceRouter,
     login: loginRouter,
-    csv: csvRouter,
-    directories: directoriesRouter,
+    //csv: csvRouter,
+    //directories: directoriesRouter,
     search: searchRouter,
-    mapInfo: mapInfoRouter,
     mapEditor: mapEditorRouter,
 });
 const app = express();
