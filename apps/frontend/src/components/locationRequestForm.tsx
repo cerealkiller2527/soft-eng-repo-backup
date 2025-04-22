@@ -22,7 +22,7 @@ export default function LocationRequestForm({ onSubmit }) {
         transport: "",
         building: "Chestnut Hill Medical Center",
     });
-    const nodesQuery = useQuery(trpc.mapInfo.getNodesByBuildingName.queryOptions({ buildingName: form.building }));
+    const nodesQuery = useQuery(trpc.mapInfoRouter.mapInfo.queryOptions({ buildingName: form.building }));
 
 
     useEffect(() => {
