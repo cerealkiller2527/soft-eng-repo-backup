@@ -4,12 +4,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
     Card,
     CardContent,
-    CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import BnWLogo from "*.png";
 
 const Landing: React.FC = () => {
     // Images array
@@ -23,6 +20,7 @@ const Landing: React.FC = () => {
     // State for image rotation
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovering, setIsHovering] = useState(false);
+
     // State for disclaimer visibility
     const [showDisclaimer, setShowDisclaimer] = useState(true);
 
@@ -37,19 +35,10 @@ const Landing: React.FC = () => {
         return () => clearInterval(interval);
     }, [images.length, isHovering]);
 
-    // Auto-hide disclaimer after 5 seconds
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowDisclaimer(false);
-        }, 5000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
         <section className="relative bg-[#f2f2f2]">
             {showDisclaimer && (
-                <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-8 fade-in-20 duration-300 max-w-md w-[calc(100%-2rem)]">
+                <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-8 fade-in-20 max-w-md duration-500">
                     <AlertDescription className="flex items-center justify-between gap-4">
                         <span>This web application is strictly a CS3733-D25 Software Engineering class project for Prof. Wilson Wong at WPI</span>
                         <button
@@ -122,7 +111,9 @@ const Landing: React.FC = () => {
                 </div>
 
                 <div className="relative z-30 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mx-auto pt-25">
-                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0">
+                    <a href="/FloorPlan">
+                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0
+                                    hover:outline-solid hover:outline-[#012D5A] hover:outline-5">
                         <CardHeader className="pb-4">
                             <CardTitle className="text-center text-lg">
                                 Intuitive Navigation Systems for Visitors
@@ -135,53 +126,61 @@ const Landing: React.FC = () => {
                         </CardContent>
                         {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
                         <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
-                            <img
-                                src="/FreeNaviHero.jpg"
-                                alt="Navigation Image"
-                                className="w-full h-full object-cover"
-                            />
+                        <img
+                            src="/FreeNaviHero.jpg"
+                            alt="Navigation Image"
+                            className="w-full h-full object-cover"
+                        />
                         </div>
                     </Card>
-                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0">
-                        <CardHeader>
-                            <CardTitle className="text-center text-lg">
-                                Quick Service Request Forms for Employees
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="text-lg px-6 flex-grow">
-                            Need a translator? How about some specialized equipment? Maybe a ride
-                            between Hospitals? Our service request forms allow for employees to
-                            quickly request all that and more, seamlessly within the webpage.
-                        </CardContent>
-                        {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
-                        <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
-                            <img
-                                src="/FreeServiceHero.jpg"
-                                alt="Service Image"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                    </Card>
-                    <Card className="bg-white shadow-lg flex flex-col h-full pb-0">
-                        <CardHeader>
-                            <CardTitle className="text-center text-lg">
-                                In-Depth Map Editor for Admins
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="text-lg px-6">
-                            In addition to all it's regular functionalities, our webpage offers
-                            some specialized features to admins. In the unlikely event that our navigation
-                            runs into an error, Admins are able to directly add nodes to the map.
-                        </CardContent>
-                        {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
-                        <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
-                            <img
-                                src="/FreeAdminHero.jpg"
-                                alt="Navigation Image"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                    </Card>
+                    </a>
+                    <a href="/directory">
+                        <Card className="bg-white shadow-lg flex flex-col h-full pb-0
+                                    hover:outline-solid hover:outline-[#012D5A] hover:outline-5">
+                            <CardHeader>
+                                <CardTitle className="text-center text-lg">
+                                    Comprehensive Directory Information
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="text-lg px-6 flex-grow">
+                                Need specific information on a department you need to visit? Our directory page
+                                offers a comprehensive breakdown of everything you could want to know, from the building,
+                                floor, and suite, to the phone number and specialties.
+                            </CardContent>
+                            {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
+                            <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
+                                <img
+                                    src="/FreeAdminHero.jpg"
+                                    alt="Service Image"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        </Card>
+                    </a>
+                    <a href="/login">
+                        <Card className="bg-white shadow-lg flex flex-col h-full pb-0
+                                    hover:outline-solid hover:outline-[#012D5A] hover:outline-5">
+                            <CardHeader>
+                                <CardTitle className="text-center text-lg">
+                                    Quick Service Request Forms for Employees
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="text-lg px-6 flex-grow">
+                                Need a translator? How about some specialized equipment? Maybe a ride
+                                between Hospitals? Our service request forms allow for employees to
+                                quickly request all that and more, seamlessly within the webpage.
+                                Just make sure to login first!
+                            </CardContent>
+                            {/* I would rather use CardFooter, but just inserting it here seems to remove the bottom gap*/}
+                            <div className="mt-auto w-full h-60 overflow-hidden rounded-b-lg">
+                                <img
+                                    src="/FreeServiceHero.jpg"
+                                    alt="Service Image"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        </Card>
+                    </a>
                 </div>
 
                 <div className="h-32 bg-[#f2f2f2]"></div>
