@@ -37,6 +37,9 @@
     "vitest": "^3.0.9"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.28.2",
+    "@clerk/clerk-sdk-node": "^5.1.6",
+    "@clerk/express": "^1.4.7",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-icons": "^1.3.2",
     "@react-google-maps/api": "^2.20.6",
@@ -51,7 +54,7 @@
     "clsx": "^2.1.1",
     "common": "workspace:*",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "dotenv-cli": "^7.4.4",
     "frontend": "workspace:^",
     "google-maps": "^4.3.3",

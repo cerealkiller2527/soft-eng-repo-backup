@@ -3,41 +3,96 @@ import { useLocation } from "react-router-dom";
 import React, {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
-import { useTRPC } from '../database/trpc.ts';
-import {useAuth} from '../Context/AuthContext';
+import { useTRPC, trpcClient } from '../database/trpc.ts';
+import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
+import { SignIn, SignInButton } from "@clerk/clerk-react";
+import { isClerkAPIResponseError } from "@clerk/clerk-js";
 
 const Login: React.FC = () => {
 
-    const {setAuthenticated} = useAuth();
+    // const {setAuthenticated} = useAuth();
     const location = useLocation();
     const trpc = useTRPC();
     const [email, setEmail] = useState("");
     const[transition, setTransition] = useState(false);
-
     const[username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const[confirmPassword, setConfirmPassword] = useState("");
 
-    //const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
 
+    // Clerk Auth
+    const { isLoaded: signInLoaded, signIn } = useSignIn();
+    const { isLoaded: signUpLoaded, signUp, setActive } = useSignUp();
+    const { getToken } = useAuth();
+
     const from = location.state?.from?.pathname || '/Directory';
 
-    const checkLogin = useMutation(
+    const handleSignIn = async () => {
+        if (!signInLoaded) return;
 
-        trpc.login.checkLogin.mutationOptions({
-            onSuccess: (data) => {
-                console.log('Login success', data);
-                setAuthenticated(true);
-                navigate(from);
-            },
-            onError: (error) => {
-                console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
-            },
-        })
-    );
+        try {
+            const signInAttempt = await signIn.create({
+                identifier: username,
+                password,
+            });
+
+            const sessionId = await signInAttempt.createdSessionId;
+            if (!sessionId) throw new Error("No session ID returned.");
+
+            if (typeof window !== 'undefined' && window.Clerk) {
+                const sessionToken = await window.Clerk.session?.getToken();
+                if (!sessionToken) throw new Error("Failed to get session token.");
+
+                // call backend to verify session
+                await trpcClient.login.verifyClerkUser.mutate({
+                    sessionId: sessionId,
+                    sessionToken: sessionToken,
+                });
+            } else {
+                throw new Error("Clerk is not available.");
+            }
+
+            navigate("/Directory");
+        } catch (err: unknown) {
+            if (isClerkAPIResponseError(err)) {
+                alert(err.errors?.[0]?.message ?? "Login failed");
+            } else {
+                alert("Unknown error during login");
+            }
+        }
+    };
+
+    const handleSignUp = async () => {
+        if (!signUpLoaded) return;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        try {
+            const result = await signUp.create({
+                emailAddress: email,
+                password,
+            });
+
+            await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+
+            alert("Account created! Please check your email for verification.");
+
+            await setActive({ session: result.createdSessionId });
+
+            setIsSignUp(false);
+        } catch (err: unknown) {
+            if (isClerkAPIResponseError(err)) {
+                alert("Signup failed: " + (err.errors?.[0]?.message ?? "Unknown error"));
+            } else {
+                alert("Signup failed: Unknown error");
+            }
+        }
+
     const addUser = useMutation(
         trpc.login.addLogin.mutationOptions({
             onSuccess: (data) => {
@@ -51,23 +106,10 @@ const Login: React.FC = () => {
             }
         })
     )
-    const handleSignUp = () => {
-        if(password!== confirmPassword){
-            alert("Password do not match!");
-            return;
-        }
-
-        addUser.mutate({
-            username: username,
-            password: password,
-            email: email
-        })
-
     };
 
     return (
-
-//dimensions for the hero image: 1152px width 1080px height
+    //dimensions for the hero image: 1152px width 1080px height
         <div className="h-screen flex">
             <div className = "w-3/5 bg-cover bg-center opacity-90" style={{backgroundImage:"url('/newImageHero.png')"}}>
                 <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-4 left-4 w-92 h-auto"/>
@@ -80,7 +122,7 @@ const Login: React.FC = () => {
                 </div>
             </div>
 
-
+            {/* Sign-In / Sign-Up */}
             <div className="w-2/5 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
                 <div >
                     {isSignUp ? (
@@ -142,31 +184,51 @@ const Login: React.FC = () => {
                         <>
                             <h1 className="text-2xl text-gray-800 mb-4 text-center">Sign In</h1>
 
+                            {/*<input*/}
+                            {/*    type="text"*/}
+                            {/*    placeholder="Username"*/}
+                            {/*    value={username}*/}
+                            {/*    onChange={(e) => setUsername(e.target.value)}*/}
+                            {/*    className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"*/}
+                            {/*/>*/}
+                            {/*<input*/}
+                            {/*    type="password"*/}
+                            {/*    placeholder="Password"*/}
+                            {/*    value={password}*/}
+                            {/*    onChange={(e) => setPassword(e.target.value)}*/}
+                            {/*    className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"*/}
+                            {/*/>*/}
+                            {/*<button*/}
+                            {/*    onClick={handleSignIn}*/}
+                            {/*    className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"*/}
+                            {/*>*/}
+                            {/*    Sign In*/}
+                            {/*</button>*/}
 
+                            {/*<SignIn*/}
+                            {/*    path="/login"*/}
+                            {/*    routing="path"*/}
+                            {/*    redirectUrl="/Directory"*/}
+                            {/*    appearance={{*/}
+                            {/*        elements: {*/}
+                            {/*            formButtonPrimary: "bg-blue-900 hover:bg-white hover:text-blue-900",*/}
+                            {/*            card: "shadow-md border border-gray-200 p-6 rounded-md",*/}
+                            {/*        },*/}
+                            {/*    }}*/}
+                            {/*/>*/}
 
-                            <input
-                                type="text"
-                                placeholder="Username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button
-                                onClick={()=>checkLogin.mutate({
-                                    username: username,
-                                    password: password
-                                })}
-                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
-                            >
-                                Sign In
-                            </button>
+                            {/*<SignIn*/}
+                            {/*    path="/login"*/}
+                            {/*    routing="path"*/}
+                            {/*    redirectUrl="/Directory"*/}
+                            {/*/>*/}
+
+                            <SignInButton mode="modal" redirectUrl="/Directory">
+                                <button className="bg-blue-800 text-white px-4 py-2 rounded">
+                                    Sign In
+                                </button>
+                            </SignInButton>
+
                             <p className="mt-4 text-sm text-center">
                                 Don't have an account?{" "}
                                 <span
