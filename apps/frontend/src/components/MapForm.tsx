@@ -19,11 +19,10 @@ import 'react-datepicker/dist/react-datepicker.css';
     type: typeEnum,
     description: z.string(),
 })
+    type FormValues = z.infer<typeof formSchema>
 
-    export default function MapForm() {
+    export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) => void }) {
 
-     const trpc = useTRPC();
-     // const addReq = useMutation(trpc.  mutationOptions({}))
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -34,14 +33,9 @@ import 'react-datepicker/dist/react-datepicker.css';
         }
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
-        //addReq.mutate({
-        //    suite: values.suite,
-        //    type: values.type,
-        //    description: values.description,
-       // });
-    }
+
+
+
         return(
             <Form {...form}>
                 <div className="max-w-2xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">

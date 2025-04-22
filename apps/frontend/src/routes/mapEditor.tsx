@@ -6,12 +6,10 @@ import { queryClient } from '../database/trpc.ts';
 import { useTRPC } from '../database/trpc.ts';
 import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx'
 import { overlays } from "@/constants.tsx";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {formSchema} from "../components/MapEditorSelectForm.tsx";
 import { HelpDialog } from "../components/helpDialog.tsx";
-import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
+import MapForm from "../components/MapForm.tsx";
 
 
 
@@ -27,12 +25,12 @@ import * as z from "zod";
 
 
 type Node = {
-    departmentId: number;
     id: number;
     x: number;
     y: number;
-    type: string;
     description: string;
+    suite: string;
+    type: string;
 };
 
 type Edge = {
@@ -65,6 +63,8 @@ const MapEditor = () => {
         trpc.mapEditor.sendFloorMap.mutationOptions()
     )
 
+
+
     const handleSaveMap = async () => {
         try {
 
@@ -73,7 +73,8 @@ const MapEditor = () => {
                 latitude: node.x,
                 longitude: node.y,
                 type: node.type,
-                description: node.description,
+                description: node.description ?? "",
+                suite: node.suite ?? "",
             }));
 
             const formattedEdges = edges.map((edge) => ({
@@ -130,7 +131,14 @@ const MapEditor = () => {
 
     const edgeStartRef = useRef<Node | null>(null);
 
-
+    const handleFormSubmit = (values: { suite: string, type: string, description: string }) => {
+        console.log("Received from child:", values)
+        if (edgeStartRef.current) {
+            edgeStartRef.current.suite = values.suite;
+            edgeStartRef.current.type = values.type;
+            edgeStartRef.current.description = values.description;
+        }
+    }
 
     const handleMarkerClick = (clickedNode: Node) => {
         if (!edgeStartRef.current) {
@@ -358,6 +366,7 @@ const MapEditor = () => {
                     y: e.latLng.lng(),
                     type: "Intermediary",
                     description: "",
+                    suite: "",
                 };
 
                 countRef.current -= 1;
@@ -398,6 +407,7 @@ const MapEditor = () => {
                     y: e.latLng.lng(),
                     type: "Intermediary",
                     description: "",
+                    suite: "",
                 };
                 countRef.current -= 1;
                 setNodes(prev => [...prev, newNode]);
@@ -417,7 +427,7 @@ const MapEditor = () => {
             <div
                 id="google-map-container"
                 ref={mapRef}
-                className="absolute top-20 bottom-15 left-0 right-0 w-full z-0"
+                className="absolute top-20 bottom-0 left-0 right-0 w-full z-0"
             />
 
             <HelpDialog />
@@ -432,6 +442,9 @@ const MapEditor = () => {
             >
                 Save Map
             </Button>
+            <div className="absolute top-30 right-4 z-10">
+                <MapForm onSubmit={handleFormSubmit}/>
+            </div>
 
             <div className="absolute top-30 left-4 z-10">
                 <div className="bg-white shadow-md rounded-2xl overflow-hidden">
@@ -442,9 +455,7 @@ const MapEditor = () => {
             </div>
 
 
-            <div className="fixed bottom-0 left-0 right-0 z-20">
-                <Footer />
-            </div>
+
         </div>
     );
 };
