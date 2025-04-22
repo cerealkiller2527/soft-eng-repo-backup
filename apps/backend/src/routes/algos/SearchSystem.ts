@@ -30,6 +30,12 @@ export class SearchSystem {
         ) {
             startDescription = '120/122drop off';
             parkingDescription = '120/122parking';
+        } else if (
+            location === 'Faulkner Hospital' ||
+            location === 'faulkner'
+        ){
+            startDescription = 'f1drop off'
+            parkingDescription = 'f1parking';
         } else {
             console.error('Unrecognized location', location);
             return [new pNode(-1)];
