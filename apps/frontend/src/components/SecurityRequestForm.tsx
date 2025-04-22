@@ -59,88 +59,111 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
     }
 
     return (
-        <Form {...form}>
-            <h2>Security Request Form</h2>
-            <p>Created by Sahana and Tina</p>
-            <br />
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="employeeName"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Employee Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Enter your full name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+        <div className="max-w-2xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+            <div className="text-center">
+                <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Security Request Form</h2>
+                <p className="text-sm text-gray-600">Created by Sahana and Tina</p>
+            </div>
 
-
-                <FormField
-                    control={form.control}
-                    name="priority"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Priority</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="employeeName"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Employee Name</FormLabel>
                                 <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a priority" />
-                                    </SelectTrigger>
+                                    <Input
+                                        placeholder="Enter your full name"
+                                        {...field}
+                                        className="w-full"
+                                    />
                                 </FormControl>
-                                <SelectContent>
-                                    {priority.map((p) => (
-                                        <SelectItem key={p} value={p}>{p}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Location</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormField
+                        control={form.control}
+                        name="priority"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Priority</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a priority" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {priority.map((p) => (
+                                            <SelectItem key={p} value={p}>
+                                                {p}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Location</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a location" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {MGBHospitals.map((loc) => (
+                                            <SelectItem key={loc} value={loc}>
+                                                {loc}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="additionalNotes"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Additional Notes</FormLabel>
                                 <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a location" />
-                                    </SelectTrigger>
+                                    <Textarea
+                                        placeholder="Please mention the security service needed here"
+                                        className="resize-none w-full min-h-[100px]"
+                                        {...field}
+                                    />
                                 </FormControl>
-                                <SelectContent>
-                                    {MGBHospitals.map((loc) => (
-                                        <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                <FormField
-                    control={form.control}
-                    name="additionalNotes"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Additional Notes</FormLabel>
-                            <FormControl>
-                                <Textarea placeholder="Please mention the security service needed here" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                    <div className="flex justify-center pt-4">
+                        <Button
+                            type="submit"
+                            className="px-6 py-2 text-white bg-[#012D5A] hover:bg-[#01498C] transition-colors rounded-xl shadow-md"
+                        >
+                            Submit Request
+                        </Button>
+                    </div>
+                </form>
+            </Form>
+        </div>
+    );
 
-                <Button type="submit">Submit Request</Button>
-            </form>
-        </Form>
-    )
 }
