@@ -1,6 +1,6 @@
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 import { serviceRouter } from '../routes/serviceRouter.ts';
-import {RequestType, Priority, Status, Prisma} from 'database';
+import { RequestType, Priority, Status, Prisma } from 'database';
 import PrismaClient from '../bin/prisma-client.ts';
 
 //make fake data(doesn't connect to the database so that we can just test the routers)
@@ -15,32 +15,32 @@ vi.mock('../bin/prisma-client.ts', () => ({
             findMany: vi.fn(),
             create: vi.fn(),
             update: vi.fn(),
-        }
-    }
-}))
+        },
+    },
+}));
 const prisma = PrismaClient as any;
 
 //make sure we would have a clean mock data before each test
 beforeEach(() => {
     vi.clearAllMocks();
-})
+});
 
 describe('getLanguageRequests', () => {
     test('filtered language requests', async () => {
         // return data only if language matches
-        prisma.serviceRequest.findMany.mockImplementation(({ where }:{where: Prisma.ServiceRequestWhereInput}) => {
-            if (
-                where.language?.language === "Japanese"
-            ) {
-                return Promise.resolve("Filter for Japanese");
-            }
+        prisma.serviceRequest.findMany.mockImplementation(
+            ({ where }: { where: Prisma.ServiceRequestWhereInput }) => {
+                if (where.language?.language === 'Japanese') {
+                    return Promise.resolve('Filter for Japanese');
+                }
 
-            return Promise.resolve([]);
-        });
+                return Promise.resolve([]);
+            }
+        );
 
         const caller = serviceRouter.createCaller({});
         const result = await caller.getLanguageRequests({
-            language: "Japanese",
+            language: 'Japanese',
         });
 
         // check that the Prisma query is called correctly
@@ -48,7 +48,7 @@ describe('getLanguageRequests', () => {
             where: {
                 type: RequestType.LANGUAGE,
                 language: {
-                    language: "Japanese",
+                    language: 'Japanese',
                 },
             },
             include: {
@@ -57,7 +57,7 @@ describe('getLanguageRequests', () => {
             },
         });
         // should return matching data
-        expect(result).toEqual("Filter for Japanese");
+        expect(result).toEqual('Filter for Japanese');
     });
 
     test('no filters language requests', async () => {
@@ -84,11 +84,11 @@ test('create new language data', async () => {
 
     const caller = serviceRouter.createCaller({});
     const input = {
-        language: "Japanese",
-        location: "Room 1",
+        language: 'Japanese',
+        location: 'Room 1',
         startTime: new Date('2025-08-09T09:22:18Z'),
         endTime: new Date('2025-08-09T10:22:18Z'),
-        additionalNotes: "",
+        additionalNotes: '',
         priority: Priority.High,
         employee: 'Emp1',
     };
@@ -109,8 +109,8 @@ test('create new language data', async () => {
     expect(prisma.language.create).toHaveBeenCalledWith({
         data: {
             id: 1,
-            language: "Japanese",
-            location: "Room 1",
+            language: 'Japanese',
+            location: 'Room 1',
             startTime: new Date('2025-08-09T09:22:18Z'),
             endTime: new Date('2025-08-09T10:22:18Z'),
         },
@@ -149,10 +149,3 @@ test('updates language request with some fields', async () => {
 
     expect(result).toEqual({ message: 'Update language request done.' });
 });
-
-
-
-
-
-
-
