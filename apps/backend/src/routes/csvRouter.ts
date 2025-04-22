@@ -25,8 +25,4 @@ const clearDatabaseRouter = t.router({
 });
 
 // Combine all routers
-export const csvRouter = t.mergeRouters(
-    csvExportRouter,
-    csvImportRouter,
-    clearDatabaseRouter
-);
+export const csvRouter = t.mergeRouters(csvExportRouter, csvImportRouter, clearDatabaseRouter);

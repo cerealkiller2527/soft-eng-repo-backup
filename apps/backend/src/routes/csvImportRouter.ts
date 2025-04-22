@@ -25,16 +25,42 @@ export const csvImportRouter = t.router({
                 const nodeMap = new Map<string, number>(); // nodeCoord -> nodeId
 
                 for (const record of records) {
-                    const departmentName = record['Department Name']?.trim();
+                    // Validate required fields
                     const buildingName = record['Building Name']?.trim();
                     if (!buildingName) {
                         throw new TRPCError({
                             code: 'BAD_REQUEST',
-                            message: `Building Name missing`,
+                            message: `Building Name missing in row`,
                         });
                     }
 
-                    // Create/Update the building via building name
+                    const rawCoord = normalizeCoord(record['Node (lat,long)']);
+                    if (!rawCoord) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Node coordinates missing in row`,
+                        });
+                    }
+
+                    const match = rawCoord.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
+                    if (!match) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Invalid coordinate format: ${rawCoord}`,
+                        });
+                    }
+
+                    const lat = parseFloat(match[1]);
+                    const long = parseFloat(match[2]);
+                    const floor = parseInt(record['Floor']?.trim() || '0', 10);
+                    if (isNaN(floor)) {
+                        throw new TRPCError({
+                            code: 'BAD_REQUEST',
+                            message: `Invalid floor number: ${record['Floor']}`,
+                        });
+                    }
+
+                    // Create/Update building
                     const building = await PrismaClient.building.upsert({
                         where: { name: buildingName },
                         update: {
@@ -48,35 +74,7 @@ export const csvImportRouter = t.router({
                         },
                     });
 
-                    // Get the node info
-                    const rawCoord = normalizeCoord(record['Node (lat,long)']);
-                    if (!rawCoord) {
-                        throw new TRPCError({
-                            code: 'BAD_REQUEST',
-                            message: `Node Coord missing`,
-                        });
-                    }
-                    const match = rawCoord.match(/\(([-\d.]+),\s*([-\d.]+)\)/); // match to (decimal,decimal)
-                    if (!match) {
-                        throw new TRPCError({
-                            code: 'BAD_REQUEST',
-                            message: `Invalid format of the Node Coord`,
-                        });
-                    }
-
-                    const lat = parseFloat(match[1]); // get the lat
-                    const long = parseFloat(match[2]); // get the long
-                    const floor = parseInt(record['Floor'].trim(), 10);
-                    if (isNaN(floor)) {
-                        throw new TRPCError({
-                            code: 'BAD_REQUEST',
-                            message: `Floor number missing`,
-                        });
-                    }
-                    const description = (record['Node Description'] || '').trim();
-                    const suite = (record['Suite'] || '').trim();
-
-                    // Find or create node
+                    // Create/Update node
                     let node = await PrismaClient.node.findFirst({
                         where: { lat, long },
                     });
@@ -84,10 +82,10 @@ export const csvImportRouter = t.router({
                     if (!node) {
                         node = await PrismaClient.node.create({
                             data: {
-                                type: 'Location',
+                                type: record['Node Type'] || 'Location',
                                 lat,
                                 long,
-                                description,
+                                description: record['Node Description'] || '',
                             },
                         });
                     }
@@ -95,93 +93,96 @@ export const csvImportRouter = t.router({
                     // Store node ID for edge creation
                     nodeMap.set(rawCoord, node.id);
 
-                    // Create or update department
-                    let department = await PrismaClient.department.findFirst({
-                        where: {
-                            name: departmentName,
-                            Location: {
-                                some: {
-                                    buildingId: building.id,
-                                },
-                            },
-                        },
-                    });
+                    // Create/Update department if name exists
+                    let department = null;
+                    const departmentName = record['Department Name']?.trim();
+                    if (departmentName) {
+                        // First try to find existing department
+                        const existingDept = await PrismaClient.department.findFirst({
+                            where: { name: departmentName },
+                        });
 
-                    if (!department) {
-                        department = await PrismaClient.department.create({
-                            data: {
-                                name: departmentName,
-                                phoneNumber: record['Phone Number'] || '',
-                                description: record['Department Description'] || null,
-                            },
-                        });
-                    } else {
-                        department = await PrismaClient.department.update({
-                            where: { id: department.id },
-                            data: {
-                                phoneNumber: record['Phone Number'] || '',
-                                description: record['Department Description'] || null,
-                            },
-                        });
+                        if (existingDept) {
+                            // Update existing department
+                            department = await PrismaClient.department.update({
+                                where: { id: existingDept.id },
+                                data: {
+                                    phoneNumber: record['Phone Number'] || '',
+                                    description: record['Department Description'] || null,
+                                },
+                            });
+                        } else {
+                            // Create new department
+                            department = await PrismaClient.department.create({
+                                data: {
+                                    name: departmentName,
+                                    phoneNumber: record['Phone Number'] || '',
+                                    description: record['Department Description'] || null,
+                                },
+                            });
+                        }
                     }
 
-                    // Create or update location
+                    // Create/Update location
                     await PrismaClient.location.upsert({
                         where: {
-                            id: node.id, // Using node ID as location ID
+                            id: node.id,
                         },
                         update: {
                             floor,
-                            suite,
+                            suite: record['Suite'] || '',
                             buildingId: building.id,
-                            departmentId: department.id,
+                            departmentId: department?.id || null,
                             nodeID: node.id,
                         },
                         create: {
                             id: node.id,
                             floor,
-                            suite,
+                            suite: record['Suite'] || '',
                             buildingId: building.id,
-                            departmentId: department.id,
+                            departmentId: department?.id || null,
                             nodeID: node.id,
                         },
                     });
 
-                    // Handle services
-                    const svcNames = (record['Services'] || '')
-                        .split(';')
-                        .map((s: string) => s.trim());
+                    // Handle services if department exists
+                    if (department) {
+                        const svcNames = (record['Services'] || '')
+                            .split(';')
+                            .map((s: string) => s.trim())
+                            .filter(Boolean);
 
-                    for (const name of svcNames) {
-                        if (!name) continue;
+                        for (const name of svcNames) {
+                            let service = await PrismaClient.service.findFirst({ where: { name } });
 
-                        let service = await PrismaClient.service.findFirst({ where: { name } });
+                            if (!service) {
+                                service = await PrismaClient.service.create({ data: { name } });
+                            }
 
-                        if (!service) {
-                            service = await PrismaClient.service.create({ data: { name } });
-                        }
-
-                        const exists = await PrismaClient.departmentServices.findFirst({
-                            where: {
-                                departmentID: department.id,
-                                serviceID: service.id,
-                            },
-                        });
-
-                        if (!exists) {
-                            await PrismaClient.departmentServices.create({
-                                data: {
+                            // Check if relationship exists
+                            const exists = await PrismaClient.departmentServices.findFirst({
+                                where: {
                                     departmentID: department.id,
                                     serviceID: service.id,
                                 },
                             });
+
+                            if (!exists) {
+                                await PrismaClient.departmentServices.create({
+                                    data: {
+                                        departmentID: department.id,
+                                        serviceID: service.id,
+                                    },
+                                });
+                            }
                         }
                     }
 
                     // Store edges for later creation
                     const edgeStrs = (record['Edge Connections (from -> to)'] || '')
                         .split(';')
-                        .map((s: string) => s.trim());
+                        .map((s: string) => s.trim())
+                        .filter(Boolean);
 
                     for (const edgeStr of edgeStrs) {
                         const match = edgeStr.match(
@@ -202,12 +203,16 @@ export const csvImportRouter = t.router({
                     const toId = nodeMap.get(to);
 
                     if (!fromId || !toId) {
-                        console.warn(`Missing node`);
+                        console.warn(`Missing node for edge: ${from} -> ${to}`);
                         continue;
                     }
 
+                    // Check if edge exists
                     const exists = await PrismaClient.edge.findFirst({
-                        where: { fromNodeId: fromId, toNodeId: toId },
+                        where: {
+                            fromNodeId: fromId,
+                            toNodeId: toId,
+                        },
                     });
 
                     if (!exists) {
@@ -220,7 +225,7 @@ export const csvImportRouter = t.router({
                     }
                 }
 
-                return { message: 'CSV import succeeded (1 node per row)' };
+                return { message: 'CSV import succeeded' };
             } catch (error) {
                 const msg = error instanceof Error ? error.message : String(error);
                 throw new TRPCError({
