@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer";
+import Layout from "../components/Layout";
 import { useTRPC } from "../database/trpc.ts";
 import {
     Accordion,
@@ -102,39 +101,39 @@ const DirectoryPage: React.FC = () => {
 
     if (isLoading) {
         return (
+            <Layout>
             <div className="min-h-screen bg-white pt-20">
-                <Navbar />
                 <main className="max-w-4xl mx-auto p-4">
                     <LoadingSpinner />
                 </main>
-                <Footer />
             </div>
+            </Layout>
         );
     }
 
     if (error || !departmentsResult.success) {
         return (
+            <Layout>
             <div className="min-h-screen bg-white pt-20">
-                <Navbar />
                 <main className="max-w-4xl mx-auto p-4">
                     <ErrorMessage error={error} validationError={departmentsResult.error} />
                 </main>
-                <Footer />
             </div>
+            </Layout>
         );
     }
 
     if (!departments) {
         return (
+            <Layout>
             <div className="min-h-screen bg-white pt-20">
-                <Navbar />
                 <main className="max-w-4xl mx-auto p-4">
                     <div className="text-center py-8">
                         <p className="text-gray-600">No departments found.</p>
                     </div>
                 </main>
-                <Footer />
             </div>
+            </Layout>
         );
     }
 
@@ -160,8 +159,8 @@ const DirectoryPage: React.FC = () => {
     }, {} as Record<keyof typeof DEPARTMENT_CATEGORIES, Department[]>);
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <Navbar />
+        <Layout>
+        <div className="min-h-screen flex flex-col pt-20">
             <main className="flex-grow max-w-4xl mx-auto p-4 w-full">
                 <h1 className="text-3xl font-light text-[#012D5A] mb-4">Directory</h1>
                 <hr className="border-[#012D5A]/20 mb-6" />
@@ -242,8 +241,8 @@ const DirectoryPage: React.FC = () => {
                     )}
                 </div>
             </main>
-            <Footer />
         </div>
+        </Layout>
     );
 };
 

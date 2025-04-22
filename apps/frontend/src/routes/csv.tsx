@@ -1,8 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import React, { useState, useRef } from 'react';
+import Layout from "../components/Layout";
+import { Button } from '@/components/ui/button';
+import {
+    Table,
+    TableHeader,
+    TableRow,
+    TableHead,
+    TableBody,
+    TableCell,
+} from '@/components/ui/table';
 import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
@@ -214,8 +220,8 @@ export default function CSV() {
     }, [selectedColumns]);
 
     return (
+        <Layout>
         <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
-            <Navbar />
             <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
                 <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
                     Department CSV Import/Export
@@ -412,7 +418,7 @@ export default function CSV() {
                     )}
                 </div>
             </div>
-            <Footer />
         </div>
+        </Layout>
     );
 }

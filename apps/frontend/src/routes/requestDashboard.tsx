@@ -1,6 +1,6 @@
 import React from "react";
 import {useState} from "react";
-import Navbar from "../components/Navbar.tsx";
+import Layout from "../components/Layout";
 import { useQuery } from '@tanstack/react-query';
 import {useTRPC} from "../database/trpc.ts";
 import TransportRequestDisplay from "../components/allServiceRequests/TransportRequestDisplay.tsx";
@@ -21,8 +21,8 @@ const requestDashboard = () => {
     };
 
     return (
+        <Layout>
         <div className="p-25 bg-[#f2f2f2]">
-            <Navbar />
             <div className="mt-8">
                 <br />
                 <div>
@@ -30,6 +30,7 @@ const requestDashboard = () => {
                 </div>
             </div>
         </div>
+        </Layout>
     );
 };
 
