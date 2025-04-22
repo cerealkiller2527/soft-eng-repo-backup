@@ -183,6 +183,7 @@ const Landing: React.FC = () => {
                     </a>
                 </div>
 
+                {/* Gap on bottom for style, might have to change height later */}
                 <div className="h-32 bg-[#f2f2f2]"></div>
             </section>
         </section>
