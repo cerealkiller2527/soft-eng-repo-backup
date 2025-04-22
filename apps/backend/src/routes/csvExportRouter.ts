@@ -7,50 +7,71 @@ export const t = initTRPC.create();
 export const csvExportRouter = t.router({
     exportCSV: t.procedure.mutation(async () => {
         try {
-            //get all the node with all the department, service, and building info
+            // Get all nodes with their complete relationships
             const nodes = await PrismaClient.node.findMany({
                 include: {
-                    building: true,
-                    Department: {
+                    Location: {
                         include: {
-                            DepartmentServices: { include: { service: true } },
+                            building: true,
+                            Department: {
+                                include: {
+                                    DepartmentServices: {
+                                        include: {
+                                            service: true,
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
-                    fromEdge: true,
+                    fromEdge: {
+                        include: {
+                            toNode: true,
+                        },
+                    },
+                    toEdge: {
+                        include: {
+                            fromNode: true,
+                        },
+                    },
                 },
             });
 
-            //map the nodes so that we can create each row
-            const rows = nodes.map((node) => {
-                const department = node.Department;
-                const building = node.building;
+            // Map the nodes to create each row
+            const rows = nodes.flatMap((node) => {
+                return node.Location.map((location) => {
+                    const department = location.Department;
+                    const building = location.building;
 
-                const services = department?.DepartmentServices || [];
-                const serviceIds = services.map((s) => s.serviceID).join('; ');
-                const serviceNames = services.map((s) => s.service?.name || '').join('; ');
+                    // Get all services for the department
+                    const services = department?.DepartmentServices || [];
+                    const serviceNames = services.map((s) => s.service?.name || '').join('; ');
 
-                return {
-                    'Node Type': node.type,
-                    'Node Description': node.description,
-                    Floor: node.floor,
-                    Suite: node.suite,
-                    'Node (lat,long)': `(${node.lat}, ${node.long})`,
-                    'Edge Connections (from -> to)': node.fromEdge
-                        .map((e) => `${e.fromNodeId}->${e.toNodeId}`)
-                        .join('; '),
-                    'Building Name': building?.name || '',
-                    'Building Address': building?.address || '',
-                    'Building Phone Number': building?.phoneNumber || '',
-                    'Department Name': department?.name || '',
-                    'Phone Number': department?.phoneNumber || '',
-                    'Department Description': department?.description || '',
-                    Services: serviceNames,
-                };
+                    // Get all edge connections (both from and to)
+                    const fromEdges = node.fromEdge.map((e) => `${e.fromNodeId}->${e.toNodeId}`);
+                    const toEdges = node.toEdge.map((e) => `${e.fromNodeId}->${e.toNodeId}`);
+                    const allEdges = [...fromEdges, ...toEdges].join('; ');
+
+                    return {
+                        'Node Type': node.type,
+                        'Node Description': node.description,
+                        Floor: location.floor.toString(),
+                        Suite: location.suite || '',
+                        'Node (lat,long)': `(${node.lat}, ${node.long})`,
+                        'Edge Connections (from -> to)': allEdges,
+                        'Building Name': building?.name || '',
+                        'Building Address': building?.address || '',
+                        'Building Phone Number': building?.phoneNumber || '',
+                        'Department Name': department?.name || '',
+                        'Phone Number': department?.phoneNumber || '',
+                        'Department Description': department?.description || '',
+                        Services: serviceNames,
+                    };
+                });
             });
 
-            //create the csv
+            // Create the CSV
             const csv = stringify(rows, { header: true });
-            //return the csv
             return csv;
         } catch (error) {
             const msg = error instanceof Error ? error.message : String(error);
