@@ -50,7 +50,7 @@ const ServiceRequest = () => {
         setSecurityRequests((prev) => [...prev, newRequest]);
     }
     return (
-        <div className="flex flex-col min-h-screen bg-white">
+        <div className="flex flex-col min-h-screen bg-[#f2f2f2]">
             <div className="flex-grow pt-20 pl-20 pr-20">
                 <Navbar />
                 <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>

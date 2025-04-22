@@ -63,11 +63,14 @@ export default function TransportRequestDisplay() {
 
     return (
         <div className="p-6 md:p-10 max-w-full overflow-x-auto bg-white rounded-xl shadow-md border border-gray-200">
+            <div>
+                <h1 className="text-3xl font-bold text-[#012D5A] mb-4 flex justify-center">Manage Service Requests</h1>
             <div className="flex justify-end">
             <Input className="w-40 hover:border-[#F6BD38] border-2 border-[#F6BD38] hover:border-4"
                    value={filter}
                    onChange={(e) => setFilter(e.target.value)}
                     placeholder="Filter"/>
+            </div>
             </div>
             <br />
         <Table className="min-w-[1000px] border border-gray-200 rounded-xl shadow-sm ">
@@ -82,7 +85,6 @@ export default function TransportRequestDisplay() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-
                     {filteredData?.map((req) => (
                         <>
                         <TableRow key={req.id} onClick={() => toggleRow(req.id)} className="odd:bg-white even:bg-gray-100 cursor-pointer hover:border-[#F6BD38] hover:border-4 transition">
@@ -96,66 +98,66 @@ export default function TransportRequestDisplay() {
                             <TableCell> {req.status} </TableCell>
                             </TableRow>
 
-                    {expandedRowId === req.id && (
-                        <TableRow className="bg-gray-100">
-                        <TableCell colSpan={9}>
-                    <div className="p-4 space-y-2 text-sm text-gray-700">
-                        {req.type === "EXTERNALTRANSPORTATION" && req.externalTransportation && (
-                            <div className="p-4 bg-white rounded-md shadow-md border border-gray-300 space-y-1">
-                                <p><strong>Employee:</strong> {req.fromEmployee}</p>
-                                <p><strong>Priority:</strong> {req.priority}</p>
-                                <p><strong>Status:</strong> {req.status}</p>
-                                <p><strong>Transport Type:</strong> {req.externalTransportation.transportType}</p>
-                                <p><strong>From:</strong> {req.externalTransportation.fromWhere}</p>
-                                <p><strong>To:</strong> {req.externalTransportation.toWhere}</p>
-                                <p><strong>Pickup Time:</strong> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
-                                <p><strong>Notes:</strong> {req.description}</p>
-                            </div>
-                        )}
-                        {req.type === "SECURITY" && req.security && (
-                                    <div>
-                                        <p><strong>Employee:</strong> {req.fromEmployee}</p>
-                                        <p><strong>Priority:</strong> {req.priority}</p>
-                                        <p><strong>Status:</strong> {req.status}</p>
-                                        <p><strong>Location:</strong> {req.security.location}</p>
-                                        <p><strong>Notes:</strong> {req.description}</p>
-                                    </div>
-                                )}
-                        {req.type === "EQUIPMENTDELIVERY" && req.equipmentDelivery && (
-                            <div>
-                                <p><strong>Employee:</strong> {req.fromEmployee}</p>
-                                <p><strong>Priority:</strong> {req.priority}</p>
-                                <p><strong>Status:</strong> {req.status}</p>
-                                <p><strong>deadline:</strong> {new Date(req.equipmentDelivery.pickupTime).toLocaleString()}</p>
-                                <p><strong>Equipment:</strong> {req.equipmentDelivery.equipments.join(", ")}</p>
-                                <p><strong>To Where:</strong> {req.equipmentDelivery.toWhere}</p>
-                                <p><strong>Notes:</strong> {req.description}</p>
-                            </div>
-                        )}
+                            {expandedRowId === req.id && (
+                                <TableRow className="bg-[#f9f9f9]">
+                                    <TableCell colSpan={5}>
+                                        <div className="p-6 bg-white border border-gray-200 rounded-md shadow-inner text-sm space-y-4">
+                                            <h3 className="text-lg font-semibold text-[#012D5A]">Request Details</h3>
+                                            <hr/>
 
-                        {req.type === "LANGUAGE" && req.language && (
-                            <div>
-                                <p><strong>Employee:</strong> {req.fromEmployee}</p>
-                                <p><strong>Priority:</strong> {req.priority}</p>
-                                <p><strong>Status:</strong> {req.status}</p>
-                                <p><strong>Language:</strong> {req.language.language}</p>
-                                <p><strong>Start Time:</strong> {new Date(req.language.startTime).toLocaleString()}</p>
-                                <p><strong>End Time:</strong> {new Date(req.language.endTime).toLocaleString()}</p>
-                                <p><strong>Language:</strong> {req.language.location}</p>
-                                <p><strong>Notes:</strong> {req.description}</p>
-                            </div>
-                        )}
-                    </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-800">
+                                                <p><span className="font-medium text-black">Employee:</span> {req.fromEmployee}</p>
+                                                <p><span className="font-medium text-black">Priority:</span> {req.priority}</p>
+                                                <p><span className="font-medium text-black">Status:</span> {req.status}</p>
+                                                <p><span className="font-medium text-black">Notes:</span> {req.description}</p>
 
+                                                {/* Transport Details */}
+                                                {req.type === "EXTERNALTRANSPORTATION" && req.externalTransportation && (
+                                                    <>
+                                                        <p><span className="font-medium text-black">Transport Type:</span> {req.externalTransportation.transportType}</p>
+                                                        <p><span className="font-medium text-black">From:</span> {req.externalTransportation.fromWhere}</p>
+                                                        <p><span className="font-medium text-black">To:</span> {req.externalTransportation.toWhere}</p>
+                                                        <p><span className="font-medium text-black">Pickup Time:</span> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
+                                                    </>
+                                                )}
 
-                        </TableCell>
-                </TableRow>
-                        )}
+                                                {/* Security Details */}
+                                                {req.type === "SECURITY" && req.security && (
+                                                    <>
+                                                        <p><span className="font-medium text-black">Location:</span> {req.security.location}</p>
+                                                    </>
+                                                )}
+
+                                                {/* Equipment Delivery Details */}
+                                                {req.type === "EQUIPMENTDELIVERY" && req.equipmentDelivery && (
+                                                    <>
+                                                        <p><span className="font-medium text-black">Deadline:</span> {new Date(req.equipmentDelivery.pickupTime).toLocaleString()}</p>
+                                                        <p><span className="font-medium text-black">Equipment:</span> {req.equipmentDelivery.equipments.join(", ")}</p>
+                                                        <p><span className="font-medium text-black">To:</span> {req.equipmentDelivery.toWhere}</p>
+                                                    </>
+                                                )}
+
+                                                {/* Language Request Details */}
+                                                {req.type === "LANGUAGE" && req.language && (
+                                                    <>
+                                                        <p><span className="font-medium text-black">Language:</span> {req.language.language}</p>
+                                                        <p><span className="font-medium text-black">Start:</span> {new Date(req.language.startTime).toLocaleString()}</p>
+                                                        <p><span className="font-medium text-black">End:</span> {new Date(req.language.endTime).toLocaleString()}</p>
+                                                        <p><span className="font-medium text-black">Location:</span> {req.language.location}</p>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+
                         </>
                     ))}
                     </TableBody>
                 </Table>
 
         </div>
+
     )
 }

@@ -74,179 +74,202 @@ import { z } from "zod"
         }
 
         return (
-            <Form {...form}>
-                <h2>Transportation Request Form</h2>
-                <p>Created by Matt Nickerson (Iteration 1)</p>
-                <br />
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="employeeName"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Employee Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Employee Name" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter employee name.
-                                </FormDescription>
-                            </FormItem>
+            <div className="max-w-3xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Transportation Request Form</h2>
+                    <p className="text-sm text-gray-600">Created by Matt Nickerson (Iteration 1)</p>
+                </div>
 
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="patientName"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Patient Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Patient Name" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter the patient name.
-                                </FormDescription>
-                            </FormItem>
-
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="priority"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Priority</FormLabel>
-                                <Select defaultValue={field.value} onValueChange={field.onChange} >
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="employeeName"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Employee Name</FormLabel>
                                     <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Priority..." />
-                                        </SelectTrigger>
+                                        <Input placeholder="Employee Name" {...field} className="w-full" />
                                     </FormControl>
-                                    <SelectContent>
-                                        {priority.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </FormItem>
-                        )}/>
+                                    <FormDescription>Enter employee name.</FormDescription>
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                    control={form.control}
-                    name="transportType"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Transport Type</FormLabel>
-                            <Select defaultValue={field.value} onValueChange={field.onChange} >
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Transport Type..." />
-                                </SelectTrigger>
-                            </FormControl>
-                                <SelectContent>
-                                    {transportTypes.map((type) => (
-                                        <SelectItem key={type} value={type}>
-                                            {type}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </FormItem>
-                    )}/>
-                    <FormField
-                        control={form.control}
-                        name="pickupTime"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>Pick Up Time/Date</FormLabel>
-                                <FormControl>
-                                    <ReactDatePicker
-                                        selected={field.value}
-                                        onChange={(date) => field.onChange(date)}
-                                        showTimeSelect
-                                        placeholder = "MM/DD/YYYY, HH:MM AM/PM"
-                                        dateFormat="Pp"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                        popperClassName="!z-50"
-                                        calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                        dayClassName={() => "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"}
-                                    />
-                                </FormControl>
-                                <FormDescription>Add the date and time of pickup.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="pickupTransport"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Pick Up</FormLabel>
-                                <Select defaultValue={field.value} onValueChange={field.onChange} >
+                        <FormField
+                            control={form.control}
+                            name="patientName"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Patient Name</FormLabel>
                                     <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pick up from..." />
-                                        </SelectTrigger>
+                                        <Input placeholder="Patient Name" {...field} className="w-full" />
                                     </FormControl>
-                                    <SelectContent>
-                                        {MGBHospitals.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </FormItem>
-                        )}/>
-                    <FormField
-                        control={form.control}
-                        name="dropoffTransport"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Drop off</FormLabel>
-                                <Select defaultValue={field.value} onValueChange={field.onChange} >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Drop off to..." />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {MGBHospitals.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </FormItem>
-                        )}/>
-                    <FormField
-                        control={form.control}
-                        name="additionalNotes"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Additional Notes</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="Placeholder"
-                                        className="resize-none"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormDescription>Add any additional notes.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                                    <FormDescription>Enter the patient name.</FormDescription>
+                                </FormItem>
+                            )}
+                        />
 
-                    <Button type="submit">Submit</Button>
-                </form>
-            </Form>
-        )
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="priority"
+                                render={({ field }) => (
+                                    <FormItem className="space-y-2">
+                                        <FormLabel>Priority</FormLabel>
+                                        <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Priority..." />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {priority.map((type) => (
+                                                    <SelectItem key={type} value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="transportType"
+                                render={({ field }) => (
+                                    <FormItem className="space-y-2">
+                                        <FormLabel>Transport Type</FormLabel>
+                                        <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Transport Type..." />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {transportTypes.map((type) => (
+                                                    <SelectItem key={type} value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <FormField
+                            control={form.control}
+                            name="pickupTime"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Pick Up Time/Date</FormLabel>
+                                    <FormControl>
+                                        <ReactDatePicker
+                                            selected={field.value}
+                                            onChange={(date) => field.onChange(date)}
+                                            showTimeSelect
+                                            placeholderText="MM/DD/YYYY, HH:MM AM/PM"
+                                            dateFormat="Pp"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+                                            popperClassName="!z-50"
+                                            calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
+                                            dayClassName={() =>
+                                                "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
+                                            }
+                                        />
+                                    </FormControl>
+                                    <FormDescription>Add the date and time of pickup.</FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="pickupTransport"
+                                render={({ field }) => (
+                                    <FormItem className="space-y-2">
+                                        <FormLabel>Pick Up</FormLabel>
+                                        <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Pick up from..." />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {MGBHospitals.map((type) => (
+                                                    <SelectItem key={type} value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="dropoffTransport"
+                                render={({ field }) => (
+                                    <FormItem className="space-y-2">
+                                        <FormLabel>Drop Off</FormLabel>
+                                        <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Drop off to..." />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {MGBHospitals.map((type) => (
+                                                    <SelectItem key={type} value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <FormField
+                            control={form.control}
+                            name="additionalNotes"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Additional Notes</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="Add any additional context, comments, or instructions..."
+                                            className="resize-none w-full min-h-[100px]"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormDescription>This field is optional.</FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="flex justify-center pt-4">
+                            <Button
+                                type="submit"
+                                className="px-6 py-2 text-white bg-[#012D5A] hover:bg-[#01498C] transition-colors rounded-xl shadow-md"
+                            >
+                                Submit Request
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </div>
+        );
+
+
     }
 
 
