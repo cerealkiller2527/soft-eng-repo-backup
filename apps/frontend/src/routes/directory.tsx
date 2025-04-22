@@ -12,20 +12,36 @@ import {
     AccordionTrigger,
 } from "../components/ui/accordion";
 
+const NodeTypeEnum = z.enum(['Entrance', 'Intermediary', 'Staircase', 'Elevator', 'Location', 'Help_Desk']);
+
+const NodeSchema = z.object({
+    id: z.number(),
+    type: NodeTypeEnum,
+    description: z.string(),
+    lat: z.number(),
+    long: z.number()
+}).nullable();
+
 const BuildingSchema = z.object({
+    id: z.number(),
     name: z.string(),
     address: z.string(),
     phoneNumber: z.string()
 });
 
 const LocationSchema = z.object({
-    suite: z.string(),
+    id: z.number(),
     floor: z.number(),
-    building: BuildingSchema
+    suite: z.string().nullable(),
+    buildingId: z.number(),
+    building: BuildingSchema,
+    nodeID: z.number().nullable(),
+    node: NodeSchema
 });
 
 const ServiceSchema = z.object({
     service: z.object({
+        id: z.number(),
         name: z.string()
     })
 });
@@ -33,10 +49,10 @@ const ServiceSchema = z.object({
 const DepartmentSchema = z.object({
     id: z.number(),
     name: z.string(),
-    description: z.string().optional(),
+    description: z.string().nullable(),
     phoneNumber: z.string(),
     DepartmentServices: z.array(ServiceSchema),
-    node: z.array(LocationSchema)
+    Location: z.array(LocationSchema)
 });
 
 type Department = z.infer<typeof DepartmentSchema>;
@@ -54,6 +70,26 @@ const DEPARTMENT_CATEGORIES = {
     'Other Services': [] // For departments that don't match other categories
 } as const;
 
+const LoadingSpinner: React.FC = () => (
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+);
+
+const ErrorMessage: React.FC<{ error?: Error; validationError?: z.ZodError }> = ({ error, validationError }) => (
+    <div className="text-center py-8">
+        <div className="text-red-600 mb-4">
+            {error ? 'Failed to load departments. Please try again later.' : 'Data validation error. Please contact support.'}
+        </div>
+        {validationError && (
+            <div className="text-sm text-gray-600">
+                <p>Validation errors:</p>
+                <pre className="mt-2 p-2 bg-gray-100 rounded overflow-auto">
+                    {JSON.stringify(validationError.errors, null, 2)}
+                </pre>
+            </div>
+        )}
+    </div>
+);
+
 const DirectoryPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const trpc = useTRPC();
@@ -61,27 +97,40 @@ const DirectoryPage: React.FC = () => {
         trpc.directories.getAllDepartments.queryOptions()
     );
 
-    // Validate departments data
-    const departmentsResult = z.array(DepartmentSchema).safeParse(departmentsData);
+    const departmentsResult = departmentsData ? z.array(DepartmentSchema).safeParse(departmentsData) : { success: false, error: null };
     const departments = departmentsResult.success ? departmentsResult.data : null;
-    const hasError = !departmentsResult.success || error;
 
-    if (isLoading || hasError) {
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-white pt-20">
+                <Navbar />
+                <main className="max-w-4xl mx-auto p-4">
+                    <LoadingSpinner />
+                </main>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (error || !departmentsResult.success) {
+        return (
+            <div className="min-h-screen bg-white pt-20">
+                <Navbar />
+                <main className="max-w-4xl mx-auto p-4">
+                    <ErrorMessage error={error} validationError={departmentsResult.error} />
+                </main>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (!departments) {
         return (
             <div className="min-h-screen bg-white pt-20">
                 <Navbar />
                 <main className="max-w-4xl mx-auto p-4">
                     <div className="text-center py-8">
-                        {isLoading ? (
-                            "Loading directory information..."
-                        ) : (
-                            <span className="text-red-500">
-                                {!departmentsResult.success ? 
-                                    "Invalid departments data received" : 
-                                    "Error loading departments"
-                                }
-                            </span>
-                        )}
+                        <p className="text-gray-600">No departments found.</p>
                     </div>
                 </main>
                 <Footer />
@@ -105,7 +154,7 @@ const DirectoryPage: React.FC = () => {
         }) || [];
         
         if (depts.length > 0) {
-            acc[category] = depts;
+            acc[category as keyof typeof DEPARTMENT_CATEGORIES] = depts;
         }
         return acc;
     }, {} as Record<keyof typeof DEPARTMENT_CATEGORIES, Department[]>);
