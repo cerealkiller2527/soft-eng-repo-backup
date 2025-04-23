@@ -23,7 +23,9 @@ export default function DashboardButton() {
                 <CardFooter className="pt-0">
                     <Link
                         to="/requestdashboard"
-                        className="mt-2 text-center w-full py-2 px-4 font-medium rounded-lg bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] border-2 border-[#012D5A] transition"
+                        className="w-full bg-[#012D5A] text-white text-center font-medium py-2 px-4 rounded-md
+                            hover:text-[#012D5A] hover:bg-white
+                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                     >
                         Open Dashboard
                     </Link>

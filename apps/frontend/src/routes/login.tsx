@@ -89,7 +89,9 @@ const Login: React.FC = () => {
                     />
                     <Button
                         onClick={() => checkLogin.mutate({ username, password })}
-                        className="w-full bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] border border-transparent hover:border-[#012D5A] transition-all"
+                        className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
+                            hover:text-[#012D5A] hover:bg-white
+                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                     >
                         LOG IN
                     </Button>
