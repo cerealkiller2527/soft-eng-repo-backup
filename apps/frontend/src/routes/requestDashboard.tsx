@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.tsx";
 import { useQuery } from '@tanstack/react-query';
 import {useTRPC} from "../database/trpc.ts";
 import TransportRequestDisplay from "../components/allServiceRequests/TransportRequestDisplay.tsx";
+import Footer from "@/components/Footer.tsx"
 
 
 const requestDashboard = () => {
@@ -29,7 +30,11 @@ const requestDashboard = () => {
                 <TransportRequestDisplay />
                 </div>
             </div>
+            <div className="fixed bottom-0 left-0 right-0 z-20">
+                <Footer />
+            </div>
         </div>
+
     );
 };
 
