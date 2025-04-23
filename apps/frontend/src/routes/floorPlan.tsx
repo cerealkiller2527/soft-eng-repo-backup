@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
 import {useMutation, useQuery} from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
+import { queryClient } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
@@ -185,14 +186,16 @@ const FloorPlan = () => {
 
 
         if (form.location && mapInstance.current && directionsRenderer.current) {
+            queryClient.invalidateQueries();
+
             const directionsService = new google.maps.DirectionsService();
-            let address = {lat: 42.32629494233723, lng: -71.14950206654193};
+            let address = {lat: 42.3262940433051, lng: -71.1495987024141};
             if(form.building ==  "20 Patriot Place"){
                 address = {lat: 42.09263772658629, lng: -71.26603830263363};
             }else if(form.building ==  "22 Patriot Place"){
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }else if(form.building ==  "Faulkner Hospital"){
-                address = {lat: 42.30163258195755, lng: -71.12812875693645};
+                address = {lat: 42.30118405913063, lng: -71.12763594431938};
             }
             directionsService.route(
                 {
@@ -247,14 +250,14 @@ const FloorPlan = () => {
         const building = form?.building ?? "Default";
         const buildingCenter = buildingCenters[building] ?? buildingCenters["Default"];
 
-        const targetCenter = centerMode === "building"
+        const targetCenter = centerMode === "Building"
             ? buildingCenter
             : pathCenter ?? buildingCenter;
 
 
         mapInstance.current?.setCenter(targetCenter);
 
-        if (centerMode === "building") {
+        if (centerMode === "Building") {
             mapInstance.current?.setZoom(18); // zoom in when showing the building
         }else{
             mapInstance.current?.setZoom(10);
@@ -280,8 +283,12 @@ const FloorPlan = () => {
                 />
                 <div className="absolute top-5 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
                     <InstructionsBox key={instructions.join()} instructions={instructions} />
+
+                </div>
+                <div className="absolute top-55 right-9 z-10 p-4 rounded-lg shadow-md w-80 h-64">
                     <DirectionsButton directions={instructions} />
                 </div>
+
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
                     <LocationRequestForm onSubmit={(form) => setForm(form)} />

@@ -7,7 +7,7 @@ export function DirectionsButton({ directions }: { directions: string[] }) {
     function handleAddWithTTS() {
         setInstructions((prev) => {
             const updated = [...prev, ...directions];
-
+            console.log("sounds");
             directions.forEach((dir) => {
                 const utterance = new SpeechSynthesisUtterance(dir);
                 const voices = window.speechSynthesis.getVoices();
@@ -25,7 +25,7 @@ export function DirectionsButton({ directions }: { directions: string[] }) {
     return (
         <Button onClick={handleAddWithTTS} className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
                     hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid">
-            Speak & Add Directions
+            TTS
         </Button>
     );
 }
