@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
-import { useMutation } from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
@@ -101,7 +101,7 @@ const FloorPlan = () => {
 
         polyline.setMap(mapInstance.current);
         polylineRef.current = polyline;
-
+        console.log("polyline rendered")
     }, [pathCoords, imageIndex]);
 
     useEffect(() => {
@@ -123,43 +123,38 @@ const FloorPlan = () => {
         });
     }, [imageIndex]);
 
-    const search = useMutation(
-        trpc.search.getPath.mutationOptions({
-            onSuccess: (data: pNodeDTO[]) => {
-
-                console.log(data);
-                const formattedCoords = data.map((node) => ({
-                    latitude: node.longitude,
-                    longitude: node.latitude,
-                    floor: node.floor
-                }));
-
-                // const formattedCoords = data.map(([x, y]) => ({ x, y }));
-                // setPathCoords(formattedCoords);
-
-                setPathCoords(formattedCoords)
-
-            },
-            onError: (error) => {
-                console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
-            },
-        })
-    );
 
 
+
+
+
+    const search = useQuery(trpc.search.getPath.queryOptions({
+        buildingName: form?.building ??  "",
+        endSuite: form?.destination ?? "",
+        startSuite: "ASDF",
+        driving: true,
+        algorithm: "BFS",
+
+    }))
+
+
+    useEffect(() => {
+        if (search.data) {
+            console.log("Search results:", search.data);
+            const formattedCoords = search.data.map((node) => ({
+                latitude: node.longitude,
+                longitude: node.latitude,
+                floor: node.floor,
+            }));
+            setPathCoords(formattedCoords);
+        }
+
+    }, [search.status]);
 
 
     useEffect(() => {
         if (!form) return;
 
-        search.mutate({
-            buildingName: form.building,
-            endSuite: form.destination,
-            startSuite: "ASDF",
-            driving: true,
-            algorithm: "BFS"
-        });
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -204,8 +199,6 @@ const FloorPlan = () => {
                         const leg = result.routes[0].legs[0];
                         const Mapsinstructions = leg.steps.map(step => step.instructions);
                         setInstructions(Mapsinstructions);
-                        console.log(instructions);
-                        console.log(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
 
