@@ -169,14 +169,18 @@ export const mapEditorRouter = t.router({
 
         const idMapping: [number, number][] = [];
 
+        const proximityThreshold = 0.0001;
+
         await Promise.all(
           nodes.map(async (node) => {
+            const parsedType = typeEnum.parse(node.type);
+
             const createdNode = await prismaClient.node.create({
               data: {
                 description: node.description,
                 lat: node.latitude,
                 long: node.longitude,
-                type: typeEnum.parse(node.type),
+                type: parsedType,
               },
             });
 
@@ -190,17 +194,67 @@ export const mapEditorRouter = t.router({
             });
 
             idMapping.push([node.id, createdNode.id]);
-            console.log(
-              node.id,
-              createdNode.id,
-              "idmapping",
-              floor,
-              buildingId,
-            );
+
+            if (parsedType === "Staircase" || parsedType === "Elevator") {
+              // Query DB for existing nearby nodes of the same type
+              const nearbySameTypeNodes = await prismaClient.node.findMany({
+                where: {
+                  type: parsedType,
+                  NOT: { id: createdNode.id },
+                  lat: {
+                    gte: createdNode.lat - proximityThreshold,
+                    lte: createdNode.lat + proximityThreshold,
+                  },
+                  long: {
+                    gte: createdNode.long - proximityThreshold,
+                    lte: createdNode.long + proximityThreshold,
+                  },
+                },
+              });
+
+              for (const otherNode of nearbySameTypeNodes) {
+                // Check if edge already exists (in either direction)
+                const existingEdge = await prismaClient.edge.findFirst({
+                  where: {
+                    OR: [
+                      {
+                        fromNodeId: createdNode.id,
+                        toNodeId: otherNode.id,
+                      },
+                      {
+                        fromNodeId: otherNode.id,
+                        toNodeId: createdNode.id,
+                      },
+                    ],
+                  },
+                });
+
+                if (!existingEdge) {
+                  await prismaClient.edge.create({
+                    data: {
+                      fromNodeId: createdNode.id,
+                      toNodeId: otherNode.id,
+                    },
+                  });
+
+                  await prismaClient.edge.create({
+                    data: {
+                      fromNodeId: otherNode.id,
+                      toNodeId: createdNode.id,
+                    },
+                  });
+
+                  console.log(
+                    `Edge created between ${createdNode.id} and ${otherNode.id}`,
+                  );
+                }
+              }
+            }
 
             return createdNode;
           }),
         );
+
         console.log("Created ", nodes.length, " nodes in the database");
         //make node creation/mapping for neg ids
         //if from or to node in edge is negative, use lookuptable to map to new id
