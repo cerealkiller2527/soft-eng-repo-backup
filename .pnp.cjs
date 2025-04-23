@@ -63,7 +63,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["@hookform/resolvers", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:5.0.1"],\
-          ["@prisma/client", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:6.6.0"],\
           ["@radix-ui/react-alert-dialog", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:1.1.10"],\
           ["@radix-ui/react-icons", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:1.3.2"],\
           ["@react-google-maps/api", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:2.20.6"],\
@@ -1307,23 +1306,6 @@ const RAW_RUNTIME_STATE =
           ["@prisma/client", "npm:6.6.0"]\
         ],\
         "linkType": "SOFT"\
-      }],\
-      ["virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:6.6.0", {\
-        "packageLocation": "./.yarn/unplugged/@prisma-client-virtual-cf9e02c316/node_modules/@prisma/client/",\
-        "packageDependencies": [\
-          ["@prisma/client", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:6.6.0"],\
-          ["@types/prisma", null],\
-          ["@types/typescript", null],\
-          ["prisma", null],\
-          ["typescript", "patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>::version=5.8.2&hash=5786d5"]\
-        ],\
-        "packagePeers": [\
-          "@types/prisma",\
-          "@types/typescript",\
-          "prisma",\
-          "typescript"\
-        ],\
-        "linkType": "HARD"\
       }],\
       ["virtual:fe27c481e11f854f2aaf80c4760560439cddfbeba750e60d2e16a63e1f6a6a95afa15077c31c3bb85454931e3cde1f859cec18d092f611e16a968032948f7247#npm:6.6.0", {\
         "packageLocation": "./.yarn/unplugged/@prisma-client-virtual-f2b6fdfdde/node_modules/@prisma/client/",\
@@ -10337,7 +10319,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["softeng-startercode-d25", "workspace:."],\
           ["@hookform/resolvers", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:5.0.1"],\
-          ["@prisma/client", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:6.6.0"],\
           ["@radix-ui/react-alert-dialog", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:1.1.10"],\
           ["@radix-ui/react-icons", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:1.3.2"],\
           ["@react-google-maps/api", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:2.20.6"],\
