@@ -6,7 +6,6 @@ type InstructionsBoxProps = {
 };
 
 const InstructionsBox = ({ instructions }: { instructions: string[] }) => {
-    console.log("InstructionsBox rendered with:", instructions);
 
     return (
         <ScrollArea className="max-h-48 overflow-auto">
