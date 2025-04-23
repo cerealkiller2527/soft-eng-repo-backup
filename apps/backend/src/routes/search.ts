@@ -33,12 +33,31 @@ export const searchRouter = t.router({
 
             const nodePath = await s.path(input.buildingName, endNode!.description, input.driving);
 
+            const nodeIds = nodePath.map(node => node.id);
+
+            const locations = await PrismaClient.location.findMany({
+                where: {
+                    nodeID: { in: nodeIds },
+                },
+                select: {
+                    nodeID: true,
+                    floor: true,
+                },
+            });
+
+            const floorMap = new Map<number, number>();
+            locations.forEach(location => {
+                if (location.nodeID !== null) {
+                    floorMap.set(location.nodeID, location.floor);
+                }
+            });
+
             const pNodeDTOS: pNodeDTO[] = nodePath.map((node) => ({
                 id: node.id,
                 description: node.description,
                 latitude: node.latitude,
                 longitude: node.longitude,
-                floor: node.floor,
+                floor: floorMap.get(node.id) ?? -1,
                 neighbors: node.neighbors.map((neighbor) => ({
                     id: neighbor.id,
                 })),
