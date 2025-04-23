@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
-import { useMutation } from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
+import {DirectionsButton} from "@/components/DirectionsButton.tsx";
 
 
 import {pNodeDTO} from "../../../../share/types.ts";
@@ -101,7 +102,7 @@ const FloorPlan = () => {
 
         polyline.setMap(mapInstance.current);
         polylineRef.current = polyline;
-
+        console.log("polyline rendered")
     }, [pathCoords, imageIndex]);
 
     useEffect(() => {
@@ -123,43 +124,39 @@ const FloorPlan = () => {
         });
     }, [imageIndex]);
 
-    const search = useMutation(
-        trpc.search.getPath.mutationOptions({
-            onSuccess: (data: pNodeDTO[]) => {
-
-                console.log(data);
-                const formattedCoords = data.map((node) => ({
-                    latitude: node.longitude,
-                    longitude: node.latitude,
-                    floor: node.floor
-                }));
-
-                // const formattedCoords = data.map(([x, y]) => ({ x, y }));
-                // setPathCoords(formattedCoords);
-
-                setPathCoords(formattedCoords)
-
-            },
-            onError: (error) => {
-                console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
-            },
-        })
-    );
 
 
+
+
+
+    const search = useQuery(trpc.search.getPath.queryOptions({
+        buildingName: form?.building ??  "",
+        endSuite: form?.destination ?? "",
+        startSuite: "ASDF",
+        driving: true,
+        algorithm: "BFS",
+    }))
+
+
+    useEffect(() => {
+        if (search.data) {
+            console.log("Search results:", search.data.path);
+            const formattedCoords = search.data.path.map((node) => ({
+                latitude: node.longitude,
+                longitude: node.latitude,
+                floor: node.floor,
+            }));
+            setPathCoords(formattedCoords);
+            setInstructions((prev) => [...prev, ...search.data.directions]);
+
+        }
+
+    }, [search.status]);
 
 
     useEffect(() => {
         if (!form) return;
 
-        search.mutate({
-            buildingName: form.building,
-            endSuite: form.destination,
-            startSuite: "ASDF",
-            driving: true,
-            algorithm: "BFS"
-        });
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -186,7 +183,7 @@ const FloorPlan = () => {
             const directionsService = new google.maps.DirectionsService();
             let address = {lat: 42.32629494233723, lng: -71.14950206654193};
             if(form.building ==  "20 Patriot Place"){
-                address = {lat: 42.09251994541246, lng: -71.26653442087988};
+                address = {lat: 42.09263772658629, lng: -71.26603830263363};
             }else if(form.building ==  "22 Patriot Place"){
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }else if(form.building ==  "Faulkner Hospital"){
@@ -204,8 +201,6 @@ const FloorPlan = () => {
                         const leg = result.routes[0].legs[0];
                         const Mapsinstructions = leg.steps.map(step => step.instructions);
                         setInstructions(Mapsinstructions);
-                        console.log(instructions);
-                        console.log(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
 
@@ -239,6 +234,7 @@ const FloorPlan = () => {
                 />
                 <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
                     <InstructionsBox key={instructions.join()} instructions={instructions} />
+                    <DirectionsButton directions={instructions} />
                 </div>
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">

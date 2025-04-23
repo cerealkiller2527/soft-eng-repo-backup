@@ -68,7 +68,7 @@ export const overlays: OverlayImage[][] = [
                 north: 42.09310,
                 south: 42.09224,
                 east: -71.26652,
-                west: -71.26756,
+                west: -71.26634,
             },
         },
 
@@ -79,7 +79,7 @@ export const overlays: OverlayImage[][] = [
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
-                east: -71.26652,
+                east: -71.26634,
                 west: -71.26756,
             },
         },

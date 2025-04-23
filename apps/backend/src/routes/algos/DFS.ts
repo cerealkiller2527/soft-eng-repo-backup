@@ -3,8 +3,9 @@ import { pNode } from "./pNode.ts";
 
 export class DFS implements Algorithm {
   async findPath(startDesc: string, endDesc: string): Promise<pNode[]> {
-    const startNode: pNode = await Algorithm.getNodeFromDescription(startDesc);
-    const endNode: pNode = await Algorithm.getNodeFromDescription(endDesc);
+    console.log(startDesc, endDesc);
+    const startNode: pNode = await Algorithm.getLocationFromSuite(startDesc);
+    const endNode: pNode = await Algorithm.getLocationFromSuite(endDesc);
 
     if (startNode.id === -1) {
       console.error("start node not found, no node has given description");
@@ -17,7 +18,7 @@ export class DFS implements Algorithm {
       console.error("no path found");
       return [startNode];
     } else {
-      console.log("path found", path);
+      console.log("path found");
       return path;
     }
   }
