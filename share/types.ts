@@ -3,5 +3,6 @@ export type pNodeDTO = {
     description: string;
     longitude: number;
     latitude: number;
+    floor: number;
     neighbors: { id: number }[]; // Only include IDs of neighbors
 };

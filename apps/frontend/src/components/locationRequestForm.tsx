@@ -27,11 +27,14 @@ export default function LocationRequestForm({ onSubmit }) {
 
     useEffect(() => {
         if (nodesQuery.data) {
-            const locations = nodesQuery.data
-                .filter((node) => node.type === "Location" && node.description)
-                .map((node) => node.description);
+            // const locations = nodesQuery.data
+            //     .filter((node) => node.type === "Location" && node.description)
+            //     .map((node) => node.description);
 
-            SetMGBHospitals(locations);
+            const suites = nodesQuery.data
+                // .filter((suite) => )
+
+            SetMGBHospitals(suites);
         }
     }, [form.building, nodesQuery.status]);
 
