@@ -2,11 +2,8 @@ import  { useState } from "react";
 import { useLocation } from "react-router-dom";
 import React, {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from '@tanstack/react-query';
 import { useTRPC, trpcClient } from '../database/trpc.ts';
-import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
 import { SignIn } from "@clerk/clerk-react";
-import { isClerkAPIResponseError } from "@clerk/clerk-js";
 
 const Login: React.FC = () => {
 
@@ -21,11 +18,6 @@ const Login: React.FC = () => {
 
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
-
-    // Clerk Auth
-    const { isLoaded: signInLoaded, signIn } = useSignIn();
-    const { isLoaded: signUpLoaded, signUp, setActive } = useSignUp();
-    const { getToken } = useAuth();
 
     const from = location.state?.from?.pathname || '/Directory';
 
@@ -110,7 +102,7 @@ const Login: React.FC = () => {
                         <>
                             <SignIn
                                 forceRedirectUrl="/directory"
-                                signUpUrl={undefined}
+                                signUpUrl={null}
                                 appearance={{
                                     elements: {
                                         formButtonPrimary:
