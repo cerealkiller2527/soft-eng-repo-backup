@@ -7,10 +7,10 @@ const Footer = () => {
                 <div>
             <p className="text-sm">&copy; 2025 Brigham and Women's Hospital. All rights reserved.</p>
             <div className="flex space-x-4 mt-2">
-                <a href="/privacy" className="hover:underline text-sm">Privacy Policy</a>
-                <a href="/privacy" className="hover:underline text-sm">Patient Privacy Notice</a>
-                <a href="/terms" className="hover:underline text-sm">Terms of Service</a>
-                <a href="/contact" className="hover:underline text-sm">Contact Us</a>
+                <a href="/privacy" className="hover:underline hover:decoration-[#F6BD38] text-sm">Privacy Policy</a>
+                <a href="/privacy" className="hover:underline hover:decoration-[#F6BD38] text-sm">Patient Privacy Notice</a>
+                <a href="/terms" className="hover:underline hover:decoration-[#F6BD38] text-sm">Terms of Service</a>
+                <a href="/contact" className="hover:underline hover:decoration-[#F6BD38] text-sm">Contact Us</a>
             </div>
             </div>
                 <a href='/'>

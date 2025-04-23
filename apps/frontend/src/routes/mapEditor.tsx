@@ -464,9 +464,6 @@ const MapEditor = () => {
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     );
 };
