@@ -97,7 +97,7 @@ export const mapEditorRouter = t.router({
         .input(
             z.object({
                 buildingId: z.number(),
-                floor: z.number(),
+                floor: z.number()
                 nodes: z.array(
                     z.object({
                         id: z.number(),
