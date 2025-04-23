@@ -154,9 +154,11 @@ const FloorPlan = () => {
         if (!form) return;
 
         search.mutate({
-            endDesc: form.destination,
-            location: form.building,
-            driving: driving
+            buildingName: form.building,
+            endSuite: form.destination,
+            startSuite: "ASDF",
+            driving: true,
+            algorithm: "BFS"
         });
 
         let travelMode = google.maps.TravelMode.DRIVING;
