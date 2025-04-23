@@ -35,11 +35,11 @@
         "eslint-config-custom": "*",
         "prettier": "*",
         "prettier-config-custom": "*",
-        "prisma": "6.5.0",
+        "prisma": "^6.6.0",
         "ts-config-custom": "*"
     },
     "dependencies": {
-        "@prisma/client": "6.5.0",
+        "@prisma/client": "^6.6.0",
         "dotenv": "*",
         "dotenv-cli": "*",
         "ts-node": "^10.9.2",
