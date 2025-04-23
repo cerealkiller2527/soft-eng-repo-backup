@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import Layout from "../components/Layout";
 import { Button } from '@/components/ui/button';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import {Table, TableHeader, TableRow, TableHead, TableBody, TableCell} from '@/components/ui/table';
 import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
@@ -83,7 +83,7 @@ export default function CSV() {
             onSuccess: () => {
                 setMessage('Import successful');
             },
-            onError: (error) => {
+            onError: (error: unknown) => {
                 setMessage(error instanceof Error ? error.message : 'Import failed');
             },
         })
@@ -111,7 +111,7 @@ export default function CSV() {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         },
-        onError: (error) => {
+        onError: (error: unknown) => {
             setMessage(error instanceof Error ? error.message : 'Export failed');
         },
     });
@@ -357,7 +357,7 @@ export default function CSV() {
                                         className="w-full px-3 py-2 border rounded-md"
                                     >
                                         <option value="">All Types</option>
-                                        {nodeType.map(type => (
+                                        {Object.values(nodeType).map(type => (
                                             <option key={type} value={type}>{type}</option>
                                         ))}
                                     </select>
