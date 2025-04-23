@@ -27,11 +27,6 @@ export const searchRouter = t.router({
             suite: input.endSuite,
           },
         });
-        const endNode = await PrismaClient.node.findFirst({
-          where: {
-            id: endLocation!.nodeID ?? -1,
-          },
-        });
 
         const s = new SearchSystem(new BFS());
 
@@ -41,7 +36,7 @@ export const searchRouter = t.router({
 
         const nodePath = await s.path(
           input.buildingName,
-          endNode!.description,
+          input.endSuite,
           input.driving,
         );
 
@@ -146,7 +141,10 @@ export const searchRouter = t.router({
 
         const dirs = getWalkingDirections(pNodeDTOS);
 
-        return pNodeDTOS;
+        return {
+          path: pNodeDTOS,
+          directions: dirs,
+        };
       } catch (error) {
         console.error("Error finding path:", error);
         throw new TRPCError({

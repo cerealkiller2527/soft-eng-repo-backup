@@ -18,21 +18,20 @@ export class SearchSystem {
     let parkingDescription: string;
     let parkingPath: pNode[] = [];
     let parkingReturnPath: pNode[] = [];
+    console.log(location, endDescription, driving);
 
-    // find location
     if (location === "Chestnut Hill Medical Center" || location == "chestnut") {
-      startDescription = "1drop off";
-      parkingDescription = "1parking";
-    } else if (
-      location === "20 Patriot Place" ||
-      location === "22 Patriot Place" ||
-      location === "patriot place"
-    ) {
-      startDescription = "120/122drop off";
-      parkingDescription = "120/122parking";
+      startDescription = "Chestnut Drop Off";
+      parkingDescription = "Chestnut Parking";
+    } else if (location === "20 Patriot Place") {
+      startDescription = "20 Patriot Dropoff";
+      parkingDescription = "20 Patriot Parking";
+    } else if (location === "22 Patriot Place") {
+      startDescription = "22 Patriot Dropoff";
+      parkingDescription = "22 Patriot Parking";
     } else if (location === "Faulkner Hospital" || location === "faulkner") {
-      startDescription = "f1drop off";
-      parkingDescription = "f1parking";
+      startDescription = "Faulkner Drop Off";
+      parkingDescription = "Faulkner Parking";
     } else {
       console.error("Unrecognized location", location);
       return [new pNode(-1)];
@@ -44,7 +43,6 @@ export class SearchSystem {
         startDescription,
         parkingDescription,
       );
-      parkingReturnPath = parkingPath.reverse();
     }
 
     const path = await this.algorithm.findPath(
@@ -52,6 +50,6 @@ export class SearchSystem {
       endDescription,
     );
 
-    return [...parkingPath, ...parkingReturnPath, ...path];
+    return [...parkingPath.reverse(), ...path];
   }
 }

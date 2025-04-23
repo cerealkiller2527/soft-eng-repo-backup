@@ -32,6 +32,7 @@ export default function LocationRequestForm({ onSubmit }) {
             //     .map((node) => node.description);
 
             const suites = nodesQuery.data
+            console.log(suites)
                 // .filter((suite) => )
 
             SetMGBHospitals(suites);

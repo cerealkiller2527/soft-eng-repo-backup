@@ -21,4 +21,26 @@ export abstract class Algorithm {
       return new pNode(node.id, node.lat, node.long, node.description, 0);
     }
   }
+
+  static async getLocationFromSuite(suite: string): Promise<pNode> {
+    /**
+     * queries database for node with given description
+     * @param description string that matches a description of a node in the database
+     * @return a new pNode with all fields filled, or a node with id -1 if no node was found
+     */
+
+    const location = await PrismaClient.location.findFirst({
+      where: { suite: suite },
+      include: { node: true },
+    });
+
+    const node = location?.node;
+    console.log("LOCATION AND NODE DEBUG:", location, node);
+
+    if (!node) {
+      return new pNode(-1);
+    } else {
+      return new pNode(node.id, node.lat, node.long, node.description, 0);
+    }
+  }
 }

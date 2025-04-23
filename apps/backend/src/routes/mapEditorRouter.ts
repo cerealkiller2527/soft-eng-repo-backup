@@ -123,15 +123,6 @@ export const mapEditorRouter = t.router({
       console.log(floor);
       try {
         // get locations of nodes to delete
-        const locations = await PrismaClient.location.findMany({
-          where: {
-            buildingId: input.buildingId,
-            floor: input.floor,
-          },
-          include: {
-            node: true,
-          },
-        });
 
         // get nodes to delete from locations
         const location = { buildingId: input.buildingId, floor: input.floor };
@@ -159,6 +150,19 @@ export const mapEditorRouter = t.router({
           "Deleted ",
           deletedNodesCount.count,
           " nodes from the database",
+        );
+
+        const locations = await PrismaClient.location.deleteMany({
+          where: {
+            buildingId: input.buildingId,
+            floor: input.floor,
+            departmentId: null,
+          },
+        });
+        console.log(
+          "Deleted ",
+          locations.count,
+          " locations from the database",
         );
 
         // create nodes in database

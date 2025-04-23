@@ -134,19 +134,20 @@ const FloorPlan = () => {
         startSuite: "ASDF",
         driving: true,
         algorithm: "BFS",
-
     }))
 
 
     useEffect(() => {
         if (search.data) {
-            console.log("Search results:", search.data);
-            const formattedCoords = search.data.map((node) => ({
+            console.log("Search results:", search.data.path);
+            const formattedCoords = search.data.path.map((node) => ({
                 latitude: node.longitude,
                 longitude: node.latitude,
                 floor: node.floor,
             }));
             setPathCoords(formattedCoords);
+            setInstructions((prev) => [...prev, ...search.data.directions]);
+
         }
 
     }, [search.status]);
@@ -181,7 +182,7 @@ const FloorPlan = () => {
             const directionsService = new google.maps.DirectionsService();
             let address = {lat: 42.32629494233723, lng: -71.14950206654193};
             if(form.building ==  "20 Patriot Place"){
-                address = {lat: 42.09251994541246, lng: -71.26653442087988};
+                address = {lat: 42.09263772658629, lng: -71.26603830263363};
             }else if(form.building ==  "22 Patriot Place"){
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }else if(form.building ==  "Faulkner Hospital"){

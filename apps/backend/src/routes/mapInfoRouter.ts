@@ -24,7 +24,12 @@ export const mapInfoRouter = t.router({
         const locations = await PrismaClient.location.findMany({
           where: {
             buildingId: building.id,
-            nodeID: {not: null}
+            nodeID: { not: null },
+            node: {
+              is: {
+                type: "Location",
+              },
+            },
           },
         });
         return [
