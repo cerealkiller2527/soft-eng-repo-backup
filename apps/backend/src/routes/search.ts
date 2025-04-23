@@ -6,12 +6,13 @@ import { SearchSystem } from './algos/SearchSystem.ts';
 import { pNodeDTO } from '../../../../share/types.ts';
 import { pNode } from '../../../backend/src/routes/algos/pNode.ts';
 import PrismaClient from "../bin/prisma-client.ts";
+import {DFS} from "./algos/DFS.ts";
 
 export const t = initTRPC.create();
 
 export const searchRouter = t.router({
 
-    getPath: t.procedure.input(z.object({buildingName: z.string(), endSuite: z.string(), startSuite: z.string(), driving: z.boolean()})).query(async ({ input }) => {
+    getPath: t.procedure.input(z.object({buildingName: z.string(), endSuite: z.string(), startSuite: z.string(), driving: z.boolean(), algorithm: z.string()})).query(async ({ input }) => {
         try {
             const endLocation = await PrismaClient.location.findFirst({
                 where: {
@@ -25,6 +26,10 @@ export const searchRouter = t.router({
             })
 
             const s = new SearchSystem(new BFS());
+
+            if(input.algorithm === "DFS"){
+                s.changeAlgorithm(new DFS())
+            }
 
             const nodePath = await s.path(input.buildingName, endNode!.description, input.driving);
 
