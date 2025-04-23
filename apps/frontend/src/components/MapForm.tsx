@@ -1,10 +1,8 @@
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-
-import { Button } from "@/components/ui/button";
+"use client"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -13,42 +11,37 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 import {
     Select,
-    SelectContent,
-    SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
-export const formSchema = z.object({
-    building: z.string(),
-    floor: z.string(),
-});
+const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"])
+const formSchema = z.object({
+    suite: z.string(),
+    type: typeEnum,
+    description: z.string(),
+})
+type FormValues = z.infer<typeof formSchema>
 
-const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill", "Faulkner Hospital"];
-const floors = ["1", "2", "3", "4"];
-
-export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z.infer<typeof formSchema>) => void }) {
+export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) => void }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            building: "",
-            floor: "",
-        },
-    });
-
-    useEffect(() => {
-        // Fetch buildings/floors from backend in future
-    }, []);
-
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        if (!values.building || !values.floor) {
-            toast.error("Please select both a building and a floor.");
-            return;
+            suite: "",
+            type: "Entrance",
+            description: "",
         }
+    })
 
+    const handleSubmit = (values: FormValues) => {
         try {
             toast(
                 <div className="rounded-md bg-slate-950 p-4">
@@ -62,42 +55,32 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
         }
     };
 
-    {/* Pasting this back in from my other branch, hope this works */}
     return (
-        <div className="bg-white rounded-lg shadow-md p-6 w-64">
+        <div className="bg-white rounded-lg shadow-md p-6">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 max-w-md mx-auto">
                     <h2 className="text-2xl font-bold text-center text-[#012D5A] mb-6">
-                        Map Editor Selection
+                        Suite Request Form
                     </h2>
 
                     <FormField
                         control={form.control}
-                        name="building"
+                        name="suite"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="block text-sm font-medium text-black">
-                                    Building
+                                    Suite
                                 </FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a building" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent className="max-h-60 overflow-y-auto">
-                                        {buildings.map((building) => (
-                                            <SelectItem
-                                                key={building}
-                                                value={building}
-                                            >
-                                                {building}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Enter suite"
+                                        type="text"
+                                        className="w-full"
+                                        {...field}
+                                    />
+                                </FormControl>
                                 <FormDescription className="text-xs text-black">
-                                    Choose the building you want to edit
+                                    Enter the suite number or identifier
                                 </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
@@ -106,31 +89,51 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
 
                     <FormField
                         control={form.control}
-                        name="floor"
+                        name="type"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="block text-sm font-medium text-black">
-                                    Floor
+                                    Type
                                 </FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a floor" />
+                                            <SelectValue placeholder="Select a type" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent className="max-h-60 overflow-y-auto">
-                                        {floors.map((floor) => (
-                                            <SelectItem
-                                                key={floor}
-                                                value={floor}
-                                            >
-                                                Floor {floor}
+                                        {typeEnum.options.map((type) => (
+                                            <SelectItem key={type} value={type}>
+                                                {type}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                                 <FormDescription className="text-xs text-black">
-                                    Choose the floor level
+                                    Select the type of location
+                                </FormDescription>
+                                <FormMessage className="text-xs text-red-500" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="block text-sm font-medium text-black">
+                                    Description
+                                </FormLabel>
+                                <FormControl>
+                                    <Textarea
+                                        className="resize-none w-full min-h-[100px]"
+                                        placeholder="Enter a description"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormDescription className="text-xs text-black">
+                                    Add any additional details about this location
                                 </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
@@ -144,11 +147,11 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                             hover:text-[#012D5A] hover:bg-white
                             hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                         >
-                            Continue to Editor
+                            Submit Request
                         </Button>
                     </div>
                 </form>
             </Form>
         </div>
-    );
+    )
 }

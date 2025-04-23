@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer";
+import Layout from "../components/Layout";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
+import InstructionsBox from "@/components/InstructionsBox";
+
 
 import {pNodeDTO} from "../../../../share/types.ts";
 
@@ -37,6 +38,7 @@ const FloorPlan = () => {
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
     const [driving, setDriving] = useState<boolean>(true);
+    const [instructions, setInstructions] = useState<string[]>([]);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -169,6 +171,8 @@ const FloorPlan = () => {
 
         if(form.building == "Patriot Place"){
             mapInstance.current?.setCenter({ lat: 42.09333, lng: -71.26546 });
+        }else if(form.building ==  "Faulkner Hospital"){
+            mapInstance.current?.setCenter({lat: 42.30163258195755, lng: -71.12812875693645});
         }else{
             mapInstance.current?.setCenter({ lat: 42.3262, lng: -71.1497 });
         }
@@ -183,6 +187,8 @@ const FloorPlan = () => {
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
             }else if(form.building ==  "22 Patriot Place"){
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
+            }else if(form.building ==  "Faulkner Hospital"){
+                address = {lat: 42.30163258195755, lng: -71.12812875693645};
             }
             directionsService.route(
                 {
@@ -194,6 +200,10 @@ const FloorPlan = () => {
                     if (status === 'OK' && result?.routes?.length > 0) {
                         directionsRenderer.current.setDirections(result);
                         const leg = result.routes[0].legs[0];
+                        const Mapsinstructions = leg.steps.map(step => step.instructions);
+                        setInstructions(Mapsinstructions);
+                        console.log(instructions);
+                        console.log(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
 
@@ -213,14 +223,8 @@ const FloorPlan = () => {
     };
 
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col">
-            {/* Header */}
-            <div className="flex justify-start mb-2 p-2">
-                <img src="/BrighamAndWomensLogo.png" alt="Logo" className="h-12 ml-2" />
-            </div>
-
-            {/* Navbar */}
-            <Navbar />
+        <Layout>
+        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-20">
 
             {/* Main content fills screen excluding navbar/footer */}
             <div className="relative flex-1">
@@ -231,7 +235,9 @@ const FloorPlan = () => {
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
                 />
-
+                <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
+                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                </div>
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
                     <LocationRequestForm onSubmit={(form) => setForm(form)} />
@@ -247,10 +253,8 @@ const FloorPlan = () => {
                 </div>
 
             </div>
-
-            {/* Footer */}
-            <Footer />
         </div>
+        </Layout>
     );
 };
 

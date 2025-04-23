@@ -84,7 +84,7 @@ export const securityRouter = t.router({
                     ...(additionalNotes && { additionalNotes: additionalNotes }),
                     ...(priority && { priority: priority as Priority }),
                     ...(employee && { employee: employee }),
-                    ...(location && { security: { update: {location} } }),
+                    ...(location && { security: { update: { location } } }),
                 },
             });
             console.log('Update security request done.');

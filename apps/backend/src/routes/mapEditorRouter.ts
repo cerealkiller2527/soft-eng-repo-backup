@@ -12,6 +12,15 @@ const node = z.object({
     id: z.number(),
 });
 
+const typeEnum = z.enum([
+    'Entrance',
+    'Intermediary',
+    'Staircase',
+    'Elevator',
+    'Location',
+    'Help_Desk',
+]);
+
 export const mapEditorRouter = t.router({
     // Get all nodes and edges for a floor map in a single call
     getFloorMap: t.procedure
@@ -23,30 +32,35 @@ export const mapEditorRouter = t.router({
         )
         .query(async ({ input }) => {
             try {
-                const nodes = await getNodesFromLocation(input);
+                const locations = await getLocations(input);
+
+                const validLocations = locations.filter((location) => location.node !== null);
+
+                const nodes = validLocations.map((location) => location.node!);
                 const nodeIds = nodes.map((node) => node.id);
 
-                // Get all edges where both nodes are on this floor
                 const edges = await PrismaClient.edge.findMany({
                     where: {
                         fromNodeId: { in: nodeIds },
                         toNodeId: { in: nodeIds },
                     },
                     orderBy: {
-                        id: 'asc', // Sort edges by ID for consistency
+                        id: 'asc',
                     },
                 });
 
-                // Format nodes for display
-                const formattedNodes = nodes.map((node) => ({
-                    id: node.id,
-                    x: node.lat,
-                    y: node.long,
-                    description: node.description,
-                    type: node.type,
-                }));
+                const formattedNodes = validLocations.map((location) => {
+                    const node = location.node!;
+                    return {
+                        id: node.id,
+                        x: node.lat,
+                        y: node.long,
+                        description: node.description,
+                        type: node.type,
+                        suite: location.suite,
+                    };
+                });
 
-                // Format edges for drawing lines
                 const formattedEdges = edges.map((edge) => {
                     const fromNode = nodes.find((n) => n.id === edge.fromNodeId);
                     const toNode = nodes.find((n) => n.id === edge.toNodeId);
@@ -55,15 +69,15 @@ export const mapEditorRouter = t.router({
                         id: edge.id,
                         fromNodeId: edge.fromNodeId,
                         toNodeId: edge.toNodeId,
-                        // Include coordinates to simplify drawing lines
                         fromX: fromNode?.lat || 0,
                         fromY: fromNode?.long || 0,
                         toX: toNode?.lat || 0,
                         toY: toNode?.long || 0,
                     };
                 });
+
                 console.log(input.floor);
-                // Return everything needed to render the map
+
                 return {
                     nodes: formattedNodes,
                     edges: formattedEdges,
@@ -91,6 +105,7 @@ export const mapEditorRouter = t.router({
                         longitude: z.number(),
                         latitude: z.number(),
                         type: z.string(),
+                        suite: z.string(),
                     })
                 ),
                 edges: z.array(
@@ -166,7 +181,7 @@ export const mapEditorRouter = t.router({
                                 description: node.description,
                                 lat: node.latitude,
                                 long: node.longitude,
-                                type: 'Intermediary',
+                                type: typeEnum.parse(node.type),
                             },
                         });
 
@@ -175,6 +190,7 @@ export const mapEditorRouter = t.router({
                                 floor: floor,
                                 buildingId: buildingId,
                                 nodeID: createdNode.id,
+                                suite: node.suite,
                             },
                         });
 
@@ -218,6 +234,21 @@ export const mapEditorRouter = t.router({
             }
         }),
 });
+
+async function getLocations({ buildingId, floor }: { buildingId: number; floor: number }) {
+    // Get all nodes on this floor
+    const locations = await PrismaClient.location.findMany({
+        where: {
+            buildingId: buildingId,
+            floor: floor,
+        },
+        include: {
+            node: true,
+        },
+    });
+    // get the nodes at that location
+    return locations.filter((location) => location.node !== null);
+}
 
 async function getNodesFromLocation({ buildingId, floor }: { buildingId: number; floor: number }) {
     // Get all nodes on this floor

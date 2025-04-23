@@ -15,32 +15,32 @@ vi.mock('../bin/prisma-client.ts', () => ({
             findMany: vi.fn(),
             create: vi.fn(),
             update: vi.fn(),
-        }
-    }
-}))
+        },
+    },
+}));
 const prisma = PrismaClient as any;
 
 //make sure we would have a clean mock data before each test
 beforeEach(() => {
     vi.clearAllMocks();
-})
+});
 
 describe('getSecurityRequests', () => {
     test('filtered security requests', async () => {
         // return data only if location matches
-        prisma.serviceRequest.findMany.mockImplementation(({ where }:{ where: Prisma.ServiceRequestWhereInput }) => {
-            if (
-                where.security?.location === "Main Gate"
-            ) {
-                return Promise.resolve("Filter for Main Gate");
-            }
+        prisma.serviceRequest.findMany.mockImplementation(
+            ({ where }: { where: Prisma.ServiceRequestWhereInput }) => {
+                if (where.security?.location === 'Main Gate') {
+                    return Promise.resolve('Filter for Main Gate');
+                }
 
-            return Promise.resolve([]);
-        });
+                return Promise.resolve([]);
+            }
+        );
 
         const caller = serviceRouter.createCaller({});
         const result = await caller.getSecurityRequests({
-            location: 'Main Gate'
+            location: 'Main Gate',
         });
 
         // check that the Prisma query is called correctly
@@ -57,7 +57,7 @@ describe('getSecurityRequests', () => {
             },
         });
         // should return matching data
-        expect(result).toEqual("Filter for Main Gate");
+        expect(result).toEqual('Filter for Main Gate');
     });
 
     test('no filters security requests', async () => {
@@ -141,10 +141,3 @@ test('updates security request with some fields', async () => {
 
     expect(result).toEqual({ message: 'Update security request done.' });
 });
-
-
-
-
-
-
-
