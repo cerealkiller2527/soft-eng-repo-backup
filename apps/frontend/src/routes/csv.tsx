@@ -1,13 +1,23 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import Layout from "../components/Layout";
 import { Button } from '@/components/ui/button';
-import {Table, TableHeader, TableRow, TableHead, TableBody, TableCell} from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
 import { useMutation } from '@tanstack/react-query';
-import { nodeType } from 'database';
 
+// Define nodeType enum to match Prisma schema
+const nodeTypeEnum = z.enum([
+    "Entrance",
+    "Intermediary",
+    "Staircase",
+    "Elevator",
+    "Location",
+    "Help_Desk",
+]);
+
+// Define the schema for CSV rows
 const CSVRowSchema = z.object({
     'Building ID': z.string().optional(),
     'Building Name': z.string(),
@@ -17,7 +27,7 @@ const CSVRowSchema = z.object({
     'Floor': z.string(),
     'Suite': z.string().optional(),
     'Node ID': z.string().optional(),
-    'Node Type': z.string(),
+    'Node Type': nodeTypeEnum,
     'Node Description': z.string(),
     'Node Coordinates': z.string(),
     'From Edges': z.string(),
@@ -31,7 +41,13 @@ const CSVRowSchema = z.object({
 
 type CSVRow = z.infer<typeof CSVRowSchema>;
 
-const allColumns = [
+interface ColumnDefinition {
+    key: keyof CSVRow;
+    label: string;
+    group: 'Building' | 'Location' | 'Node' | 'Department';
+}
+
+const allColumns: ColumnDefinition[] = [
     // Building Information
     { key: 'Building Name', label: 'Building Name', group: 'Building' },
     { key: 'Building Address', label: 'Building Address', group: 'Building' },
@@ -59,7 +75,42 @@ const allColumns = [
     { key: 'Services', label: 'Services', group: 'Department' }
 ] as const;
 
-const baseColumns = ['Building Name', 'Building Phone', 'Floor', 'Node ID', 'Node Type', 'Department Name', 'Department Description'] as const;
+const baseColumns: (keyof CSVRow)[] = ['Building Name', 'Floor', 'Node ID', 'Node Type', 'Department Name', 'Department Description'] as const;
+
+// Update the select options to use the enum values
+const nodeTypeOptions = nodeTypeEnum.options.map((type) => ({
+    value: type,
+    label: type,
+}));
+
+const columnGroups = ['Building', 'Location', 'Node', 'Department'] as const;
+
+interface FilterConfig {
+    key: keyof CSVRow;
+    label: string;
+    type: 'text' | 'select';
+    options?: string[];
+}
+
+const filterableColumns: FilterConfig[] = [
+    { key: 'Building Name', label: 'Building', type: 'text' },
+    { key: 'Floor', label: 'Floor', type: 'text' },
+    { key: 'Node Type', label: 'Node Type', type: 'select', options: nodeTypeEnum.options },
+    { key: 'Department Name', label: 'Department', type: 'text' },
+    { key: 'Building Phone', label: 'Phone', type: 'text' },
+    { key: 'Node Description', label: 'Description', type: 'text' },
+    { key: 'Suite', label: 'Suite', type: 'text' },
+];
+
+// Add this after the import section
+const importWarning = "Warning: Importing a new CSV will delete all existing data in the database. Please make sure you have exported your current data if you need to keep it.";
+
+// Define a base style for the main action buttons
+const actionButtonStyle = `
+    bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
+    hover:text-[#012D5A] hover:bg-white
+    hover:ring-2 hover:ring-offset-1 hover:ring-offset-white hover:ring-[#F6BD38]
+`;
 
 export default function CSV() {
     const [file, setFile] = useState<File | null>(null);
@@ -67,14 +118,11 @@ export default function CSV() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [previewData, setPreviewData] = useState<CSVRow[]>([]);
-    const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+    const [selectedColumns, setSelectedColumns] = useState<(keyof CSVRow)[]>([]);
     const [showColumnSelector, setShowColumnSelector] = useState(false);
-    const [filters, setFilters] = useState({
-        building: '',
-        floor: '',
-        nodeType: '',
-        department: ''
-    });
+    const [filters, setFilters] = useState<Record<string, string>>({});
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const handleClick = () => fileInputRef.current?.click();
 
     const trpc = useTRPC();
 
@@ -83,7 +131,7 @@ export default function CSV() {
             onSuccess: () => {
                 setMessage('Import successful');
             },
-            onError: (error: unknown) => {
+            onError: (error) => {
                 setMessage(error instanceof Error ? error.message : 'Import failed');
             },
         })
@@ -111,7 +159,7 @@ export default function CSV() {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         },
-        onError: (error: unknown) => {
+        onError: (error) => {
             setMessage(error instanceof Error ? error.message : 'Export failed');
         },
     });
@@ -177,22 +225,17 @@ export default function CSV() {
 
     const filteredData = useMemo(() => {
         return previewData.filter(row => {
-            const matchesBuilding = !filters.building || 
-                row['Building Name'].toLowerCase().includes(filters.building.toLowerCase());
-            const matchesFloor = !filters.floor || 
-                row['Floor'].toString().includes(filters.floor);
-            const matchesNodeType = !filters.nodeType || 
-                row['Node Type'] === filters.nodeType;
-            const matchesDepartment = !filters.department || 
-                row['Department Name'].toLowerCase().includes(filters.department.toLowerCase());
-            
-            return matchesBuilding && matchesFloor && matchesNodeType && matchesDepartment;
+            return Object.entries(filters).every(([key, value]) => {
+                if (!value) return true;
+                const columnValue = String(row[key as keyof CSVRow] || '').toLowerCase();
+                return columnValue.includes(value.toLowerCase());
+            });
         });
     }, [previewData, filters]);
 
     useEffect(() => {
         if (selectedColumns.length === 0) {
-            setSelectedColumns([...baseColumns]);
+            setSelectedColumns(baseColumns);
         }
     }, []);
 
@@ -200,217 +243,234 @@ export default function CSV() {
         return allColumns
             .filter(column => selectedColumns.includes(column.key))
             .sort((a, b) => {
-                // First sort by group
-                const groupOrder = ['Building', 'Location', 'Node', 'Department'];
+                const groupOrder = columnGroups;
                 const groupComparison = groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group);
                 if (groupComparison !== 0) return groupComparison;
-                
-                // Then sort by original order within group
                 return allColumns.findIndex(col => col.key === a.key) - 
                        allColumns.findIndex(col => col.key === b.key);
             });
     }, [selectedColumns]);
 
+    const handleColumnToggle = (columnKey: keyof CSVRow) => {
+        setSelectedColumns(prev => {
+            const newColumns = prev.includes(columnKey)
+                ? prev.filter(key => key !== columnKey)
+                : [...prev, columnKey];
+            
+            // Update filters when columns change
+            const newFilters = { ...filters };
+            if (!newColumns.includes(columnKey)) {
+                delete newFilters[columnKey];
+            }
+            setFilters(newFilters);
+            
+            return newColumns;
+        });
+    };
+
+    const toggleAllColumns = () => {
+        setSelectedColumns(
+            selectedColumns.length === allColumns.length
+                ? [...baseColumns]
+                : allColumns.map(col => col.key)
+        );
+    };
+
+    const renderColumnSelector = () => (
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
+            <div className="flex justify-between items-center mb-4">
+                <h4 className="text-sm font-medium text-gray-700">Select Columns to Display</h4>
+                <Button
+                    onClick={toggleAllColumns}
+                    variant="outline"
+                    size="sm"
+                    className="whitespace-nowrap"
+                >
+                    {selectedColumns.length === allColumns.length ? "Base Columns" : "All Columns"}
+                </Button>
+            </div>
+            <div className="space-y-4">
+                {columnGroups.map(group => (
+                    <div key={group} className="space-y-2">
+                        <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{group}</h5>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                            {allColumns
+                                .filter(column => column.group === group)
+                                .map(column => (
+                                    <div key={column.key} className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            id={column.key}
+                                            checked={selectedColumns.includes(column.key)}
+                                            onChange={() => handleColumnToggle(column.key)}
+                                            className="h-4 w-4 text-[#0057B8] focus:ring-[#0057B8] border-gray-300 rounded"
+                                        />
+                                        <label htmlFor={column.key} className="text-sm text-gray-700">
+                                            {column.label}
+                                        </label>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+
+    const renderFilters = () => {
+        const activeFilters = filterableColumns.filter(config => 
+            selectedColumns.includes(config.key)
+        );
+
+        if (activeFilters.length === 0) return null;
+
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                {activeFilters.map(config => (
+                    <div key={config.key}>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            {config.label}
+                        </label>
+                        {config.type === 'select' ? (
+                            <select
+                                value={filters[config.key] || ''}
+                                onChange={(e) => setFilters(prev => ({ ...prev, [config.key]: e.target.value }))}
+                                className="w-full px-3 py-2 border rounded-md"
+                            >
+                                <option value="">All {config.label}s</option>
+                                {config.options?.map(option => (
+                                    <option key={option} value={option}>{option}</option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input
+                                type="text"
+                                value={filters[config.key] || ''}
+                                onChange={(e) => setFilters(prev => ({ ...prev, [config.key]: e.target.value }))}
+                                placeholder={`Filter by ${config.label.toLowerCase()}`}
+                                className="w-full px-3 py-2 border rounded-md"
+                            />
+                        )}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    const renderTable = () => (
+        <div className="relative overflow-auto max-h-[500px] border rounded-lg pb-4">
+            <Table className="min-w-full">
+                <TableHeader className="sticky top-0 bg-[#012D5A] z-10">
+                    <TableRow>
+                        {visibleColumns.map(column => (
+                            <TableHead 
+                                key={column.key} 
+                                className="text-white whitespace-nowrap px-4 py-2 font-medium h-10 min-w-[150px]"
+                            >
+                                {column.label}
+                            </TableHead>
+                        ))}
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {filteredData.map((row, i) => (
+                        <TableRow key={i} className="bg-white even:bg-gray-50">
+                            {visibleColumns.map(column => (
+                                <TableCell 
+                                    key={column.key} 
+                                    className="whitespace-nowrap px-4 py-2 min-w-[150px]"
+                                >
+                                    {String(row[column.key] || '')}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+    );
+
     return (
         <Layout>
-        <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
-            <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
-                <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
-                    Department CSV Import/Export
-                </h1>
+            <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
+                <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
+                    <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
+                        Department CSV Import/Export
+                    </h1>
 
-                <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-semibold mb-4">Import CSV</h2>
-                    <div className="flex flex-col gap-4 mb-6">
-                        <div className="flex gap-4 items-center">
-                            <input
-                                type="file"
-                                accept=".csv"
-                                onChange={handleFileChange}
-                                className="block w-full text-sm
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-md file:border-0
-                                file:bg-[#0057B8] file:text-white
-                                hover:file:bg-[#004795]"
-                            />
-                            <Button
-                                onClick={handleImport}
-                                disabled={loading || !file}
-                                className="whitespace-nowrap"
-                            >
-                                {loading ? "Working..." : "Import CSV"}
-                            </Button>
-                            <Button
-                                onClick={handleExport}
-                                disabled={loading}
-                                className="whitespace-nowrap"
-                            >
-                                {loading ? "Working..." : "Export CSV"}
-                            </Button>
+                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                        <div className="flex flex-col gap-4 mb-6">
+                            <div className="flex gap-4 items-center">
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".csv"
+                                    onChange={handleFileChange}
+                                    className="hidden"
+                                />
+                                <Button onClick={handleClick} className={actionButtonStyle}>
+                                    Choose CSV
+                                </Button>
+                                <span className="text-sm text-gray-500 truncate max-w-xs">
+                                    {file ? file.name : "No file selected"}
+                                </span>
+                                
+                                <div className="text-sm text-yellow-600 flex items-center gap-1 ml-auto">
+                                    <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    <span className="whitespace-nowrap">Importing replaces data</span>
+                                </div>
+
+                                <Button
+                                    onClick={handleImport}
+                                    disabled={loading || !file}
+                                    className={`${actionButtonStyle} ml-2`}
+                                >
+                                    {loading ? "Working..." : "Import CSV"}
+                                </Button>
+                                <Button
+                                    onClick={handleExport}
+                                    disabled={loading}
+                                    className={actionButtonStyle}
+                                >
+                                    {loading ? "Working..." : "Export CSV"}
+                                </Button>
+                            </div>
+                            {message && (
+                                <div className={`p-4 rounded-md text-sm ${
+                                    message.includes('success') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}>
+                                    {message}
+                                </div>
+                            )}
                         </div>
-                        {message && (
-                            <div className={`p-4 rounded-md ${
-                                message.includes('success') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                            }`}>
-                                {message}
+
+                        {previewData.length > 0 && (
+                            <div className="mt-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-semibold">Preview</h3>
+                                    <Button
+                                        onClick={() => setShowColumnSelector(!showColumnSelector)}
+                                        className={actionButtonStyle}
+                                    >
+                                        {showColumnSelector ? "Hide Columns" : "Select Columns"}
+                                    </Button>
+                                </div>
+
+                                {showColumnSelector && renderColumnSelector()}
+                                {renderFilters()}
+
+                                <p className="text-sm text-gray-600 mb-4">
+                                    Showing {filteredData.length} of {previewData.length} rows
+                                </p>
+
+                                {renderTable()}
                             </div>
                         )}
                     </div>
-
-                    {previewData.length > 0 && (
-                        <div className="mt-8">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold">Preview</h3>
-                                <Button
-                                    onClick={() => setShowColumnSelector(!showColumnSelector)}
-                                    className="whitespace-nowrap"
-                                >
-                                    {showColumnSelector ? "Hide Columns" : "Select Columns"}
-                                </Button>
-                            </div>
-
-                            {showColumnSelector && (
-                                <div className="bg-white p-4 rounded-lg shadow-sm mb-4">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h4 className="text-sm font-medium text-gray-700">Select Columns to Display</h4>
-                                        <Button
-                                            onClick={() => {
-                                                if (selectedColumns.length === allColumns.length) {
-                                                    setSelectedColumns([...baseColumns]);
-                                                } else {
-                                                    setSelectedColumns(allColumns.map(col => col.key));
-                                                }
-                                            }}
-                                            variant="outline"
-                                            size="sm"
-                                            className="whitespace-nowrap"
-                                        >
-                                            {selectedColumns.length === allColumns.length ? "Base Columns" : "All Columns"}
-                                        </Button>
-                                    </div>
-                                    <div className="space-y-4">
-                                        {['Building', 'Location', 'Node', 'Department'].map(group => (
-                                            <div key={group} className="space-y-2">
-                                                <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{group}</h5>
-                                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                                                    {allColumns
-                                                        .filter(column => column.group === group)
-                                                        .map(column => (
-                                                            <div key={column.key} className="flex items-center gap-2">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    id={column.key}
-                                                                    checked={selectedColumns.includes(column.key)}
-                                                                    onChange={(e) => {
-                                                                        if (e.target.checked) {
-                                                                            setSelectedColumns([...selectedColumns, column.key]);
-                                                                        } else {
-                                                                            setSelectedColumns(selectedColumns.filter(col => col !== column.key));
-                                                                        }
-                                                                    }}
-                                                                    className="h-4 w-4 text-[#0057B8] focus:ring-[#0057B8] border-gray-300 rounded"
-                                                                />
-                                                                <label htmlFor={column.key} className="text-sm text-gray-700">
-                                                                    {column.label}
-                                                                </label>
-                                                            </div>
-                                                        ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Building
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={filters.building}
-                                        onChange={(e) => setFilters(prev => ({ ...prev, building: e.target.value }))}
-                                        placeholder="Filter by building"
-                                        className="w-full px-3 py-2 border rounded-md"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Floor
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={filters.floor}
-                                        onChange={(e) => setFilters(prev => ({ ...prev, floor: e.target.value }))}
-                                        placeholder="Filter by floor"
-                                        className="w-full px-3 py-2 border rounded-md"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Node Type
-                                    </label>
-                                    <select
-                                        value={filters.nodeType}
-                                        onChange={(e) => setFilters(prev => ({ ...prev, nodeType: e.target.value }))}
-                                        className="w-full px-3 py-2 border rounded-md"
-                                    >
-                                        <option value="">All Types</option>
-                                        {Object.values(nodeType).map(type => (
-                                            <option key={type} value={type}>{type}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Department
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={filters.department}
-                                        onChange={(e) => setFilters(prev => ({ ...prev, department: e.target.value }))}
-                                        placeholder="Filter by department"
-                                        className="w-full px-3 py-2 border rounded-md"
-                                    />
-                                </div>
-                            </div>
-
-                            <p className="text-sm text-gray-600 mb-4">
-                                Showing {filteredData.length} of {previewData.length} rows
-                            </p>
-
-                            <div className="overflow-auto max-h-[500px] border rounded-lg">
-                                <div className="min-w-full inline-block align-middle">
-                                    <Table>
-                                        <TableHeader className="sticky top-0 bg-white z-10">
-                                            <TableRow>
-                                                {visibleColumns.map(column => (
-                                                    <TableHead key={column.key} className="whitespace-nowrap">
-                                                        {column.label}
-                                                    </TableHead>
-                                                ))}
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {filteredData.map((row, i) => (
-                                                <TableRow key={i}>
-                                                    {visibleColumns.map(column => (
-                                                        <TableCell key={column.key} className="whitespace-nowrap">
-                                                            {row[column.key as keyof CSVRow] || ''}
-                                                        </TableCell>
-                                                    ))}
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
-        </div>
         </Layout>
     );
 }
