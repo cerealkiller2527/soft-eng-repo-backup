@@ -18,6 +18,7 @@ import MapForm from "../components/MapForm.tsx";
 //add alert popup if changes are made and not saved
 //add save button
 
+const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"])
 
 type FormData = z.infer<typeof formSchema>;
 import * as z from "zod";
@@ -187,7 +188,17 @@ const MapEditor = () => {
     useEffect(() => {
         if (fetchFloorMap.status === 'success' && fetchFloorMap.data?.nodes) {
             console.log(fetchFloorMap.data.nodes)
-            setNodes(fetchFloorMap.data.nodes);
+            setNodes(
+                fetchFloorMap.data.nodes.map((node) => ({
+                    id: node.id,
+                    x: node.x,
+                    y: node.y,
+                    description: node.description,
+                    type: typeEnum.parse(node.type),
+                    suite: node.suite ?? "",
+                }))
+            );
+
             setEdges(fetchFloorMap.data.edges);
             console.log(nodes);
         }
