@@ -441,6 +441,7 @@ const MapEditor = () => {
                 <Navbar />
             </div>
 
+            {/* Div for alignment of Buttons */}
             <div className="absolute bottom-20 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
