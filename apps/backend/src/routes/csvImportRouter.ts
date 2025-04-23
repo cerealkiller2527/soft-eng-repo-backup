@@ -70,46 +70,47 @@ export const csvImportRouter = t.router({
           await tx.edge.deleteMany({});
           await tx.location.deleteMany({});
           await tx.node.deleteMany({});
-          await tx.department.deleteMany({});
-          await tx.building.deleteMany({});
 
           const buildingMapping = new Map<string, number>();
-          const nodeMapping = new Map<string, number>();
           const departmentMapping = new Map<string, number>();
+          const nodeMapping = new Map<string, number>();
           const serviceMapping = new Map<string, number>();
 
-          const uniqueBuildings = new Map<string, CSVRecord>();
-          for (const record of validatedData) {
-            uniqueBuildings.set(record["Building Name"], record);
-          }
-
-          for (const [_, record] of uniqueBuildings) {
-            const building = await tx.building.create({
-              data: {
-                name: record["Building Name"],
-                address: record["Building Address"],
-                phoneNumber: record["Building Phone"],
-              },
+          // Load and validate buildings from database
+          const uniqueBuildings = new Set(
+            validatedData.map((r) => r["Building Name"]),
+          );
+          for (const buildingName of uniqueBuildings) {
+            const building = await tx.building.findFirst({
+              where: { name: buildingName },
             });
-            buildingMapping.set(record["Building Name"], building.id);
+            if (!building) {
+              throw new Error(
+                `Building "${buildingName}" not found in database.`,
+              );
+            }
+            buildingMapping.set(buildingName, building.id);
           }
 
-          const uniqueDepartments = new Map<string, CSVRecord>();
-          for (const record of validatedData) {
-            uniqueDepartments.set(record["Department Name"], record);
-          }
-
-          for (const [_, record] of uniqueDepartments) {
-            const department = await tx.department.create({
-              data: {
-                name: record["Department Name"],
-                phoneNumber: record["Department Phone"],
-                description: record["Department Description"] || null,
-              },
+          // Load and validate departments from database
+          const uniqueDepartments = new Set(
+            validatedData
+              .map((r) => r["Department Name"].trim())
+              .filter((name) => name !== ""),
+          );
+          for (const departmentName of uniqueDepartments) {
+            const department = await tx.department.findFirst({
+              where: { name: departmentName },
             });
-            departmentMapping.set(record["Department Name"], department.id);
+            if (!department) {
+              throw new Error(
+                `Department "${departmentName}" not found in database.`,
+              );
+            }
+            departmentMapping.set(departmentName, department.id);
           }
 
+          // Create unique services
           const uniqueServices = new Set<string>();
           for (const record of validatedData) {
             const services = record.Services.split(",")
@@ -120,13 +121,12 @@ export const csvImportRouter = t.router({
 
           for (const serviceName of uniqueServices) {
             const service = await tx.service.create({
-              data: {
-                name: serviceName,
-              },
+              data: { name: serviceName },
             });
             serviceMapping.set(serviceName, service.id);
           }
 
+          // Create nodes
           for (const record of validatedData) {
             const coords = parseCoordinates(record["Node Coordinates"]);
             if (coords) {
@@ -142,6 +142,7 @@ export const csvImportRouter = t.router({
             }
           }
 
+          // Create locations
           for (const record of validatedData) {
             const buildingId = buildingMapping.get(record["Building Name"]);
             const nodeId = nodeMapping.get(record["Node ID"] || "");
@@ -162,6 +163,7 @@ export const csvImportRouter = t.router({
             }
           }
 
+          // Create edges
           for (const record of validatedData) {
             const fromEdges = record["From Edges"]
               .split(",")
@@ -201,6 +203,7 @@ export const csvImportRouter = t.router({
             }
           }
 
+          // Link departments and services
           const departmentServiceCombinations = [];
           for (const record of validatedData) {
             const departmentId = departmentMapping.get(
