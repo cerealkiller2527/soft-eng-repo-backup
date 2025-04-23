@@ -6,7 +6,14 @@ import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
 import { useMutation } from '@tanstack/react-query';
-import { nodeType } from 'database';
+const nodeType = z.enum([
+    "Entrance",
+    "Intermediary",
+    "Staircase",
+    "Elevator",
+    "Location",
+    "Help_Desk",
+]);
 
 const CSVRowSchema = z.object({
     'Building ID': z.string().optional(),

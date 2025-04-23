@@ -5,6 +5,7 @@ import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
+import {DirectionsButton} from "@/components/DirectionsButton.tsx";
 
 
 import {pNodeDTO} from "../../../../share/types.ts";
@@ -233,6 +234,7 @@ const FloorPlan = () => {
                 />
                 <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
                     <InstructionsBox key={instructions.join()} instructions={instructions} />
+                    <DirectionsButton directions={instructions} />
                 </div>
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
