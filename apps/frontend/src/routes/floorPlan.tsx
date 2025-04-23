@@ -6,6 +6,8 @@ import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
 import {DirectionsButton} from "@/components/DirectionsButton.tsx";
+import { Button } from "@/components/ui/button";
+
 
 
 import {pNodeDTO} from "../../../../share/types.ts";
@@ -40,6 +42,17 @@ const FloorPlan = () => {
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
     const [driving, setDriving] = useState<boolean>(true);
     const [instructions, setInstructions] = useState<string[]>([]);
+    const [mode, setMode] = useState<"DFS" | "BFS">("DFS");
+    const toggleMode = () => {
+        setMode((prev) => (prev === "DFS" ? "BFS" : "DFS"));
+    };
+    const [centerMode, setCenterMode] = useState<"Building" | "Path">("Building");
+    const toggleCenterMode = () => {
+        setCenterMode((prev) => (prev === "Building" ? "Path" : "Building"));
+    };
+    const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
+
+
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -133,8 +146,8 @@ const FloorPlan = () => {
         buildingName: form?.building ??  "",
         endSuite: form?.destination ?? "",
         startSuite: "ASDF",
-        driving: true,
-        algorithm: "BFS",
+        driving: driving,
+        algorithm: mode,
     }))
 
 
@@ -168,14 +181,6 @@ const FloorPlan = () => {
             break;
         }
 
-        if(form.building == "Patriot Place"){
-            mapInstance.current?.setCenter({ lat: 42.09333, lng: -71.26546 });
-        }else if(form.building ==  "Faulkner Hospital"){
-            mapInstance.current?.setCenter({lat: 42.30163258195755, lng: -71.12812875693645});
-        }else{
-            mapInstance.current?.setCenter({ lat: 42.3262, lng: -71.1497 });
-        }
-
 
 
 
@@ -203,6 +208,21 @@ const FloorPlan = () => {
                         setInstructions(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
+                        const route = result.routes[0];
+                        const bounds = new google.maps.LatLngBounds();
+
+                        route.legs.forEach(leg => {
+                            bounds.extend(leg.start_location);
+                            bounds.extend(leg.end_location);
+                        });
+
+                        const center = bounds.getCenter(); // This is a LatLng object
+
+                        const pathCenter: google.maps.LatLngLiteral = {
+                            lat: center.lat(),
+                            lng: center.lng(),
+                        };
+                        setPathCenter(pathCenter);
 
 
                         const durationText = leg?.duration?.text;
@@ -214,6 +234,32 @@ const FloorPlan = () => {
             );
         }
     }, [form]);
+
+    const buildingCenters: Record<string, google.maps.LatLngLiteral> = {
+        "20 Patriot Place": { lat: 42.09333, lng: -71.26546 },
+        "22 Patriot Place": { lat: 42.09333, lng: -71.26546 },
+        "Faulkner Hospital": { lat: 42.30163258195755, lng: -71.12812875693645 },
+        "Chestnut Hill Medical Center": { lat: 42.3262, lng: -71.1497 },
+        "Default": { lat: 42.3262, lng: -71.1497 }
+    };
+
+    useEffect(() => {
+        const building = form?.building ?? "Default";
+        const buildingCenter = buildingCenters[building] ?? buildingCenters["Default"];
+
+        const targetCenter = centerMode === "building"
+            ? buildingCenter
+            : pathCenter ?? buildingCenter;
+
+
+        mapInstance.current?.setCenter(targetCenter);
+
+        if (centerMode === "building") {
+            mapInstance.current?.setZoom(18); // zoom in when showing the building
+        }else{
+            mapInstance.current?.setZoom(10);
+        }
+    }, [centerMode, form?.building, pathCenter]);
 
     const handleImageSwitch = () => {
         setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
@@ -232,7 +278,7 @@ const FloorPlan = () => {
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
                 />
-                <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
+                <div className="absolute top-5 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
                     <InstructionsBox key={instructions.join()} instructions={instructions} />
                     <DirectionsButton directions={instructions} />
                 </div>
@@ -241,13 +287,28 @@ const FloorPlan = () => {
                     <LocationRequestForm onSubmit={(form) => setForm(form)} />
                 </div>
 
-                <div className="absolute top-4 right-4 z-10">
-                    <button
+                <div className="absolute top-45 right-14 z-10 grid grid-cols-1 md:grid-cols-3 gap-1 mx-auto pt-28">
+                    <Button
                         onClick={handleImageSwitch}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md"
+                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                     >
                         Floor: {imageIndex + 1}
-                    </button>
+                    </Button>
+                    <Button
+                        onClick={toggleMode}
+                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                    >
+                        {mode}
+                    </Button>
+                    <Button
+                        onClick={toggleCenterMode}
+                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                    >
+                        {centerMode}
+                    </Button>
                 </div>
 
             </div>
