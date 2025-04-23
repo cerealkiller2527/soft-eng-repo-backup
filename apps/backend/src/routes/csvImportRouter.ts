@@ -84,8 +84,26 @@ export const csvImportRouter = t.router({
           }
 
           for (const [_, record] of uniqueBuildings) {
+            let buildingId = 0;
+            switch (record["Building Name"]) {
+              case "Chestnut Hill":
+              case "Chestnut Hill Medical Center":
+                buildingId = 1;
+                break;
+              case "20 Patriot Place":
+                buildingId = 2;
+                break;
+              case "22 Patriot Place":
+                buildingId = 3;
+                break;
+              case "Faulkner Hospital":
+                buildingId = 4;
+                break;
+            }
+
             const building = await tx.building.create({
               data: {
+                id: buildingId,
                 name: record["Building Name"],
                 address: record["Building Address"],
                 phoneNumber: record["Building Phone"],
