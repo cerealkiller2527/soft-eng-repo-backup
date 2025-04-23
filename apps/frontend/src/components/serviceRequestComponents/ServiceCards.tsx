@@ -42,9 +42,7 @@ export default function ServiceCards() {
                             <CardFooter className="flex-col items-start gap-1 text-sm w-full">
                                 <Button
                                     onClick={() => setOpenForm("transport")}
-                                    className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                                    className="w-full bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] border-2 border-[#012D5A]"
                                 >
                                     Open Form
                                 </Button>
@@ -62,9 +60,7 @@ export default function ServiceCards() {
                             <CardFooter className="flex-col items-start gap-1 text-sm w-full">
                                 <Button
                                     onClick={() => setOpenForm("security")}
-                                    className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                                    className="w-full bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] border-2 border-[#012D5A]"
                                 >
                                     Open Form
                                 </Button>
@@ -82,9 +78,7 @@ export default function ServiceCards() {
                             <CardFooter className="flex-col items-start gap-1 text-sm w-full">
                                 <Button
                                     onClick={() => setOpenForm("language")}
-                                    className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                                    className="w-full bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] border-2 border-[#012D5A]"
                                 >
                                     Open Form
                                 </Button>
@@ -102,9 +96,7 @@ export default function ServiceCards() {
                             <CardFooter className="flex-col items-start gap-1 text-sm w-full">
                                 <Button
                                     onClick={() => setOpenForm("equipment")}
-                                    className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                                    className="w-full bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] border-2 border-[#012D5A]"
                                 >
                                     Open Form
                                 </Button>
