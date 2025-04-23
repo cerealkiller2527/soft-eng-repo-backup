@@ -76,6 +76,7 @@ export const csvImportRouter = t.router({
           const nodeMapping = new Map<string, number>();
           const serviceMapping = new Map<string, number>();
 
+<<<<<<< Updated upstream
           // Load and validate buildings from database
           const uniqueBuildings = new Set(
             validatedData.map((r) => r["Building Name"]),
@@ -101,6 +102,20 @@ export const csvImportRouter = t.router({
           for (const departmentName of uniqueDepartments) {
             const department = await tx.department.findFirst({
               where: { name: departmentName },
+=======
+          const uniqueBuildings = new Map<string, CSVRecord>();
+          for (const record of validatedData) {
+            uniqueBuildings.set(record["Building Name"], record);
+          }
+
+          for (const [_, record] of uniqueBuildings) {
+            const building = await tx.building.create({
+              data: {
+                name: record["Building Name"],
+                address: record["Building Address"],
+                phoneNumber: record["Building Phone"],
+              },
+>>>>>>> Stashed changes
             });
             if (!department) {
               throw new Error(
