@@ -9,7 +9,7 @@ import express from 'express';
 import logger from 'morgan';
 import { directoriesRouter } from './routes/directoriesRouter.ts';
 import { mapEditorRouter } from './routes/mapEditorRouter.ts';
-import {mapInfoRouter} from './routes/mapInfoRouter.ts';
+import { mapInfoRouter } from './routes/mapInfoRouter.ts';
 
 // created for each request
 const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({}); // no context

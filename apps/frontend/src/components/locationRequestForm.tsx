@@ -26,10 +26,10 @@ export default function LocationRequestForm({ onSubmit }) {
 
 
     useEffect(() => {
+        console.log(nodesQuery.data)
         if (nodesQuery.data) {
             const locations = nodesQuery.data
-                .filter((node) => node.type === "Location" && node.description)
-                .map((node) => node.description);
+                .filter((node) => node !== "")
 
             SetMGBHospitals(locations);
         }

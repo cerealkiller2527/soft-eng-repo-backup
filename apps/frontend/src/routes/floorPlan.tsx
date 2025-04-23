@@ -4,6 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
+import InstructionsBox from "@/components/InstructionsBox";
+
 
 import {pNodeDTO} from "../../../../share/types.ts";
 
@@ -36,6 +38,7 @@ const FloorPlan = () => {
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
     const [driving, setDriving] = useState<boolean>(true);
+    const [instructions, setInstructions] = useState<string[]>([]);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -197,8 +200,10 @@ const FloorPlan = () => {
                     if (status === 'OK' && result?.routes?.length > 0) {
                         directionsRenderer.current.setDirections(result);
                         const leg = result.routes[0].legs[0];
-                        const instructions = leg.steps.map(step => step.instructions);
+                        const Mapsinstructions = leg.steps.map(step => step.instructions);
+                        setInstructions(Mapsinstructions);
                         console.log(instructions);
+                        console.log(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
 
@@ -230,7 +235,9 @@ const FloorPlan = () => {
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
                 />
-
+                <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
+                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                </div>
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
                     <LocationRequestForm onSubmit={(form) => setForm(form)} />
