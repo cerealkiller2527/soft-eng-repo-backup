@@ -139,7 +139,10 @@ export const mapEditorRouter = t.router({
 
                 await prismaClient.edge.deleteMany({
                     where: {
-                        fromNodeId: { in: nodeIds },
+                        OR: [
+                            { fromNodeId: { in: nodeIds } },
+                            { toNodeId: { in: nodeIds } },
+                        ],
                     },
                 });
                 // delete nodes
@@ -151,24 +154,6 @@ export const mapEditorRouter = t.router({
                     },
                 });
                 console.log('Deleted ', deletedNodesCount.count, ' nodes from the database');
-
-                // get ids of nodes with edges to delete
-                const deletedNodeIds = nodes.map((node) => node.id);
-
-                // delete edges
-                const deletedEdgesCount = await prismaClient.edge.deleteMany({
-                    where: {
-                        OR: [
-                            {
-                                toNodeId: { in: deletedNodeIds },
-                            },
-                            {
-                                fromNodeId: { in: deletedNodeIds },
-                            },
-                        ],
-                    },
-                });
-                console.log('Deleted ', deletedEdgesCount.count, ' edges from the database');
 
                 // create nodes in database
 
