@@ -98,7 +98,7 @@ const DepartmentPage: React.FC = () => {
 
     return (
         <Layout>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col pt-20">
             <main className="flex-grow max-w-4xl mx-auto p-4 w-full">
                 <h1 className="text-3xl font-light text-[#012D5A] mb-4">{department.name}</h1>
                 <hr className="border-[#012D5A]/20 mb-6" />

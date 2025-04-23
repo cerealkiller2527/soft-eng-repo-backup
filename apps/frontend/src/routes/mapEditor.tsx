@@ -18,6 +18,7 @@ import MapForm from "../components/MapForm.tsx";
 //add alert popup if changes are made and not saved
 //add save button
 
+const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"])
 
 type FormData = z.infer<typeof formSchema>;
 import * as z from "zod";
@@ -164,7 +165,7 @@ const MapEditor = () => {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Backspace") {
+        if (event.key === "Delete") {
             const nodeToDelete = edgeStartRef.current;
             if (nodeToDelete) {
                 setNodes((prev) => prev.filter((node) => node.id !== nodeToDelete.id));
@@ -187,7 +188,17 @@ const MapEditor = () => {
     useEffect(() => {
         if (fetchFloorMap.status === 'success' && fetchFloorMap.data?.nodes) {
             console.log(fetchFloorMap.data.nodes)
-            setNodes(fetchFloorMap.data.nodes);
+            setNodes(
+                fetchFloorMap.data.nodes.map((node) => ({
+                    id: node.id,
+                    x: node.x,
+                    y: node.y,
+                    description: node.description,
+                    type: typeEnum.parse(node.type),
+                    suite: node.suite ?? "",
+                }))
+            );
+
             setEdges(fetchFloorMap.data.edges);
             console.log(nodes);
         }
@@ -220,12 +231,12 @@ const MapEditor = () => {
             marker.addListener('dragend', () => handleMarkerDragEnd(node.id, marker));
             marker.addListener('click', () => {
                 infoWindow.setContent(`
-                    <div>
-                        <strong>${node.description ?? 'No description'}</strong><br/>
-                        Type: ${node.type}<br/>
-                        ID: ${node.id}
-                    </div>
-                    `);
+                <div>
+                  <strong>${node.suite ?? 'No description'}</strong><br/>
+                  Type: ${node.type}<br/>
+                  ID: ${node.id}
+                </div>
+            `);
                 infoWindow.open({
                     anchor: marker,
                     map: mapInstance.current,
@@ -442,7 +453,7 @@ const MapEditor = () => {
             </div>
 
             {/* Div for alignment of Buttons */}
-            <div className="absolute bottom-20 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
+            <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
                     className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white

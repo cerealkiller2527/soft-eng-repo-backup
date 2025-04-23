@@ -157,32 +157,55 @@ export const csvImportRouter = t.router({
                         .map((id) => id.trim())
                         .filter(Boolean);
 
+                    // First ensure all referenced nodes exist
+                    const allReferencedNodeIds = [...new Set([...fromEdges, ...toEdges])];
+                    const existingNodes = await prisma.node.findMany({
+                        where: {
+                            id: {
+                                in: allReferencedNodeIds.map((id) => parseInt(id)),
+                            },
+                        },
+                        select: { id: true },
+                    });
+                    const existingNodeIds = new Set(
+                        existingNodes.map((node) => node.id.toString())
+                    );
+
+                    // Only create edges for nodes that exist
                     for (const toId of fromEdges) {
-                        await prisma.edge.upsert({
-                            where: { id: parseInt(toId) },
-                            update: {
-                                fromNodeId: nodeId,
-                                toNodeId: parseInt(toId),
-                            },
-                            create: {
-                                fromNodeId: nodeId,
-                                toNodeId: parseInt(toId),
-                            },
-                        });
+                        if (existingNodeIds.has(toId)) {
+                            await prisma.edge.upsert({
+                                where: {
+                                    id: parseInt(toId),
+                                },
+                                update: {
+                                    fromNodeId: nodeId,
+                                    toNodeId: parseInt(toId),
+                                },
+                                create: {
+                                    fromNodeId: nodeId,
+                                    toNodeId: parseInt(toId),
+                                },
+                            });
+                        }
                     }
 
                     for (const fromId of toEdges) {
-                        await prisma.edge.upsert({
-                            where: { id: parseInt(fromId) },
-                            update: {
-                                fromNodeId: parseInt(fromId),
-                                toNodeId: nodeId,
-                            },
-                            create: {
-                                fromNodeId: parseInt(fromId),
-                                toNodeId: nodeId,
-                            },
-                        });
+                        if (existingNodeIds.has(fromId)) {
+                            await prisma.edge.upsert({
+                                where: {
+                                    id: parseInt(fromId),
+                                },
+                                update: {
+                                    fromNodeId: parseInt(fromId),
+                                    toNodeId: nodeId,
+                                },
+                                create: {
+                                    fromNodeId: parseInt(fromId),
+                                    toNodeId: nodeId,
+                                },
+                            });
+                        }
                     }
                 }
             }

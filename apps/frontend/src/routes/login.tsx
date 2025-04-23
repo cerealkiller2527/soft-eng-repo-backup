@@ -6,6 +6,7 @@ import { useAuth } from '../Context/AuthContext';
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
 
 const Login: React.FC = () => {
     const { setAuthenticated } = useAuth();
@@ -33,8 +34,24 @@ const Login: React.FC = () => {
         })
     );
 
+    const [showDisclaimer, setShowDisclaimer] = useState(true);
+
     return (
         <div className="h-screen flex">
+
+            {showDisclaimer && (
+                <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-8 fade-in-20 max-w-md duration-500">
+                    <AlertDescription className="flex items-center justify-between gap-4">
+                        <span>This web application is strictly a CS3733-D25 Software Engineering class project for Prof. Wilson Wong at WPI</span>
+                        <button
+                            onClick={() => setShowDisclaimer(false)}
+                            className="p-1 rounded-full hover:bg-gray-100 transition-colors text-red-500"
+                        >
+                            X
+                        </button>
+                    </AlertDescription>
+                </Alert>
+            )}
 
             <div className="w-2/3 bg-cover bg-center opacity-90 relative" style={{ backgroundImage: "url('/newImageHero.png')" }}>
                 <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-4 left-4 w-92 h-auto" />
