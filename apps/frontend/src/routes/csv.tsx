@@ -1,20 +1,12 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import Layout from "../components/Layout";
 import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableHeader,
-    TableRow,
-    TableHead,
-    TableBody,
-    TableCell,
-} from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
 import { useMutation } from '@tanstack/react-query';
-
-const nodeTypeEnum = z.enum(['Entrance', 'Intermediary', 'Staircase', 'Elevator', 'Location', 'Help_Desk']);
+import { nodeType } from 'database';
 
 const CSVRowSchema = z.object({
     'Building ID': z.string().optional(),
@@ -25,7 +17,7 @@ const CSVRowSchema = z.object({
     'Floor': z.string(),
     'Suite': z.string().optional(),
     'Node ID': z.string().optional(),
-    'Node Type': nodeTypeEnum,
+    'Node Type': z.string(),
     'Node Description': z.string(),
     'Node Coordinates': z.string(),
     'From Edges': z.string(),
@@ -365,7 +357,7 @@ export default function CSV() {
                                         className="w-full px-3 py-2 border rounded-md"
                                     >
                                         <option value="">All Types</option>
-                                        {nodeTypeEnum.options.map(type => (
+                                        {nodeType.map(type => (
                                             <option key={type} value={type}>{type}</option>
                                         ))}
                                     </select>
