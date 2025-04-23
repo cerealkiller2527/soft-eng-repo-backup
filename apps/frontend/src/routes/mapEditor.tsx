@@ -234,7 +234,9 @@ const MapEditor = () => {
                 <div>
                   <strong>${node.suite ?? 'No description'}</strong><br/>
                   Type: ${node.type}<br/>
-                  ID: ${node.id}
+                  ID: ${node.id}<br/>
+                  Lat: ${node.x}<br/>
+                  Long: ${node.y}
                 </div>
             `);
                 infoWindow.open({
@@ -453,7 +455,7 @@ const MapEditor = () => {
             </div>
 
             {/* Div for alignment of Buttons */}
-            <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
+            <div className="absolute bottom-10 left-15 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
                     className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white

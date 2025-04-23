@@ -5,6 +5,7 @@ import { useTRPC } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
+import { DirectionsButton} from "@/components/DirectionsButton";
 
 
 import {pNodeDTO} from "../../../../share/types.ts";
@@ -180,14 +181,23 @@ const FloorPlan = () => {
 
         if (form.location && mapInstance.current && directionsRenderer.current) {
             const directionsService = new google.maps.DirectionsService();
-            let address = {lat: 42.32629494233723, lng: -71.14950206654193};
-            if(form.building ==  "20 Patriot Place"){
-                address = {lat: 42.09263772658629, lng: -71.26603830263363};
-            }else if(form.building ==  "22 Patriot Place"){
-                address = {lat: 42.09251994541246, lng: -71.26653442087988};
-            }else if(form.building ==  "Faulkner Hospital"){
-                address = {lat: 42.30163258195755, lng: -71.12812875693645};
+            let address = {lat: 42.3262950636318, lng: -71.1494980200208};
+            if(form.building ==  "20 Patriot Place" && !driving){
+                address = {lat: 42.09246908231313, lng: -71.26642176610235};
+            }else if(form.building ==  "22 Patriot Place" && !driving){
+                address = {lat: 42.09251777006624, lng:  -71.26652323164454};
+            }else if(form.building ==  "Faulkner Hospital" && !driving){
+                address = {lat: 42.3012843384385, lng: -71.12771797007423};
+            }else if(form.building ==  "20 Patriot Place" && driving){
+                address = {lat: 42.09238279279456, lng: -71.26641377768568};
+            }else if(form.building ==  "22 Patriot Place" && driving){
+                address = {lat: 42.09236692913726, lng:  -71.26642798631269};
+            }else if(form.building ==  "Faulkner Hospital" && driving){
+                address = {lat: 42.30096424724806, lng: -71.12769475303416};
+            }else if(form.building ==  "Chestnut Hill Medical Center" && driving) {
+                address = {lat: 42.32636329870798, lng:  -71.14976451657915};
             }
+
             directionsService.route(
                 {
                     origin: form.location,
@@ -233,6 +243,7 @@ const FloorPlan = () => {
                 />
                 <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
                     <InstructionsBox key={instructions.join()} instructions={instructions} />
+                    <DirectionsButton directions={instructions}/>
                 </div>
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
