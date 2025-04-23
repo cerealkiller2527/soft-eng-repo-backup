@@ -126,8 +126,8 @@ const MapEditor = () => {
 
     };
 
-
-
+    // Using this for rendering the edgeStartRef stuff
+    const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
 
     const edgeStartRef = useRef<Node | null>(null);
@@ -144,6 +144,7 @@ const MapEditor = () => {
     const handleMarkerClick = (clickedNode: Node) => {
         if (!edgeStartRef.current) {
             edgeStartRef.current = clickedNode;
+            setSelectedNode(clickedNode);
             console.log("Edge start set to", clickedNode.id);
         } else {
             if (edgeStartRef.current.id !== clickedNode.id) {
@@ -152,12 +153,14 @@ const MapEditor = () => {
                     fromNodeId: edgeStartRef.current.id,
                     toNodeId: clickedNode.id,
                 };
-
                 countRef.current -= 1;
                 setEdges((prev) => [...prev, newEdge]);
                 console.log("Edge created between", edgeStartRef.current.id, "and", clickedNode.id);
+
+                // Keep the form visible by selecting the new node
+                edgeStartRef.current = clickedNode;
+                setSelectedNode(clickedNode);
             }
-            edgeStartRef.current = null;
         }
     };
 
@@ -165,10 +168,7 @@ const MapEditor = () => {
         if (event.key === "Delete") {
             const nodeToDelete = edgeStartRef.current;
             if (nodeToDelete) {
-                // Remove the node
                 setNodes((prev) => prev.filter((node) => node.id !== nodeToDelete.id));
-
-                // Remove edges connected to the node
                 setEdges((prev) =>
                     prev.filter(
                         (edge) =>
@@ -176,8 +176,8 @@ const MapEditor = () => {
                             edge.toNodeId !== nodeToDelete.id
                     )
                 );
-
                 edgeStartRef.current = null;
+                setSelectedNode(null);
             }
         }
     };
@@ -241,8 +241,8 @@ const MapEditor = () => {
                     anchor: marker,
                     map: mapInstance.current,
                 });
-            });
-            marker.addListener('click', () => {
+
+                // Separate the marker click handler from the infoWindow click
                 handleMarkerClick(node);
             });
 
@@ -307,7 +307,14 @@ const MapEditor = () => {
             const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
             const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
 
-            setInfoWindow(new InfoWindow());
+            const newInfoWindow = new InfoWindow();
+            // Add close listener
+            newInfoWindow.addListener('closeclick', () => {
+                edgeStartRef.current = null;
+                setSelectedNode(null);
+            });
+
+            setInfoWindow(newInfoWindow);
             setAdvancedMarker(() => AdvancedMarkerElement);
             setPin(() => PinElement);
         };
@@ -441,27 +448,30 @@ const MapEditor = () => {
                 className="absolute top-20 bottom-0 left-0 right-0 w-full z-0"
             />
 
-            <HelpDialog />
-
             <div className="fixed top-0 left-0 right-0 z-20">
                 <Navbar />
             </div>
 
-            <Button
-                className="absolute bottom-20 left-4 z-10"
-                onClick={handleSaveMap}
-            >
-                Save Map
-            </Button>
-            <div className="absolute top-30 right-4 z-10">
-                <MapForm onSubmit={handleFormSubmit}/>
+            {/* Div for alignment of Buttons */}
+            <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
+                <Button
+                    onClick={handleSaveMap}
+                    className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                >
+                    Save Map
+                </Button>
+
+                <HelpDialog />
             </div>
 
-            <div className="absolute top-30 left-4 z-10">
-                <div className="bg-white shadow-md rounded-2xl overflow-hidden">
-                    <div className="p-4">
-                        <MapEditorSelectForm onSubmit={(form) => setForm(form)} />
-                    </div>
+            <div className="absolute top-30 right-4 z-30">
+                {(selectedNode || edgeStartRef.current) && <MapForm onSubmit={handleFormSubmit} />}
+            </div>
+
+            <div className="absolute top-26 left-4 z-10">
+                <div className="absolute z-10 p-4">
+                    <MapEditorSelectForm onSubmit={(form) => setForm(form)} />
                 </div>
             </div>
         </div>

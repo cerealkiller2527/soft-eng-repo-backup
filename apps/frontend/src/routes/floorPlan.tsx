@@ -203,6 +203,7 @@ const FloorPlan = () => {
                         const Mapsinstructions = leg.steps.map(step => step.instructions);
                         setInstructions(Mapsinstructions);
                         console.log(instructions);
+                        console.log(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
 
@@ -234,9 +235,8 @@ const FloorPlan = () => {
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
                 />
-                <div className="p-4">
-                    <h2 className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">Directions</h2>
-                    <InstructionsBox instructions={instructions} />
+                <div className="absolute top-20 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
+                    <InstructionsBox key={instructions.join()} instructions={instructions} />
                 </div>
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">

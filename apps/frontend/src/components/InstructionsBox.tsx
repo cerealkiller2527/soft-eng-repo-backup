@@ -5,15 +5,18 @@ type InstructionsBoxProps = {
     instructions: string[];
 };
 
-const InstructionsBox: React.FC<InstructionsBoxProps> = ({ instructions }) => {
+const InstructionsBox = ({ instructions }: { instructions: string[] }) => {
+    console.log("InstructionsBox rendered with:", instructions);
+
     return (
-        <ScrollArea className="h-64 w-64 rounded-xl border p-4 bg-white shadow-md">
-            <div className="space-y-2">
-                {instructions.map((text, index) => (
-                    <div key={index} className="text-sm text-gray-700">
-                        {index + 1}. {text}
-                    </div>
-                ))}
+        <ScrollArea className="max-h-48 overflow-auto">
+            <div className="p-4 bg-white rounded shadow">
+                <h3 className="text-lg font-bold mb-2 sticky top-0 bg-white z-10 pb-2">Step-by-Step Directions</h3>
+                <ul className="list-disc list-inside">
+                    {instructions.map((inst, idx) => (
+                        <li key={idx} dangerouslySetInnerHTML={{ __html: inst }} />
+                    ))}
+                </ul>
             </div>
         </ScrollArea>
     );
