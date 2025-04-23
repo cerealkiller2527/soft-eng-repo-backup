@@ -2,8 +2,11 @@ import  { useState } from "react";
 import { useLocation } from "react-router-dom";
 import React, {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from '@tanstack/react-query';
 import { useTRPC, trpcClient } from '../database/trpc.ts';
-import { SignIn } from "@clerk/clerk-react";
+import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
+import { SignIn, SignInButton } from "@clerk/clerk-react";
+import { isClerkAPIResponseError } from "@clerk/clerk-js";
 
 const Login: React.FC = () => {
 
@@ -19,7 +22,90 @@ const Login: React.FC = () => {
     const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
 
+    // Clerk Auth
+    const { isLoaded: signInLoaded, signIn } = useSignIn();
+    const { isLoaded: signUpLoaded, signUp, setActive } = useSignUp();
+    const { getToken } = useAuth();
+
     const from = location.state?.from?.pathname || '/Directory';
+
+    const handleSignIn = async () => {
+        if (!signInLoaded) return;
+
+        try {
+            const signInAttempt = await signIn.create({
+                identifier: username,
+                password,
+            });
+
+            const sessionId = await signInAttempt.createdSessionId;
+            if (!sessionId) throw new Error("No session ID returned.");
+
+            if (typeof window !== 'undefined' && window.Clerk) {
+                const sessionToken = await window.Clerk.session?.getToken();
+                if (!sessionToken) throw new Error("Failed to get session token.");
+
+                // call backend to verify session
+                await trpcClient.login.verifyClerkUser.mutate({
+                    sessionId: sessionId,
+                    sessionToken: sessionToken,
+                });
+            } else {
+                throw new Error("Clerk is not available.");
+            }
+
+            navigate("/Directory");
+        } catch (err: unknown) {
+            if (isClerkAPIResponseError(err)) {
+                alert(err.errors?.[0]?.message ?? "Login failed");
+            } else {
+                alert("Unknown error during login");
+            }
+        }
+    };
+
+    const handleSignUp = async () => {
+        if (!signUpLoaded) return;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        try {
+            const result = await signUp.create({
+                emailAddress: email,
+                password,
+            });
+
+            await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+            alert("Account created! Please check your email for verification.");
+
+            await setActive({ session: result.createdSessionId });
+
+            setIsSignUp(false);
+        } catch (err: unknown) {
+            if (isClerkAPIResponseError(err)) {
+                alert("Signup failed: " + (err.errors?.[0]?.message ?? "Unknown error"));
+            } else {
+                alert("Signup failed: Unknown error");
+            }
+        }
+
+    const addUser = useMutation(
+        trpc.login.addLogin.mutationOptions({
+            onSuccess: (data) => {
+                console.log('Add user', data);
+                alert("Account created successfully! You can now log in.");
+                setIsSignUp(false); // Switch to login form after sign-up
+            },
+            onError: (error) => {
+                console.error('Unable to add user', error);
+                alert("Unable to add user! Try again later.");
+            }
+        })
+    )
+    };
 
     return (
         //dimensions for the hero image: 1152px width 1080px height
@@ -88,6 +174,13 @@ const Login: React.FC = () => {
                                 className="w-full p-2 mb-2 border border-gray-300 rounded-md"
                             />
 
+                            <button
+                                onClick={handleSignUp}
+                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
+                            >
+                                Sign Up
+                            </button>
+
                             <p className="mt-4 text-sm text-center">
                                 Already have an account?{' '}
                                 <span
@@ -102,17 +195,12 @@ const Login: React.FC = () => {
                         <>
                             <SignIn
                                 forceRedirectUrl="/directory"
-                                signUpUrl={null}
+                                signUpUrl={undefined}
                                 appearance={{
                                     elements: {
                                         formButtonPrimary:
                                             'bg-blue-900 hover:bg-white hover:text-blue-900',
                                         card: 'shadow-md border border-gray-200 p-6 rounded-md',
-
-                                        footer: 'hidden',
-                                        footerAction: 'hidden',
-                                        footerActionText: 'hidden',
-                                        footerActionLink: 'hidden',
                                     },
                                 }}
                             />
