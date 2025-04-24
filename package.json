@@ -40,6 +40,9 @@
     "vitest": "^3.0.9"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.28.2",
+    "@clerk/clerk-sdk-node": "^5.1.6",
+    "@clerk/express": "^1.4.7",
     "@hookform/resolvers": "^5.0.1",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-alert-dialog": "^1.1.10",
