@@ -40,35 +40,39 @@ async function main() {
     // Create buildings
     const chestnutHillBuilding = await prisma.building.create({
         data: {
-            id: 1,
             name: "Chestnut Hill Medical Center",
             address: '25 Boylston St, Chestnut Hill, Ma 02467',
             phoneNumber: '(617) 482-5500',
+            defaultLat: 42.3262,
+            defaultLng: -71.1497
         }
     });
     const patriotPlace20Building = await prisma.building.create({
         data: {
-            id: 2,
             name: "20 Patriot Place",
             address: '20 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
+            defaultLat: 42.09280,
+            defaultLng: -71.266
         }
     });
     const patriotPlace22Building = await prisma.building.create({
         data: {
-            id: 3,
             name: "22 Patriot Place",
             address: '22 Patriot Pl, Foxboro, MA 02035',
             phoneNumber: '(866) 378-9164',
+            defaultLat: 42.09262,
+            defaultLng: -71.267
         }
     });
 
     const faulknerBuilding = await prisma.building.create({
         data: {
-            id: 4,
             name: "Faulkner Hospital",
             address: '1153 Centre St, Jamaica Plain, MA 02130',
             phoneNumber: '(866) 378-9164',
+            defaultLat: 42.30163258195755,
+            defaultLng: -71.12812875693645
         }
     });
 
@@ -1008,8 +1012,9 @@ async function main() {
         const startIndex = descToI(startDesc);
         const endIndex = descToI(endDesc);
         return {
-            fromNodeId: allNodes[startIndex].id, toNodeId: allNodes[endIndex].id,
-        }
+            fromNodeId: allNodes[startIndex].id, 
+            toNodeId: allNodes[endIndex].id
+        };
     }
 
 
