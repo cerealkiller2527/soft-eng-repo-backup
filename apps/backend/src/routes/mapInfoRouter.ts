@@ -5,6 +5,19 @@ import prismaClient from "../bin/prisma-client.ts";
 
 export const t = initTRPC.create();
 export const mapInfoRouter = t.router({
+  getBuildingInfo: t.procedure.query(async () => {
+    return await PrismaClient.building.findMany({
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        phoneNumber: true,
+        defaultLat: true,
+        defaultLng: true,
+      },
+    });
+  }),
+
   mapInfo: t.procedure
     .input(z.object({ buildingName: z.string() }))
     .query(async ({ input }) => {
