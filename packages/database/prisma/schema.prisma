@@ -173,9 +173,11 @@ model DepartmentServices {
 }
 
 model Building {
-  id          Int        @id
+  id          Int        @id @default(autoincrement())
   name        String     @unique
   address     String
   phoneNumber String
+  defaultLat  Float
+  defaultLng  Float
   Location    Location[]
 }
