@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '../database/trpc.ts';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,10 +29,12 @@ export const formSchema = z.object({
     floor: z.string(),
 });
 
-const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill", "Faulkner Hospital"];
 const floors = ["1", "2", "3", "4"];
 
 export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z.infer<typeof formSchema>) => void }) {
+    const trpc = useTRPC();
+    const buildingsQuery = useQuery(trpc.mapInfoRouter.getBuildingInfo.queryOptions());
+    
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -40,8 +44,10 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
     });
 
     useEffect(() => {
-        // Fetch buildings/floors from backend in future
-    }, []);
+        if (buildingsQuery.error) {
+            toast.error("Failed to load buildings");
+        }
+    }, [buildingsQuery.error]);
 
     const handleSubmit = (values: z.infer<typeof formSchema>) => {
         if (!values.building || !values.floor) {
@@ -62,7 +68,6 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
         }
     };
 
-    {/* Pasting this back in from my other branch, hope this works */}
     return (
         <div className="bg-white rounded-lg shadow-md p-6 w-64">
             <Form {...form}>
@@ -86,12 +91,12 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent className="max-h-60 overflow-y-auto">
-                                        {buildings.map((building) => (
+                                        {buildingsQuery.data?.map((building) => (
                                             <SelectItem
-                                                key={building}
-                                                value={building}
+                                                key={building.id}
+                                                value={building.name}
                                             >
-                                                {building}
+                                                {building.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

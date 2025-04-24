@@ -24,6 +24,7 @@ type formType = {
 
 const FloorPlan = () => {
     const trpc = useTRPC();
+    const buildingsQuery = useQuery(trpc.mapInfoRouter.getBuildingInfo.queryOptions());
     const [eta, setEta] = useState<string | undefined>(undefined);
     const [form, setForm] = useState<formType | null>(null);
     const mapRef = useRef<HTMLDivElement | null>(null);
@@ -169,34 +170,27 @@ const FloorPlan = () => {
 
 
     useEffect(() => {
-        if (!form) return;
-
+        if (!form || !buildingsQuery.data) return;
+        
+        const building = buildingsQuery.data.find(b => b.name === form.building);
+        if (!building) return;
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
-            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT;
-            setDriving(false)
-            break;
-            case "Walking": travelMode = google.maps.TravelMode.WALKING;
-            setDriving(false)
-            break;
+            case "Public Transport": 
+                travelMode = google.maps.TravelMode.TRANSIT;
+                setDriving(false);
+                break;
+            case "Walking": 
+                travelMode = google.maps.TravelMode.WALKING;
+                setDriving(false);
+                break;
         }
 
-
-
-
         if (form.location && mapInstance.current && directionsRenderer.current) {
-            queryClient.invalidateQueries();
-
             const directionsService = new google.maps.DirectionsService();
-            let address = {lat: 42.3262940433051, lng: -71.1495987024141};
-            if(form.building ==  "20 Patriot Place"){
-                address = {lat: 42.09263772658629, lng: -71.26603830263363};
-            }else if(form.building ==  "22 Patriot Place"){
-                address = {lat: 42.09251994541246, lng: -71.26653442087988};
-            }else if(form.building ==  "Faulkner Hospital"){
-                address = {lat: 42.30118405913063, lng: -71.12763594431938};
-            }
+            const address = { lat: building.defaultLat, lng: building.defaultLng };
+            
             directionsService.route(
                 {
                     origin: form.location,
@@ -219,14 +213,8 @@ const FloorPlan = () => {
                             bounds.extend(leg.end_location);
                         });
 
-                        const center = bounds.getCenter(); // This is a LatLng object
-
-                        const pathCenter: google.maps.LatLngLiteral = {
-                            lat: center.lat(),
-                            lng: center.lng(),
-                        };
-                        setPathCenter(pathCenter);
-
+                        const center = bounds.getCenter();
+                        setPathCenter({ lat: center.lat(), lng: center.lng() });
 
                         const durationText = leg?.duration?.text;
                         setEta(durationText);
@@ -236,33 +224,26 @@ const FloorPlan = () => {
                 }
             );
         }
-    }, [form]);
-
-    const buildingCenters: Record<string, google.maps.LatLngLiteral> = {
-        "20 Patriot Place": { lat: 42.09333, lng: -71.26546 },
-        "22 Patriot Place": { lat: 42.09333, lng: -71.26546 },
-        "Faulkner Hospital": { lat: 42.30163258195755, lng: -71.12812875693645 },
-        "Chestnut Hill Medical Center": { lat: 42.3262, lng: -71.1497 },
-        "Default": { lat: 42.3262, lng: -71.1497 }
-    };
+    }, [form, buildingsQuery.data]);
 
     useEffect(() => {
-        const building = form?.building ?? "Default";
-        const buildingCenter = buildingCenters[building] ?? buildingCenters["Default"];
+        if (!form || !buildingsQuery.data) return;
+        
+        const building = buildingsQuery.data.find(b => b.name === form.building);
+        if (!building) return;
+
+        const buildingCenter = { 
+            lat: building.defaultLat, 
+            lng: building.defaultLng 
+        };
 
         const targetCenter = centerMode === "Building"
             ? buildingCenter
             : pathCenter ?? buildingCenter;
 
-
         mapInstance.current?.setCenter(targetCenter);
-
-        if (centerMode === "Building") {
-            mapInstance.current?.setZoom(18); // zoom in when showing the building
-        }else{
-            mapInstance.current?.setZoom(10);
-        }
-    }, [centerMode, form?.building, pathCenter]);
+        mapInstance.current?.setZoom(centerMode === "Building" ? 18 : 10);
+    }, [centerMode, form?.building, pathCenter, buildingsQuery.data]);
 
     const handleImageSwitch = () => {
         setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);

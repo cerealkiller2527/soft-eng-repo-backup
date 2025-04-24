@@ -42,6 +42,7 @@ type Edge = {
 
 const MapEditor = () => {
     const trpc = useTRPC();
+    const buildingsQuery = useQuery(trpc.mapInfoRouter.getBuildingInfo.queryOptions());
     const mapRef = useRef<HTMLDivElement | null>(null);
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
@@ -203,6 +204,19 @@ const MapEditor = () => {
             console.log(nodes);
         }
     }, [fetchFloorMap.status, fetchFloorMap.data]);
+
+    useEffect(() => {
+        if (!form || !buildingsQuery.data) return;
+        
+        const selectedBuilding = buildingsQuery.data.find(b => b.name === form.building);
+        if (selectedBuilding && mapInstance.current) {
+            mapInstance.current.setCenter({ 
+                lat: selectedBuilding.defaultLat, 
+                lng: selectedBuilding.defaultLng 
+            });
+            setBuilding(selectedBuilding.id);
+        }
+    }, [form, buildingsQuery.data]);
 
     useEffect(() => {
         if (!form || nodes.length === 0) return;
