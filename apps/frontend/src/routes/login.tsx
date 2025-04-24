@@ -141,78 +141,21 @@ const Login: React.FC = () => {
             </div>
 
             {/* Sign-In / Sign-Up */}
-            <div className="w-2/5 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
+            <div className="w-1/3 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
                 <div>
-                    {isSignUp ? (
-                        <>
-                            <h1 className="text-2xl text-gray-800 mb-4 text-center">
-                                Create Account
-                            </h1>
-                            <p className="text-sm text-gray-500 mb-6 text-center">
-                                Please enter the below details to sign up.
-                            </p>
-                            <input
-                                type="email"
-                                placeholder="Email Address"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-2 mb-2 border border-gray-300 rounded-md"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className="w-full p-2 mb-2 border border-gray-300 rounded-md"
-                            />
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-2 mb-2 border border-gray-300 rounded-md"
-                            />
-
-                            <input
-                                type="password"
-                                placeholder="Confirm Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="w-full p-2 mb-2 border border-gray-300 rounded-md"
-                            />
-
-                            <button
-                                onClick={handleSignUp}
-                                className="w-full p-2 bg-blue-900 text-white rounded-md hover:bg-white hover:text-blue-900 border-2 border-transparent hover:border-blue-900 transition-all"
-                            >
-                                Sign Up
-                            </button>
-
-                            <p className="mt-4 text-sm text-center">
-                                Already have an account?{' '}
-                                <span
-                                    onClick={() => setIsSignUp(false)}
-                                    className="text-blue-900 hover:underline cursor-pointer"
-                                >
-                                    Sign In
-                                </span>
-                            </p>
-                        </>
-                    ) : (
-                        <>
-                            <SignIn
-                                forceRedirectUrl="/directory"
-                                signUpUrl={undefined}
-                                appearance={{
-                                    elements: {
-                                        formButtonPrimary:
-                                            'bg-blue-900 hover:bg-white hover:text-blue-900',
-                                        card: 'shadow-md border border-gray-200 p-6 rounded-md',
-                                    },
-                                }}
-                            />
-                        </>
-                    )}
+                    <>
+                        <SignIn
+                            forceRedirectUrl="/directory"
+                            signUpUrl={undefined}
+                            appearance={{
+                                elements: {
+                                    formButtonPrimary:
+                                        'bg-blue-900 hover:bg-white hover:text-blue-900',
+                                    card: 'shadow-md border border-gray-200 p-6 rounded-md',
+                                },
+                            }}
+                        />
+                    </>
                 </div>
             </div>
         </div>
