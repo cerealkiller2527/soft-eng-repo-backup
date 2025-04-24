@@ -1,6 +1,6 @@
 import { Algorithm } from "./Algorithm.ts";
 import { pNode } from "./pNode.ts";
-import PrismaClient from "../../bin/prisma-client.ts";
+import PrismaClient from "../bin/prisma-client.ts";
 
 export class SearchSystem {
   algorithm: Algorithm;

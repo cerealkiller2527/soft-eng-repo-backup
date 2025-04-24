@@ -1,4 +1,4 @@
-import PrismaClient from "../../bin/prisma-client.ts";
+import PrismaClient from "../bin/prisma-client.ts";
 
 export class pNode {
   private static nodeCache: Map<number, pNode> = new Map();

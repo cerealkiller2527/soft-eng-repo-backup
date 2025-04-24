@@ -1,33 +1,13 @@
 import { initTRPC } from "@trpc/server";
 import { z } from "zod";
 import { parse } from "papaparse";
-import PrismaClient from "../bin/prisma-client";
+import PrismaClient from "../../bin/prisma-client.ts";
 import { nodeType } from "database";
+import {csvSchema} from "../../../../../share/Schemas.ts";
 
 const t = initTRPC.create();
 
-const CSVRecordSchema = z.object({
-  "Building ID": z.string().optional(),
-  "Building Name": z.string(),
-  "Building Address": z.string(),
-  "Building Phone": z.string(),
-  "Location ID": z.string().optional(),
-  Floor: z.string(),
-  Suite: z.string().optional(),
-  "Node ID": z.string().optional(),
-  "Node Type": z.string(),
-  "Node Description": z.string(),
-  "Node Coordinates": z.string(),
-  "From Edges": z.string(),
-  "To Edges": z.string(),
-  "Department ID": z.string().optional(),
-  "Department Name": z.string(),
-  "Department Phone": z.string(),
-  "Department Description": z.string().optional(),
-  Services: z.string(),
-});
-
-type CSVRecord = z.infer<typeof CSVRecordSchema>;
+type CSVRecord = z.infer<typeof csvSchema>;
 
 function parseCoordinates(coord: string): { lat: number; long: number } | null {
   if (!coord || coord.trim() === "") return null;
@@ -61,7 +41,7 @@ export const csvImportRouter = t.router({
         });
 
         const validatedData = data.map((record) =>
-          CSVRecordSchema.parse(record),
+          csvSchema.parse(record),
         );
 
         return await PrismaClient.$transaction(async (tx) => {

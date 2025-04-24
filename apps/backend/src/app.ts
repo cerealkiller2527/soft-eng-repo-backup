@@ -1,15 +1,15 @@
 import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { employeeRouter } from "./routes/employeeRouter";
-import { serviceRouter } from "./routes/serviceRouter";
+import { serviceRouter } from "./routes/service/serviceRouter.ts";
 import { loginRouter } from "./routes/loginRouter.ts";
-import { searchRouter } from "./routes/search.ts";
-import { csvRouter } from "./routes/csvRouter.ts";
+import { searchRouter } from "./routes/map/search.ts";
+import { csvRouter } from "./routes/csv/csvRouter.ts";
 import express from "express";
 import logger from "morgan";
 import { directoriesRouter } from "./routes/directoriesRouter.ts";
-import { mapEditorRouter } from "./routes/mapEditorRouter.ts";
-import { mapInfoRouter } from "./routes/mapInfoRouter.ts";
+import { mapEditorRouter } from "./routes/map/mapEditorRouter.ts";
+import { mapInfoRouter } from "./routes/map/mapInfoRouter.ts";
 
 // created for each request
 const createContext = ({

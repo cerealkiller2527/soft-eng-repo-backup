@@ -1,5 +1,5 @@
 import { expect, test, describe, vi, beforeEach } from "vitest";
-import { serviceRouter } from "../routes/serviceRouter.ts";
+import { serviceRouter } from "../routes/service/serviceRouter.ts";
 import { Prisma, RequestType, Priority, Status } from "database";
 import PrismaClient from "../bin/prisma-client.ts";
 

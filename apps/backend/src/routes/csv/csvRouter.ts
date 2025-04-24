@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server";
-import { csvExportRouter } from "./csvExportRouter";
-import { csvImportRouter } from "./csvImportRouter";
-import PrismaClient from "../bin/prisma-client";
+import { csvExportRouter } from "./csvExportRouter.ts";
+import { csvImportRouter } from "./csvImportRouter.ts";
+import PrismaClient from "../../bin/prisma-client.ts";
 
 export const t = initTRPC.create();
 

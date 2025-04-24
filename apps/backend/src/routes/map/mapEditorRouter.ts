@@ -1,8 +1,8 @@
 // src/routes/mapEditorRouter.ts
 import { initTRPC, TRPCError } from "@trpc/server";
 import { z } from "zod";
-import PrismaClient from "../bin/prisma-client";
-import prismaClient from "../bin/prisma-client";
+import PrismaClient from "../../bin/prisma-client.ts";
+import prismaClient from "../../bin/prisma-client.ts";
 
 // Initialize tRPC
 export const t = initTRPC.create();

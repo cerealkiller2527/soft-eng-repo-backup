@@ -1,15 +1,12 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import PrismaClient from "../bin/prisma-client";
 import { z } from "zod";
+import {userSchema} from "../../../../share/Schemas.ts";
+
 export const t = initTRPC.create();
 export const loginRouter = t.router({
   checkLogin: t.procedure
-    .input(
-      z.object({
-        username: z.string(),
-        password: z.string(),
-      }),
-    )
+    .input(userSchema)
     .mutation(async ({ input }) => {
       const { username, password } = input;
       const user = await PrismaClient.user.findUnique({

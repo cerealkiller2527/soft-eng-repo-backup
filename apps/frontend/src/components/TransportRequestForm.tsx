@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import TransportRequest from "../routes/serviceRequest.tsx"
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
-import {exportPriority} from "../../../backend/src/routes/serviceRouter.ts";
+import {exportPriority} from "../../../backend/src/routes/service/serviceRouter.ts";
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"];

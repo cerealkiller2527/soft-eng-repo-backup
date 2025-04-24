@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server";
 import { z } from "zod";
 import { unparse } from "papaparse";
-import PrismaClient from "../bin/prisma-client";
+import PrismaClient from "../../bin/prisma-client.ts";
 import {
   Building,
   Location,
@@ -9,31 +9,13 @@ import {
   DepartmentServices,
   nodeType,
 } from "database";
+import {csvSchema} from "../../../../../share/Schemas.ts";
 
 const t = initTRPC.create();
 
-const CSVRowSchema = z.object({
-  "Building ID": z.string().optional(),
-  "Building Name": z.string(),
-  "Building Address": z.string(),
-  "Building Phone": z.string(),
-  "Location ID": z.string().optional(),
-  Floor: z.string(),
-  Suite: z.string().optional(),
-  "Node ID": z.string().optional(),
-  "Node Type": z.string(),
-  "Node Description": z.string(),
-  "Node Coordinates": z.string(),
-  "From Edges": z.string(),
-  "To Edges": z.string(),
-  "Department ID": z.string().optional(),
-  "Department Name": z.string(),
-  "Department Phone": z.string(),
-  "Department Description": z.string().optional(),
-  Services: z.string(),
-});
 
-type CSVRow = z.infer<typeof CSVRowSchema>;
+
+type CSVRow = z.infer<typeof csvSchema>;
 
 type BuildingWithRelations = Building & {
   Location: (Location & {
@@ -123,7 +105,7 @@ export const csvExportRouter = t.router({
 
       return unparse(rows, {
         header: true,
-        columns: Object.keys(CSVRowSchema.shape),
+        columns: Object.keys(csvSchema.shape),
       });
     } catch (error) {
       console.error("Failed to export CSV:", error);

@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { BFS } from "./algos/BFS.ts";
-import { SearchSystem } from "./algos/SearchSystem.ts";
+import { BFS } from "../../algos/BFS.ts";
+import { SearchSystem } from "../../algos/SearchSystem.ts";
 
-import { pNodeDTO } from "../../../../share/types.ts";
-import PrismaClient from "../bin/prisma-client.ts";
-import { DFS } from "./algos/DFS.ts";
+import { pNodeDTO } from "../../../../../share/types.ts";
+import PrismaClient from "../../bin/prisma-client.ts";
+import { DFS } from "../../algos/DFS.ts";
 
 export const t = initTRPC.create();
 
