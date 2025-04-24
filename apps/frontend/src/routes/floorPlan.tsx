@@ -1,10 +1,15 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
-import Navbar from "../components/Navbar.tsx";
-import Footer from "../components/Footer";
-import { useMutation } from '@tanstack/react-query';
+import Layout from "../components/Layout";
+import {useMutation, useQuery} from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
+import { queryClient } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
+import InstructionsBox from "@/components/InstructionsBox";
+import {DirectionsButton} from "@/components/DirectionsButton.tsx";
+import { Button } from "@/components/ui/button";
+
+
 
 import {pNodeDTO} from "../../../../share/types.ts";
 
@@ -37,6 +42,18 @@ const FloorPlan = () => {
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
     const [driving, setDriving] = useState<boolean>(true);
+    const [instructions, setInstructions] = useState<string[]>([]);
+    const [mode, setMode] = useState<"DFS" | "BFS">("DFS");
+    const toggleMode = () => {
+        setMode((prev) => (prev === "DFS" ? "BFS" : "DFS"));
+    };
+    const [centerMode, setCenterMode] = useState<"Building" | "Path">("Building");
+    const toggleCenterMode = () => {
+        setCenterMode((prev) => (prev === "Building" ? "Path" : "Building"));
+    };
+    const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
+
+
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -58,7 +75,7 @@ const FloorPlan = () => {
             const map = new google.maps.Map(mapRef.current, {
                 zoom: 18,
                 center: { lat: 42.09333, lng: -71.26546 },
-                disableDefaultUI: false,
+                disableDefaultUI: true,
                 mapId: '57f41020f9b31f57',
             });
 
@@ -99,7 +116,7 @@ const FloorPlan = () => {
 
         polyline.setMap(mapInstance.current);
         polylineRef.current = polyline;
-
+        console.log("polyline rendered")
     }, [pathCoords, imageIndex]);
 
     useEffect(() => {
@@ -121,41 +138,39 @@ const FloorPlan = () => {
         });
     }, [imageIndex]);
 
-    const search = useMutation(
-        trpc.search.getPath.mutationOptions({
-            onSuccess: (data: pNodeDTO[]) => {
-
-                console.log(data);
-                const formattedCoords = data.map((node) => ({
-                    latitude: node.longitude,
-                    longitude: node.latitude,
-                    floor: node.floor
-                }));
-
-                // const formattedCoords = data.map(([x, y]) => ({ x, y }));
-                // setPathCoords(formattedCoords);
-
-                setPathCoords(formattedCoords)
-
-            },
-            onError: (error) => {
-                console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
-            },
-        })
-    );
 
 
+
+
+
+    const search = useQuery(trpc.search.getPath.queryOptions({
+        buildingName: form?.building ??  "",
+        endSuite: form?.destination ?? "",
+        startSuite: "ASDF",
+        driving: driving,
+        algorithm: mode,
+    }))
+
+
+    useEffect(() => {
+        if (search.data) {
+            console.log("Search results:", search.data.path);
+            const formattedCoords = search.data.path.map((node) => ({
+                latitude: node.longitude,
+                longitude: node.latitude,
+                floor: node.floor,
+            }));
+            setPathCoords(formattedCoords);
+            setInstructions((prev) => [...prev, ...search.data.directions]);
+
+        }
+
+    }, [search.status]);
 
 
     useEffect(() => {
         if (!form) return;
 
-        search.mutate({
-            endDesc: form.destination,
-            location: form.building,
-            driving: driving
-        });
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -167,22 +182,20 @@ const FloorPlan = () => {
             break;
         }
 
-        if(form.building == "Patriot Place"){
-            mapInstance.current?.setCenter({ lat: 42.09333, lng: -71.26546 });
-        }else{
-            mapInstance.current?.setCenter({ lat: 42.3262, lng: -71.1497 });
-        }
-
 
 
 
         if (form.location && mapInstance.current && directionsRenderer.current) {
+            queryClient.invalidateQueries();
+
             const directionsService = new google.maps.DirectionsService();
-            let address = {lat: 42.32629494233723, lng: -71.14950206654193};
+            let address = {lat: 42.3262940433051, lng: -71.1495987024141};
             if(form.building ==  "20 Patriot Place"){
-                address = {lat: 42.09251994541246, lng: -71.26653442087988};
+                address = {lat: 42.09263772658629, lng: -71.26603830263363};
             }else if(form.building ==  "22 Patriot Place"){
                 address = {lat: 42.09251994541246, lng: -71.26653442087988};
+            }else if(form.building ==  "Faulkner Hospital"){
+                address = {lat: 42.30118405913063, lng: -71.12763594431938};
             }
             directionsService.route(
                 {
@@ -194,8 +207,25 @@ const FloorPlan = () => {
                     if (status === 'OK' && result?.routes?.length > 0) {
                         directionsRenderer.current.setDirections(result);
                         const leg = result.routes[0].legs[0];
+                        const Mapsinstructions = leg.steps.map(step => step.instructions);
+                        setInstructions(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
 
+                        const route = result.routes[0];
+                        const bounds = new google.maps.LatLngBounds();
+
+                        route.legs.forEach(leg => {
+                            bounds.extend(leg.start_location);
+                            bounds.extend(leg.end_location);
+                        });
+
+                        const center = bounds.getCenter(); // This is a LatLng object
+
+                        const pathCenter: google.maps.LatLngLiteral = {
+                            lat: center.lat(),
+                            lng: center.lng(),
+                        };
+                        setPathCenter(pathCenter);
 
 
                         const durationText = leg?.duration?.text;
@@ -208,19 +238,39 @@ const FloorPlan = () => {
         }
     }, [form]);
 
+    const buildingCenters: Record<string, google.maps.LatLngLiteral> = {
+        "20 Patriot Place": { lat: 42.09333, lng: -71.26546 },
+        "22 Patriot Place": { lat: 42.09333, lng: -71.26546 },
+        "Faulkner Hospital": { lat: 42.30163258195755, lng: -71.12812875693645 },
+        "Chestnut Hill Medical Center": { lat: 42.3262, lng: -71.1497 },
+        "Default": { lat: 42.3262, lng: -71.1497 }
+    };
+
+    useEffect(() => {
+        const building = form?.building ?? "Default";
+        const buildingCenter = buildingCenters[building] ?? buildingCenters["Default"];
+
+        const targetCenter = centerMode === "Building"
+            ? buildingCenter
+            : pathCenter ?? buildingCenter;
+
+
+        mapInstance.current?.setCenter(targetCenter);
+
+        if (centerMode === "Building") {
+            mapInstance.current?.setZoom(18); // zoom in when showing the building
+        }else{
+            mapInstance.current?.setZoom(10);
+        }
+    }, [centerMode, form?.building, pathCenter]);
+
     const handleImageSwitch = () => {
         setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
     };
 
     return (
-        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col">
-            {/* Header */}
-            <div className="flex justify-start mb-2 p-2">
-                <img src="/BrighamAndWomensLogo.png" alt="Logo" className="h-12 ml-2" />
-            </div>
-
-            {/* Navbar */}
-            <Navbar />
+        <Layout>
+        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-20">
 
             {/* Main content fills screen excluding navbar/footer */}
             <div className="relative flex-1">
@@ -231,26 +281,46 @@ const FloorPlan = () => {
                     ref={mapRef}
                     style={{ width: '100%', height: '100%' }}
                 />
+                <div className="absolute top-5 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
+                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+
+                </div>
+                <div className="absolute top-55 right-9 z-10 p-4 rounded-lg shadow-md w-80 h-64">
+                    <DirectionsButton directions={instructions} />
+                </div>
 
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
                     <LocationRequestForm onSubmit={(form) => setForm(form)} />
                 </div>
 
-                <div className="absolute top-4 right-4 z-10">
-                    <button
+                <div className="absolute top-45 right-14 z-10 grid grid-cols-1 md:grid-cols-3 gap-1 mx-auto pt-28">
+                    <Button
                         onClick={handleImageSwitch}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md"
+                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                     >
                         Floor: {imageIndex + 1}
-                    </button>
+                    </Button>
+                    <Button
+                        onClick={toggleMode}
+                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                    >
+                        {mode}
+                    </Button>
+                    <Button
+                        onClick={toggleCenterMode}
+                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                    >
+                        {centerMode}
+                    </Button>
                 </div>
 
             </div>
-
-            {/* Footer */}
-            <Footer />
         </div>
+        </Layout>
     );
 };
 

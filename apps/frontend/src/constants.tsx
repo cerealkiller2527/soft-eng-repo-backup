@@ -27,27 +27,59 @@ export const overlays: OverlayImage[][] = [
                 east: -71.26552,
                 west: -71.26656,
             },
-        }
-    ],
-    [
+        },
         {
-            imageUrl: "/22PatriotPlaceFloorThree.png",
+            imageUrl: "/falknerFloorOne.png",
             bounds: {
-                north: 70.09309,
-                south: 70.09309,
-                east: -71.26552,
-                west: -71.26656,
+                north: 42.30250258195755,
+                south: 42.300903146614,
+                east: -71.12764275196665,
+                west: -71.12937875693645,
+            },
+
+
+        },
+        {
+            imageUrl: "/belkin.png",
+            bounds: {
+                north: 42.30198,
+                south: 42.30155,
+                east: -71.12682,
+                west: -71.12728,
+            },
+
+
+        },
+        {
+            imageUrl: "/22PatriotPlaceFloorOne.png",
+            bounds: {
+                north: 42.09310,
+                south: 42.09224,
+                east: -71.26652,
+                west: -71.26756,
             },
         },
 
     ],
     [
         {
-            imageUrl: "/22PatriotPlaceFloorFour.png",
+            imageUrl: "/22PatriotPlaceFloorThree.png",
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
                 east: -71.26652,
+                west: -71.26634,
+            },
+        },
+
+    ],
+    [
+        {
+            imageUrl: "/22PatriotPlaceFloorThree.png",
+            bounds: {
+                north: 42.09310,
+                south: 42.09224,
+                east: -71.26634,
                 west: -71.26756,
             },
         },
@@ -67,3 +99,6 @@ export const overlays: OverlayImage[][] = [
     ],
 
 ];
+
+//SW 42.300273146614, -71.12795275196665
+//NE 42.30263258195755, -71.12812875693645

@@ -1,16 +1,17 @@
-import  { useState } from "react";
-import { useLocation } from "react-router-dom";
-import React, {useEffect} from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC, trpcClient } from '../database/trpc.ts';
 import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
 import { SignIn, SignInButton } from "@clerk/clerk-react";
 import { isClerkAPIResponseError } from "@clerk/clerk-js";
 
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
+
 const Login: React.FC = () => {
 
-    // const {setAuthenticated} = useAuth();
     const location = useLocation();
     const trpc = useTRPC();
     const [email, setEmail] = useState("");
@@ -107,29 +108,35 @@ const Login: React.FC = () => {
     )
     };
 
-    return (
-        //dimensions for the hero image: 1152px width 1080px height
-        <div className="h-screen flex">
-            <div
-                className="w-3/5 bg-cover bg-center opacity-90"
-                style={{ backgroundImage: "url('/newImageHero.png')" }}
-            >
-                <img
-                    src="/hospitalLogo.png"
-                    alt="Hospital Logo"
-                    className="absolute top-4 left-4 w-92 h-auto"
-                />
+    const [showDisclaimer, setShowDisclaimer] = useState(true);
 
+    return (
+        <div className="h-screen flex">
+
+            {showDisclaimer && (
+                <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-8 fade-in-20 max-w-md duration-500">
+                    <AlertDescription className="flex items-center justify-between gap-4">
+                        <span>This web application is strictly a CS3733-D25 Software Engineering class project for Prof. Wilson Wong at WPI</span>
+                        <button
+                            onClick={() => setShowDisclaimer(false)}
+                            className="p-1 rounded-full hover:bg-gray-100 transition-colors text-red-500"
+                        >
+                            X
+                        </button>
+                    </AlertDescription>
+                </Alert>
+            )}
+
+            <div className="w-2/3 bg-cover bg-center opacity-90 relative" style={{ backgroundImage: "url('/newImageHero.png')" }}>
+                <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-4 left-4 w-92 h-auto" />
                 <div
-                    onMouseEnter={() => {
-                        setTransition(true);
-                    }}
-                    className={`flex flex-col items-center text-center text-white p-6 rounded-lg mt-90 mr-10 transition-all duration-1000 ease-in-out ${transition ? 'opacity-100 translate-y-1' : 'opacity-0 translate-y-8 '}`}
+                    onMouseEnter={() => setTransition(true)}
+                    className={`flex flex-col items-center text-center text-white p-6 rounded-lg mt-90 mr-10 transition-all duration-1000 ease-in-out ${
+                        transition ? "opacity-100 translate-y-1" : "opacity-0 translate-y-8"
+                    }`}
                 >
-                    <h1 className="text-4xl font-bold ">Accessing Health Care Made Easy</h1>
-                    <p className="text-lg mt-2 y-0">
-                        Access maps, request services, and more—all in one application now.
-                    </p>
+                    <h1 className="text-4xl font-bold">Accessing Health Care Made Easy</h1>
+                    <p className="text-lg mt-2">Access maps, request services, and more—all in one application now.</p>
                 </div>
             </div>
 

@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import {pNodeDTO} from "../../../../share/types.ts";
 
-const buildings = ["22 Patriot Place" ,"20 Patriot Place", "Chestnut Hill Medical Center"];
+const buildings = ["22 Patriot Place" ,"20 Patriot Place", "Chestnut Hill Medical Center", "Faulkner Hospital"];
 
 const transport = ["Public Transport", "Walking", "Driving"];
 
@@ -22,16 +22,20 @@ export default function LocationRequestForm({ onSubmit }) {
         transport: "",
         building: "Chestnut Hill Medical Center",
     });
-    const nodesQuery = useQuery(trpc.mapInfo.getNodesByBuildingName.queryOptions({ buildingName: form.building }));
+    const nodesQuery = useQuery(trpc.mapInfoRouter.mapInfo.queryOptions({ buildingName: form.building }));
 
 
     useEffect(() => {
         if (nodesQuery.data) {
-            const locations = nodesQuery.data
-                .filter((node) => node.type === "Location" && node.description)
-                .map((node) => node.description);
+            // const locations = nodesQuery.data
+            //     .filter((node) => node.type === "Location" && node.description)
+            //     .map((node) => node.description);
 
-            SetMGBHospitals(locations);
+            const suites = nodesQuery.data
+            console.log(suites)
+                // .filter((suite) => )
+
+            SetMGBHospitals(suites);
         }
     }, [form.building, nodesQuery.status]);
 

@@ -24,6 +24,7 @@ RUN yarn install
 # Generate Prisma client
 RUN yarn workspace database generate
 
+
 # Build the application
 RUN yarn build
 

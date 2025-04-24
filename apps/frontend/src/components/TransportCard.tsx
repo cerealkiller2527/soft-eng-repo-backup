@@ -32,12 +32,11 @@ export default function TransportCard({ onAddRequest }: { onAddRequest: (data: o
                 <div className="relative w-full max-w-xl max-h-[95vh] overflow-y-auto bg-white p-6 rounded-2xl shadow-lg transform scale-95">
                     <Button
                         onClick={() => setIsOpen(false)}
-                        className="absolute top-3 right-4 text-2xl font-bold text-red-600 hover:text-red-800 bg-white hover:bg-white"
+                        className="absolute top-3 right-3 text-2xl font-bold text-red-600 hover:text-red-800 bg-white hover:bg-white"
                     >
                         x
                     </Button>
                     <TransportationForm onFormSubmit={handleFormSubmit} />
-
                 </div>
             </div>
         )}
