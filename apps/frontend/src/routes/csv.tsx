@@ -6,6 +6,7 @@ import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
 import { useMutation } from '@tanstack/react-query';
+import {csvSchema} from "../../../../share/Schemas.ts";
 
 // Define nodeType enum to match Prisma schema
 const nodeTypeEnum = z.enum([
@@ -17,29 +18,7 @@ const nodeTypeEnum = z.enum([
     "Help_Desk",
 ]);
 
-// Define the schema for CSV rows
-const CSVRowSchema = z.object({
-    'Building ID': z.string().optional(),
-    'Building Name': z.string(),
-    'Building Address': z.string(),
-    'Building Phone': z.string(),
-    'Location ID': z.string().optional(),
-    'Floor': z.string(),
-    'Suite': z.string().optional(),
-    'Node ID': z.string().optional(),
-    'Node Type': nodeTypeEnum,
-    'Node Description': z.string(),
-    'Node Coordinates': z.string(),
-    'From Edges': z.string(),
-    'To Edges': z.string(),
-    'Department ID': z.string().optional(),
-    'Department Name': z.string(),
-    'Department Phone': z.string(),
-    'Department Description': z.string().optional(),
-    'Services': z.string()
-});
-
-type CSVRow = z.infer<typeof CSVRowSchema>;
+type CSVRow = z.infer<typeof csvSchema>;
 
 interface ColumnDefinition {
     key: keyof CSVRow;
@@ -179,7 +158,7 @@ export default function CSV() {
             skipEmptyLines: true,
             complete: (result) => {
                 try {
-                    const validatedData = result.data.map(row => CSVRowSchema.parse(row));
+                    const validatedData = result.data.map(row => csvSchema.parse(row));
                     setPreviewData(validatedData);
                 } catch (error) {
                     if (error instanceof z.ZodError) {

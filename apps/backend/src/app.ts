@@ -3,13 +3,12 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { employeeRouter } from "./routes/employeeRouter";
 import { serviceRouter } from "./routes/service/serviceRouter.ts";
 import { loginRouter } from "./routes/loginRouter.ts";
-import { searchRouter } from "./routes/map/search.ts";
+import { searchRouter } from "./routes/map/searchRouter.ts";
 import { csvRouter } from "./routes/csv/csvRouter.ts";
 import express from "express";
 import logger from "morgan";
 import { directoriesRouter } from "./routes/directoriesRouter.ts";
-import { mapEditorRouter } from "./routes/map/mapEditorRouter.ts";
-import { mapInfoRouter } from "./routes/map/mapInfoRouter.ts";
+import {mapRouter} from "./routes/map/mapRouter.ts";
 
 // created for each request
 const createContext = ({
@@ -24,9 +23,7 @@ const appRouter = t.router({
   login: loginRouter,
   csv: csvRouter,
   directories: directoriesRouter,
-  search: searchRouter,
-  mapEditor: mapEditorRouter,
-  mapInfoRouter: mapInfoRouter,
+  map: mapRouter,
 });
 const app = express();
 app.use(

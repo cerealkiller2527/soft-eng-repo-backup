@@ -29,7 +29,7 @@ export default function TransportRequestForm({ onSubmit }: { onSubmit: (data: {
         additionalNotes: "",
     });
     const trpc = useTRPC();
-    const addReq = useMutation(trpc.service.addTransportationRequest.mutationOptions())
+    const addReq = useMutation(trpc.service.addExternalTransportationRequest.mutationOptions());
     const [submittedRequests, setSubmittedRequests] = useState<typeof form[]>([]);
 
     const handleSelectChange = (event:ChangeEvent<HTMLSelectElement>) => {

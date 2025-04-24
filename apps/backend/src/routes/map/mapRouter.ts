@@ -1,5 +1,5 @@
 // Combine all routers
-import {searchRouter} from "./search.ts";
+import {searchRouter} from "./searchRouter.ts";
 import {mapInfoRouter} from "./mapInfoRouter.ts";
 import {mapEditorRouter} from "./mapEditorRouter.ts";
 import { initTRPC } from "@trpc/server";

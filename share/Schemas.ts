@@ -16,6 +16,7 @@ export const nodeSchema = z.object({
  * common zod schema for edges in routers
  */
 export const edgeSchema = z.object({
+    id: z.number(),
     toNodeId: z.number(),
     fromNodeId: z.number(),
 })

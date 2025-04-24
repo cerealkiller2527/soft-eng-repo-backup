@@ -143,7 +143,7 @@ const FloorPlan = () => {
 
 
 
-    const search = useQuery(trpc.search.getPath.queryOptions({
+    const search = useQuery(trpc.map.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endSuite: form?.destination ?? "",
         startSuite: "ASDF",

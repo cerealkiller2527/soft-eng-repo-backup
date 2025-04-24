@@ -61,7 +61,7 @@ const MapEditor = () => {
 
 
     const setFloorMap = useMutation(
-        trpc.mapEditor.sendFloorMap.mutationOptions()
+        trpc.map.sendFloorMap.mutationOptions()
     )
 
 
@@ -98,7 +98,7 @@ const MapEditor = () => {
     };
 
     const fetchFloorMap = useQuery(
-        trpc.mapEditor.getFloorMap.queryOptions({
+        trpc.map.getFloorMap.queryOptions({
             buildingId: Number(building),
             floor: Number(form?.floor ?? 1),
             onError: (error) => {
