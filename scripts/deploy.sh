@@ -9,7 +9,7 @@ GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
 
 # Login to AWS ECR
 echo "Logging in to AWS ECR..."
-aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+# aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
 
 # Build the Docker image with production target and environment variables
 echo "Building Docker image..."

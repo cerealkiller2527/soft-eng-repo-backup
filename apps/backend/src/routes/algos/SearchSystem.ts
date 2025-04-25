@@ -1,48 +1,55 @@
-import { Algorithm } from './Algorithm.ts';
-import { pNode } from './pNode.ts';
-import PrismaClient from '../../bin/prisma-client.ts';
+import { Algorithm } from "./Algorithm.ts";
+import { pNode } from "./pNode.ts";
+import PrismaClient from "../../bin/prisma-client.ts";
 
 export class SearchSystem {
-    algorithm: Algorithm;
+  algorithm: Algorithm;
 
-    constructor(algorithm: Algorithm) {
-        this.algorithm = algorithm;
+  constructor(algorithm: Algorithm) {
+    this.algorithm = algorithm;
+  }
+
+  changeAlgorithm(algorithm: Algorithm) {
+    this.algorithm = algorithm;
+  }
+
+  async path(location: string, endDescription: string, driving: boolean) {
+    let startDescription: string;
+    let parkingDescription: string;
+    let parkingPath: pNode[] = [];
+    let parkingReturnPath: pNode[] = [];
+    console.log(location, endDescription, driving);
+
+    if (location === "Chestnut Hill Medical Center" || location == "chestnut") {
+      startDescription = "Chestnut Drop Off";
+      parkingDescription = "Chestnut Parking";
+    } else if (location === "20 Patriot Place") {
+      startDescription = "20 Patriot Dropoff";
+      parkingDescription = "20 Patriot Parking";
+    } else if (location === "22 Patriot Place") {
+      startDescription = "22 Patriot Dropoff";
+      parkingDescription = "22 Patriot Parking";
+    } else if (location === "Faulkner Hospital" || location === "faulkner") {
+      startDescription = "Faulkner Drop Off";
+      parkingDescription = "Faulkner Parking";
+    } else {
+      console.error("Unrecognized location", location);
+      return [new pNode(-1)];
     }
 
-    changeAlgorithm(algorithm: Algorithm) {
-        this.algorithm = algorithm;
+    // if driving, get path to parking
+    if (driving) {
+      parkingPath = await this.algorithm.findPath(
+        startDescription,
+        parkingDescription,
+      );
     }
 
-    async path(location: string, endDescription: string, driving: boolean) {
-        let startDescription: string;
-        let parkingDescription: string;
-        let parkingPath: pNode[] = [];
-        let parkingReturnPath: pNode[] = [];
+    const path = await this.algorithm.findPath(
+      startDescription,
+      endDescription,
+    );
 
-        // find location
-        if (location === 'Chestnut Hill Medical Center' || location == 'chestnut') {
-            startDescription = '1drop off';
-            parkingDescription = '1parking';
-        } else if (
-            location === '20 Patriot Place' ||
-            location === '22 Patriot Place' ||
-            location === 'patriot place'
-        ) {
-            startDescription = '120/122drop off';
-            parkingDescription = '120/122parking';
-        } else {
-            console.error('Unrecognized location', location);
-            return [new pNode(-1)];
-        }
-
-        // if driving, get path to parking
-        if (driving) {
-            parkingPath = await this.algorithm.findPath(startDescription, parkingDescription);
-            parkingReturnPath = parkingPath.reverse();
-        }
-
-        const path = await this.algorithm.findPath(startDescription, endDescription);
-
-        return [...parkingPath, ...parkingReturnPath, ...path];
-    }
+    return [...parkingPath.reverse(), ...path];
+  }
 }

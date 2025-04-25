@@ -22,16 +22,20 @@ export default function LocationRequestForm({ onSubmit }) {
         transport: "",
         building: "Chestnut Hill Medical Center",
     });
-    const nodesQuery = useQuery(trpc.mapInfo.getNodesByBuildingName.queryOptions({ buildingName: form.building }));
+    const nodesQuery = useQuery(trpc.mapInfoRouter.mapInfo.queryOptions({ buildingName: form.building }));
 
 
     useEffect(() => {
         if (nodesQuery.data) {
-            const locations = nodesQuery.data
-                .filter((node) => node.type === "Location" && node.description)
-                .map((node) => node.description);
+            // const locations = nodesQuery.data
+            //     .filter((node) => node.type === "Location" && node.description)
+            //     .map((node) => node.description);
 
-            SetMGBHospitals(locations);
+            const suites = nodesQuery.data
+            console.log(suites)
+                // .filter((suite) => )
+
+            SetMGBHospitals(suites);
         }
     }, [form.building, nodesQuery.status]);
 
