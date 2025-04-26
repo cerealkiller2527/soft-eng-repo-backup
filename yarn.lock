@@ -983,6 +983,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/dmmf@npm:6.6.0":
+  version: 6.6.0
+  resolution: "@prisma/dmmf@npm:6.6.0"
+  checksum: 10c0/a3b0d7e1b0718b3fab3719f00ec88c7dfd46507a3405b8b283ab88e8897fb89c12f5d628cbe35b9fd3fc79586d087086ab95c3075410a10622f8fc38dba1e131
+  languageName: node
+  linkType: hard
+
 "@prisma/engines-version@npm:4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81":
   version: 4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81
   resolution: "@prisma/engines-version@npm:4.16.1-1.4bc8b6e1b66cb932731fb1bdbbc550d1e010de81"
@@ -1061,6 +1068,24 @@ __metadata:
     cross-spawn: "npm:7.0.3"
     kleur: "npm:4.1.5"
   checksum: 10c0/f9d67dcdf0c52d1987c753ccc9a3a3eb8c586d0733e27345b8d7dbcda23257a4df644d52b6520da1ce17c8a21879481508366805192c594b13414abe4ea98249
+  languageName: node
+  linkType: hard
+
+"@prisma/generator-helper@npm:^6.3.0":
+  version: 6.6.0
+  resolution: "@prisma/generator-helper@npm:6.6.0"
+  dependencies:
+    "@prisma/debug": "npm:6.6.0"
+    "@prisma/dmmf": "npm:6.6.0"
+    "@prisma/generator": "npm:6.6.0"
+  checksum: 10c0/6898bed6db1780aa53c018fb1129296a497e390074c04669b4fc8dec26aa2b8c9cdb2e21e3555c5bdbd312d5e6f1f45c2e9cd3dce8c73c701bea4b96e4ab9534
+  languageName: node
+  linkType: hard
+
+"@prisma/generator@npm:6.6.0":
+  version: 6.6.0
+  resolution: "@prisma/generator@npm:6.6.0"
+  checksum: 10c0/7fc1dbc9767d0a1461f3555b644582e5418df1c7611f10dc075600609801db197973bf7bd7aadb3cd27c19d9bc933c977ce1c865547403dcf98ab9ca176a8af6
   languageName: node
   linkType: hard
 
@@ -4060,6 +4085,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"code-block-writer@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "code-block-writer@npm:12.0.0"
+  checksum: 10c0/ced73cdc466bff968bba9e8e32340d88420d25a229b9269f7425a10a7c2c9a12ca702dcb601b2462b96472d354f021cf66e552179fcbe30c8f7ecd0173c5fa07
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^2.0.1":
   version: 2.0.1
   resolution: "color-convert@npm:2.0.1"
@@ -4351,6 +4383,9 @@ __metadata:
     ts-config-custom: "npm:*"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.3.3"
+    zod: "npm:^3.24.3"
+    zod-prisma-types: "npm:^3.2.4"
+    zof: "npm:^0.0.0"
   languageName: unknown
   linkType: soft
 
@@ -6585,7 +6620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.15":
+"lodash@npm:^4.17.15, lodash@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
@@ -10207,6 +10242,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"zod-prisma-types@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "zod-prisma-types@npm:3.2.4"
+  dependencies:
+    "@prisma/generator-helper": "npm:^6.3.0"
+    code-block-writer: "npm:^12.0.0"
+    lodash: "npm:^4.17.21"
+    zod: "npm:^3.24.1"
+  peerDependencies:
+    "@prisma/client": ^4.x.x || ^5.x.x || ^6.x.x
+    prisma: ^4.x.x || ^5.x.x || ^6.x.x
+  bin:
+    zod-prisma-types: dist/bin.js
+  checksum: 10c0/12c8226b75aeb9236a511e89ed39afc52d507fbaff2da57af20fc1a0b6c6841d4d5f5e11b9b1384ac5667e5234c74522cc825d8e55a54c4783cf9a3709e5c2e5
+  languageName: node
+  linkType: hard
+
 "zod-validation-error@npm:^3.0.3":
   version: 3.4.0
   resolution: "zod-validation-error@npm:3.4.0"
@@ -10216,9 +10268,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.4, zod@npm:^3.24.2, zod@npm:^3.24.3":
+"zod@npm:^3.20.2, zod@npm:^3.22.4, zod@npm:^3.24.1, zod@npm:^3.24.2, zod@npm:^3.24.3":
   version: 3.24.3
   resolution: "zod@npm:3.24.3"
   checksum: 10c0/ab0369810968d0329a1a141e9418e01e5c9c2a4905cbb7cb7f5a131d6e9487596e1400e21eeff24c4a8ee28dacfa5bd6103893765c055b7a98c2006a5a4fc68d
+  languageName: node
+  linkType: hard
+
+"zof@npm:^0.0.0":
+  version: 0.0.0
+  resolution: "zof@npm:0.0.0"
+  checksum: 10c0/7145c01814c93cd8383addcccb40cd6db341dbe977de3e3d185de8813cd2d90d344ca6ff306ef7443b540d26f7a70530d7e78d21e75a97172bf04b9cde3382e6
   languageName: node
   linkType: hard

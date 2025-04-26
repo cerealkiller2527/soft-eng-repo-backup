@@ -7,7 +7,11 @@ generator client {
 }
 
 generator zod {
-  provider = "prisma-zod-generator"
+  provider               = "zod-prisma-types"
+  createInputTypes       = true // need for seed!
+  addIncludeType         = true
+  addSelectType          = true
+  addInputTypeValidation = true
 }
 
 datasource db {

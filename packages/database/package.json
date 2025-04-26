@@ -38,7 +38,8 @@
         "prettier": "*",
         "prettier-config-custom": "*",
         "prisma": "^6.6.0",
-        "ts-config-custom": "*"
+        "ts-config-custom": "*",
+        "zof": "^0.0.0"
     },
     "dependencies": {
         "@prisma/client": "^6.6.0",
@@ -47,6 +48,8 @@
         "papaparse": "^5.5.2",
         "prisma-zod-generator": "^0.8.13",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "typescript": "^5.3.3",
+        "zod": "^3.24.3",
+        "zod-prisma-types": "^3.2.4"
     }
 }

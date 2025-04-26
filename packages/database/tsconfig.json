@@ -7,6 +7,7 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "types": ["node"],
-        "strict": true
+        "strict": true, // zod generato
+        "strictNullChecks": true // for zod
     }
 }

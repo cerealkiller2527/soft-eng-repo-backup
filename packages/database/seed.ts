@@ -1,6 +1,9 @@
 import {PrismaClient, RequestType, Status, nodeType, Priority, Prisma} from './.prisma/client';
 import Papa from "papaparse";
 import fs from "fs";
+import z from "zod";
+import {DepartmentCreateInputSchema, BuildingCreateInputSchema, LocationUncheckedCreateInputSchema} from "./prisma/generated/zod"
+import {departmentCSVRow} from "./seedFiles/CSVTypes.ts";
 
 const prisma = new PrismaClient();
 
@@ -26,71 +29,95 @@ async function main() {
     console.log('Existing data purged.');
 
     // seed buildings
-    const buildingsFile = fs.readFileSync("./seedFiles/buildings.csv", "utf-8")
-    const buildings = Papa.parse(buildingsFile,
+
+    const buildingsFile = fs.readFileSync("./seedFiles/buildings.csv", "utf-8");
+    const { data: buildingRows } = Papa.parse<Record<string, any>>(buildingsFile,
         {
             header: true,
             skipEmptyLines: true,
-            dynamicTyping: true,
-            transformHeader: header => header.trim(),
+            dynamicTyping:
+                {
+                    id: true // we want ID to be a number and not a string
+                }
         }
-    ).data;
+    );
+
+    const parsedBuildings = [];
+    for (const row of buildingRows){
+        try{
+            const parsed = BuildingCreateInputSchema.parse(row)
+            parsedBuildings.push(parsed)
+        } catch (e) {
+            console.error("Error in parsing building inputs: ", e)
+        }
+
+    }
+
+    const prismaBuildings = await prisma.building.createManyAndReturn({data: parsedBuildings})
 
 
-    const prismaBuildings = await prisma.building.createManyAndReturn({
-        data: JSON.parse(JSON.stringify(buildings))
-    })
+    // seed departments (with locations)
 
-    // seed nodes
-    const chestnutFile = fs.readFileSync("./seedFiles/nodes/chestnut.csv", "utf-8")
-    const chestnutNodes = Papa.parse(chestnutFile,
+    const deptsFile = fs.readFileSync("./seedFiles/departments.csv", "utf-8");
+    const { data: deptRows } = Papa.parse<Record<string, any>>(deptsFile,
         {
             header: true,
             skipEmptyLines: true,
-            dynamicTyping: {
-                lat: true,
-                long: true,
-                floor: true
-            },
-            transformHeader: header => header.trim(),
+            dynamicTyping:
+                {
+                    floor: true // we want ID to be a number and not a string
+                }
         }
-    ).data;
+    )
 
 
-    const prismaChestnutNodes = await prisma.node.createManyAndReturn({
-        data: JSON.parse(JSON.stringify(chestnutNodes))
-    })
+    for (const row of deptRows) {
+        try {
+            const parsed = departmentCSVRow.parse(row)
+
+            // pull department data
+            const deptData: z.infer<typeof DepartmentCreateInputSchema> = {
+                name: parsed.name,
+                phoneNumber: parsed.phoneNumber,
+                description: parsed.description
+            }
+
+            // create department
+            const thisDept = await prisma.department.create({data: deptData})
+
+            // find building in DB
+            const thisBuilding = await prisma.building.findFirst({
+                where: {
+                    name: {
+                        contains: parsed.buildingName,
+                        mode: "insensitive"
+                    }
+                }
+            });
+
+            const locData: z.infer<typeof LocationUncheckedCreateInputSchema> = {
+                floor: parsed.floor,
+                suite: parsed.suite,
+                buildingId: thisBuilding?.id ?? -1, // building id of -1 if not found
+                departmentId: thisDept.id
+            }
+
+            await prisma.location.create({data: locData})
+
+
+        } catch (e) {
+            console.error("Error in parsing department inputs: ", e)
+        }
+    }
 
 
 
 
 
 
-    //
-    // // seed departments
-    // const deptsFile = fs.readFileSync("./seedFiles/departments.csv", "utf-8")
-    // const depts = Papa.parse(deptsFile,
-    //     {
-    //         header: true,
-    //         skipEmptyLines: true,
-    //         dynamicTyping: {
-    //             floor: true,
-    //         },
-    //         transformHeader: header => header.trim()
-    //     }
-    // ).data;
-    //
-    // const deptsJSON = JSON.parse(JSON.stringify(depts));
-    //
-    // // remove buildingName data from prisma query
-    //
-    // console.log(updatedData)
 
-    // const prismaDepts = prisma.department.createManyAndReturn({
-    //     data: updatedData
-    // })
 
-    // console.log(deptsJSON)
+
 
 }
 
