@@ -171,6 +171,7 @@ const MapEditor = () => {
             }
         }
     };
+
     document.addEventListener("keydown", handleKeyDown);
 
     useEffect(() => {
@@ -204,6 +205,7 @@ const MapEditor = () => {
         edgeStartRef.current = null;
 
         const newMarkers = nodes.map((node) => {
+            console.log(node.type + " node created, path is " + getImageFromNodeType(node.type));
             const pinElement = document.createElement("div");
             pinElement.className = "custom-pin";
             pinElement.innerHTML = `
@@ -416,13 +418,13 @@ const MapEditor = () => {
 
     function getImageFromNodeType(type: string): string {
         switch(type) {
-            case "Entrance": return "/map-pins/EntranceIcon.png";
-            case "Intermediary": return "/20PatriotPlaceFloorOne.png";
-            case "Staircase": return "/map-pins/StaircaseIcon.png";
-            case "Elevator": return  "/map-pins/HelpIcon.png";
-            case "Location": return "/20PatriotPlaceFloorOne.png";
-            case "Help_Desk": return "/map-pins/HelpIcon.png";
-            default: return "/20PatriotPlaceFloorOne.png";
+            case "Entrance": return "/map-pins/BlueDoorNOBG.png";
+            case "Intermediary": return "/map-pins/HelpIcon.png"; // MAKE NEW ICON
+            case "Staircase": return "/map-pins/BlueStairNOBG.png";
+            case "Elevator": return  "/map-pins/BlueElevatorNOBG.png";
+            case "Location": return "/map-pins/HelpIcon.png"; // MAKE NEW ICON
+            case "Help_Desk": return "/map-pins/BlueHelpNOBG.png";
+            default: return "/map-pins/HelpIcon.png";
         }
     }
 
@@ -467,10 +469,22 @@ const MapEditor = () => {
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="sm:max-w-[425px]">
-                        <MapEditorSelectForm onSubmit={(form) => {
-                            setForm(form);
-                            setIsDialogOpen(false); // Close after submission
-                        }} />
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Select Location</AlertDialogTitle>
+                            <Button
+                                variant="ghost"
+                                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
+                                onClick={() => setIsDialogOpen(false)}
+                            >
+                                X
+                            </Button>
+                        </AlertDialogHeader>
+                        <div className="p-4">
+                            <MapEditorSelectForm onSubmit={(form) => {
+                                setForm(form);
+                                setIsDialogOpen(false); // Close after submission
+                            }} />
+                        </div>
                     </AlertDialogContent>
                 </AlertDialog>
             </div>
