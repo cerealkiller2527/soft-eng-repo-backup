@@ -10,10 +10,13 @@ import {formSchema} from "../components/MapEditorSelectForm.tsx";
 import { HelpDialog } from "../components/helpDialog.tsx";
 import { Button } from "@/components/ui/button";
 import MapForm from "../components/MapForm.tsx";
-
-
-
-
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alertdialog"
 
 //add alert popup if changes are made and not saved
 //add save button
@@ -22,8 +25,6 @@ const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "L
 
 type FormData = z.infer<typeof formSchema>;
 import * as z from "zod";
-
-
 
 type Node = {
     id: number;
@@ -57,18 +58,14 @@ const MapEditor = () => {
     const polylinesRef = useRef<google.maps.Polyline[]>([]);
     const [form, setForm] = useState<FormData | null>(null);
     const countRef = useRef(-1);
-
-
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const setFloorMap = useMutation(
         trpc.mapEditor.sendFloorMap.mutationOptions()
     )
 
-
-
     const handleSaveMap = async () => {
         try {
-
             const formattedNodes = nodes.map((node) => ({
                 id: node.id,
                 latitude: node.x,
@@ -117,19 +114,14 @@ const MapEditor = () => {
                     : node
             );
             setNodes(updatedNodes);
-
         }
     };
 
     const handleEdgeClick = (edgeId: number) => {
         setEdges((prevEdges) => prevEdges.filter((edge) => edge.id !== edgeId));
-
     };
 
-    // Using this for rendering the edgeStartRef stuff
     const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-
-
     const edgeStartRef = useRef<Node | null>(null);
 
     const handleFormSubmit = (values: { suite: string, type: string, description: string }) => {
@@ -156,8 +148,6 @@ const MapEditor = () => {
                 countRef.current -= 1;
                 setEdges((prev) => [...prev, newEdge]);
                 console.log("Edge created between", edgeStartRef.current.id, "and", clickedNode.id);
-
-                // Keep the form visible by selecting the new node
                 edgeStartRef.current = clickedNode;
                 setSelectedNode(clickedNode);
             }
@@ -183,8 +173,6 @@ const MapEditor = () => {
     };
     document.addEventListener("keydown", handleKeyDown);
 
-
-
     useEffect(() => {
         if (fetchFloorMap.status === 'success' && fetchFloorMap.data?.nodes) {
             console.log(fetchFloorMap.data.nodes)
@@ -198,7 +186,6 @@ const MapEditor = () => {
                     suite: node.suite ?? "",
                 }))
             );
-
             setEdges(fetchFloorMap.data.edges);
             console.log(nodes);
         }
@@ -214,18 +201,23 @@ const MapEditor = () => {
 
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
-
-
         edgeStartRef.current = null;
 
         const newMarkers = nodes.map((node) => {
+            const pinElement = document.createElement("div");
+            pinElement.className = "custom-pin";
+            pinElement.innerHTML = `
+            <img src=${getImageFromNodeType(node.type)}
+                alt="Map pin" 
+                style="width: 50px; height: 50px;"/>
+                `;
+
             const marker = new AdvancedMarker({
                 position: { lat: node.x, lng: node.y },
                 map: mapInstance.current,
                 title: node.description ?? '',
                 gmpDraggable: true,
-
-
+                content: pinElement
             });
 
             marker.addListener('dragend', () => handleMarkerDragEnd(node.id, marker));
@@ -241,8 +233,6 @@ const MapEditor = () => {
                     anchor: marker,
                     map: mapInstance.current,
                 });
-
-                // Separate the marker click handler from the infoWindow click
                 handleMarkerClick(node);
             });
 
@@ -259,11 +249,10 @@ const MapEditor = () => {
         polylinesRef.current.forEach(line => line.setMap(null));
         polylinesRef.current = [];
         edges.forEach((edge) => {
-
             const fromNode = nodes.find((node) => node.id === edge.fromNodeId);
             const toNode = nodes.find((node) => node.id === edge.toNodeId);
 
-            if (!fromNode || !toNode) return; // Skip if nodes are missing
+            if (!fromNode || !toNode) return;
 
             const path = [
                 { lat: fromNode.x, lng: fromNode.y },
@@ -294,13 +283,8 @@ const MapEditor = () => {
                 });
             });
             polylinesRef.current.push(polyline);
-
-
         });
-
-
     }, [nodes, edges]);
-
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -308,7 +292,6 @@ const MapEditor = () => {
             const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
 
             const newInfoWindow = new InfoWindow();
-            // Add close listener
             newInfoWindow.addListener('closeclick', () => {
                 edgeStartRef.current = null;
                 setSelectedNode(null);
@@ -332,8 +315,6 @@ const MapEditor = () => {
                 title: node.description ?? '',
                 draggable: true,
             });
-
-
             return marker;
         });
 
@@ -367,8 +348,6 @@ const MapEditor = () => {
                 mapId: '57f41020f9b31f57',
             });
 
-
-
             mapInstance.current = map;
             mapInstance.current.setOptions({
                 disableDoubleClickZoom : true
@@ -379,7 +358,7 @@ const MapEditor = () => {
                 if (!e.latLng) return;
 
                 const newNode: Node = {
-                    id: countRef.current, // Replace with a UUID if you prefer
+                    id: countRef.current,
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
@@ -395,7 +374,6 @@ const MapEditor = () => {
                 suppressMarkers: true,
             });
             directionsRenderer.current.setMap(map);
-
         }
     }, []);
 
@@ -420,7 +398,7 @@ const MapEditor = () => {
                 if (!e.latLng) return;
 
                 const newNode: Node = {
-                    id: countRef.current, // Replace with a UUID if you prefer
+                    id: countRef.current,
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
@@ -431,14 +409,22 @@ const MapEditor = () => {
                 setNodes(prev => [...prev, newNode]);
             });
 
-
             console.log(google.maps.version);
-
-
-
             overlaysRef.current.push(overlay);
         });
     }, [imageIndex]);
+
+    function getImageFromNodeType(type: string): string {
+        switch(type) {
+            case "Entrance": return "/map-pins/EntranceIcon.png";
+            case "Intermediary": return "/20PatriotPlaceFloorOne.png";
+            case "Staircase": return "/map-pins/StaircaseIcon.png";
+            case "Elevator": return  "/map-pins/HelpIcon.png";
+            case "Location": return "/20PatriotPlaceFloorOne.png";
+            case "Help_Desk": return "/map-pins/HelpIcon.png";
+            default: return "/20PatriotPlaceFloorOne.png";
+        }
+    }
 
     return (
         <div id="floorplan" className="relative w-full h-screen overflow-hidden">
@@ -452,7 +438,6 @@ const MapEditor = () => {
                 <Navbar />
             </div>
 
-            {/* Div for alignment of Buttons */}
             <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
@@ -470,9 +455,24 @@ const MapEditor = () => {
             </div>
 
             <div className="absolute top-26 left-4 z-10">
-                <div className="absolute z-10 p-4">
-                    <MapEditorSelectForm onSubmit={(form) => setForm(form)} />
-                </div>
+                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <AlertDialogTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
+            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                            onClick={() => setIsDialogOpen(true)}
+                        >
+                            Select Location
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="sm:max-w-[425px]">
+                        <MapEditorSelectForm onSubmit={(form) => {
+                            setForm(form);
+                            setIsDialogOpen(false); // Close after submission
+                        }} />
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     );

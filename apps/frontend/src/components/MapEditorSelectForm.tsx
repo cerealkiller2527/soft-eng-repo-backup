@@ -62,7 +62,6 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
         }
     };
 
-    {/* Pasting this back in from my other branch, hope this works */}
     return (
         <div className="bg-white rounded-lg shadow-md p-6 w-64">
             <Form {...form}>
