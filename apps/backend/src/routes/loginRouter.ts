@@ -1,44 +1,69 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import PrismaClient from "../bin/prisma-client";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { z } from "zod";
-export const t = initTRPC.create();
+import { t } from "../app.ts";
+
 export const loginRouter = t.router({
-  checkLogin: t.procedure
+  verifyClerkUser: t.procedure
     .input(
       z.object({
-        username: z.string(),
-        password: z.string(),
+        sessionId: z.string(),
+        sessionToken: z.string(),
       }),
     )
     .mutation(async ({ input }) => {
-      const { username, password } = input;
-      const user = await PrismaClient.user.findUnique({
-        where: { username: username },
-      });
+      try {
+        const session = await clerkClient.sessions.verifySession(
+          input.sessionId,
+          input.sessionToken,
+        );
+        const userId = session.userId;
+        const user = await clerkClient.users.getUser(userId);
+        const email = user.emailAddresses[0].emailAddress;
 
-      if (!user) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User not found.",
+        const existing = await PrismaClient.user.findFirst({
+          where: { email },
         });
-      }
 
-      if (user.password !== password) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid password.",
-        });
-      }
+        if (!existing) {
+          await PrismaClient.user.create({
+            data: {
+              username: user.username ?? "",
+              password: "", // default since Clerk handles auth
+              email: email,
+            },
+          });
+        }
 
-      console.log("Successfully logged in: ", user.username);
-      return {
-        message: "Login successful",
-        user: {
-          username: user.username,
-          email: user.email,
-        },
-      };
+        return { success: true };
+      } catch (err) {
+        console.error("Failed to verify session", err);
+        throw new Error("Unauthorized");
+      }
     }),
+
+  getCurrentUser: t.procedure.query(async ({ ctx }) => {
+    if (!ctx.userId) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    try {
+      const user = await clerkClient.users.getUser(ctx.userId);
+      return {
+        id: user.id,
+        email: user.emailAddresses[0].emailAddress,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      };
+    } catch (err) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch user info",
+      });
+    }
+  }),
+
   addLogin: t.procedure
     .input(
       z.object({
@@ -74,5 +99,5 @@ export const loginRouter = t.router({
       };
     }),
 });
-// export type definition of API
+
 export type loginRouter = typeof loginRouter;
