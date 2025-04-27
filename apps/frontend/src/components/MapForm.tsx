@@ -31,13 +31,19 @@ const formSchema = z.object({
 })
 type FormValues = z.infer<typeof formSchema>
 
-export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) => void }) {
+interface MapFormProps {
+    onSubmit: (values: FormValues) => void;
+    initialValues?: Partial<FormValues>;
+}
+
+export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             suite: "",
             type: "Entrance",
             description: "",
+            ...initialValues, // This will override the defaults with any provided initialValues
         }
     })
 
@@ -60,7 +66,7 @@ export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) =
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 max-w-md mx-auto">
                     <h2 className="text-2xl font-bold text-center text-[#012D5A] mb-6">
-                        Suite Request Form
+                        {initialValues ? "Edit Node" : "Suite Request Form"}
                     </h2>
 
                     <FormField
@@ -147,7 +153,7 @@ export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) =
                             hover:text-[#012D5A] hover:bg-white
                             hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                         >
-                            Submit Request
+                            {initialValues ? "Update Node" : "Submit Request"}
                         </Button>
                     </div>
                 </form>
