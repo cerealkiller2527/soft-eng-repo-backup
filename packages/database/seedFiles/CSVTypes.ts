@@ -5,6 +5,7 @@ export const departmentCSVRow = z.object({
     buildingName: z.string(),
     name: z.string(),
     description: z.string(),
+    services: z.string(),
     phoneNumber: z.string(),
     floor: z.number().int(),
     suite: z.string()

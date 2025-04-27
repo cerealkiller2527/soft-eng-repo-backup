@@ -2,7 +2,7 @@ import {PrismaClient, RequestType, Status, nodeType, Priority, Prisma} from './.
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
-import {DepartmentCreateInputSchema, BuildingCreateInputSchema, LocationUncheckedCreateInputSchema} from "./prisma/generated/zod"
+import {DepartmentCreateInputSchema, BuildingCreateInputSchema, LocationUncheckedCreateInputSchema, ServiceCreateInputSchema, DepartmentServicesUncheckedCreateInputSchema} from "./prisma/generated/zod"
 import {departmentCSVRow} from "./seedFiles/CSVTypes.ts";
 
 const prisma = new PrismaClient();
@@ -27,6 +27,17 @@ async function main() {
     await prisma.user.deleteMany();
 
     console.log('Existing data purged.');
+
+    // seed admin user
+    const admin = await prisma.user.create({
+        data: {
+            username: 'admin',
+            password: 'admin',
+            email: 'admin@admin.com',
+        },
+    });
+
+    console.log(`Created admin user: ${admin.username}`);
 
     // seed buildings
 
@@ -56,7 +67,7 @@ async function main() {
     const prismaBuildings = await prisma.building.createManyAndReturn({data: parsedBuildings})
 
 
-    // seed departments (with locations)
+    // seed departments (with locations and services)
 
     const deptsFile = fs.readFileSync("./seedFiles/departments.csv", "utf-8");
     const { data: deptRows } = Papa.parse<Record<string, any>>(deptsFile,
@@ -96,7 +107,7 @@ async function main() {
             });
 
             if (thisBuilding === null){
-                console.error("error in finding building: ", parsed.buildingName, " as a substring of building names")
+                console.error("error in finding building: ", parsed.buildingName, " as a substring of building name")
                 break
             }
 
@@ -112,10 +123,37 @@ async function main() {
             await prisma.location.create({data: locData})
 
 
+            // create services from the department description
+            let services: string[] = parsed.services?.split(";") ?? [];
+            services = services.map(service => service.trim());
+
+
+            for (const service of services){ // go thru every service
+                if (service != ''){
+                    // create service zodject
+                    const zService: z.infer<typeof ServiceCreateInputSchema> = {
+                        name: service
+                    }
+
+                    // create Service in DB
+                    const thisService = await prisma.service.create({data: zService});
+
+                    // create DepartmentServices zodject
+                    const zDepartmentServices: z.infer<typeof DepartmentServicesUncheckedCreateInputSchema> = {
+                        departmentID: thisDept.id,
+                        serviceID: thisService.id
+                    }
+
+                    // create DepartmentServices in DB
+                    await prisma.departmentServices.create({data: zDepartmentServices})
+                }
+            }
+
         } catch (e) {
             console.error("Error in parsing department inputs: ", e)
         }
     }
+
 
 }
 
