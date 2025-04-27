@@ -95,6 +95,12 @@ async function main() {
                 }
             });
 
+            if (thisBuilding === null){
+                console.error("error in finding building: ", parsed.buildingName, " as a substring of building names")
+                break
+            }
+
+            // create location object
             const locData: z.infer<typeof LocationUncheckedCreateInputSchema> = {
                 floor: parsed.floor,
                 suite: parsed.suite,
@@ -102,6 +108,7 @@ async function main() {
                 departmentId: thisDept.id
             }
 
+            // create location in DB
             await prisma.location.create({data: locData})
 
 
@@ -109,15 +116,6 @@ async function main() {
             console.error("Error in parsing department inputs: ", e)
         }
     }
-
-
-
-
-
-
-
-
-
 
 }
 

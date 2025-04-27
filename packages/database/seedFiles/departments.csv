@@ -1,3 +1,40 @@
 buildingName,name,description,phoneNumber,floor,suite
 Chestnut,Allergy and Clinical Immunology,"Allergy, (environmental, food, medication, and venoms), asthma, anaphylaxis, angioedema, sinusitis, and immunodeficiency",(617) 732-9850,3,301
 Chestnut,Backup Child Care Center,Backup childcare for employees,(617) 732-9543,2,210
+Chestnut,Brigham Dermatology Associates (BDA),Medical and surgical dermatology,(617) 732-9080,3,317
+Chestnut,Brigham Obstetrics and Gynecology Group (BOGG),"Gynecology, obstetrics",(617) 732-9100,5,575
+Chestnut,Brigham Physicians Group (BPG),Adult primary care,(617) 732-9900,4,428
+Chestnut,Brigham Psychiatric Specialties,"Psychiatry, psychology, social work",(617) 732-9811,3,303
+Chestnut,Center for Pain Medicine,Multidisciplinary pain management,(617) 732-9060,3,320
+Chestnut,Crohn's and Colitis Center,"Crohn's disease, inflammatory bowel disease, infusion services, microscopic colitis, pulmonary, rheumatology, ulcerative colitis",(617) 732-6389,2,201
+Chestnut,Endoscopy Center,"Bacterial overgrowth breath test, colonoscopy, H. Pylori breath test, lactose malabsorption breath test, upper endoscopy",(617) 732-7426,2,202
+Chestnut,Gretchen S. and Edward A. Fish Center for Women's Health,"Cardiology, dermatology, endocrinology, gastroenterology, hematology, infectious diseases, mental health, general neurology, nutrition, primary care, pulmonary, sleep medicine, women's health",(617) 732-9300,4,402
+Chestnut,Laboratory,"Blood work, lab services",(617) 732-9841,1,130
+Chestnut,Multi-Specialty Clinic,"Orthopedic surgery, vascular surgery, dermatology, pain medicine, travel medicine",(617) 732-9500,1,130
+Chestnut,Osher Clinical Center for Integrative Health,"Acupuncture, health coaching, chiropractic, integrative medicine, massage therapy, neurology, echocardiography, pulmonary",(617) 732-9700,4,422
+Chestnut,Patient Financial Services,Patient financial counseling,(617) 732-9677,2,204B
+Chestnut,Pharmacy,Outpatient pharmacy services,(617) 732-9040,3,317
+Chestnut,Radiology,"Bone density, Breast imaging/Mammography, ultrasound, X-Ray",(617) 732-9801,5,560
+Chestnut,"Radiology, MRI/CT scan","CT scan, MRI, X-Ray",(617) 732-9821,1,102B
+Chestnut,Rehabilitation Services,"Orthopedic, sports, neurologic and vestibular Physical Therapy, pelvic floor therapy, occupational therapy, speech language pathology",(617) 732-9525,2,200
+20 Patriot Place,Cardiovascular Services,,(866) 378-9164,1,0
+20 Patriot Place,Radiology,,(866) 378-9164,1,0
+20 Patriot Place,Blood Draw/ Phlebotomy,,(866) 378-9164,1,0
+20 Patriot Place,Pharmacy,,(866) 378-9164,1,0
+20 Patriot Place,Multi Specialty Clinic,"Cardiac Arrhythmia, Dermatology, Neurosurgery, Optometry, Pulmonology, Women's Health, Allergy, Gastroenterology, Neurology, Endocrinology, Kidney (Renal) Medicine, Ophthalmology, Rheumatology, Vein Care Services, Patient Financial Services",(866) 378-9164,3,0
+20 Patriot Place,Blood Draw/Phlebotomy,,(866) 378-9164,4,0
+20 Patriot Place,Urgent Care Center,,(866) 378-9164,1,0
+20 Patriot Place,Urology,,(866) 378-9164,1,0
+20 Patriot Place,Orthopaedics,"Hand and Upper Extremity, Arthroplasty, Pediatric Trauma, Physiatry, Podiatry",(866) 378-9164,2,0
+20 Patriot Place,Rehabilitation Services,"Cardiac Rehab; Occupational Therapy, Hand Therapy, Upper Extremity; Physical Therapy, Speech - Language",(866) 378-9164,2,0
+20 Patriot Place,Clinical Lab,,(866) 378-9164,2,0
+20 Patriot Place,Surgi-Care,,(866) 378-9164,2,0
+20 Patriot Place,Surgical Specialties,"Audiology; ENT, General and Gastrointestinal Surgery, Plastic Surgery, Thoracic Surgery, Vascular Surgery, Weight Management and Wellness",(866) 378-9164,3,0
+20 Patriot Place,Sports Medicine Center,X-Ray Suite,(866) 378-9164,3,0
+20 Patriot Place,Electromyography (EMG),,(866) 378-9164,4,0
+20 Patriot Place,Nutrition,,(866) 378-9164,4,0
+20 Patriot Place,Pain Medicine,,(866) 378-9164,4,0
+20 Patriot Place,Pulmonary Function Testing,,(866) 378-9164,4,0
+20 Patriot Place,Day Surgery Center,,(866) 378-9164,4,0
+22 Patriot Place,Community Room,,(866) 378-9164,4,0
+22 Patriot Place,Primary Care,,(866) 378-9164,4,0
