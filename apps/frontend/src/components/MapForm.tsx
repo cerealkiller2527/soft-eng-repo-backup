@@ -33,7 +33,11 @@ type FormValues = z.infer<typeof formSchema>
 
 interface MapFormProps {
     onSubmit: (values: FormValues) => void;
-    initialValues?: Partial<FormValues>;
+    initialValues?: {
+        suite?: string;
+        type?: string;
+        description?: string;
+    };
 }
 
 export default function MapForm({ onSubmit, initialValues }: MapFormProps) {

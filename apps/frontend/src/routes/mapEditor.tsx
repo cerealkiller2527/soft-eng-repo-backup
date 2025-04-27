@@ -113,6 +113,8 @@ const MapEditor = () => {
         }
     };
 
+
+
     const handleMarkerClick = (clickedNode: Node) => {
         if (!edgeStartRef.current) {
             edgeStartRef.current = clickedNode;
@@ -126,6 +128,7 @@ const MapEditor = () => {
             edgeStartRef.current = clickedNode;
             setSelectedNode(clickedNode);
         }
+
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -270,6 +273,7 @@ const MapEditor = () => {
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
+                    type: "Intermediary",
                     description: "",
                     suite: "",
                 }]);
@@ -342,7 +346,16 @@ const MapEditor = () => {
             </div>
 
             <div className="absolute top-30 right-4 z-30">
-                {(selectedNode || edgeStartRef.current) && <MapForm onSubmit={handleFormSubmit} />}
+                {(selectedNode || edgeStartRef.current) && (
+                    <MapForm
+                        onSubmit={handleFormSubmit}
+                        initialValues={edgeStartRef.current ? {
+                            suite: edgeStartRef.current.suite,
+                            type: edgeStartRef.current.type,
+                            description: edgeStartRef.current.description
+                        } : undefined}
+                    />
+                )}
             </div>
 
             <div className="absolute top-26 left-4 z-10">
@@ -369,7 +382,7 @@ const MapEditor = () => {
                             </Button>
                         </AlertDialogHeader>
                         <div className="p-4">
-                            <MapEditorSelectForm onSubmit={(form) => {
+                            <MapEditorSelectForm onSubmit={(form, ) => {
                                 setForm(form);
                                 setIsDialogOpen(false);
                             }} />
