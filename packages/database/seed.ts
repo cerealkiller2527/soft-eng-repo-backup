@@ -1,8 +1,13 @@
-import {PrismaClient, RequestType, Status, nodeType, Priority, Prisma} from './.prisma/client';
+import {PrismaClient, RequestType} from './.prisma/client';
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
-import {DepartmentCreateInputSchema, BuildingCreateInputSchema, LocationUncheckedCreateInputSchema, ServiceCreateInputSchema, DepartmentServicesUncheckedCreateInputSchema} from "./prisma/generated/zod"
+import {
+    DepartmentCreateInputSchema,
+    BuildingCreateInputSchema,
+    LocationUncheckedCreateInputSchema,
+    ServiceCreateInputSchema,
+    DepartmentServicesUncheckedCreateInputSchema} from "./prisma/generated/zod"
 import {departmentCSVRow} from "./seedFiles/CSVTypes.ts";
 
 const prisma = new PrismaClient();
@@ -64,7 +69,7 @@ async function main() {
 
     }
 
-    const prismaBuildings = await prisma.building.createManyAndReturn({data: parsedBuildings})
+   await prisma.building.createManyAndReturn({data: parsedBuildings})
 
 
     // seed departments (with locations and services)
@@ -153,6 +158,22 @@ async function main() {
             console.error("Error in parsing department inputs: ", e)
         }
     }
+
+
+
+    // create employees
+    await Promise.all(
+        Array.from({ length: 5 }).map((_, i) =>
+            prisma.employee.create({
+                data: {
+                    name: `Transport Employee ${i + 1}`,
+                    employeeType: 'Transport',
+                    canService: [RequestType.EXTERNALTRANSPORTATION],
+                    language: ['English'],
+                },
+            })
+        )
+    );
 
 
 }
