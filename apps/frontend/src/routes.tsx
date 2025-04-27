@@ -55,18 +55,14 @@ export const routes = [
         path: '/requestdashboard',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
             <RequestDashboard />
-            </ProtectedRoute>
 ),
     },
     {
         path: '/csv',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
             <CSVPage />
-            </ProtectedRoute>
         ),
     },
     {
