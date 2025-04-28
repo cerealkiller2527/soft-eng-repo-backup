@@ -1,4 +1,4 @@
-import {PrismaClient, RequestType} from './.prisma/client';
+import {Prisma, PrismaClient, RequestType} from './.prisma/client';
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
@@ -7,8 +7,11 @@ import {
     BuildingCreateInputSchema,
     LocationUncheckedCreateInputSchema,
     ServiceCreateInputSchema,
-    DepartmentServicesUncheckedCreateInputSchema} from "./prisma/generated/zod"
-import {departmentCSVRow} from "./seedFiles/CSVTypes.ts";
+    DepartmentServicesUncheckedCreateInputSchema,
+    NodeCreateInputSchema,
+    nodeTypeSchema} from "./prisma/generated/zod"
+import {departmentCSVRow, nodeCSVRow} from "./seedFiles/CSVTypes.ts";
+import NodeCreateInput = Prisma.NodeCreateInput;
 
 const prisma = new PrismaClient();
 
@@ -158,6 +161,66 @@ async function main() {
             console.error("Error in parsing department inputs: ", e)
         }
     }
+
+
+    // seed nodes
+    const chestnutNodesFile = fs.readFileSync("./seedFiles/nodes/chestnut.csv", "utf-8")
+
+    const { data: chestnutNodes } = Papa.parse<Record<string, any>>(chestnutNodesFile,
+        {
+            header: true,
+            skipEmptyLines: true,
+            dynamicTyping:
+                {
+                    lat: true,
+                    long: true,
+                    floor: true
+                }
+        }
+    )
+
+    // seed nodes with locations
+    const nodesSeeded = await Promise.all(
+        chestnutNodes.map(async (node) => {
+            try {
+                const parsedInfo = nodeCSVRow.parse(node);
+                const parsedNode: z.infer<typeof NodeCreateInputSchema> = {
+                    type: nodeTypeSchema.parse(parsedInfo.type),
+                    description: parsedInfo.description,
+                    lat: parsedInfo.lat,
+                    long: parsedInfo.long
+                }
+                const thisNode = await prisma.node.create({ data: parsedNode });
+
+                // find building in DB
+                const thisBuilding = await prisma.building.findFirst({
+                    where: {
+                        name: {
+                            contains: parsedInfo.building,
+                            mode: "insensitive"
+                        }
+                    }
+                });
+
+                if (thisBuilding === null){
+                    console.error("error in finding building: ", parsedInfo.building, " as a substring of building name")
+                }
+
+                const parsedLocation: z.infer<typeof LocationUncheckedCreateInputSchema> = {
+                    floor: parsedInfo.floor,
+                    buildingId: thisBuilding?.id ?? -1,
+                    nodeID: thisNode.id
+                }
+
+                await prisma.location.create({data: parsedLocation})
+
+            } catch (e) {
+                console.log('error parsing node ', node, '. Error: ', e);
+            }
+        })
+    );
+
+
 
 
 

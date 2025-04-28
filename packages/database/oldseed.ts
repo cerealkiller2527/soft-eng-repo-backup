@@ -223,7 +223,7 @@ async function main() {
             });
             return createdNode;
         })
-);
+    );
 
     const pat20Floor1NodesSeeded = await Promise.all(
         pat20Floor1Nodes.map(async(node) => {
