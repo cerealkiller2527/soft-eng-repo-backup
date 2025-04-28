@@ -12,6 +12,7 @@ import LandingPage from "./routes/landingPage.tsx";
 import MapEditor from "./routes/mapEditor.tsx"
 import TestDirectory from "./routes/test.tsx";
 import DepartmentPage from "./routes/department.tsx";
+import Credits from "./routes/credits.tsx";
 
 export const routes = [
     {
@@ -83,6 +84,11 @@ export const routes = [
         path: '/test',
         errorElement: <div />,
         element: <TestDirectory />,
+    },
+    {
+        path: '/credits',
+        errorElement: <div/>,
+        element: <Credits/>,
     },
 ];
 
