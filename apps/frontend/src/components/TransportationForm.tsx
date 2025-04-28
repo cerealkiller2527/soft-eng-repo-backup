@@ -74,7 +74,7 @@ import { z } from "zod"
         }
 
         return (
-            <div className="max-w-3xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+            <div className="">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Transportation Request Form</h2>
                     <p className="text-sm text-gray-600">Created by Matt Nickerson (Iteration 1)</p>
