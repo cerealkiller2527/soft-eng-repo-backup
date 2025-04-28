@@ -26,7 +26,8 @@ const buildingData = {
     "22 Patriot Place": { floors: 4 },
     "20 Patriot Place": { floors: 4 },
     "Chestnut Hill": { floors: 1 },
-    "Faulkner Hospital": { floors: 1 }
+    "Faulkner Hospital": { floors: 1 },
+    "Main Campus": { floors: 2 },
 };
 
 export const formSchema = z.object({
@@ -44,10 +45,6 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
             floor: "",
         },
     });
-
-    useEffect(() => {
-        // Fetch buildings/floors from backend in future
-    }, []);
 
     const handleBuildingChange = (value: string) => {
         setSelectedBuilding(value);

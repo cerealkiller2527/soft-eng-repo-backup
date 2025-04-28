@@ -55,7 +55,6 @@ const MapEditor = () => {
     const [hasInitialized, setHasInitialized] = useState(false);
     const [selectedNode, setSelectedNode] = useState<Node | null>(null);
     const edgeStartRef = useRef<Node | null>(null);
-
     const setFloorMap = useMutation(
         trpc.mapEditor.sendFloorMap.mutationOptions()
     )
@@ -88,6 +87,7 @@ const MapEditor = () => {
     const fetchFloorMap = useQuery(trpc.mapEditor.getFloorMap.queryOptions({
         buildingId: Number(building),
         floor: Number(form?.floor ?? 1),
+
     }));
 
     const handleMarkerDragEnd = (nodeId: number, marker: google.maps.AdvancedMarkerElement) => {
@@ -157,44 +157,77 @@ const MapEditor = () => {
                 type: typeEnum.parse(node.type),
             })));
             setEdges(fetchFloorMap.data.edges);
+            console.log(form?.floor);
         }
+
     }, [fetchFloorMap.data]);
 
     useEffect(() => {
-        if (!form) return;
+        if (!form || !AdvancedMarker) return;
+
 
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
         nodes.forEach(node => {
             const pinElement = document.createElement("div");
-            pinElement.innerHTML = `<img src="${getImageFromNodeType(node.type)}" 
-                                      alt="Marker" 
-                                      style="width: 50px; height: 50px;">`;
+            const img = document.createElement("img");
+            img.src = getImageFromNodeType(node.type);
+            img.alt = node.type;
+            img.style.width = "40px";
+            img.style.height = "40px";
+            img.style.objectFit = "contain";
+            pinElement.appendChild(img);
 
-            const marker = new AdvancedMarker!({
+            // Create marker
+            const marker = new AdvancedMarker({
                 position: { lat: node.x, lng: node.y },
                 map: mapInstance.current,
                 content: pinElement,
                 gmpDraggable: true,
             });
 
-            marker.addListener('dragend', () => handleMarkerDragEnd(node.id, marker));
+            // Add event listeners
+            marker.addListener('dragend', () => {
+                const newPosition = marker.position;
+                if (newPosition) {
+                    setNodes(prev => prev.map(n =>
+                        n.id === node.id ? {
+                            ...n,
+                            x: newPosition.lat(),
+                            y: newPosition.lng()
+                        } : n
+                    ));
+                }
+            });
+
             marker.addListener('click', () => {
-                infoWindow!.setContent(`
+                if (infoWindow) {
+                    infoWindow.setContent(`
                     <div>
-                        <strong>${node.suite}</strong>
+                        <strong>Department: ${node.suite}</strong>
                         <p>Type: ${node.type}</p>
                         <p>ID: ${node.id}</p>
                     </div>
                 `);
-                infoWindow!.open(mapInstance.current!, marker);
+                    infoWindow.open({
+                        anchor: marker,
+                        map: mapInstance.current,
+                    });
+                }
                 handleMarkerClick(node);
             });
 
             markersRef.current.push(marker);
         });
-    }, [nodes, form, AdvancedMarker]);
+
+        // Cleanup function
+        return () => {
+            markersRef.current.forEach(marker => {
+                if (marker.map) marker.map = null;
+            });
+        };
+    }, [nodes, form, AdvancedMarker, infoWindow]);
 
     useEffect(() => {
         polylinesRef.current.forEach(line => line.setMap(null));
@@ -241,13 +274,15 @@ const MapEditor = () => {
 
     useEffect(() => {
         if (!mapRef.current || !mapInstance.current) return;
-
+        setImageIndex(Number(form?.floor ?? 1) - 1)
         if (form?.building === "20 Patriot Place") {
             mapInstance.current.setCenter({ lat: 42.09280, lng: -71.266 });
         } else if (form?.building === "22 Patriot Place") {
             mapInstance.current.setCenter({ lat: 42.09262, lng: -71.267 });
         } else if (form?.building === "Faulkner Hospital") {
             mapInstance.current.setCenter({ lat: 42.30163258195755, lng: -71.12812875693645 });
+        } else if (form?.building === "Main Campus") {
+            mapInstance.current.setCenter({ lat: 42.33656648018521,lng: -71.10643147844775 });
         } else {
             mapInstance.current.setCenter({ lat: 42.3262, lng: -71.1497 });
         }
@@ -268,6 +303,7 @@ const MapEditor = () => {
             mapInstance.current.addListener("dblclick", (e: google.maps.MapMouseEvent) => {
                 if (!e.latLng) return;
 
+
                 setNodes(prev => [...prev, {
                     id: countRef.current--,
                     x: e.latLng.lat(),
@@ -286,7 +322,7 @@ const MapEditor = () => {
 
         overlaysRef.current.forEach(o => o.setMap(null));
         overlaysRef.current = [];
-
+        console.log(overlaysRef.current);
         overlays[imageIndex].forEach((overlayData) => {
             const overlay = new google.maps.GroundOverlay(
                 overlayData.imageUrl,
@@ -296,10 +332,12 @@ const MapEditor = () => {
                 ), { clickable: true }
             );
             overlay.setMap(mapInstance.current);
+            console.log(imageIndex);
 
+            console.log(overlayData);
             overlay.addListener("dblclick", (e: google.maps.MapMouseEvent) => {
                 if (!e.latLng) return;
-
+                console.log(form?.floor)
                 setNodes(prev => [...prev, {
                     id: countRef.current--,
                     x: e.latLng.lat(),
@@ -371,22 +409,16 @@ const MapEditor = () => {
                         </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="sm:max-w-[425px]">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Select Location</AlertDialogTitle>
-                            <Button
-                                variant="ghost"
-                                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
-                                onClick={() => setIsDialogOpen(false)}
-                            >
-                                X
-                            </Button>
-                        </AlertDialogHeader>
-                        <div className="p-4">
-                            <MapEditorSelectForm onSubmit={(form, ) => {
-                                setForm(form);
-                                setIsDialogOpen(false);
-                            }} />
-                        </div>
+                        <MapEditorSelectForm onSubmit={(form, ) => {
+                            setForm(form);
+                            setIsDialogOpen(false);
+                        }} />
+                        <Button
+                            className="absolute right-4 top-4 rounded-sm bg-white hover:bg-gray-100 text-red-500"
+                            onClick={() => setIsDialogOpen(false)}
+                        >
+                            X
+                        </Button>
                     </AlertDialogContent>
                 </AlertDialog>
             </div>
@@ -397,13 +429,13 @@ const MapEditor = () => {
 function getImageFromNodeType(type: string): string {
     const images = {
         Entrance: "/map-pins/BlueDoorNOBG.png",
-        Intermediary: "/map-pins/HelpIcon.png",
+        Intermediary: "/map-pins/BasicLocationNOBG.png",
         Staircase: "/map-pins/BlueStairNOBG.png",
         Elevator: "/map-pins/BlueElevatorNOBG.png",
-        Location: "/map-pins/HelpIcon.png",
+        Location: "/map-pins/BasicLocationNOBG.png",
         Help_Desk: "/map-pins/BlueHelpNOBG.png",
     };
-    return images[type] || "/map-pins/HelpIcon.png";
+    return images[type] || "/map-pins/BasicLocationNOBG.png";
 }
 
 export default MapEditor;

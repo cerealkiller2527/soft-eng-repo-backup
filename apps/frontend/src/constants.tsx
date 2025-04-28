@@ -9,6 +9,7 @@ type OverlayImage = {
     };
 };
 export const overlays: OverlayImage[][] = [
+    //Floor 1
     [
         {
             imageUrl: "/chestnutFloorOne.png",
@@ -61,6 +62,7 @@ export const overlays: OverlayImage[][] = [
         },
 
     ],
+    //Floor 2
     [
         {
             imageUrl: "/22PatriotPlaceFloorThree.png",
@@ -71,8 +73,20 @@ export const overlays: OverlayImage[][] = [
                 west: -71.26634,
             },
         },
+        // 42.33694209846247, -71.10742130229114
+        // 42.33320397707655, -71.10606521452486
+        {
+            imageUrl: "/BWMainCampus.png",
+            bounds: {
+                north: 42.33795,
+                south: 42.33300,
+                east: -71.10340,
+                west: -71.11050,
+            }
+        }
 
     ],
+    //floor 3
     [
         {
             imageUrl: "/22PatriotPlaceFloorThree.png",
@@ -85,6 +99,7 @@ export const overlays: OverlayImage[][] = [
         },
 
     ],
+    //Floor 4
     [
         {
             imageUrl: "/22PatriotPlaceFloorFour.png",
@@ -95,10 +110,5 @@ export const overlays: OverlayImage[][] = [
                 west: -71.26756,
             },
         },
-
     ],
-
 ];
-
-//SW 42.300273146614, -71.12795275196665
-//NE 42.30263258195755, -71.12812875693645
