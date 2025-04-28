@@ -1,38 +1,112 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
-import { useTRPC } from '../database/trpc.ts';
-import { useAuth } from '../Context/AuthContext';
+import { useTRPC, trpcClient } from '../database/trpc.ts';
+import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
+import { SignIn, SignInButton } from "@clerk/clerk-react";
+import { isClerkAPIResponseError } from "@clerk/clerk-js";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
 
 const Login: React.FC = () => {
-    const { setAuthenticated } = useAuth();
-    const location = useLocation();
-    const navigate = useNavigate();
-    const trpc = useTRPC();
 
-    const [username, setUsername] = useState("");
+    const location = useLocation();
+    const trpc = useTRPC();
+    const [email, setEmail] = useState("");
+    const[transition, setTransition] = useState(false);
+    const[username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [transition, setTransition] = useState(false);
+    const[confirmPassword, setConfirmPassword] = useState("");
+
+    const [isSignUp, setIsSignUp] = useState(false);
+    const navigate = useNavigate();
+
+    // Clerk Auth
+    const { isLoaded: signInLoaded, signIn } = useSignIn();
+    const { isLoaded: signUpLoaded, signUp, setActive } = useSignUp();
+    const { getToken } = useAuth();
 
     const from = location.state?.from?.pathname || '/Directory';
 
-    const checkLogin = useMutation(
-        trpc.login.checkLogin.mutationOptions({
+    const handleSignIn = async () => {
+        if (!signInLoaded) return;
+
+        try {
+            const signInAttempt = await signIn.create({
+                identifier: username,
+                password,
+            });
+
+            const sessionId = await signInAttempt.createdSessionId;
+            if (!sessionId) throw new Error("No session ID returned.");
+
+            if (typeof window !== 'undefined' && window.Clerk) {
+                const sessionToken = await window.Clerk.session?.getToken();
+                if (!sessionToken) throw new Error("Failed to get session token.");
+
+                // call backend to verify session
+                await trpcClient.login.verifyClerkUser.mutate({
+                    sessionId: sessionId,
+                    sessionToken: sessionToken,
+                });
+            } else {
+                throw new Error("Clerk is not available.");
+            }
+
+            navigate("/Directory");
+        } catch (err: unknown) {
+            if (isClerkAPIResponseError(err)) {
+                alert(err.errors?.[0]?.message ?? "Login failed");
+            } else {
+                alert("Unknown error during login");
+            }
+        }
+    };
+
+    const handleSignUp = async () => {
+        if (!signUpLoaded) return;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        try {
+            const result = await signUp.create({
+                emailAddress: email,
+                password,
+            });
+
+            await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+            alert("Account created! Please check your email for verification.");
+
+            await setActive({ session: result.createdSessionId });
+
+            setIsSignUp(false);
+        } catch (err: unknown) {
+            if (isClerkAPIResponseError(err)) {
+                alert("Signup failed: " + (err.errors?.[0]?.message ?? "Unknown error"));
+            } else {
+                alert("Signup failed: Unknown error");
+            }
+        }
+
+    const addUser = useMutation(
+        trpc.login.addLogin.mutationOptions({
             onSuccess: (data) => {
-                console.log('Login success', data);
-                setAuthenticated(true);
-                navigate(from);
+                console.log('Add user', data);
+                alert("Account created successfully! You can now log in.");
+                setIsSignUp(false); // Switch to login form after sign-up
             },
             onError: (error) => {
-                console.error('Username or password is incorrect!', error);
-                alert("Username or password is incorrect!");
-            },
+                console.error('Unable to add user', error);
+                alert("Unable to add user! Try again later.");
+            }
         })
-    );
+    )
+    };
 
     const [showDisclaimer, setShowDisclaimer] = useState(true);
 
@@ -66,35 +140,22 @@ const Login: React.FC = () => {
                 </div>
             </div>
 
-
-            <div className="w-1/3 flex flex-col justify-center items-center bg-[#F2F2F2] h-screen px-12">
-                <div className="w-full max-w-md space-y-4">
-                    <h1 className="text-2xl text-gray-800 mb-4 text-center">Sign In</h1>
-
-                    <Input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[#012D5A] focus:ring-[#012D5A]"
-
-                    />
-                    <Input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="bg-white text-black placeholder-gray-500 border border-gray-300 focus:border-[#012D5A] focus:ring-[#012D5A]"
-
-                    />
-                    <Button
-                        onClick={() => checkLogin.mutate({ username, password })}
-                        className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        LOG IN
-                    </Button>
+            {/* Sign-In / Sign-Up */}
+            <div className="w-1/3 flex flex-col justify-center items-center h-screen bg-gray-100 px-12">
+                <div>
+                    <>
+                        <SignIn
+                            forceRedirectUrl="/directory"
+                            signUpUrl={undefined}
+                            appearance={{
+                                elements: {
+                                    formButtonPrimary:
+                                        'bg-blue-900 hover:bg-white hover:text-blue-900',
+                                    card: 'shadow-md border border-gray-200 p-6 rounded-md',
+                                },
+                            }}
+                        />
+                    </>
                 </div>
             </div>
         </div>

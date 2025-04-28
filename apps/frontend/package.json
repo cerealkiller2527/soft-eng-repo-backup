@@ -13,6 +13,8 @@
     },
     "dependencies": {
         "@auth0/auth0-react": "^2.1.1",
+        "@clerk/clerk-js": "^5.62.0",
+        "@clerk/clerk-react": "^5.28.2",
         "@heroicons/react": "^2.1.1",
         "@hookform/resolvers": "^5.0.1",
         "@radix-ui/react-accordion": "^1.2.3",
@@ -30,6 +32,7 @@
         "@tanstack/react-query": "^5.72.0",
         "@tanstack/react-table": "^8.21.3",
         "@trpc/client": "^11.0.2",
+        "@trpc/react-query": "^11.1.0",
         "@trpc/server": "11.0.4",
         "@trpc/tanstack-react-query": "^11.0.2",
         "@types/google.maps": "^3.58.1",

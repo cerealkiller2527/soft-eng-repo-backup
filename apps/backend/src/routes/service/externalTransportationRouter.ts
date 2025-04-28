@@ -1,11 +1,10 @@
-import { initTRPC } from "@trpc/server";
+import { t, protectedProcedure } from "../../trpc.ts";
 import { ServiceRequest, RequestType, Status, Priority } from "database";
 import PrismaClient from "../../bin/prisma-client.ts";
-export const t = initTRPC.create();
 import { z } from "zod";
 
 export const externalTransportationRouter = t.router({
-  getExternalTransportationRequests: t.procedure
+  getExternalTransportationRequests: protectedProcedure
     .input(
       z.object({
         patientName: z.string().optional(),
@@ -16,10 +15,9 @@ export const externalTransportationRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
-        employee: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const {
         patientName,
         pickupTime,
@@ -29,39 +27,68 @@ export const externalTransportationRouter = t.router({
         additionalNotes,
         priority,
         status,
-        employee,
       } = input;
-      return PrismaClient.serviceRequest.findMany({
-        where: {
-          type: RequestType.EXTERNALTRANSPORTATION,
-          ...(patientName && {
-            externalTransportation: { patientName: patientName },
-          }),
-          ...(pickupTime && {
-            externalTransportation: { pickupTime: pickupTime },
-          }),
-          ...(transportation && {
-            externalTransportation: { transportType: transportation },
-          }),
-          ...(pickupTransport && {
-            externalTransportation: { fromWhere: pickupTransport },
-          }),
-          ...(dropoffTransport && {
-            externalTransportation: { toWhere: dropoffTransport },
-          }),
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(status && { status: status as Status }),
-          ...(employee && { employee: employee }),
-        },
-        include: {
-          externalTransportation: true,
-          assignedTo: true,
-        },
-      });
+      if (ctx.role === "admin") {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.EXTERNALTRANSPORTATION,
+            ...(patientName && {
+              externalTransportation: { patientName: patientName },
+            }),
+            ...(pickupTime && {
+              externalTransportation: { pickupTime: pickupTime },
+            }),
+            ...(transportation && {
+              externalTransportation: { transportType: transportation },
+            }),
+            ...(pickupTransport && {
+              externalTransportation: { fromWhere: pickupTransport },
+            }),
+            ...(dropoffTransport && {
+              externalTransportation: { toWhere: dropoffTransport },
+            }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+          },
+          include: {
+            externalTransportation: true,
+            assignedTo: true,
+          },
+        });
+      } else {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.EXTERNALTRANSPORTATION,
+            ...(patientName && {
+              externalTransportation: { patientName: patientName },
+            }),
+            ...(pickupTime && {
+              externalTransportation: { pickupTime: pickupTime },
+            }),
+            ...(transportation && {
+              externalTransportation: { transportType: transportation },
+            }),
+            ...(pickupTransport && {
+              externalTransportation: { fromWhere: pickupTransport },
+            }),
+            ...(dropoffTransport && {
+              externalTransportation: { toWhere: dropoffTransport },
+            }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+            fromEmployee: ctx.username || "",
+          },
+          include: {
+            externalTransportation: true,
+            assignedTo: true,
+          },
+        });
+      }
     }),
 
-  addExternalTransportationRequest: t.procedure
+  addExternalTransportationRequest: protectedProcedure
     .input(
       z.object({
         patientName: z.string(),
@@ -71,10 +98,9 @@ export const externalTransportationRouter = t.router({
         dropoffTransport: z.string(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
-        employee: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         patientName,
         pickupTime,
@@ -83,7 +109,6 @@ export const externalTransportationRouter = t.router({
         dropoffTransport,
         additionalNotes,
         priority,
-        employee,
       } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
@@ -91,7 +116,7 @@ export const externalTransportationRouter = t.router({
           dateCreated: new Date(Date.now()),
           status: Status.NOTASSIGNED,
           description: additionalNotes,
-          fromEmployee: employee,
+          fromEmployee: ctx.username || "",
           priority: priority as Priority,
         },
       });
@@ -111,7 +136,7 @@ export const externalTransportationRouter = t.router({
       };
     }),
 
-  updateExternalTransportationRequest: t.procedure
+  updateExternalTransportationRequest: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -122,10 +147,10 @@ export const externalTransportationRouter = t.router({
         dropoffTransport: z.string().optional(),
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
-        employee: z.string().optional(),
+        employeeID: z.number().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         id,
         patientName,
@@ -135,33 +160,61 @@ export const externalTransportationRouter = t.router({
         dropoffTransport,
         additionalNotes,
         priority,
-        employee,
+        employeeID,
       } = input;
-      const serviceRequest = await PrismaClient.serviceRequest.update({
-        where: { id: id },
-        data: {
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(employee && { employee: employee }),
-          ...(patientName ||
-          pickupTime ||
-          transportation ||
-          pickupTransport ||
-          dropoffTransport
-            ? {
-                externalTransportation: {
-                  update: {
-                    ...(patientName && { patientName: patientName }),
-                    ...(pickupTime && { pickupTime: pickupTime }),
-                    ...(transportation && { transportType: transportation }),
-                    ...(pickupTransport && { fromWhere: pickupTransport }),
-                    ...(dropoffTransport && { toWhere: dropoffTransport }),
+      if (ctx.role === "admin") {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(employeeID && { assignedEmployeeID: employeeID }),
+            ...(patientName ||
+            pickupTime ||
+            transportation ||
+            pickupTransport ||
+            dropoffTransport
+              ? {
+                  externalTransportation: {
+                    update: {
+                      ...(patientName && { patientName: patientName }),
+                      ...(pickupTime && { pickupTime: pickupTime }),
+                      ...(transportation && { transportType: transportation }),
+                      ...(pickupTransport && { fromWhere: pickupTransport }),
+                      ...(dropoffTransport && { toWhere: dropoffTransport }),
+                    },
                   },
-                },
-              }
-            : {}),
-        },
-      });
+                }
+              : {}),
+          },
+        });
+      } else {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(patientName ||
+            pickupTime ||
+            transportation ||
+            pickupTransport ||
+            dropoffTransport
+              ? {
+                  externalTransportation: {
+                    update: {
+                      ...(patientName && { patientName: patientName }),
+                      ...(pickupTime && { pickupTime: pickupTime }),
+                      ...(transportation && { transportType: transportation }),
+                      ...(pickupTransport && { fromWhere: pickupTransport }),
+                      ...(dropoffTransport && { toWhere: dropoffTransport }),
+                    },
+                  },
+                }
+              : {}),
+          },
+        });
+      }
+
       console.log("Update ext. transportation request done.");
       return {
         message: "Update ext. transportation request done.",
