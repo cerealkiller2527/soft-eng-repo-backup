@@ -1,6 +1,6 @@
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer.tsx";
-import {NewNavbar} from "../components/NewNavbar.tsx";
+import NewNavbar from "../components/NewNavbar.tsx";
 import React from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
