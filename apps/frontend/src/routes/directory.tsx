@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import Navbar from "../components/Navbar";
+import NewNavbar from "../components/NewNavbar";
 import Footer from "../components/Footer";
 import { useTRPC } from "../database/trpc";
 
@@ -135,7 +135,7 @@ const DirectoryPage: React.FC = () => {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-[#F4F8FA] pt-20">
-                <Navbar />
+                <NewNavbar />
                 <main className="max-w-5xl mx-auto p-6 flex justify-center">
                     <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-[#012D5A] border-gray-200" />
                 </main>
@@ -147,7 +147,7 @@ const DirectoryPage: React.FC = () => {
     if (error || !departmentsResult.success) {
         return (
             <div className="min-h-screen bg-[#F4F8FA] pt-20">
-                <Navbar />
+                <NewNavbar />
                 <main className="max-w-5xl mx-auto p-6 text-center">
                     <p className="text-red-500 font-semibold mb-2">
                         {error ? "Failed to load departments. Please try again later." : "Data validation error."}
@@ -165,7 +165,7 @@ const DirectoryPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#F2F2F2]">
-            <Navbar />
+            <NewNavbar />
             <main className="max-w-7xl mx-auto p-6 pt-24">
                 <h1 className="text-4xl font-semibold text-[#012D5A] mb-6">Directory</h1>
                 <p className="text-lg text-muted-foreground mb-4">Find a specialty, department or service</p>
