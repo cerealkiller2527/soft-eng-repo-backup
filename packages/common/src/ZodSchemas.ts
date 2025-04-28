@@ -9,6 +9,8 @@ export const pNodeZod = z.object({
     neighbors: z.array(z.number()), // Only include IDs of neighbors
 })
 
+export type pNodeZT = z.infer<typeof pNodeZod>
+
 export const searchInput = z.object({
     buildingId: z.number(),
     endDeptName: z.string(),
