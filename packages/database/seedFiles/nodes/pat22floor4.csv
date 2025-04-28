@@ -1,7 +1,0 @@
-suite,description,lat,long,floor,type
-0,4left stairs,42.092446,-71.266887,4,Staircase
-0,4a1,42.092548,-71.266732,4,Intermediary
-0,4a2,42.092542,-71.266715,4,Intermediary
-0,4phlebotomy,42.092527,-71.266734,4,Location
-0,4middle stairs,42.092532,-71.266775,4,Staircase
-0,422elevator,42.092589,-71.266719,4,Elevator

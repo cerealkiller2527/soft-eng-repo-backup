@@ -1,4 +1,4 @@
-import {Prisma, PrismaClient, RequestType} from './.prisma/client';
+import {nodeType, Prisma, PrismaClient, RequestType} from './.prisma/client';
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
@@ -11,7 +11,9 @@ import {
     NodeCreateInputSchema,
     nodeTypeSchema,
     EdgeUncheckedCreateInputSchema} from "./prisma/generated/zod"
-import {departmentCSVRow, nodeCSVRow, edgeCSVRow} from "./seedFiles/CSVTypes.ts";
+import {departmentCSVRow, edgeCSVRow} from "./seedFiles/CSVTypes.ts";
+
+import {seedEdges, seedNodes} from "./seedFiles/seedHelperFunctions.ts"
 
 const prisma = new PrismaClient();
 
@@ -162,113 +164,18 @@ async function main() {
         }
     }
 
+    // seeds nodes and connects them to departments via location by matching node description to department name
+    // will work as long as department names are unique on each floor of each building (eg, "Radiology" can exist
+    // as a department in both floor 3 and 4 of 22 patriot place, but cannot have duplicates on each floor).
+    const seededChestnutNodes = await seedNodes("./seedFiles/chestnut/chestnut_nodes.csv");
+    const seededPat20Flr1Nodes = await seedNodes("./seedFiles/pat20floor1/pat20floor1_nodes.csv");
+    const seededPat22Flr1Nodes = await seedNodes("./seedFiles/nodes/pat22floor1.csv");
+    // const seededPat22Flr3Nodes = await seedNodes("./seedFiles/nodes/pat22floor3.csv");
+    // const seededPt22Flr4Nodes = await seedNodes("./seedFiles/nodes/pat22floor4.csv");
 
-    // seed nodes with locations and edges
-    const chestnutNodesFile = fs.readFileSync("./seedFiles/nodes/chestnut.csv", "utf-8");
-
-    const { data: chestnutNodes } = Papa.parse<Record<string, any>>(chestnutNodesFile,
-        {
-            header: true,
-            skipEmptyLines: true,
-            dynamicTyping:
-                {
-                    lat: true,
-                    long: true,
-                    floor: true
-                }
-        }
-    );
-
-
-
-    const nodesSeeded = await Promise.all(
-        chestnutNodes.map(async (node) => {
-            try {
-                const parsedInfo = nodeCSVRow.parse(node);
-                const parsedNode: z.infer<typeof NodeCreateInputSchema> = {
-                    type: nodeTypeSchema.parse(parsedInfo.type),
-                    description: parsedInfo.description,
-                    lat: parsedInfo.lat,
-                    long: parsedInfo.long
-                }
-                const thisNode = await prisma.node.create({ data: parsedNode });
-
-                // find building in DB
-                const thisBuilding = await prisma.building.findFirst({
-                    where: {
-                        name: {
-                            contains: parsedInfo.building,
-                            mode: "insensitive"
-                        }
-                    }
-                });
-
-                if (thisBuilding === null){
-                    console.error("error in finding building: ", parsedInfo.building, " as a substring of building name")
-                }
-
-                const parsedLocation: z.infer<typeof LocationUncheckedCreateInputSchema> = {
-                    floor: parsedInfo.floor,
-                    buildingId: thisBuilding?.id ?? -1,
-                    nodeID: thisNode.id
-                }
-
-                await prisma.location.create({data: parsedLocation})
-
-                return thisNode;
-            } catch (e) {
-                console.log('error parsing node ', node, '. Error: ', e);
-            }
-        })
-    );
-
-    // seed edges
-    const edgesFile = fs.readFileSync("./seedFiles/edges.csv", "utf-8");
-
-    const {data: edges} = Papa.parse<Record<string, any>>(edgesFile,
-        {
-            header: true,
-            skipEmptyLines: true,
-        }
-    );
-
-    const edgesSeeded = await Promise.all(
-        edges.map(async (edge) => {
-            try {
-                const parsedEdge = edgeCSVRow.parse(edge)
-                const edgesNodeIds = edgeFromTo(parsedEdge.fromNode, parsedEdge.toNode)
-                const dbEdge = EdgeUncheckedCreateInputSchema.parse(edgesNodeIds);
-                await prisma.edge.create({data: dbEdge});
-            } catch (e) {
-                console.log("error parsing edges: ", e)
-            }
-
-
-        })
-    )
-
-    function edgeFromTo(startDesc: string, endDesc: string) {
-        const startIndex = descToI(startDesc);
-        const endIndex = descToI(endDesc);
-        return {
-            fromNodeId: nodesSeeded[startIndex]?.id, toNodeId: nodesSeeded[endIndex]?.id,
-        }
-    }
-
-
-    function descToI(description: string) {
-        for(let i = 0; i < nodesSeeded.length; i++) {
-            if(nodesSeeded[i]?.description === description) {
-                return i;
-            }
-        }
-        console.error("error seeding node paths, searched for node with description that does not exist: |" + description + "| does not exist");
-        return -1;
-    }
-
-
-
-
+    const seededChestnutEdges = await seedEdges("./seedFiles/chestnut/chestnut_edges.csv");
+    const seededPat20Flr1Edges = await seedEdges("./seedFiles/pat20floor1/pat20floor1_edges.csv")
+    const seededPat22Flr1Edges = await seedEdges("./seedFiles/pat22floor1/pat22floor1_edges.csv")
 
 
     // create employees
@@ -284,6 +191,8 @@ async function main() {
             })
         )
     );
+
+    console.log("seed done!")
 
 
 }
