@@ -9,9 +9,9 @@ import {
     ServiceCreateInputSchema,
     DepartmentServicesUncheckedCreateInputSchema,
     NodeCreateInputSchema,
-    nodeTypeSchema} from "./prisma/generated/zod"
-import {departmentCSVRow, nodeCSVRow} from "./seedFiles/CSVTypes.ts";
-import NodeCreateInput = Prisma.NodeCreateInput;
+    nodeTypeSchema,
+    EdgeUncheckedCreateInputSchema} from "./prisma/generated/zod"
+import {departmentCSVRow, nodeCSVRow, edgeCSVRow} from "./seedFiles/CSVTypes.ts";
 
 const prisma = new PrismaClient();
 
@@ -163,8 +163,8 @@ async function main() {
     }
 
 
-    // seed nodes
-    const chestnutNodesFile = fs.readFileSync("./seedFiles/nodes/chestnut.csv", "utf-8")
+    // seed nodes with locations and edges
+    const chestnutNodesFile = fs.readFileSync("./seedFiles/nodes/chestnut.csv", "utf-8");
 
     const { data: chestnutNodes } = Papa.parse<Record<string, any>>(chestnutNodesFile,
         {
@@ -177,9 +177,10 @@ async function main() {
                     floor: true
                 }
         }
-    )
+    );
 
-    // seed nodes with locations
+
+
     const nodesSeeded = await Promise.all(
         chestnutNodes.map(async (node) => {
             try {
@@ -214,11 +215,57 @@ async function main() {
 
                 await prisma.location.create({data: parsedLocation})
 
+                return thisNode;
             } catch (e) {
                 console.log('error parsing node ', node, '. Error: ', e);
             }
         })
     );
+
+    // seed edges
+    const edgesFile = fs.readFileSync("./seedFiles/edges.csv", "utf-8");
+
+    const {data: edges} = Papa.parse<Record<string, any>>(edgesFile,
+        {
+            header: true,
+            skipEmptyLines: true,
+        }
+    );
+
+    const edgesSeeded = await Promise.all(
+        edges.map(async (edge) => {
+            try {
+                const parsedEdge = edgeCSVRow.parse(edge)
+                const edgesNodeIds = edgeFromTo(parsedEdge.fromNode, parsedEdge.toNode)
+                const dbEdge = EdgeUncheckedCreateInputSchema.parse(edgesNodeIds);
+                await prisma.edge.create({data: dbEdge});
+            } catch (e) {
+                console.log("error parsing edges: ", e)
+            }
+
+
+        })
+    )
+
+    function edgeFromTo(startDesc: string, endDesc: string) {
+        const startIndex = descToI(startDesc);
+        const endIndex = descToI(endDesc);
+        return {
+            fromNodeId: nodesSeeded[startIndex]?.id, toNodeId: nodesSeeded[endIndex]?.id,
+        }
+    }
+
+
+    function descToI(description: string) {
+        for(let i = 0; i < nodesSeeded.length; i++) {
+            if(nodesSeeded[i]?.description === description) {
+                return i;
+            }
+        }
+        console.error("error seeding node paths, searched for node with description that does not exist: |" + description + "| does not exist");
+        return -1;
+    }
+
 
 
 
