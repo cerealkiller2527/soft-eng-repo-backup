@@ -9,46 +9,21 @@ export const loginRouter = t.router({
     .input(
       z.object({
         sessionId: z.string(),
-        sessionToken: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const { sessionId } = input;
 
-      const authorization = ctx.req.headers.authorization;
-      if (!authorization || !authorization.startsWith("Bearer ")) {
-        throw new Error("Unauthorized: No Authorization token.");
+      if (!ctx.req.auth) {
+        throw new Error("Unauthorized: No Clerk auth info.");
       }
 
-      const token = authorization.replace("Bearer ", "");
+      const { sessionId: authSessionId } = ctx.req.auth;
 
-      try {
-        const session = await clerkClient.sessions.verifySession(
-          input.sessionId,
-          input.sessionToken,
-        );
-        const userId = session.userId;
-        const user = await clerkClient.users.getUser(userId);
-        const email = user.emailAddresses[0].emailAddress;
-
-        const existing = await PrismaClient.user.findFirst({
-          where: { email },
-        });
-
-        if (!existing) {
-          await PrismaClient.user.create({
-            data: {
-              username: user.username ?? "",
-              password: "", // default since Clerk handles auth
-              email: email,
-            },
-          });
-        }
-
-        return { success: true };
-      } catch (err) {
-        console.error("Failed to verify session", err);
-        throw new Error("Unauthorized");
+      if (!authSessionId || authSessionId !== sessionId) {
+        throw new Error("Unauthorized: Session mismatch.");
       }
+
+      return { success: true };
     }),
 });

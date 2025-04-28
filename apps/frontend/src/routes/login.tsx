@@ -32,7 +32,7 @@ export default function CustomSignIn(){
         try {
             console.log("[Username Submit] Checking existence:", username);
 
-            const signInAttempt = await signIn.create({
+            await signIn.create({
                 identifier: username,
             });
 
@@ -67,7 +67,6 @@ export default function CustomSignIn(){
         try {
             console.log("[Password Submit] Signing in:", username);
 
-            // Try signIn.create with password
             const signInAttempt = await signIn.create({
                 identifier: username,
                 password,
@@ -79,12 +78,10 @@ export default function CustomSignIn(){
             await setActive({ session: sessionId });
 
             const token = await getToken();
-
             const client = trpcClient(token || undefined);
 
             await client.login.verifyClerkUser.mutate({
                 sessionId,
-                sessionToken: token ?? '',
             });
 
             navigate("/Directory");
