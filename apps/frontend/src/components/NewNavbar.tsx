@@ -10,11 +10,8 @@ import {
 } from "@/components/ui/menubar";
 import BnWLogo from "/BrighamAndWomensLogo.png";
 
-// Always visible
 const primaryLink = { title: "Map", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
-
-// Under “More”
 const moreItems = [
     { title: "Service Requests", href: "/service-request", show: (u) => true },
     { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn },
@@ -29,23 +26,25 @@ export default function NewNavbar() {
 
     // Helper: generate button styles
     const getLinkClasses = (path: string) =>
-        `px-4 py-2 rounded-md font-bold transition-colors ${
+        `px-4 py-2 rounded-md font-bold text-lg transition-colors ${
             location.pathname === path
-                ? "bg-[#86A2B6] text-black"  // Selected state
-                : "text-black hover:bg-[#86A2B6]"  // Hover state
+                ? "bg-[#86A2B6] text-black underline"
+                : "text-black hover:underline"
         }`;
 
     return (
-        <nav className="fixed top-0 w-full bg-[#AEC8E0] shadow z-50 rounded-md">
-            <div className="mx-auto flex items-center justify-between px-4 py-1">
+        <Menubar className="fixed top-0 w-full bg-[#AEC8E0] shadow z-50 rounded-md h-14">
+            <div className="mx-auto flex items-center justify-between px-4 py-1 w-full">
 
                 {/* Logo */}
                 <Link to="/" className="flex items-center space-x-2">
-                    <img src={BnWLogo} alt="Brigham & Women's Logo" className="h-12" />
+                    <img src={BnWLogo} alt="Brigham & Women's Logo" className="h-10" />
                 </Link>
 
-                {/* Navigation Links */}
-                <div className="flex items-center space-x-6">
+
+                <div className="flex-grow"></div>
+                {/* Links */}
+                <div className="flex items-center space-x-10">
 
                     {/* Map */}
                     <Link to={primaryLink.href} className={getLinkClasses(primaryLink.href)}>
@@ -58,51 +57,47 @@ export default function NewNavbar() {
                     </Link>
 
                     {/* More Dropdown */}
-                    <Menubar>
+                    <MenubarMenu>
+                        <MenubarTrigger className="px-4 py-2 rounded-md text-lg font-bold bg-transparent hover:underline transition-colors">
+                            More
+                        </MenubarTrigger>
+                        <MenubarContent align="end" className="border rounded-md shadow-md bg-white">
+                            {moreItems
+                                .filter(item => item.show(auth))
+                                .map(item => (
+                                    <MenubarItem key={item.href}>
+                                        <Link
+                                            to={item.href}
+                                            className={`block w-full text-left py-2 px-4 transition-colors ${
+                                                location.pathname === item.href
+                                                    ? "bg-[#86A2B6] text-black"
+                                                    : "text-black"
+                                            }`}
+                                        >
+                                            {item.title}
+                                        </Link>
+                                    </MenubarItem>
+                                ))}
+                        </MenubarContent>
+                    </MenubarMenu>
+
+                    {/* Profile Icon Dropdown */}
+                    {isSignedIn ? (
                         <MenubarMenu>
-                            <MenubarTrigger className="px-4 py-2 rounded-md font-bold text-black bg-transparent hover:bg-[#86A2B6] focus:bg-[#86A2B6] transition-colors">
-                                More
+                            <MenubarTrigger className="p-2 rounded-full text-black bg-transparent hover:bg-[#86A2B6] focus:bg-[#86A2B6] transition-colors">
+                                <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
                             <MenubarContent align="end" className="border rounded-md shadow-md bg-white">
-                                {moreItems
-                                    .filter(item => item.show(auth))
-                                    .map(item => (
-                                        <MenubarItem key={item.href}>
-                                            <Link
-                                                to={item.href}
-                                                className={`block w-full text-left py-2 px-4 transition-colors ${
-                                                    location.pathname === item.href
-                                                        ? "bg-[#86A2B6] text-black"
-                                                        : "text-black"
-                                                }`}
-                                            >
-                                                {item.title}
-                                            </Link>
-                                        </MenubarItem>
-                                    ))}
+                                <MenubarItem>
+                                    <button
+                                        onClick={() => signOut()}
+                                        className="w-full text-left py-2 px-4 text-black"
+                                    >
+                                        Log Out
+                                    </button>
+                                </MenubarItem>
                             </MenubarContent>
                         </MenubarMenu>
-                    </Menubar>
-
-                    {/* Profile Icon or Login Button */}
-                    {isSignedIn ? (
-                        <Menubar>
-                            <MenubarMenu>
-                                <MenubarTrigger className="p-2 rounded-full text-blue-900 bg-transparent hover:bg-[#86A2B6] focus:bg-[#86A2B6] transition-colors">
-                                    <UserCircleIcon className="h-8 w-8" />
-                                </MenubarTrigger>
-                                <MenubarContent align="end" className="border rounded-md shadow-md bg-white">
-                                    <MenubarItem>
-                                        <button
-                                            onClick={() => signOut()}
-                                            className="w-full text-left py-2 px-4 text-black"
-                                        >
-                                            Log Out
-                                        </button>
-                                    </MenubarItem>
-                                </MenubarContent>
-                            </MenubarMenu>
-                        </Menubar>
                     ) : (
                         <Link
                             to="/login"
@@ -111,10 +106,8 @@ export default function NewNavbar() {
                             Login
                         </Link>
                     )}
-
                 </div>
-
             </div>
-        </nav>
-    );
+        </Menubar>
+    )
 }
