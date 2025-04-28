@@ -16,7 +16,7 @@ export const createContext = async ({
   const role = user.publicMetadata?.role as string | null;
   const username = user.username;
 
-  return { userId, role, username };
+  return { userId, role, username, req, res };
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

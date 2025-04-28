@@ -1,35 +1,22 @@
 import "dotenv/config";
-import { initTRPC } from "@trpc/server";
-//import { createContext } from "./context";
+import { t } from "./trpc.ts";
+import { createContext } from "./context";
 import { clerkMiddleware } from "@clerk/express";
-import { clerkClient } from "@clerk/clerk-sdk-node";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
 import logger from "morgan";
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
-export const t = initTRPC.context<Context>().create();
-
 import { employeeRouter } from "./routes/employeeRouter";
 import { serviceRouter } from "./routes/serviceRouter";
-import { loginRouter } from "./routes/loginRouter.ts";
 import { searchRouter } from "./routes/search.ts";
 import { csvRouter } from "./routes/csvRouter.ts";
 import { directoriesRouter } from "./routes/directoriesRouter.ts";
 import { mapEditorRouter } from "./routes/mapEditorRouter.ts";
 import { mapInfoRouter } from "./routes/mapInfoRouter.ts";
 
-const createContext = async ({
-  req,
-  res,
-}: trpcExpress.CreateExpressContextOptions) => {
-  return { req, res };
-};
-
 const appRouter = t.router({
   employee: employeeRouter,
   service: serviceRouter,
-  login: loginRouter,
   csv: csvRouter,
   directories: directoriesRouter,
   search: searchRouter,

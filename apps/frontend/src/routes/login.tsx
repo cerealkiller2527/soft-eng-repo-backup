@@ -11,7 +11,6 @@ import { FaGithub as GitHubIcon, FaGoogle as GoogleIcon } from "react-icons/fa";
 
 export default function CustomSignIn(){
 
-    const location = useLocation();
     const[transition, setTransition] = useState(false);
     const[username, setUsername] = useState("");
     const[password, setPassword] = useState("");
@@ -19,13 +18,15 @@ export default function CustomSignIn(){
     const [stage, setStage] = useState<"username" | "password">("username");
     const [step, setStep] = useState<1 | 2>(1);
     const [userExists, setUserExists] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
-    const { getToken } = useAuth();
+    // const { getToken } = useAuth();
 
     const handleUsernameSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+        setIsSubmitting(true);
 
         if (!signInLoaded) return;
 
@@ -55,12 +56,15 @@ export default function CustomSignIn(){
             } else {
                 setError("Unknown error verifying username.");
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     const handlePasswordSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+        setIsSubmitting(true);
 
         if (!signInLoaded) return;
 
@@ -77,12 +81,12 @@ export default function CustomSignIn(){
 
             await setActive({ session: sessionId });
 
-            const token = await getToken();
-            const client = trpcClient(token || undefined);
-
-            await client.login.verifyClerkUser.mutate({
-                sessionId,
-            });
+            // const token = await getToken();
+            // const client = trpcClient(token || undefined);
+            //
+            // await client.login.verifyClerkUser.mutate({
+            //     sessionId,
+            // });
 
             navigate("/Directory");
 
@@ -99,6 +103,8 @@ export default function CustomSignIn(){
             } else {
                 setError("Unknown error during login.");
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -233,6 +239,22 @@ export default function CustomSignIn(){
 
                         {error && (
                             <div className="text-red-500 text-sm text-center">{error}</div>
+                        )}
+
+                        {stage === "password" && (
+                            <Button
+                                variant="outline"
+                                type="button"
+                                className="w-full text-blue-900"
+                                onClick={() => {
+                                    setStage("username");
+                                    setStep(1);
+                                    setError(null);
+                                    setPassword("");
+                                }}
+                            >
+                                Back
+                            </Button>
                         )}
 
                         <Button
