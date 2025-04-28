@@ -9,9 +9,9 @@ export const isAuthed = async ({ ctx, next }: { ctx: Context; next: any }) => {
 };
 
 export const hasRole =
-  (allowedRoles: string[]) =>
+  (role: string) =>
   async ({ ctx, next }: { ctx: Context; next: any }) => {
-    if (!ctx.role || !allowedRoles.includes(ctx.role)) {
+    if (!ctx.role || !(ctx.role === role)) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next();

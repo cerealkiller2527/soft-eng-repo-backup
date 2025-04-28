@@ -31,7 +31,9 @@ export const routes = [
         path: '/ServiceRequest',
         errorElement: <div />,
         element: (
-            <ServiceRequest />
+            <ProtectedRoute>
+                <ServiceRequest />
+            </ProtectedRoute>
         ),
     },
     {
@@ -55,7 +57,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <ProtectedRoute>
-            <RequestDashboard />
+                <RequestDashboard />
             </ProtectedRoute>
 ),
     },
@@ -64,7 +66,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <AdminRoute>
-            <CSVPage />
+                <CSVPage />
             </AdminRoute>
         ),
     },
@@ -73,7 +75,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <AdminRoute>
-            <MapEditor />
+                <MapEditor />
             </AdminRoute>
         ),
     },

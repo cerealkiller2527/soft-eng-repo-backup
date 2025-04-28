@@ -9,7 +9,7 @@ export const createContext = async ({
   const { userId } = getAuth(req);
 
   if (!userId) {
-    return { userId: null, role: null };
+    return { userId: null, username: null, role: null };
   }
 
   const user = await clerkClient.users.getUser(userId);
