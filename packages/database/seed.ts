@@ -204,6 +204,7 @@ async function main() {
                     lat: node.lat,
                     long: node.long,
                     type: toNodeType(node.type),
+                    outside: false
                 },
             });
             await prisma.location.create({
@@ -225,6 +226,7 @@ async function main() {
                     lat: node.lat,
                     long: node.long,
                     type: toNodeType(node.type),
+                    outside: false
                 },
             });
             await prisma.location.create({
@@ -245,6 +247,7 @@ async function main() {
                     lat: node.lat,
                     long: node.long,
                     type: toNodeType(node.type),
+                    outside: false
                 },
             });
             await prisma.location.create({
@@ -265,6 +268,7 @@ async function main() {
                     lat: node.lat,
                     long: node.long,
                     type: toNodeType(node.type),
+                    outside: false
                 },
             });
             await prisma.location.create({
@@ -285,6 +289,7 @@ async function main() {
                     lat: node.lat,
                     long: node.long,
                     type: toNodeType(node.type),
+                    outside: false
                 },
             });
             await prisma.location.create({

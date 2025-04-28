@@ -6140,7 +6140,8 @@ const RAW_RUNTIME_STATE =
           ["eslint-config-custom", "workspace:configs/eslint-config-custom"],\
           ["prettier", "npm:3.5.3"],\
           ["prettier-config-custom", "workspace:configs/prettier-config-custom"],\
-          ["ts-config-custom", "workspace:configs/ts-config-custom"]\
+          ["ts-config-custom", "workspace:configs/ts-config-custom"],\
+          ["zod", "npm:3.24.3"]\
         ],\
         "linkType": "SOFT"\
       }]\

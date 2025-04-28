@@ -179,6 +179,7 @@ export const mapEditorRouter = t.router({
                 lat: node.latitude,
                 long: node.longitude,
                 type: parsedType,
+                outside: false
               },
             });
 

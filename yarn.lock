@@ -4162,6 +4162,7 @@ __metadata:
     prettier: "npm:*"
     prettier-config-custom: "workspace:*"
     ts-config-custom: "workspace:*"
+    zod: "npm:^3.24.3"
   languageName: unknown
   linkType: soft
 

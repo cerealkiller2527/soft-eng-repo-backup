@@ -152,6 +152,7 @@ export const csvImportRouter = t.router({
                   description: record["Node Description"],
                   lat: coords.lat,
                   long: coords.long,
+                  outside: false,
                 },
               });
               nodeMapping.set(record["Node ID"] || String(node.id), node.id);

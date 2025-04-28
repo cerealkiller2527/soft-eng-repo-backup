@@ -11,6 +11,7 @@
         "eslint-config-custom": "workspace:*",
         "prettier": "*",
         "prettier-config-custom": "workspace:*",
-        "ts-config-custom": "workspace:*"
+        "ts-config-custom": "workspace:*",
+        "zod": "^3.24.3"
     }
 }

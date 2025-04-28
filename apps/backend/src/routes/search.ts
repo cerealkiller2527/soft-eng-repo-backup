@@ -7,76 +7,53 @@ import { SearchSystem } from "./algos/SearchSystem.ts";
 import { pNodeDTO } from "../../../../share/types.ts";
 import PrismaClient from "../bin/prisma-client.ts";
 import { DFS } from "./algos/DFS.ts";
+import {pNodeZT, searchInput, searchOutput} from "common/src/ZodSchemas.ts";
 
 export const searchRouter = t.router({
   getPath: t.procedure
-    .input(
-      z.object({
-        buildingName: z.string(),
-        endSuite: z.string(),
-        startSuite: z.string(),
-        driving: z.boolean(),
-        algorithm: z.string(),
-      }),
-    )
+    .input(searchInput)
     .query(async ({ input }) => {
       try {
+
+        // get end location and node
         const endLocation = await PrismaClient.location.findFirst({
           where: {
-            suite: input.endSuite,
-          },
-        });
-
-        const s = new SearchSystem(new BFS());
-
-        if (input.algorithm === "DFS") {
-          s.changeAlgorithm(new DFS());
-        }
-
-        const nodePath = await s.path(
-          input.buildingName,
-          input.endSuite,
-          input.driving,
-        );
-
-        const nodeIds = nodePath.map((node) => node.id);
-
-        const locations = await PrismaClient.location.findMany({
-          where: {
-            nodeID: { in: nodeIds },
+            Department:{
+              name: input.endDeptName,
+            }
           },
           select: {
-            nodeID: true,
-            floor: true,
+            nodeID: true
           },
         });
 
-        const floorMap = new Map<number, number>();
-        locations.forEach((location) => {
-          if (location.nodeID !== null) {
-            floorMap.set(location.nodeID, location.floor);
-          }
-        });
+        const endNodeId = endLocation!.nodeID;
 
-        const pNodeDTOS: pNodeDTO[] = nodePath.map((node) => ({
-          id: node.id,
-          description: node.description,
-          latitude: node.latitude,
-          longitude: node.longitude,
-          floor: floorMap.get(node.id) ?? -1,
-          neighbors: node.neighbors.map((neighbor) => ({
-            id: neighbor.id,
-          })),
-        }));
 
+        // create search system and pass through data for path
+        const s = new SearchSystem(new BFS());
+
+        const paths = s.path(
+            input.dropOffLatitude,
+            input.dropOffLongitude,
+            endNodeId!,
+            input.buildingId,
+            input.driving
+        )
+
+        const returnPaths = searchOutput.parse(paths)
+        const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment]
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        // SKIPPER'S WACK AH CODE STARTS HERE
         type Direction = string;
 
-        function getWalkingDirections(pNodeDTOS: pNodeDTO[]): Direction[] {
+        function getWalkingDirections(pNodeZTs: pNodeZT[]): Direction[] {
           const directions: Direction[] = [];
 
-          for (let i = 0; i < pNodeDTOS.length - 1; i++) {
-            const current = pNodeDTOS[i];
-            const next = pNodeDTOS[i + 1];
+          for (let i = 0; i < pNodeZTs.length - 1; i++) {
+            const current = pNodeZTs[i];
+            const next = pNodeZTs[i + 1];
 
             const deltaLng = next.longitude - current.longitude;
             const deltaLat = next.latitude - current.latitude;
@@ -138,10 +115,13 @@ export const searchRouter = t.router({
           return Math.sqrt(deltaLat * deltaLat + deltaLng * deltaLng) * 364000;
         }
 
-        const dirs = getWalkingDirections(pNodeDTOS);
+        const dirs = getWalkingDirections(pNodeZTs);
+
+        // SKIPPER'S WACK AH CODE ENDS HERE
+        //////////////////////////////////////////////////////////////////////////////////////
 
         return {
-          path: pNodeDTOS,
+          path: returnPaths,
           directions: dirs,
         };
       } catch (error) {
