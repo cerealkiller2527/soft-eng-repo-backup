@@ -21,6 +21,7 @@ export default function CustomSignIn(){
     const [userExists, setUserExists] = useState(false);
     const navigate = useNavigate();
     const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
+    const { getToken } = useAuth();
 
     const handleUsernameSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -77,7 +78,6 @@ export default function CustomSignIn(){
 
             await setActive({ session: sessionId });
 
-            const { getToken } = useAuth();
             const token = await getToken();
 
             const client = trpcClient(token || undefined);
@@ -246,7 +246,6 @@ export default function CustomSignIn(){
                         </Button>
                     </form>
 
-                    {/* Terms */}
                     <p className="text-xs text-gray-400 text-center mt-4">
                         By clicking continue, you agree to our{" "}
                         <a href="#" className="underline">Terms of Service</a> and{" "}
