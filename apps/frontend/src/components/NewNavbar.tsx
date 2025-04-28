@@ -13,9 +13,11 @@ import BnWLogo from "/BrighamAndWomensLogo.png";
 const primaryLink = { title: "Map", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
 const moreItems = [
-    { title: "Service Requests", href: "/service-request", show: (u) => true },
-    { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn },
-    { title: "Map Editor", href: "/mapeditor", show: (u) => u.isSignedIn && u.user?.unsafeMetadata.role === "admin" },
+    { title: "About", href: "/about", show: (u)=> true},
+    { title: "Credits", href: "/credits", show: (u)=> true},
+    { title: "Service Requests", href: "/service-request", show: (u) => u.isSignedIn},
+    { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
+    { title: "Map Editor", href: "/mapeditor", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
 ];
 
 export default function NewNavbar() {
