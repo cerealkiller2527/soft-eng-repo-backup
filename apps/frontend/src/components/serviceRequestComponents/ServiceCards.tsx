@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TrendingUpIcon } from "lucide-react";
+import { useQuery } from '@tanstack/react-query'
+import { useTRPC } from "@/database/trpc"
 import { Badge } from "@/components/ui/badge";
 import {
     Card,

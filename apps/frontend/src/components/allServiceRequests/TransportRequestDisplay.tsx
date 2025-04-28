@@ -22,7 +22,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { TrendingUpIcon } from "lucide-react"
-import Footer from "@/components/Footer.tsx"
 
 export default function TransportRequestDisplay() {
 
