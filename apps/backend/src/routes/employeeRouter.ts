@@ -1,8 +1,7 @@
-import { initTRPC } from "@trpc/server";
+import { t, protectedProcedure } from "../trpc.ts";
 import PrismaClient from "../bin/prisma-client";
-export const t = initTRPC.create();
 export const employeeRouter = t.router({
-  getEmployee: t.procedure.query(async () => {
+  getEmployee: protectedProcedure.query(async () => {
     return PrismaClient.employee.findMany();
   }),
 });

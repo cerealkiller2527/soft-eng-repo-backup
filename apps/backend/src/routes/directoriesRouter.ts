@@ -1,9 +1,7 @@
-import { initTRPC } from "@trpc/server";
+import { t } from "../trpc.ts";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import PrismaClient from "../bin/prisma-client";
-
-const t = initTRPC.create();
 
 const DepartmentSchema = z.object({
   id: z.number(),

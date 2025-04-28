@@ -6,11 +6,10 @@ import Directory from './routes/directory.tsx';
 import Login from './routes/login.tsx';
 import RequestDashboard from './routes/requestDashboard.tsx';
 import CSVPage from './routes/csv.tsx';
-import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import {ProtectedRoute, AdminRoute} from './routes/ProtectedRoute.tsx';
 import {useAuth} from './Context/AuthContext.tsx';
 import LandingPage from "./routes/landingPage.tsx";
 import MapEditor from "./routes/mapEditor.tsx"
-import MapInfoTest from "./routes/mapinfotest.tsx";
 import TestDirectory from "./routes/test.tsx";
 import DepartmentPage from "./routes/department.tsx";
 
@@ -64,16 +63,18 @@ export const routes = [
         path: '/csv',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
+            <AdminRoute>
             <CSVPage />
-            </ProtectedRoute>
+            </AdminRoute>
         ),
     },
     {
         path: '/mapeditor',
         errorElement: <div />,
         element: (
-                <MapEditor />
+            <AdminRoute>
+            <MapEditor />
+            </AdminRoute>
         ),
     },
     {
