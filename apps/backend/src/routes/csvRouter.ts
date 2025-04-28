@@ -1,13 +1,11 @@
-import { initTRPC } from "@trpc/server";
+import { t, adminProcedure } from "../trpc.ts";
 import { csvExportRouter } from "./csvExportRouter";
 import { csvImportRouter } from "./csvImportRouter";
 import PrismaClient from "../bin/prisma-client";
 
-export const t = initTRPC.create();
-
 // Add clear database procedure
 const clearDatabaseRouter = t.router({
-  clearDatabase: t.procedure.mutation(async () => {
+  clearDatabase: adminProcedure.mutation(async () => {
     try {
       // Delete in correct order to handle foreign key constraints
       await PrismaClient.departmentServices.deleteMany();

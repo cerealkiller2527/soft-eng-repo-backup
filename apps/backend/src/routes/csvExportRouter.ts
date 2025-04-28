@@ -1,4 +1,4 @@
-import { initTRPC } from "@trpc/server";
+import { t, adminProcedure } from "../trpc.ts";
 import { z } from "zod";
 import { unparse } from "papaparse";
 import PrismaClient from "../bin/prisma-client";
@@ -9,8 +9,6 @@ import {
   DepartmentServices,
   nodeType,
 } from "database";
-
-const t = initTRPC.create();
 
 const CSVRowSchema = z.object({
   "Building ID": z.string().optional(),
@@ -59,7 +57,7 @@ type BuildingWithRelations = Building & {
 };
 
 export const csvExportRouter = t.router({
-  exportCSV: t.procedure.query(async () => {
+  exportCSV: adminProcedure.query(async () => {
     try {
       const buildings = (await PrismaClient.building.findMany({
         include: {

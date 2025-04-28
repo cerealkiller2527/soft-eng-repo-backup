@@ -1,10 +1,8 @@
-import { initTRPC } from "@trpc/server";
+import { t, adminProcedure } from "../trpc.ts";
 import { z } from "zod";
 import { parse } from "papaparse";
 import PrismaClient from "../bin/prisma-client";
 import { nodeType } from "database";
-
-const t = initTRPC.create();
 
 const CSVRecordSchema = z.object({
   "Building ID": z.string().optional(),
@@ -51,7 +49,7 @@ function parseCoordinates(coord: string): { lat: number; long: number } | null {
 }
 
 export const csvImportRouter = t.router({
-  importCSV: t.procedure
+  importCSV: adminProcedure
     .input(z.object({ json: z.string() }))
     .mutation(async ({ input }) => {
       try {

@@ -52,24 +52,3 @@ export const loginRouter = t.router({
       }
     }),
 });
-
-// getCurrentUser: t.procedure.query(async ({ ctx }) => {
-//   if (!ctx.userId) {
-//     throw new TRPCError({ code: "UNAUTHORIZED" });
-//   }
-//
-//   try {
-//     const user = await clerkClient.users.getUser(ctx.userId);
-//     return {
-//       id: user.id,
-//       email: user.emailAddresses[0].emailAddress,
-//       firstName: user.firstName,
-//       lastName: user.lastName,
-//     };
-//   } catch (err) {
-//     throw new TRPCError({
-//       code: "INTERNAL_SERVER_ERROR",
-//       message: "Failed to fetch user info",
-//     });
-//   }
-// }),
