@@ -208,8 +208,17 @@ const DirectoryPage: React.FC = () => {
             {selectedDepartment && (
 
                 <div className="sticky top-18 z-10 bg-white px-4 py-4 border-b border-gray-200">
-                    <form onSubmit={handleSearch} className="max-w-xl mx-auto">
-                        <div className="flex shadow-sm rounded-lg bg-white">
+                    <div className="max-w-7xl mx-auto flex items-center gap-4">
+
+                        {/* Back button */}
+                        <Button variant="ghost" onClick={() => setSelectedDepartment(null)} className="flex items-center gap-2">
+                            ← Back
+                        </Button>
+
+
+
+                    <form onSubmit={handleSearch} className="flex-grow">
+                        <div className="flex w-full shadow-sm rounded-lg bg-white">
                             <div className="relative flex-grow">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <Search className="h-5 w-5 text-slate-400" />
@@ -227,6 +236,7 @@ const DirectoryPage: React.FC = () => {
                             </Button>
                         </div>
                     </form>
+                </div>
                 </div>
             )}
 
@@ -361,63 +371,11 @@ const DirectoryPage: React.FC = () => {
                             :
 
                             (
+                                <div className="flex justify-center items-center h-64">
+                                    <h2 className="text-2xl font-semibold text-slate-500">Select a category</h2>
+                                </div>
+                            )
 
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredDepartments.map((dept) => (
-                                    <Link key={dept.id} to={`/department/${dept.id}`}>
-                                        <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full">
-                                            <CardContent className="p-0">
-                                                <div className="p-4">
-                                                    <div className="flex items-start justify-between">
-                                                        <div>
-                                                            <h3 className="font-medium text-[#012D5A] text-lg">{dept.name}</h3>
-                                                            <p className="text-sm text-slate-500 mt-1 line-clamp-2">
-                                                                {dept.description || "Department information"}
-                                                            </p>
-                                                        </div>
-                                                        <ChevronRight className="h-5 w-5 text-slate-400" />
-                                                    </div>
-                                                    <div className="flex items-center mt-4 text-sm text-slate-500">
-                                                        <Phone className="h-4 w-4 mr-1" />
-                                                        <span>{dept.phoneNumber}</span>
-                                                    </div>
-                                                    {dept.Location && dept.Location.length > 0 && (
-                                                        <div className="flex items-center mt-2 text-sm text-slate-500">
-                                                            <MapPin className="h-4 w-4 mr-1" />
-                                                            <span>
-                                {dept.Location[0].building.name}
-                                                                {dept.Location[0].suite && `, Suite ${dept.Location[0].suite}`}
-                              </span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="border-t border-slate-100 bg-slate-50 px-4 py-3">
-                                                    {dept.DepartmentServices.length > 0 ? (
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {dept.DepartmentServices.slice(0, 3).map((service) => (
-                                                                <Badge key={service.service.id} variant="secondary" className="bg-slate-100 text-slate-700">
-                                                                    {service.service.name}
-                                                                </Badge>
-                                                            ))}
-                                                            {dept.DepartmentServices.length > 3 && (
-                                                                <Badge variant="outline" className="text-slate-500">
-                                                                    +{dept.DepartmentServices.length - 3} more
-                                                                </Badge>
-                                                            )}
-                                                        </div>
-                                                    ) : (
-                                                        <span className="text-xs text-slate-400">No services listed</span>
-                                                    )}
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </Link>
-                                ))}
-                            </div>
-
-
-                        )
                         }
 
 
