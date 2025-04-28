@@ -394,7 +394,7 @@ export default function CSV() {
                         Department CSV Import/Export
                     </h1>
 
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div className="bg-white rounded-lg shadow-md p-6 mb-8 min-h-100">
                         <div className="flex flex-col gap-4 mb-6">
                             <div className="flex gap-4 items-center">
                                 <input
