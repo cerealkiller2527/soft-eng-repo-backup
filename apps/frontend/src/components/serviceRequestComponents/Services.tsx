@@ -47,13 +47,13 @@ export default function Services({ title, description, icon: Icon, formType }: S
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
                     {formType === "equipment" ? (
-                        <EquipmentRequestForm onSubmit={() => setOpen(false)} />
+                        <EquipmentRequestForm onFormSubmit={handleFormSubmit} />
                     ) : formType === "transport" ? (
-                        <TransportationForm />
+                        <TransportationForm onFormSubmit={handleFormSubmit} />
                     ) : formType === "security" ? (
-                        <SecurityForm />
+                        <SecurityForm onFormSubmit={handleFormSubmit} />
                     ) : formType === "language" ? (
-                        <LanguageForm />
+                        <LanguageForm onFormSubmit={handleFormSubmit} />
                     ) : null}
                 </DialogContent>
             </Dialog>

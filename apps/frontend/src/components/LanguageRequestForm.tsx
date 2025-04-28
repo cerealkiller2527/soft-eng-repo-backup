@@ -101,19 +101,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                                 <FormItem className="space-y-2">
                                     <FormLabel>Start Time</FormLabel>
                                     <FormControl>
-                                        <ReactDatePicker
-                                            selected={field.value}
-                                            onChange={(date) => field.onChange(date)}
-                                            showTimeSelect
-                                            placeholderText="MM/DD/YYYY, HH:MM AM/PM"
-                                            dateFormat="Pp"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                            popperClassName="!z-50"
-                                            calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                            dayClassName={() =>
-                                                "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
-                                            }
-                                        />
+                                        <Input type={"datetime-local"} />
                                     </FormControl>
                                     <FormDescription>Add the start time.</FormDescription>
                                     <FormMessage />
@@ -128,19 +116,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                                 <FormItem className="space-y-2">
                                     <FormLabel>End Time</FormLabel>
                                     <FormControl>
-                                        <ReactDatePicker
-                                            selected={field.value}
-                                            onChange={(date) => field.onChange(date)}
-                                            showTimeSelect
-                                            placeholderText="MM/DD/YYYY, HH:MM AM/PM"
-                                            dateFormat="Pp"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                            popperClassName="!z-50"
-                                            calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                            dayClassName={() =>
-                                                "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
-                                            }
-                                        />
+                                        <Input type={"datetime-local"} />
                                     </FormControl>
                                     <FormDescription>Add the end time.</FormDescription>
                                     <FormMessage />

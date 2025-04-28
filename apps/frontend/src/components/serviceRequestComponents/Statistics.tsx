@@ -18,33 +18,29 @@ export default function MiniDashboard() {
             id: req.id,
             type: "Patient Transport",
             status: req.status,
-            time: new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             details: req.description ?? "Transport request",
-            createdAt: req.createdAt,
+            employee: req.fromEmployee,
         })),
         ...(requestsSecurity.data ?? []).map(req => ({
             id: req.id,
             type: "Security Assistance",
             status: req.status,
-            time: new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             details: req.description ?? "Security request",
-            createdAt: req.createdAt,
+            employee: req.fromEmployee,
         })),
         ...(requestsEquipment.data ?? []).map(req => ({
             id: req.id,
             type: "Medical Equipment",
             status: req.status,
-            time: new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             details: req.description ?? "Equipment request",
-            createdAt: req.createdAt,
+            employee: req.fromEmployee,
         })),
         ...(requestsLanguage.data ?? []).map(req => ({
             id: req.id,
             type: "Language Services",
             status: req.status,
-            time: new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             details: req.description ?? "Language request",
-            createdAt: req.createdAt,
+            employee: req.fromEmployee,
         })),
     ];
 
@@ -58,7 +54,7 @@ export default function MiniDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-white shadow md:col-span-2">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-xl text-[#003153]">Recent Activity</CardTitle>
+                    <CardTitle className="text-xl text-[#003153]">Request Quick View</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex gap-2 mb-4">
@@ -81,7 +77,7 @@ export default function MiniDashboard() {
                                 <div className="flex flex-col">
                                     <div className="flex items-center">
                                         <h3 className="font-medium text-[#003153]">{request.type}</h3>
-                                        <span className="text-xs text-gray-500 ml-2">• {request.time}</span>
+                                        <span className="text-xs text-gray-500 ml-2">• {request.employee}</span>
                                     </div>
                                     <p className="text-xs text-gray-700">{request.details}</p>
                                 </div>
