@@ -145,7 +145,7 @@ export default function CustomSignIn(){
                 </Alert>
             )}
 
-            <div className="w-full bg-cover bg-center min-h-screen flex items-center justify-center px-4" style={{ backgroundImage: "url('/loginBGBlur.png')" }}>
+            <div className="w-full bg-cover bg-center min-h-screen flex items-center justify-center px-4" style={{ backgroundImage: "url('/loginBGBlur2.jpg')" }}>
                 <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-6 left-6 w-92 h-auto" />
                 {/*<div*/}
                 {/*    onMouseEnter={() => setTransition(true)}*/}
@@ -259,7 +259,7 @@ export default function CustomSignIn(){
 
                         <Button
                             type="submit"
-                            className="bg-blue-900 hover:bg-white hover:text-blue-900 transition-colors"
+                            className="bg-primary hover:bg-chart-4 hover:text-white transition-colors"
                         >
                             {step === 1 ? "Next" : "Sign In"}
                         </Button>
