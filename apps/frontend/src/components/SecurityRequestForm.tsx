@@ -18,7 +18,6 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low","Medium","High","Emergency"]
 
 const formSchema = z.object({
-    employeeName: z.string(),
     priority: z.string(),
     location: z.string(),
     additionalNotes: z.string(),
@@ -40,7 +39,6 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeName: "",
             priority: "",
             location: "",
             additionalNotes: "",
@@ -50,7 +48,6 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
-            employee: values.employeeName,
             location: values.location,
             additionalNotes: values.additionalNotes,
             priority: values.priority,
@@ -67,24 +64,6 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="employeeName"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Employee Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Enter your full name"
-                                        {...field}
-                                        className="w-full"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <FormField
                         control={form.control}
                         name="priority"
