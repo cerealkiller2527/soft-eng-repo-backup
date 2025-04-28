@@ -236,10 +236,11 @@ const DirectoryPage: React.FC = () => {
 
 
                     {/* left side of the page - accordion categories */}
-                    <div className={`w-full md:w-64 lg:w-72 transition-all duration-300 `} >
+                    <div className={`w-full md:w-64 lg:w-72 transition-all duration-300  ${selectedDepartment ? "mt-10" : ""}`} >
                         <h2 className = "text-lg font-semibold text-[#012D5A] mb-4 text-left ">Categories</h2>
                         <Card>
                             <CardContent>
+
                         <Accordion type="single" collapsible className="w-full">
                             {Object.entries(groupedDepartments).map(([category, depts]) => (
                                 <AccordionItem value={category} key={category}>
