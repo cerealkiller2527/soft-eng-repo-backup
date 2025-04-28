@@ -51,7 +51,7 @@ export default function MiniDashboard() {
     const filteredRequests = filterType === "All" ? sortedRequests : sortedRequests.filter(req => req.type === filterType);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
             <Card className="bg-white shadow md:col-span-2">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-[#003153]">Request Quick View</CardTitle>
@@ -106,7 +106,6 @@ export default function MiniDashboard() {
                     <CardTitle className="text-xl text-[#003153]">Request Status</CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center items-center h-[calc(100%-60px)]">
-                    {/* Future Chart Area */}
                 </CardContent>
             </Card>
         </div>
