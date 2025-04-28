@@ -3,12 +3,11 @@ import { pNode } from "./pNode.ts";
 import { SearchSystem } from "./SearchSystem.ts";
 
 export class BFS implements Algorithm {
-
   async findPath(startId: number, endId: number): Promise<pNode[]> {
     const startNode = await Algorithm.createNodeFromId(startId);
     const endNode = await Algorithm.createNodeFromId(endId);
 
-    const path = await this.findBFS(startNode, endNode)
+    const path = await this.findBFS(startNode, endNode);
     if (path === undefined) {
       console.error("no path found");
       return [startNode];
@@ -18,7 +17,10 @@ export class BFS implements Algorithm {
     }
   }
 
-  private async findBFS(startNode: pNode,  endNode: pNode): Promise<pNode[] | undefined> {
+  private async findBFS(
+    startNode: pNode,
+    endNode: pNode,
+  ): Promise<pNode[] | undefined> {
     /**
      * BFS for graph search to find path from startNode to endNode
      *  * @param {Node} startNode - the starting node for the search.

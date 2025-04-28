@@ -16,6 +16,7 @@ const CSVRecordSchema = z.object({
   "Node Type": z.string(),
   "Node Description": z.string(),
   "Node Coordinates": z.string(),
+  "Node Outside": z.string(),
   "From Edges": z.string(),
   "To Edges": z.string(),
   "Department ID": z.string().optional(),
@@ -152,7 +153,7 @@ export const csvImportRouter = t.router({
                   description: record["Node Description"],
                   lat: coords.lat,
                   long: coords.long,
-                  outside: false,
+                  outside: record["Node Outside"].toLowerCase() === 'true',
                 },
               });
               nodeMapping.set(record["Node ID"] || String(node.id), node.id);

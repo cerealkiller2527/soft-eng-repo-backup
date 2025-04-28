@@ -4,20 +4,14 @@ import { z } from "zod";
 import PrismaClient from "../bin/prisma-client";
 import prismaClient from "../bin/prisma-client";
 import { TRPCError } from "@trpc/server";
+import {NodeTypeZod} from "common/src/ZodSchemas.ts";
 
 // create zod objects for node and edge
 const node = z.object({
   id: z.number(),
 });
 
-const typeEnum = z.enum([
-  "Entrance",
-  "Intermediary",
-  "Staircase",
-  "Elevator",
-  "Location",
-  "Help_Desk",
-]);
+const typeEnum = NodeTypeZod
 
 export const mapEditorRouter = t.router({
   // Get all nodes and edges for a floor map in a single call
@@ -106,6 +100,7 @@ export const mapEditorRouter = t.router({
             latitude: z.number(),
             type: z.string(),
             suite: z.string(),
+            outside: z.boolean(),
           }),
         ),
         edges: z.array(
@@ -179,7 +174,7 @@ export const mapEditorRouter = t.router({
                 lat: node.latitude,
                 long: node.longitude,
                 type: parsedType,
-                outside: false
+                outside: node?.outside ?? false,
               },
             });
 

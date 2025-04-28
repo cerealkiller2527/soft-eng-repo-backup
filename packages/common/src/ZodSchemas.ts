@@ -23,3 +23,13 @@ export const searchOutput = z.object({
     toParking: z.array(pNodeZod),
     toDepartment: z.array(pNodeZod),
 })
+
+export const NodeTypeZod = z.enum([
+    "Entrance",
+    "Intermediary",
+    "Staircase",
+    "Elevator",
+    "Location",
+    "Help_Desk",
+    "Parking"
+]);

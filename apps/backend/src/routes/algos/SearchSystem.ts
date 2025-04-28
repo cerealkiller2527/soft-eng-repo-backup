@@ -1,8 +1,8 @@
 import { Algorithm } from "./Algorithm.ts";
 import { pNode } from "./pNode.ts";
 import PrismaClient from "../../bin/prisma-client.ts";
-import {z} from "zod";
-import {pNodeZod, searchOutput} from "common/src/ZodSchemas.ts";
+import { z } from "zod";
+import { pNodeZod, searchOutput } from "common/src/ZodSchemas.ts";
 
 export class SearchSystem {
   algorithm: Algorithm;
@@ -15,7 +15,13 @@ export class SearchSystem {
     this.algorithm = algorithm;
   }
 
-  async path(dropOffLatitude: number, dropOffLongitude: number, endNodeId: number, buildingId: number, driving: boolean) {
+  async path(
+    dropOffLatitude: number,
+    dropOffLongitude: number,
+    endNodeId: number,
+    buildingId: number,
+    driving: boolean,
+  ) {
     let toParking = null;
     let toParkingZ = null;
     let startId = await this.findStartNodeId(
@@ -47,19 +53,22 @@ export class SearchSystem {
     }
 
     const pathIds = toDepartment.map((node) => node.id);
-    const floorMap = await this.getFloorMap(pathIds)
+    const floorMap = await this.getFloorMap(pathIds);
     const toDeptartmentZ = this.nodesToZods(toDepartment, floorMap);
 
-    const output = ({
+    const output = {
       toParking: toParkingZ,
       toDepartment: toDeptartmentZ,
-    })
-    
-    return searchOutput.parse(output);
+    };
 
+    return searchOutput.parse(output);
   }
 
-  private async findStartNodeId(dropOffLatitude: number, dropOffLongitude: number, parking: boolean){
+  private async findStartNodeId(
+    dropOffLatitude: number,
+    dropOffLongitude: number,
+    parking: boolean,
+  ) {
     let closestNode = null;
     let closestDist = Infinity;
     let outsideNodes = null;
@@ -67,19 +76,24 @@ export class SearchSystem {
     if (!parking) {
       outsideNodes = await PrismaClient.node.findMany({
         where: {
-          outside: true
+          outside: true,
         },
-      })
-    }else {
+      });
+    } else {
       outsideNodes = await PrismaClient.node.findMany({
         where: {
-          type: "Parking"
+          type: "Parking",
         },
-      })
+      });
     }
 
     for (const node of outsideNodes) {
-      const dist = this.distance(node.lat, node.long, dropOffLatitude, dropOffLongitude)
+      const dist = this.distance(
+        node.lat,
+        node.long,
+        dropOffLatitude,
+        dropOffLongitude,
+      );
       if (dist < closestDist) {
         closestDist = dist;
         closestNode = node;
@@ -89,14 +103,19 @@ export class SearchSystem {
     return closestNode!.id;
   }
 
-  private distance(nLat: number, nLong: number, dropLat: number, dropLong: number){
+  private distance(
+    nLat: number,
+    nLong: number,
+    dropLat: number,
+    dropLong: number,
+  ) {
     const dLa = nLat - dropLat;
     const dLn = nLong - dropLong;
     return dLa * dLa + dLn * dLn;
   }
 
   private nodesToZods(nodes: pNode[], floorMap: Map<number, number>) {
-    const pNodeZodObjects = nodes.map(node => ({
+    const pNodeZodObjects = nodes.map((node) => ({
       id: node.id,
       description: node.description,
       longitude: node.longitude,
@@ -111,7 +130,7 @@ export class SearchSystem {
   }
 
   // this is to get the floor of each node because we decided nodes dont need that attr anymore so now i have to do a bunch of lookups
-  private async getFloorMap(pathIds: number[]){
+  private async getFloorMap(pathIds: number[]) {
     const locations = await PrismaClient.location.findMany({
       where: {
         nodeID: { in: pathIds },

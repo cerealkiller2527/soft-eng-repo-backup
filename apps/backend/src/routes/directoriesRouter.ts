@@ -44,7 +44,7 @@ const DepartmentSchema = z.object({
           description: z.string(),
           lat: z.number(),
           long: z.number(),
-          outside: z.boolean()
+          outside: z.boolean(),
         })
         .nullable(),
     }),

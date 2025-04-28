@@ -6,16 +6,10 @@ import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
 import { useMutation } from '@tanstack/react-query';
+import {NodeTypeZod} from "common/src/ZodSchemas.ts";
 
 // Define nodeType enum to match Prisma schema
-const nodeTypeEnum = z.enum([
-    "Entrance",
-    "Intermediary",
-    "Staircase",
-    "Elevator",
-    "Location",
-    "Help_Desk",
-]);
+const nodeTypeEnum = NodeTypeZod
 
 // Define the schema for CSV rows
 const CSVRowSchema = z.object({
@@ -30,6 +24,7 @@ const CSVRowSchema = z.object({
     'Node Type': nodeTypeEnum,
     'Node Description': z.string(),
     'Node Coordinates': z.string(),
+    "Node Outside": z.string(),
     'From Edges': z.string(),
     'To Edges': z.string(),
     'Department ID': z.string().optional(),
@@ -64,6 +59,7 @@ const allColumns: ColumnDefinition[] = [
     { key: 'Node Type', label: 'Node Type', group: 'Node' },
     { key: 'Node Description', label: 'Node Description', group: 'Node' },
     { key: 'Node Coordinates', label: 'Node Coordinates', group: 'Node' },
+    { key: 'Node Outside', label: 'Node Outside', group: 'Node' },
     { key: 'From Edges', label: 'From Edges', group: 'Node' },
     { key: 'To Edges', label: 'To Edges', group: 'Node' },
     

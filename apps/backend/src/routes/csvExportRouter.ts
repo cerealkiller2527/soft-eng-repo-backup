@@ -21,6 +21,7 @@ const CSVRowSchema = z.object({
   "Node ID": z.string().optional(),
   "Node Type": z.string(),
   "Node Description": z.string(),
+  "Node Outside": z.boolean(),
   "Node Coordinates": z.string(),
   "From Edges": z.string(),
   "To Edges": z.string(),
@@ -50,6 +51,7 @@ type BuildingWithRelations = Building & {
       description: string;
       lat: number;
       long: number;
+      outside: boolean;
       fromEdge: Edge[];
       toEdge: Edge[];
     } | null;
@@ -95,6 +97,7 @@ export const csvExportRouter = t.router({
           "Node ID": location.nodeID?.toString() ?? "",
           "Node Type": (location.node?.type as nodeType) ?? "Location",
           "Node Description": location.node?.description ?? "",
+          "Node Outside": location.node?.outside ?? false,
           "Node Coordinates": location.node
             ? `${location.node.lat}, ${location.node.long}`
             : "",
