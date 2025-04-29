@@ -166,8 +166,7 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                         <Button
                             type="submit"
                             className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                            bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                         >
                             Continue to Editor
                         </Button>
