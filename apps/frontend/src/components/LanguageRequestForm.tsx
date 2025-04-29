@@ -19,7 +19,6 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low", "Medium", "High", "Emergency"];
 
 const formSchema = z.object({
-    employeeName: z.string(),
     priority: z.string(),
     startTime: z.coerce.date(),
     endTime: z.coerce.date(),
@@ -42,7 +41,6 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeName: "",
             priority: "",
             location: "",
             language: "",
@@ -55,7 +53,6 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
-            employee: values.employeeName,
             startTime: new Date(values.startTime),
             endTime: new Date(values.endTime),
             location: values.location,
@@ -66,33 +63,15 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
         onFormSubmit?.(values);
     }
     return (
-        <div className="max-w-2xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+        <div className="">
             <div className="text-center">
-                <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Language Request Form</h2>
+                <h2 className="text-3xl font-bold text-primary mb-2">Language Request Form</h2>
                 <p className="text-sm text-gray-600">Created by Brandon and Bobby</p>
             </div>
+            <br />
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="employeeName"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Employee Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Employee Name"
-                                        {...field}
-                                        className="w-full"
-                                    />
-                                </FormControl>
-                                <FormDescription>Enter employee name.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                             control={form.control}
@@ -101,19 +80,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                                 <FormItem className="space-y-2">
                                     <FormLabel>Start Time</FormLabel>
                                     <FormControl>
-                                        <ReactDatePicker
-                                            selected={field.value}
-                                            onChange={(date) => field.onChange(date)}
-                                            showTimeSelect
-                                            placeholderText="MM/DD/YYYY, HH:MM AM/PM"
-                                            dateFormat="Pp"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                            popperClassName="!z-50"
-                                            calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                            dayClassName={() =>
-                                                "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
-                                            }
-                                        />
+                                        <Input type={"datetime-local"} />
                                     </FormControl>
                                     <FormDescription>Add the start time.</FormDescription>
                                     <FormMessage />
@@ -128,19 +95,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                                 <FormItem className="space-y-2">
                                     <FormLabel>End Time</FormLabel>
                                     <FormControl>
-                                        <ReactDatePicker
-                                            selected={field.value}
-                                            onChange={(date) => field.onChange(date)}
-                                            showTimeSelect
-                                            placeholderText="MM/DD/YYYY, HH:MM AM/PM"
-                                            dateFormat="Pp"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                            popperClassName="!z-50"
-                                            calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                            dayClassName={() =>
-                                                "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
-                                            }
-                                        />
+                                        <Input type={"datetime-local"} />
                                     </FormControl>
                                     <FormDescription>Add the end time.</FormDescription>
                                     <FormMessage />
