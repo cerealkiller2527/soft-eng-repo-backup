@@ -19,7 +19,6 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low", "Medium", "High", "Emergency"];
 
 const formSchema = z.object({
-    employeeName: z.string(),
     priority: z.string(),
     startTime: z.coerce.date(),
     endTime: z.coerce.date(),
@@ -42,7 +41,6 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeName: "",
             priority: "",
             location: "",
             language: "",
@@ -55,7 +53,6 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
-            employee: values.employeeName,
             startTime: new Date(values.startTime),
             endTime: new Date(values.endTime),
             location: values.location,
@@ -74,25 +71,6 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="employeeName"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Employee Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Employee Name"
-                                        {...field}
-                                        className="w-full"
-                                    />
-                                </FormControl>
-                                <FormDescription>Enter employee name.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                             control={form.control}

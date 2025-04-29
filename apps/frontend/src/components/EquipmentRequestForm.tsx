@@ -33,7 +33,6 @@ const equipmentTypes = ["Wheelchair", "Stretcher", "IV Pump", "Ventilator", "Mon
 const priority = ["Low", "Medium", "High", "Emergency"]
 
 const formSchema = z.object({
-    employeeName: z.string().min(1, "Employee name is required"),
     priority: z.string().min(1, "Priority is required"),
     deadline: z.coerce.date(),
     equipment: z.array(z.string()).min(1, "At least one equipment type is required"),
@@ -54,7 +53,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeName: "",
             priority: "",
             deadline: new Date(),
             equipment: [],
@@ -65,7 +63,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         addReq.mutate({
-            employee: values.employeeName,
             priority: values.priority,
             deadline: new Date(values.deadline),
             equipment: values.equipment,
@@ -83,24 +80,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="employeeName"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Employee Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Enter Employee Name"
-                                        {...field}
-                                        className="w-full"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <FormField
                         control={form.control}
                         name="priority"
