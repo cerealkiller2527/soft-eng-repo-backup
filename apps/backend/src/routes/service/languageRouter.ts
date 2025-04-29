@@ -1,11 +1,10 @@
-import { initTRPC } from "@trpc/server";
+import { t, protectedProcedure } from "../../trpc.ts";
 import { ServiceRequest, RequestType, Status, Priority } from "database";
 import PrismaClient from "../../bin/prisma-client.ts";
-export const t = initTRPC.create();
 import { z } from "zod";
 
 export const languageRouter = t.router({
-  getLanguageRequests: t.procedure
+  getLanguageRequests: protectedProcedure
     .input(
       z.object({
         language: z.string().optional(),
@@ -15,10 +14,9 @@ export const languageRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
-        employee: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const {
         language,
         location,
@@ -27,28 +25,46 @@ export const languageRouter = t.router({
         additionalNotes,
         priority,
         status,
-        employee,
       } = input;
-      return PrismaClient.serviceRequest.findMany({
-        where: {
-          type: RequestType.LANGUAGE,
-          ...(language && { language: { language: language } }),
-          ...(location && { language: { location: location } }),
-          ...(startTime && { language: { startTime: startTime } }),
-          ...(endTime && { language: { endTime: endTime } }),
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(status && { status: status as Status }),
-          ...(employee && { employee: employee }),
-        },
-        include: {
-          language: true,
-          assignedTo: true,
-        },
-      });
+      if (ctx.role === "admin") {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.LANGUAGE,
+            ...(language && { language: { language: language } }),
+            ...(location && { language: { location: location } }),
+            ...(startTime && { language: { startTime: startTime } }),
+            ...(endTime && { language: { endTime: endTime } }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+          },
+          include: {
+            language: true,
+            assignedTo: true,
+          },
+        });
+      } else {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.LANGUAGE,
+            ...(language && { language: { language: language } }),
+            ...(location && { language: { location: location } }),
+            ...(startTime && { language: { startTime: startTime } }),
+            ...(endTime && { language: { endTime: endTime } }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+            fromEmployee: ctx.username || "",
+          },
+          include: {
+            language: true,
+            assignedTo: true,
+          },
+        });
+      }
     }),
 
-  addLanguageRequest: t.procedure
+  addLanguageRequest: protectedProcedure
     .input(
       z.object({
         language: z.string(),
@@ -57,10 +73,9 @@ export const languageRouter = t.router({
         endTime: z.coerce.date(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
-        employee: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         language,
         location,
@@ -68,7 +83,6 @@ export const languageRouter = t.router({
         endTime,
         additionalNotes,
         priority,
-        employee,
       } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
@@ -76,7 +90,7 @@ export const languageRouter = t.router({
           dateCreated: new Date(Date.now()),
           status: Status.NOTASSIGNED,
           description: additionalNotes,
-          fromEmployee: employee,
+          fromEmployee: ctx.username || "",
           priority: priority as Priority,
         },
       });
@@ -95,7 +109,7 @@ export const languageRouter = t.router({
       };
     }),
 
-  updateLanguageRequest: t.procedure
+  updateLanguageRequest: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -105,10 +119,10 @@ export const languageRouter = t.router({
         endTime: z.coerce.date().optional(),
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
-        employee: z.string().optional(),
+        employeeID: z.number().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         id,
         language,
@@ -117,28 +131,51 @@ export const languageRouter = t.router({
         endTime,
         additionalNotes,
         priority,
-        employee,
+        employeeID,
       } = input;
-      const serviceRequest = await PrismaClient.serviceRequest.update({
-        where: { id: id },
-        data: {
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(employee && { employee: employee }),
-          ...(language || location || startTime || endTime
-            ? {
-                language: {
-                  update: {
-                    ...(language && { language: language }),
-                    ...(location && { location: location }),
-                    ...(startTime && { startTime: startTime }),
-                    ...(endTime && { endTime: endTime }),
+      if (ctx.role === "admin") {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(employeeID && { assignedEmployeeID: employeeID }),
+            ...(language || location || startTime || endTime
+              ? {
+                  language: {
+                    update: {
+                      ...(language && { language: language }),
+                      ...(location && { location: location }),
+                      ...(startTime && { startTime: startTime }),
+                      ...(endTime && { endTime: endTime }),
+                    },
                   },
-                },
-              }
-            : {}),
-        },
-      });
+                }
+              : {}),
+          },
+        });
+      } else {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(language || location || startTime || endTime
+              ? {
+                  language: {
+                    update: {
+                      ...(language && { language: language }),
+                      ...(location && { location: location }),
+                      ...(startTime && { startTime: startTime }),
+                      ...(endTime && { endTime: endTime }),
+                    },
+                  },
+                }
+              : {}),
+          },
+        });
+      }
+
       console.log("Update language request done.");
       return {
         message: "Update language request done.",

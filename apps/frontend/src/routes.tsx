@@ -6,13 +6,13 @@ import Directory from './routes/directory.tsx';
 import Login from './routes/login.tsx';
 import RequestDashboard from './routes/requestDashboard.tsx';
 import CSVPage from './routes/csv.tsx';
-import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import {ProtectedRoute, AdminRoute} from './routes/ProtectedRoute.tsx';
 import {useAuth} from './Context/AuthContext.tsx';
 import LandingPage from "./routes/landingPage.tsx";
 import MapEditor from "./routes/mapEditor.tsx"
-import MapInfoTest from "./routes/mapinfotest.tsx";
 import TestDirectory from "./routes/test.tsx";
 import DepartmentPage from "./routes/department.tsx";
+import Credits from "./routes/credits.tsx";
 
 export const routes = [
     {
@@ -32,7 +32,9 @@ export const routes = [
         path: '/ServiceRequest',
         errorElement: <div />,
         element: (
-            <ServiceRequest />
+            <ProtectedRoute>
+                <ServiceRequest />
+            </ProtectedRoute>
         ),
     },
     {
@@ -56,7 +58,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <ProtectedRoute>
-            <RequestDashboard />
+                <RequestDashboard />
             </ProtectedRoute>
 ),
     },
@@ -64,22 +66,29 @@ export const routes = [
         path: '/csv',
         errorElement: <div />,
         element: (
-            <ProtectedRoute>
-            <CSVPage />
-            </ProtectedRoute>
+            <AdminRoute>
+                <CSVPage />
+            </AdminRoute>
         ),
     },
     {
         path: '/mapeditor',
         errorElement: <div />,
         element: (
+            <AdminRoute>
                 <MapEditor />
+            </AdminRoute>
         ),
     },
     {
         path: '/test',
         errorElement: <div />,
         element: <TestDirectory />,
+    },
+    {
+        path: '/credits',
+        errorElement: <div/>,
+        element: <Credits/>,
     },
 ];
 
