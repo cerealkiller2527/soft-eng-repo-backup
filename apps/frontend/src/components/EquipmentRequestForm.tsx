@@ -34,7 +34,7 @@ const priority = ["Low", "Medium", "High", "Emergency"]
 
 const formSchema = z.object({
     priority: z.string().min(1, "Priority is required"),
-    employee: z.string().min(1, "Employee is required"),
+    employee: z.coerce.number().optional(),
     deadline: z.coerce.date(),
     equipment: z.array(z.string()).min(1, "At least one equipment type is required"),
     location: z.string().min(1, "Location is required"),
@@ -50,13 +50,16 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
             queryClient.invalidateQueries({ queryKey: ['service.getEquipmentRequests'] })
         }
     }))
-    const listofEmployees = useQuery(trpc.employeeRouter.queryOptions({}));
+
+    const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             priority: "",
-            employee: "",
+            employee: 0,
             deadline: new Date(),
             equipment: [],
             location: "",
@@ -68,11 +71,12 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
         addReq.mutate({
             priority: values.priority,
             deadline: new Date(values.deadline),
-            employee: values.employee,
+            employeeID: values.employee,
             equipment: values.equipment,
             toWhere: values.location,
             additionalNotes: values.additionalNotes,
         });
+        console.log(values);
         onFormSubmit?.(values);
     }
     return (
@@ -84,6 +88,30 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="employee"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Employee</FormLabel>
+                                <Select onValueChange={field.onChange}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Employee" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {listofEmployees.data?.map((employee) => (
+                                            <SelectItem key={employee.id} value={String(employee.id)}>
+                                                {employee.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="priority"
