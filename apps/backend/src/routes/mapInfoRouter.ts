@@ -1,9 +1,8 @@
-import { initTRPC } from "@trpc/server";
+import { t } from "../trpc.ts";
 import PrismaClient from "../bin/prisma-client.ts";
 import { z } from "zod";
 import prismaClient from "../bin/prisma-client.ts";
 
-export const t = initTRPC.create();
 export const mapInfoRouter = t.router({
   mapInfo: t.procedure
     .input(z.object({ buildingName: z.string() }))

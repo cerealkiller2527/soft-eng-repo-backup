@@ -1,6 +1,6 @@
 import React from 'react';
-import { Navigate, useLocation} from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext';
+import {Navigate, useLocation, useNavigate} from 'react-router-dom';
+import { useUser } from "@clerk/clerk-react";
 
 
 /*
@@ -13,16 +13,42 @@ type ProtectedRouteProps = {
     children: React.ReactNode;
 };
 
+interface AdminRouteProps {
+    children: React.ReactNode;
+}
+
 //functional component of protected route
-const ProtectedRoute:React.FC<ProtectedRouteProps> = ({children}) => {
-    const { isAuthenticated } = useAuth();
+export const ProtectedRoute:React.FC<ProtectedRouteProps> = ({children}) => {
+    const { isSignedIn, isLoaded } = useUser();
     const location = useLocation();
 
-    if (!isAuthenticated) {
+    if (!isLoaded) {
+        return <div>Loading...</div>;
+    }
+
+    if (!isSignedIn) {
         return <Navigate to="/Login" state={{from: location}} replace />;
     }
 
     return children;
 };
 
-export default ProtectedRoute;
+export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { isSignedIn, isLoaded, user } = useUser();
+    const location = useLocation();
+
+    if (!isLoaded) {
+        return <div>Loading...</div>;
+    }
+
+    if (!isSignedIn) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    if ((user?.publicMetadata?.role) !== "admin") {
+        return <Navigate to="/" replace />;
+    }
+
+    return <>{children}</>;
+};
+

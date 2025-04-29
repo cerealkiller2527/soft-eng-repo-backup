@@ -1,11 +1,9 @@
 // src/routes/mapEditorRouter.ts
-import { initTRPC, TRPCError } from "@trpc/server";
+import { t, adminProcedure } from "../trpc.ts";
 import { z } from "zod";
 import PrismaClient from "../bin/prisma-client";
 import prismaClient from "../bin/prisma-client";
-
-// Initialize tRPC
-export const t = initTRPC.create();
+import { TRPCError } from "@trpc/server";
 
 // create zod objects for node and edge
 const node = z.object({
@@ -23,7 +21,7 @@ const typeEnum = z.enum([
 
 export const mapEditorRouter = t.router({
   // Get all nodes and edges for a floor map in a single call
-  getFloorMap: t.procedure
+  getFloorMap: adminProcedure
     .input(
       z.object({
         buildingId: z.number(),
@@ -95,7 +93,7 @@ export const mapEditorRouter = t.router({
       }
     }),
 
-  sendFloorMap: t.procedure
+  sendFloorMap: adminProcedure
     .input(
       z.object({
         buildingId: z.number(),
