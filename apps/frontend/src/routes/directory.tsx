@@ -1,47 +1,39 @@
-import type React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { motion } from "framer-motion";
+import { Search, Phone, MapPin, Bot } from "lucide-react";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTRPC } from "../database/trpc";
-import { Search, Filter, Building, Phone, MapPin, ChevronRight } from "lucide-react";
 
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
-    AccordionTrigger
+    AccordionTrigger,
 } from "@/components/ui/accordion";
-
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 const NodeTypeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"]);
-
-const NodeSchema = z
-    .object({
-        id: z.number(),
-        type: NodeTypeEnum,
-        description: z.string(),
-        lat: z.number(),
-        long: z.number()
-    })
-    .nullable();
-
+const NodeSchema = z.object({
+    id: z.number(),
+    type: NodeTypeEnum,
+    description: z.string(),
+    lat: z.number(),
+    long: z.number(),
+}).nullable();
 const BuildingSchema = z.object({
     id: z.number(),
     name: z.string(),
     address: z.string(),
-    phoneNumber: z.string()
+    phoneNumber: z.string(),
 });
-
 const LocationSchema = z.object({
     id: z.number(),
     floor: z.number(),
@@ -49,25 +41,22 @@ const LocationSchema = z.object({
     buildingId: z.number(),
     building: BuildingSchema,
     nodeID: z.number().nullable(),
-    node: NodeSchema
+    node: NodeSchema,
 });
-
 const ServiceSchema = z.object({
     service: z.object({
         id: z.number(),
-        name: z.string()
-    })
+        name: z.string(),
+    }),
 });
-
 const DepartmentSchema = z.object({
     id: z.number(),
     name: z.string(),
     description: z.string().nullable(),
     phoneNumber: z.string(),
     DepartmentServices: z.array(ServiceSchema),
-    Location: z.array(LocationSchema)
+    Location: z.array(LocationSchema),
 });
-
 type Department = z.infer<typeof DepartmentSchema>;
 
 const DEPARTMENT_CATEGORIES = {
@@ -79,50 +68,70 @@ const DEPARTMENT_CATEGORIES = {
     "Diagnostic Services": ["Radiology", "Laboratory", "Imaging", "Pathology"],
     Rehabilitation: ["Physical Therapy", "Occupational Therapy", "Speech Therapy", "Rehabilitation"],
     "Emergency & Urgent Care": ["Emergency", "Urgent Care", "Trauma", "Critical Care"],
-    "Other Services": []
+    "Other Services": [],
 } as const;
 
+const chatbotMappings: Record<string, string> = {
+    "emergency": "Emergency",
+    "urgent": "Urgent Care",
+    "women": "Women's Health",
+    "pediatrics": "Pediatrics",
+    "cardiology": "Cardiology",
+    "mental": "Mental Health",
+    "radiology": "Radiology",
+    "therapy": "Rehabilitation",
+    "oncology": "Oncology",
+};
+
 const DirectoryPage: React.FC = () => {
+    const [chatInput, setChatInput] = useState("");
+    const [chatOpen, setChatOpen] = useState(false);
+    const navigate = useNavigate();
+    const trpc = useTRPC();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
-    const trpc = useTRPC();
-    const { data: departmentsData, isLoading, error } = useQuery(trpc.directories.getAllDepartments.queryOptions());
+
+    const { data: departmentsData, isLoading } = useQuery(
+        trpc.directories.getAllDepartments.queryOptions()
+    );
 
     const departmentsResult = departmentsData
         ? z.array(DepartmentSchema).safeParse(departmentsData)
         : { success: false, error: null };
-
     const departments = departmentsResult.success ? departmentsResult.data : null;
 
-    const isDepartmentInCategory = (dept: Department, category: keyof typeof DEPARTMENT_CATEGORIES): boolean => {
-        const deptText = `${dept.name} ${dept.description || ""}`.toLowerCase();
-        const keywords = DEPARTMENT_CATEGORIES[category];
-        return keywords.some((keyword) => deptText.includes(keyword.toLowerCase()));
-    };
+    useEffect(() => {
+        if (departments && departments.length > 0 && !selectedDepartment) {
+            setSelectedDepartment(departments[0]);
+        }
+    }, [departments, selectedDepartment]);
 
-    const filteredDepartments =
-        departments?.filter((dept) => {
-            const matchesSearch =
-                searchTerm === "" ||
-                dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                dept.description?.toLowerCase().includes(searchTerm.toLowerCase());
-            return matchesSearch;
-        }) || [];
+    const filteredDepartments = departments?.filter((dept) => {
+        const matchesSearch =
+            searchTerm === "" ||
+            dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            dept.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesSearch;
+    }) || [];
 
     const groupedDepartments = Object.entries(DEPARTMENT_CATEGORIES).reduce(
-        (acc, [category, _]) => {
-            const categoryKey = category as keyof typeof DEPARTMENT_CATEGORIES;
-            const depts = filteredDepartments.filter((dept) =>
-                categoryKey === "Other Services"
+        (acc, [category]) => {
+            const depts = filteredDepartments.filter((dept) => {
+                const deptText = `${dept.name} ${dept.description || ""}`.toLowerCase();
+                return category === "Other Services"
                     ? !Object.entries(DEPARTMENT_CATEGORIES).some(
                         ([cat]) =>
-                            cat !== "Other Services" && isDepartmentInCategory(dept, cat as keyof typeof DEPARTMENT_CATEGORIES)
+                            cat !== "Other Services" &&
+                            DEPARTMENT_CATEGORIES[cat as keyof typeof DEPARTMENT_CATEGORIES].some((k) =>
+                                deptText.includes(k.toLowerCase())
+                            )
                     )
-                    : isDepartmentInCategory(dept, categoryKey)
-            );
-
+                    : DEPARTMENT_CATEGORIES[category as keyof typeof DEPARTMENT_CATEGORIES].some((k) =>
+                        deptText.includes(k.toLowerCase())
+                    );
+            });
             if (depts.length > 0) {
-                acc[categoryKey] = depts;
+                acc[category as keyof typeof DEPARTMENT_CATEGORIES] = depts;
             }
             return acc;
         },
@@ -133,11 +142,30 @@ const DirectoryPage: React.FC = () => {
         e.preventDefault();
     };
 
-    if (isLoading) {
+    const handleChat = (e: React.FormEvent) => {
+        e.preventDefault();
+        const lowerInput = chatInput.toLowerCase();
+        for (const keyword in chatbotMappings) {
+            if (lowerInput.includes(keyword)) {
+                const matchName = chatbotMappings[keyword];
+                const dept = departments?.find((d) =>
+                    d.name.toLowerCase().includes(matchName.toLowerCase())
+                );
+                if (dept) {
+                    setSelectedDepartment(dept);
+                    setChatInput("");
+                    return;
+                }
+            }
+        }
+        alert("Sorry, I couldn't find that department.");
+    };
+
+    if (isLoading || !departments) {
         return (
-            <div className="min-h-screen bg-white">
+            <div className="min-h-screen bg-white flex flex-col">
                 <Navbar />
-                <main className="max-w-7xl mx-auto p-6 pt-24 flex justify-center">
+                <main className="flex-1 flex justify-center items-center">
                     <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-[#012D5A] border-gray-200" />
                 </main>
                 <Footer />
@@ -145,242 +173,273 @@ const DirectoryPage: React.FC = () => {
         );
     }
 
-    if (error || !departmentsResult.success) {
-        return (
-            <div className="min-h-screen bg-white">
-                <Navbar />
-                <main className="max-w-7xl mx-auto p-6 pt-24 text-center">
-                    <p className="text-red-500 font-semibold mb-2">
-                        {error ? "Failed to load departments. Please try again later." : "Data validation error."}
-                    </p>
-                </main>
-                <Footer />
-            </div>
-        );
+    {
+        /*
+        const placeholders = [
+            "Search departments...",
+            "Search services...",
+            "Search locations...",
+        ];
+        const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+        useEffect(() => {
+            const interval = setInterval(() => {
+                setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+            }, 2000); // change every 3 seconds
+            return () => clearInterval(interval);
+        }, []);
+*/
     }
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen flex flex-col bg-[#F2F2F2]">
             <Navbar />
 
-            {/* top section of the page*/}
-            {!selectedDepartment && (
-                <div className="bg-slate-50 border-b border-slate-200 h-80">
-                    <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 sm:py-24 lg:px-8 pt-24">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <h1 className="text-4xl font-bold tracking-tight text-[#012D5A] sm:text-5xl">Where do you want to go?</h1>
-                            <p className="mt-4 text-lg text-slate-500">Find a specialty, department or service in a second</p>
-                        </div>
+            {/* chat button pop */}
+            <div className="fixed bottom-6 right-6 z-50">
+                <Button
+                    onClick={() => setChatOpen(!chatOpen)}
+                    className="rounded-full p-4 bg-[#012D5A] hover:bg-[#01356A]"
+                >
+                    <Bot className="h-6 w-6 text-white" />
+                </Button>
+            </div>
 
-                        <div className="mt-10 max-w-2xl mx-auto">
-                            <form onSubmit={handleSearch} className="relative">
-                                <div className="flex shadow-sm rounded-lg bg-white">
-                                    <div className="relative flex-grow">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <Search className="h-5 w-5 text-slate-400" />
-                                        </div>
-                                        <Input
-                                            type="search"
-                                            placeholder="Search departments, services, or locations..."
-                                            className="block w-full pl-12 pr-4 py-6 text-lg border-0"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
-                                    <Button type="submit" className="px-6 py-6 bg-[#012D5A] text-white rounded-r-lg">
-                                        Search
-                                    </Button>
-                                </div>
-                            </form>
-
-                            {/*filter tabs maybe??*/}
-
-
-
-
-                        </div>
-                    </div>
+            {/* chat opens */}
+            {chatOpen && (
+                <div className="fixed bottom-20 right-6 bg-white shadow-lg border rounded-lg p-4 w-80 z-50">
+                    <form onSubmit={handleChat} className="flex flex-col gap-3">
+                        <Input
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            placeholder="Ask about a department..."
+                            className="flex-1"
+                        />
+                        <Button type="submit" className="bg-[#012D5A] text-white">
+                            Ask
+                        </Button>
+                    </form>
                 </div>
-
             )}
 
-            {/* moveable search bar if department selected */}
-            {selectedDepartment && (
+            {/*  show search bar */}
+            <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 text-center mt-12 rounded-lg ">
+                <div className="max-w-6xl mx-auto flex flex-col gap-4">
+                    <h1 className=" text-white text-4xl font-bold">
+                        What are you looking for?
+                    </h1>
+                    <p className="text-lg text-slate-500 text-center text-white">Find a specialty, department or service in a second</p>
 
-                <div className="sticky top-18 z-10 bg-white px-4 py-4 border-b border-gray-200">
-                    <div className="max-w-7xl mx-auto flex items-center gap-4">
-
-                        {/* Back button */}
-                        <Button variant="ghost" onClick={() => setSelectedDepartment(null)} className="flex items-center gap-2">
-                            ← Back
-                        </Button>
-
-
-
+                    <div className="mt-1 ">
                     <form onSubmit={handleSearch} className="flex-grow">
-                        <div className="flex w-full shadow-sm rounded-lg bg-white">
+                        <div className="flex shadow-sm rounded-lg bg-white">
                             <div className="relative flex-grow">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <Search className="h-5 w-5 text-slate-400" />
                                 </div>
                                 <Input
                                     type="search"
-                                    placeholder="Search..."
-                                    className="block w-full pl-12 pr-4 py-3"
+                                    placeholder="Search departments, services, or locations..."
+                                    className="block w-full pl-12 pr-4 py-6 text-lg border-0"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
-                            <Button type="submit" className="px-4 bg-[#012D5A] text-white">
+                            <Button type="submit" className="px-6 py-6 bg-[#012D5A] text-white rounded-r-lg">
                                 Search
                             </Button>
                         </div>
                     </form>
+                    </div>
                 </div>
-                </div>
-            )}
+            </div>
 
-            <main className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-                <div className="flex gap-8 flex-col md:flex-row">
-
+            <main className="flex-1 max-w-7xl mx-20 px-6 py-12">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
 
 
-                    {/* left side of the page - accordion categories */}
-                    <div className={`w-full md:w-64 lg:w-72 transition-all duration-300  ${selectedDepartment ? "mt-10" : ""}`} >
-                        <h2 className = "text-lg font-semibold text-[#012D5A] mb-4 text-left ">Categories</h2>
-                        <Card>
-                            <CardContent>
-
-                        <Accordion type="single" collapsible className="w-full">
-                            {Object.entries(groupedDepartments).map(([category, depts]) => (
-                                <AccordionItem value={category} key={category}>
-                                    <AccordionTrigger className="text-left font-medium">{category}</AccordionTrigger>
-                                    <AccordionContent>
-                                        {depts.map((dept) => (
-                                            <Button
-                                                key={dept.id}
-                                                variant="ghost"
-                                                className="w-full justify-start text-left"
-                                                onClick={() => setSelectedDepartment(dept)}
-                                            >
-                                                {dept.name}
-                                            </Button>
-                                        ))}
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
+                {/* left section */}
+                    <div className="w-full md:w-64 lg:w-72 ">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="space-y-4"
+                        >
+                            <h2 className="text-lg font-semibold text-[#012D5A]">
+                                Healthcare Services
+                            </h2>
+                            <Card className="max-h-[500px] overflow-y-auto shadow-sm">
+                                <CardContent>
+                                    <Accordion type="single" collapsible>
+                                        {Object.entries(groupedDepartments).map(
+                                            ([category, depts]) => (
+                                                <AccordionItem value={category} key={category}>
+                                                    <AccordionTrigger className="text-left font-medium">
+                                                        {category}
+                                                    </AccordionTrigger>
+                                                    <AccordionContent>
+                                                        {depts.map((dept) => (
+                                                            <Button
+                                                                key={dept.id}
+                                                                variant="ghost"
+                                                                className={`w-full justify-start text-left truncate 
+        ${selectedDepartment?.id === dept.id
+                                                                    ? "bg-[#86A2B6] text-white"
+                                                                    : "text-[#004170] hover:bg-[#86A2B6] hover:text-white"}`}
+                                                                title={dept.name}
+                                                                onClick={() => setSelectedDepartment(dept)}
+                                                            >
+                                                                {dept.name}
+                                                            </Button>
+                                                        ))}
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            )
+                                        )}
+                                    </Accordion>
                                 </CardContent>
-                                </Card>
+                            </Card>
+                        </motion.div>
                     </div>
 
-                    {/* right side of the webpage - content or details of department */}
-
+                    {/* department info */}
                     <div className="flex-1">
-                        {selectedDepartment ? (
-
-
-                                <div className="flex flex-col gap-8">
-
-
-
-                                    {/*heading section*/}
-                                    <div className="flex flex-col justify-center items-center bg-slate-50 border-slate-100 rounded-lg h-40 text-center mt-9">
-                                        <h1 className="text-4xl font-bold text-[#012D5A]">{selectedDepartment.name}</h1>
-                                        {selectedDepartment.description && (
-                                            <p className="mt-4 text-lg text-slate-600">{selectedDepartment.description}</p>
-                                        )}
-                                    </div>
-
-                                    {/* location and contact uses card -- but needed/not */}
-                                    <div className="grid gap-8 md:grid-cols-2">
-                                        <Card className="h-full">
-                                            <CardHeader>
-                                                <div className="flex items-center gap-2">
-                                                    <Phone className="h-5 w-5 text-muted-foreground" />
-                                                    <h3 className="font-semibold text-[#012D5A]">Contact Information</h3>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="text-sm text-slate-500">{selectedDepartment.phoneNumber}</div>
-                                            </CardContent>
-                                        </Card>
-
-                                        <Card className="h-full">
-                                            <CardHeader>
-                                                <div className="flex items-center gap-2">
-                                                    <MapPin className="h-5 w-5 text-muted-foreground" />
-                                                    <h3 className="font-semibold text-[#012D5A]">Location</h3>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="text-sm text-slate-500">
-                                                    {selectedDepartment.Location[0].building.name}
-                                                    {selectedDepartment.Location[0].suite && `, Suite ${selectedDepartment.Location[0].suite}`}
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-
-                                    {/* services listed  */}
-                                    {selectedDepartment.DepartmentServices.length > 0 && (
-                                        <Card>
-                                            <CardHeader>
-                                                <h4 className="text-lg font-medium text-[#012D5A]">Services</h4>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {selectedDepartment.DepartmentServices.map((s) => (
-                                                        <Badge key={s.service.id} variant="secondary">
-                                                            {s.service.name}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
-                                            </CardContent>
-                                        </Card>
+                        {selectedDepartment && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="space-y-8"
+                            >
+                                <Card className="bg-[#004170FF] text-white p-8 text-center mt-12 rounded-lg ">
+                                    <h1 className="text-4xl font-bold">
+                                        {selectedDepartment.name}
+                                    </h1>
+                                    {/*
+                                    {selectedDepartment.description && (
+                                        <p className="mt-4 text-lg text-slate-600">{selectedDepartment.description}</p>
                                     )}
+                                    */}
+                                </Card>
 
-                                    {/* start direction -- not functional yet*/}
+                                <div className="grid gap-8 md:grid-cols-2">
+                                    <Card>
+                                    <CardHeader className="flex items-center gap-2">
+                                        <Phone className="w-5 h-5 text-muted-foreground" />
+                                        <h3 className="text-[#004170FF] font-semibold">Contact</h3>
+                                    </CardHeader>
+                                    <CardContent className="flex flex-col gap-4">
+                                        <p className="text-slate-500">{selectedDepartment.phoneNumber}</p>
+
+                                        <a
+                                            href={`tel:${selectedDepartment.phoneNumber}`}
+                                            className="w-fit"
+                                        >
+                                            <Button
+                                                variant="outline"
+                                                className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
+                                            >
+                                                Call Now
+                                            </Button>
+                                        </a>
+                                    </CardContent>
+                                </Card>
 
 
-                                    <div className="flex justify-between items-center mt-8">
-                                        <Button onClick={() => setSelectedDepartment(null)} variant="ghost">
-                                            ← Back to Directory
-                                        </Button>
+                                <Card>
+                                        <CardHeader className="flex items-center gap-2">
+                                            <MapPin className="w-5 h-5 text-muted-foreground" />
+                                            <h3 className="text-[#004170FF] font-semibold">Location</h3>
+                                        </CardHeader>
+                                        <CardContent className="flex flex-col gap-4">
+                                            <p className="text-slate-500">
+                                                {selectedDepartment.Location[0]?.building.name}
+                                                {selectedDepartment.Location[0]?.suite &&
+                                                    `, Suite ${selectedDepartment.Location[0].suite}`}
+                                            </p>
 
-                                        <Button variant="outline" className="flex items-center gap-2 bg-[#012D5A] text-white">
-                                            <MapPin className="h-4 w-4" />
-                                            Start Directions
-                                        </Button>
-                                    </div>
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                    navigate("/floorplan", {
+                                                        state: {
+                                                            building: selectedDepartment?.Location[0]?.building.name,
+                                                            destination: selectedDepartment?.Location[0]?.suite || "",
+                                                        },
+                                                    });
+                                                }}
+                                                className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
+                                            >
+                                                Get Directions
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
 
-
+                                    {/*
+                                    <Card>
+                                        <CardHeader className="flex items-center gap-2">
+                                            <MapPin className="w-5 h-5 text-muted-foreground" />
+                                            <h3 className="text-[#012D5A] font-semibold">
+                                                Location
+                                            </h3>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-slate-500">
+                                                {selectedDepartment.Location[0]?.building.name}
+                                                {selectedDepartment.Location[0]?.suite &&
+                                                    `, Suite ${selectedDepartment.Location[0].suite}`}
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                    */}
                                 </div>
 
-
-
-
-
-
-
-
-                            )
-
-
-
-                            :
-
-                            (
-                                <div className="flex justify-center items-center h-64">
-                                    <h2 className="text-2xl font-semibold text-slate-500">Select a category</h2>
+                                {selectedDepartment.DepartmentServices.length > 0 && (
+                                    <Card>
+                                        <CardHeader>
+                                            <h4 className="text-lg font-medium text-[#012D5A]">
+                                                Services
+                                            </h4>
+                                        </CardHeader>
+                                        <CardContent className="flex flex-wrap gap-2">
+                                            {selectedDepartment.DepartmentServices.map(
+                                                (service) => (
+                                                    <span
+                                                        key={service.service.id}
+                                                        className="inline-block bg-[#86A2B6FF] text-white text-sm sm:text-base font-medium px-4 py-2 rounded-md shadow-sm hover:opacity-90 transition"
+                                                    >
+      {service.service.name}
+    </span>
+                                                )
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                )}
+                                {/*
+                                <div className="flex justify-end">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            navigate('/floorplan', {
+                                                state: {
+                                                    building:
+                                                        selectedDepartment?.Location[0]?.building
+                                                            .name,
+                                                    destination:
+                                                        selectedDepartment?.Location[0]?.suite ||
+                                                        '',
+                                                },
+                                            });
+                                        }}
+                                        className="bg-[#012D5A] text-white hover:bg-white hover:text-[#012D5A] hover:border hover:border-[#012D5A]"
+                                    >
+                                        Get Directions
+                                    </Button>
                                 </div>
-                            )
-
-                        }
-
-
-
-
+                                */}
+                            </motion.div>
+                        )}
                     </div>
                 </div>
             </main>

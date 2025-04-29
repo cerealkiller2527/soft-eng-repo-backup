@@ -8,6 +8,8 @@ import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
 import {DirectionsButton} from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "react-router-dom";
+
 
 
 
@@ -23,9 +25,20 @@ type formType = {
 
 
 const FloorPlan = () => {
+    const location = useLocation();
+    const passedState = location.state as { building?: string; destination?: string };
+
     const trpc = useTRPC();
     const [eta, setEta] = useState<string | undefined>(undefined);
-    const [form, setForm] = useState<formType | null>(null);
+    //const [form, setForm] = useState<formType | null>(null);
+
+    const [form, setForm] = useState<formType>({
+        building: passedState?.building || "",
+        destination: passedState?.destination || "",
+        location: "", // You can pre-fill this too later if you want
+        transport: "Driving", // Default transport mode
+    });
+
     const mapRef = useRef<HTMLDivElement | null>(null);
     const mapInstance = useRef<google.maps.Map>();
     const directionsRenderer = useRef<google.maps.DirectionsRenderer>();
@@ -291,7 +304,8 @@ const FloorPlan = () => {
 
                 {/* Overlay UI elements */}
                 <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
-                    <LocationRequestForm onSubmit={(form) => setForm(form)} />
+                    <LocationRequestForm onSubmit={(form) => setForm(form)} initialForm={form} />
+
                 </div>
 
                 <div className="absolute top-45 right-14 z-10 grid grid-cols-1 md:grid-cols-3 gap-1 mx-auto pt-28">
