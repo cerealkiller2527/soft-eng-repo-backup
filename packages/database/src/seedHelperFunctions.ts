@@ -219,9 +219,15 @@ export async function seedServiceRequests(path: string){
         dynamicTyping: false
     });
 
-    const parsedSRs = srData.map((srRow) => {serviceRequestRow.parse(srRow)})
+    const parsedSRs = [];
+
+    for (const sr of srData){
+        parsedSRs.push(serviceRequestRow.parse(sr))
+    }
 
     const srInput = parsedSRs.map((csvSR) => {
+        const requestType = RequestType[csvSR.requestType as keyof typeof RequestType];
+
 
 
     })

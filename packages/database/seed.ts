@@ -1,4 +1,4 @@
-import {nodeType, Prisma, PrismaClient, RequestType} from './.prisma/client';
+import {nodeType, Priority, Prisma, PrismaClient, RequestType, Status} from './.prisma/client';
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
@@ -181,7 +181,77 @@ async function main() {
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
 
     // seed some service requests for the employees
-
+    // from the old seed file
+    await Promise.all(
+        Array.from({ length: 10 }).map(async (_, i) => {
+            const reqType = Object.values(RequestType);
+            const type = reqType[i%5];
+            const priorityType = Object.values(Priority);
+            const priority = priorityType[i%3];
+            const serviceRequest = await prisma.serviceRequest.create({
+                data: {
+                    type: type,
+                    status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
+                    description: `No additional note`,
+                    assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
+                    fromEmployee: 'admin',
+                    priority: priority,
+                },
+            });
+            switch (type) {
+                case RequestType.AUDIOVISUAL:
+                    await prisma.audioVisual.create({
+                        data: {
+                            id: serviceRequest.id,
+                            location: `Room ${i + 1}`,
+                            deadline: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                            audiovisualType: `Type ${i + 1}`,
+                        }
+                    });
+                    break;
+                case RequestType.EXTERNALTRANSPORTATION:
+                    await prisma.externalTransportation.create({
+                        data: {
+                            id: serviceRequest.id,
+                            fromWhere: `Location A${i}`,
+                            toWhere: `Location B${i}`,
+                            transportType: 'Wheelchair Van',
+                            patientName: `Patient ${i + 1}`,
+                            pickupTime: new Date(Date.now() + 1000 * 60 * (i + 1) * 30),
+                        },
+                    })
+                    break;
+                case RequestType.EQUIPMENTDELIVERY:
+                    await prisma.equipmentDelivery.create({
+                        data: {
+                            id: serviceRequest.id,
+                            deadline: new Date(Date.now() + 1000 * 60 * 60 * 23),
+                            equipments: [`Equipment ${i}`],
+                            toWhere: `Location ${i}`
+                        }
+                    })
+                    break;
+                case RequestType.LANGUAGE:
+                    await prisma.language.create({
+                        data: {
+                            id: serviceRequest.id,
+                            location: `Location ${i}`,
+                            language: 'Spanish',
+                            startTime: new Date(Date.now() + 1000 * 60 * 60 * 23),
+                            endTime: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                        }
+                    })
+                    break;
+                case RequestType.SECURITY:
+                    await prisma.security.create({
+                        data: {
+                            id: serviceRequest.id,
+                            location: `Room ${i + 1}`
+                        }
+                    })
+                    break;
+            }
+        }))
 
     console.log("seed done!")
 
