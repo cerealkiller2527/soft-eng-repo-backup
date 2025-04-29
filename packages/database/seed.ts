@@ -7,13 +7,10 @@ import {
     BuildingCreateInputSchema,
     LocationUncheckedCreateInputSchema,
     ServiceCreateInputSchema,
-    DepartmentServicesUncheckedCreateInputSchema,
-    NodeCreateInputSchema,
-    nodeTypeSchema,
-    EdgeUncheckedCreateInputSchema} from "./prisma/generated/zod"
-import {departmentCSVRow, edgeCSVRow} from "./seedFiles/CSVTypes.ts";
+    DepartmentServicesUncheckedCreateInputSchema} from "./prisma/generated/zod"
+import {departmentCSVRow} from "./src/CSVTypes.ts";
 
-import {seedEdges, seedNodes} from "./seedFiles/seedHelperFunctions.ts"
+import {seedEdges, seedNodes, seedEmployeesAndReturn} from "./src/seedHelperFunctions.ts"
 
 const prisma = new PrismaClient();
 
@@ -169,28 +166,22 @@ async function main() {
     // as a department in both floor 3 and 4 of 22 patriot place, but cannot have duplicates on each floor).
     const seededChestnutNodes = await seedNodes("./seedFiles/chestnut/chestnut_nodes.csv");
     const seededPat20Flr1Nodes = await seedNodes("./seedFiles/pat20floor1/pat20floor1_nodes.csv");
-    const seededPat22Flr1Nodes = await seedNodes("./seedFiles/nodes/pat22floor1.csv");
-    // const seededPat22Flr3Nodes = await seedNodes("./seedFiles/nodes/pat22floor3.csv");
-    // const seededPt22Flr4Nodes = await seedNodes("./seedFiles/nodes/pat22floor4.csv");
+    const seededPat22Flr1Nodes = await seedNodes("./seedFiles/pat22floor1/pat22floor1_nodes.csv");
+    const seededPat22Flr3Nodes = await seedNodes("./seedFiles/pat22floor3/pat22floor3_nodes.csv");
+    const seededPt22Flr4Nodes = await seedNodes("./seedFiles/pat22floor4/pat22floor4_nodes.csv");
 
+    // seed edges
+    // edges with floor id of -1 go inbetween floors (elevators, stairs...)
     const seededChestnutEdges = await seedEdges("./seedFiles/chestnut/chestnut_edges.csv");
     const seededPat20Flr1Edges = await seedEdges("./seedFiles/pat20floor1/pat20floor1_edges.csv")
     const seededPat22Flr1Edges = await seedEdges("./seedFiles/pat22floor1/pat22floor1_edges.csv")
+    const seededPat22Flr3Edges = await seedEdges("./seedFiles/pat22floor3/pat22floor3_edges.csv")
 
+    // seed employees
+    const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
 
-    // create employees
-    await Promise.all(
-        Array.from({ length: 5 }).map((_, i) =>
-            prisma.employee.create({
-                data: {
-                    name: `Transport Employee ${i + 1}`,
-                    employeeType: 'Transport',
-                    canService: [RequestType.EXTERNALTRANSPORTATION],
-                    language: ['English'],
-                },
-            })
-        )
-    );
+    // seed some service requests for the employees
+
 
     console.log("seed done!")
 
