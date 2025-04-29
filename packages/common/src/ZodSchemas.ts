@@ -6,6 +6,7 @@ export const pNodeZod = z.object({
     longitude: z.number(),
     latitude: z.number(),
     floor: z.number(),
+    outside: z.boolean(),
     neighbors: z.array(z.number()), // Only include IDs of neighbors
 })
 

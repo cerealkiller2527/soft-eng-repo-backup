@@ -22,9 +22,10 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { Checkbox } from "@/components/ui/checkbox" // Import the Checkbox component
+import { Checkbox } from "@/components/ui/checkbox"
+import {NodeTypeZod} from "common/src/ZodSchemas.ts"; // Import the Checkbox component
 
-const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"])
+const typeEnum = NodeTypeZod
 const formSchema = z.object({
     department: z.string(),
     type: typeEnum,
