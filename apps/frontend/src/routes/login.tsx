@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useTRPC, trpcClient } from '../database/trpc.ts';
 import { useSignIn, useAuth } from "@clerk/clerk-react";
 import { isClerkAPIResponseError } from "@clerk/clerk-js";
 
@@ -11,7 +10,6 @@ import { FaGithub as GitHubIcon, FaGoogle as GoogleIcon } from "react-icons/fa";
 
 export default function CustomSignIn(){
 
-    const[transition, setTransition] = useState(false);
     const[username, setUsername] = useState("");
     const[password, setPassword] = useState("");
     const[error, setError] = useState<string | null>(null);
@@ -21,7 +19,6 @@ export default function CustomSignIn(){
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
-    // const { getToken } = useAuth();
 
     const handleUsernameSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,13 +77,6 @@ export default function CustomSignIn(){
             if (!sessionId) throw new Error("No session ID returned.");
 
             await setActive({ session: sessionId });
-
-            // const token = await getToken();
-            // const client = trpcClient(token || undefined);
-            //
-            // await client.login.verifyClerkUser.mutate({
-            //     sessionId,
-            // });
 
             navigate("/Directory");
 
@@ -147,15 +137,6 @@ export default function CustomSignIn(){
 
             <div className="w-full bg-cover bg-center min-h-screen flex items-center justify-center px-4" style={{ backgroundImage: "url('/loginBGBlur2.jpg')" }}>
                 <img src="/hospitalLogo.png" alt="Hospital Logo" className="absolute top-6 left-6 w-92 h-auto" />
-                {/*<div*/}
-                {/*    onMouseEnter={() => setTransition(true)}*/}
-                {/*    className={flex flex-col items-center text-center text-white p-6 rounded-lg mt-90 mr-10 transition-all duration-1000 ease-in-out ${*/}
-                {/*        transition ? "opacity-100 translate-y-1" : "opacity-0 translate-y-8"*/}
-                {/*    }}*/}
-                {/*>*/}
-                {/*    <h1 className="text-4xl font-bold">Accessing Health Care Made Easy</h1>*/}
-                {/*    <p className="text-lg mt-2">Access maps, request services, and more—all in one application now.</p>*/}
-                {/*</div>*/}
 
                 <div className="bg-white shadow-lg border border-gray-300 p-8 rounded-2xl w-full max-w-md flex flex-col gap-6">
                     <h1 className="text-2xl font-bold text-center text-gray-900">

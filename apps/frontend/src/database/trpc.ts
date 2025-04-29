@@ -5,19 +5,12 @@ import type { appRouter } from '../../../backend/src/app';
 
 export const queryClient = new QueryClient();
 
-export function trpcClient(token?: string) {
-    return createTRPCClient<typeof appRouter>({
-        links: [
-            httpBatchLink({
-                url: '/api',
-                headers() {
-                    return token
-                        ? { Authorization: `Bearer ${token}` }
-                        : {};
-                },
-            }),
-        ],
-    });
-}
+export const trpcClient = createTRPCClient<typeof appRouter>({
+    links: [
+        httpBatchLink({
+            url: '/api', // Express server
+        }),
+    ],
+});
 
 export const { TRPCProvider, useTRPC, useTRPCClient } = createTRPCContext<typeof appRouter>();
