@@ -38,10 +38,10 @@ export default function NewNavbar() {
         }`;
 
     const mobileItemClasses =
-        "block w-full text-left py-2 px-4 text-black text-lg font-bold hover:bg-[#86A2B6] transition-colors rounded-md";
+        "block w-full text-left py-2 px-4 text-black text-lg font-bold hover:bg-[#86A2B6] transition-colors rounded-none";
 
     return (
-        <Menubar className="fixed top-0 w-full bg-[#AEC8E0] shadow z-50 h-14">
+        <Menubar className="fixed top-0 w-full bg-[#AEC8E0] shadow z-50 h-14 rounded-none">
             <div className="flex items-center justify-between px-4 h-full w-full">
                 {/* Logo */}
                 <Link to="/" className="flex items-center space-x-2">
@@ -58,10 +58,10 @@ export default function NewNavbar() {
                     </Link>
 
                     <MenubarMenu>
-                        <MenubarTrigger className="px-4 py-2 rounded-md text-lg font-bold bg-transparent hover:underline transition-colors">
+                        <MenubarTrigger className="px-4 py-2 rounded-none text-lg font-bold bg-transparent hover:underline hover:cursor-pointer transition-colors">
                             More
                         </MenubarTrigger>
-                        <MenubarContent align="end" className="border rounded-md shadow-md bg-white">
+                        <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
                             {moreItems
                                 .filter((item) => item.show(auth))
                                 .map((item) => (
@@ -79,10 +79,10 @@ export default function NewNavbar() {
 
                     {isSignedIn ? (
                         <MenubarMenu>
-                            <MenubarTrigger className="p-2 rounded-full text-black bg-transparent hover:bg-[#86A2B6] focus:bg-[#86A2B6] transition-colors">
+                            <MenubarTrigger className="p-2 rounded-full text-black bg-transparent hover:cursor-pointer transition-colors">
                                 <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
-                            <MenubarContent align="end" className="border rounded-md shadow-md bg-white">
+                            <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
                                 <MenubarItem>
                                     <button
                                         onClick={() => signOut()}
@@ -96,7 +96,7 @@ export default function NewNavbar() {
                     ) : (
                         <Link
                             to="/login"
-                            className="px-4 py-2 rounded-md text-black font-bold hover:bg-[#86A2B6] transition-colors"
+                            className="px-4 py-2 rounded-none text-black font-bold hover:bg-[#86A2B6] transition-colors"
                         >
                             Login
                         </Link>
@@ -107,13 +107,13 @@ export default function NewNavbar() {
                 <div className="md:hidden relative">
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="text-black hover:bg-[#86A2B6] p-2 rounded-md"
+                        className="text-black hover:bg-[#86A2B6] p-2 rounded-none"
                     >
                         {mobileMenuOpen ? <XMarkIcon className="h-8 w-8" /> : <Bars3Icon className="h-8 w-8" />}
                     </button>
 
                     {mobileMenuOpen && (
-                        <div className="absolute top-full right-0 mt-1 bg-[#AEC8E0] w-48 p-2 rounded-md shadow-lg space-y-2 z-40 overflow-auto max-h-[calc(100vh-3.5rem)]">
+                        <div className="absolute top-full right-0 mt-1 bg-[#AEC8E0] w-48 p-2 rounded-none shadow-lg space-y-2 z-40 overflow-auto max-h-[calc(100vh-3.5rem)]">
                             <Link
                                 to={primaryLink.href}
                                 onClick={() => setMobileMenuOpen(false)}
