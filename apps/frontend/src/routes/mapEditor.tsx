@@ -334,7 +334,6 @@ const MapEditor = () => {
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
                     type: "Intermediary",
-                    type: "Intermediary",
                     description: "",
                     suite: "",
                 }]);
