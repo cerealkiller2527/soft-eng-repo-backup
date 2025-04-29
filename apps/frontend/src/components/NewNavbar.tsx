@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/menubar";
 import BnWLogo from "/BrighamAndWomensLogo.png";
 
-const primaryLink = { title: "Map", href: "/floorplan" };
+const primaryLink = { title: "Navigation", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
 const moreItems = [
     { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
