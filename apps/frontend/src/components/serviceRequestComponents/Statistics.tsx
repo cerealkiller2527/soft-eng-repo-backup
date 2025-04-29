@@ -4,6 +4,7 @@ import { CheckCircle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTRPC } from "@/database/trpc.ts";
 import { useQuery } from "@tanstack/react-query";
+import MiniChart from "@/components/serviceRequestComponents/chart.tsx";
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
@@ -44,11 +45,16 @@ export default function MiniDashboard() {
         })),
     ];
 
-    const sortedRequests = combinedRequests.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const [filterType, setFilterType] = useState<"All" | "Patient Transport" | "Security Assistance" | "Medical Equipment" | "Language Services">("All");
 
-    const filteredRequests = filterType === "All" ? sortedRequests : sortedRequests.filter(req => req.type === filterType);
+    const filteredRequests = filterType === "All" ? combinedRequests : combinedRequests.filter(req => req.type === filterType);
+
+    const chartColors = ["#004170", "#86A2B6", ];
+    const notAssignedCount = filteredRequests.filter(r => r.status === "NOTASSIGNED").length;
+    const assignedCount = filteredRequests.filter(r => r.status === "ASSIGNED").length;
+    const chartData = [assignedCount, notAssignedCount,];
+    const chartLabels = ["Assigned", "Not Assigned"]
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
@@ -101,11 +107,12 @@ export default function MiniDashboard() {
                 </CardContent>
             </Card>
 
-            <Card className="bg-white shadow">
+            <Card className="bg-white shadow h-[300px]">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-[#003153]">Request Status</CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center items-center h-[calc(100%-60px)]">
+                    <MiniChart data={chartData} labels={chartLabels} colors={chartColors} />
                 </CardContent>
             </Card>
         </div>

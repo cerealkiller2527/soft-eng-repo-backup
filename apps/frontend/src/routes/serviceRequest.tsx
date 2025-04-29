@@ -78,7 +78,36 @@ const ServiceRequest = () => {
                     Request assistance for transport, security, equipment, or language services
                 </p>
             </div>
+            <div className="relative overflow-hidden rounded-xl mx-20 mb-10 bg-gradient-to-r from-primary to-secondary text-white">
+                <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
+                    <div className="absolute bottom-10 right-32">
+                        <LineChart className="h-24 w-24" strokeWidth={1} />
+                    </div>
+                </div>
+                <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center">
+                    <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
+                        <div className="flex items-center mb-4">
+                            <BarChart3 className="h-8 w-8 mr-3" />
+                            <h2 className="text-3xl font-bold">Service Request Dashboard</h2>
+                        </div>
+                        <div className="md:w-1/3 flex justify-center">
+                            <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20 w-full max-w-xs">
+                                <Link to="/requestdashboard" className="block w-full">
+                                    <Button className="w-full bg-white hover:bg-gray-100 text-[#1a365d] font-medium">
+                                        Open Full Dashboard
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mx-20">
+
             <Services title={"Medical Equipment"} description={"Request specialized medical equipment or repairs"} icon={Stethoscope} formType={"equipment"} />
             <Services title={"Patient Transport"} description={"Request transportation between hospitals"} icon={Ambulance} formType={"transport"} />
                 <Services title={"Security Assistance"} description ={"Request security personnel for patient or staff safety"} icon={Shield} formType={"security"} />
@@ -126,33 +155,6 @@ const ServiceRequest = () => {
             <div className="mb-8 mx-20">
                 <Statistics />
             </div>
-            <div className="relative overflow-hidden rounded-xl mx-20 mb-10 bg-gradient-to-r from-primary to-secondary text-white">
-                <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
-                    <div className="absolute bottom-10 right-32">
-                        <LineChart className="h-24 w-24" strokeWidth={1} />
-                    </div>
-                </div>
-                <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center">
-                    <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
-                        <div className="flex items-center mb-4">
-                            <BarChart3 className="h-8 w-8 mr-3" />
-                            <h2 className="text-3xl font-bold">Service Request Dashboard</h2>
-                        </div>
-                        <div className="md:w-1/3 flex justify-center">
-                        <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20 w-full max-w-xs">
-                        <Link to="/requestdashboard" className="block w-full">
-                            <Button className="w-full bg-white hover:bg-gray-100 text-[#1a365d] font-medium">
-                                Open Full Dashboard
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                        </Link>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                    </div>
             </div>
         </Layout>
 

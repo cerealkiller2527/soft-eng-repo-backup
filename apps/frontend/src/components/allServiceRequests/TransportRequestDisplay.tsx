@@ -9,19 +9,21 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {Button} from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from "@/database/trpc"
 import { Badge } from "@/components/ui/badge"
 import {
-    Card,
+    Card, CardContent,
     CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { TrendingUpIcon } from "lucide-react"
+import {ArrowLeft, TrendingUpIcon} from "lucide-react"
+import {Link} from "react-router-dom";
 
 export default function TransportRequestDisplay() {
 
@@ -72,7 +74,55 @@ export default function TransportRequestDisplay() {
     };
 
     return (
+
         <div className="flex flex-1 flex-col">
+            <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-bold text-primary">Service Request Dashboard</h1>
+                <Link to="/serviceRequest">
+                    <Button variant="outline" className="border-primary text-primary">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Services
+                    </Button>
+                </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mx-20">
+
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-xl text-[#003153]">Equipment Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsEquipment.data?.length}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg text-[#003153]">Transport Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsTransport.data?.length}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg text-[#003153]">Security Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsSecurity.data?.length}</div>
+                    </CardContent>
+                </Card>
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg text-primary">Language Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsLanguage.data?.length}</div>
+                    </CardContent>
+
+                </Card>
+            </div>
             <div className="@container/main flex flex-1 flex-col gap-2">
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
                     <div className="@xl/main:grid-cols-1 grid grid-cols-1 gap-4 px-4 lg:px-6">
