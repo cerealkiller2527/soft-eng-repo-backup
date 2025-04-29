@@ -31,20 +31,9 @@ async function main() {
     await prisma.node.deleteMany();
     await prisma.location.deleteMany();
     await prisma.building.deleteMany();
-    await prisma.user.deleteMany();
 
     console.log('Existing data purged.');
 
-    // seed admin user
-    const admin = await prisma.user.create({
-        data: {
-            username: 'admin',
-            password: 'admin',
-            email: 'admin@admin.com',
-        },
-    });
-
-    console.log(`Created admin user: ${admin.username}`);
 
     // seed buildings
 
