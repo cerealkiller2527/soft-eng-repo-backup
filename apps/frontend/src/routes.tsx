@@ -12,6 +12,7 @@ import LandingPage from "./routes/landingPage.tsx";
 import MapEditor from "./routes/mapEditor.tsx"
 import TestDirectory from "./routes/test.tsx";
 import DepartmentPage from "./routes/department.tsx";
+import Credits from "./routes/credits.tsx";
 
 export const routes = [
     {
@@ -31,7 +32,9 @@ export const routes = [
         path: '/ServiceRequest',
         errorElement: <div />,
         element: (
-            <ServiceRequest />
+            <ProtectedRoute>
+                <ServiceRequest />
+            </ProtectedRoute>
         ),
     },
     {
@@ -55,7 +58,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <ProtectedRoute>
-            <RequestDashboard />
+                <RequestDashboard />
             </ProtectedRoute>
 ),
     },
@@ -64,7 +67,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <AdminRoute>
-            <CSVPage />
+                <CSVPage />
             </AdminRoute>
         ),
     },
@@ -73,7 +76,7 @@ export const routes = [
         errorElement: <div />,
         element: (
             <AdminRoute>
-            <MapEditor />
+                <MapEditor />
             </AdminRoute>
         ),
     },
@@ -81,6 +84,11 @@ export const routes = [
         path: '/test',
         errorElement: <div />,
         element: <TestDirectory />,
+    },
+    {
+        path: '/credits',
+        errorElement: <div/>,
+        element: <Credits/>,
     },
 ];
 

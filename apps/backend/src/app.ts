@@ -3,9 +3,9 @@ import { t } from "./trpc.ts";
 import { createContext } from "./context";
 import { clerkMiddleware } from "@clerk/express";
 import * as trpcExpress from "@trpc/server/adapters/express";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import express from "express";
 import logger from "morgan";
-
 import { employeeRouter } from "./routes/employeeRouter";
 import { serviceRouter } from "./routes/serviceRouter";
 import { searchRouter } from "./routes/search.ts";

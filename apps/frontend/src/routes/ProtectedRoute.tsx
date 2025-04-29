@@ -62,9 +62,7 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    const role = user?.publicMetadata?.role;
-
-    if (role !== "admin") {
+    if ((user?.publicMetadata?.role) !== "admin") {
         return <Navigate to="/" replace />;
     }
 

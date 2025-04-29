@@ -6,6 +6,6 @@ const t = initTRPC.context<Context>().create();
 
 export const protectedProcedure = t.procedure.use(isAuthed);
 
-export const adminProcedure = t.procedure.use(hasRole(["admin"]));
+export const adminProcedure = t.procedure.use(hasRole("admin"));
 
 export { t };

@@ -9,14 +9,14 @@ export const createContext = async ({
   const { userId } = getAuth(req);
 
   if (!userId) {
-    return { userId: null, role: null };
+    return { userId: null, username: null, role: null };
   }
 
   const user = await clerkClient.users.getUser(userId);
   const role = user.publicMetadata?.role as string | null;
   const username = user.username;
 
-  return { userId, role, username, req, res };
+  return { userId, role, username };
 };
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
