@@ -98,6 +98,7 @@ export const externalTransportationRouter = t.router({
         dropoffTransport: z.string(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
+        employeeID: z.number().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -109,6 +110,7 @@ export const externalTransportationRouter = t.router({
         dropoffTransport,
         additionalNotes,
         priority,
+        employeeID,
       } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
@@ -118,6 +120,7 @@ export const externalTransportationRouter = t.router({
           description: additionalNotes,
           fromEmployee: ctx.username || "",
           priority: priority as Priority,
+          ...(employeeID && { assignedEmployeeID: employeeID }),
         },
       });
       await PrismaClient.externalTransportation.create({

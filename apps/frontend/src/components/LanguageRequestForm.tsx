@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import {DatetimePicker} from "@/components/ui/datetimepicker"
 import { Input } from "@/components/ui/input"
 import {queryClient, useTRPC} from "@/database/trpc.ts";
-import { useMutation } from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import ReactDatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -19,6 +19,7 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low", "Medium", "High", "Emergency"];
 
 const formSchema = z.object({
+    employee: z.coerce.number(),
     priority: z.string(),
     startTime: z.coerce.date(),
     endTime: z.coerce.date(),
@@ -37,10 +38,13 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
             queryClient.invalidateQueries({ queryKey: ['service.getLanguageRequest'] });
         }
     }))
+    const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            employee: 0,
             priority: "",
             location: "",
             language: "",
@@ -53,6 +57,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
+            employee: values.employee,
             startTime: new Date(values.startTime),
             endTime: new Date(values.endTime),
             location: values.location,
@@ -73,6 +78,30 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="employee"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Employee</FormLabel>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Employee" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {listofEmployees.data?.map((employee) => (
+                                                <SelectItem key={employee.id} value={String(employee.id)}>
+                                                    {employee.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="startTime"

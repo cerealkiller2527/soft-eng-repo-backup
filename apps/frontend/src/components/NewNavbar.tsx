@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/menubar";
 import BnWLogo from "/BrighamAndWomensLogo.png";
 
-const primaryLink = { title: "Map", href: "/floorplan" };
+const primaryLink = { title: "Navigation", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
 const moreItems = [
     { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
@@ -19,6 +19,13 @@ const moreItems = [
     { title: "Service Requests", href: "/ServiceRequest", show: (u) => u.isSignedIn},
     { title: "About", href: "/about", show: (u)=> true},
     { title: "Credits", href: "/credits", show: (u)=> true},
+    ];
+const profileItems = [
+    {
+        title: "Swap Algorithm",
+        href: "/swap-algorithm",
+        show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin",
+    },
 ];
 
 export default function NewNavbar() {
@@ -38,7 +45,7 @@ export default function NewNavbar() {
         }`;
 
     const mobileItemClasses =
-        "block w-full text-left py-2 px-4 text-black text-lg font-bold hover:bg-[#86A2B6] transition-colors rounded-none";
+        "block w-full text-left py-2 px-4 text-black text-lg hover:bg-[#86A2B6] transition-colors rounded-none";
 
     return (
         <Menubar className="fixed top-0 w-full bg-[#AEC8E0] shadow z-50 h-14 rounded-none">
@@ -83,6 +90,17 @@ export default function NewNavbar() {
                                 <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
                             <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
+                                {profileItems
+                                         .filter((item) => item.show(auth))
+                                         .map((item) => (
+                                           <MenubarItem key={item.href}>
+                                         <Link
+                                           to={item.href}
+                                           className="block w-full text-left py-2 px-4 text-black">
+                                           {item.title}
+                                         </Link>
+                                   </MenubarItem>
+                             ))}
                                 <MenubarItem>
                                     <button
                                         onClick={() => signOut()}
@@ -113,7 +131,7 @@ export default function NewNavbar() {
                     </button>
 
                     {mobileMenuOpen && (
-                        <div className="absolute top-full right-0 mt-1 bg-[#AEC8E0] w-48 p-2 rounded-none shadow-lg space-y-2 z-40 overflow-auto max-h-[calc(100vh-3.5rem)]">
+                        <div className="absolute top-full right-0 mt-1 bg-[#AEC8E0] w-36 p-2 rounded-none shadow-lg space-y-2 z-40 overflow-auto max-h-[calc(100vh-3.5rem)]">
                             <Link
                                 to={primaryLink.href}
                                 onClick={() => setMobileMenuOpen(false)}
@@ -167,6 +185,18 @@ export default function NewNavbar() {
                                 }`}>
                                 {mobileProfileOpen && (
                                     <div className="ml-2 space-y-1">
+                                        {profileItems
+                                                 .filter((item) => item.show(auth))
+                                                 .map((item) => (
+                                                   <Link
+                                                     key={item.href}
+                                                     to={item.href}
+                                                     onClick={() => setMobileMenuOpen(false)}
+                                                     className={mobileItemClasses}
+                                                   >
+                                                     {item.title}
+                                                   </Link>
+                                                 ))}
                                         {isSignedIn ? (
                                             <button
                                                 onClick={() => {

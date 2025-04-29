@@ -11,10 +11,13 @@ import MapForm from "../components/MapForm.tsx";
 import {
     AlertDialog,
     AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alertdialog";
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle
+} from "@/components/ui/alert";
 import * as z from "zod";
 
 const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"]);
@@ -78,9 +81,21 @@ const MapEditor = () => {
                 })),
             });
 
-            if (result.success) console.log('Floor map updated successfully');
+            if (result.success) {
+                setAlert({
+                    visible: true,
+                    message: 'Map saved successfully!',
+                    variant: "default",
+                });
+                setTimeout(() => setAlert(prev => ({ ...prev, visible: false })), 3000);
+            }
         } catch (error) {
-            console.error('Update failed:', error);
+            setAlert({
+                visible: true,
+                message: 'Failed to save map. Please try again.',
+                variant: "destructive",
+            });
+            setTimeout(() => setAlert(prev => ({ ...prev, visible: false })), 3000);
         }
     };
 
@@ -90,11 +105,15 @@ const MapEditor = () => {
 
     }));
 
-    const handleMarkerDragEnd = (nodeId: number, marker: google.maps.AdvancedMarkerElement) => {
+    const handleMarkerDragEnd = (nodeId: number, marker: google.maps.marker.AdvancedMarkerElement) => {
         const newPosition = marker.position;
         if (newPosition) {
             setNodes(prev => prev.map(node =>
-                node.id === nodeId ? { ...node, x: newPosition.lat(), y: newPosition.lng() } : node
+                node.id === nodeId ? {
+                    ...node,
+                    x: newPosition.lat,
+                    y: newPosition.lng
+                } : node
             ));
         }
     };
@@ -150,6 +169,12 @@ const MapEditor = () => {
     };
     document.addEventListener("keydown", handleKeyDown);
 
+    const [alert, setAlert] = useState<{ visible: boolean; message: string; variant: "default" | "destructive" }>({
+        visible: false,
+        message: "",
+        variant: "default",
+    });
+
     useEffect(() => {
         if (fetchFloorMap.data?.nodes) {
             setNodes(fetchFloorMap.data.nodes.map(node => ({
@@ -194,8 +219,8 @@ const MapEditor = () => {
                     setNodes(prev => prev.map(n =>
                         n.id === node.id ? {
                             ...n,
-                            x: newPosition.lat(),
-                            y: newPosition.lng()
+                            x: newPosition.lat,
+                            y: newPosition.lng,
                         } : n
                     ));
                 }
@@ -243,8 +268,8 @@ const MapEditor = () => {
                         { lat: fromNode.x, lng: fromNode.y },
                         { lat: toNode.x, lng: toNode.y },
                     ],
-                    strokeColor: "#4285F4",
-                    strokeWeight: 2,
+                    strokeColor: "#0A75C2FF", // Chart-2 on style guide
+                    strokeWeight: 3,
                     map: mapInstance.current,
                 });
 
@@ -282,7 +307,7 @@ const MapEditor = () => {
         } else if (form?.building === "Faulkner Hospital") {
             mapInstance.current.setCenter({ lat: 42.30163258195755, lng: -71.12812875693645 });
         } else if (form?.building === "Main Campus") {
-            mapInstance.current.setCenter({ lat: 42.33656648018521,lng: -71.10643147844775 });
+            mapInstance.current.setCenter({ lat: 42.33510876646788,lng: -71.10665415417226 });
         } else {
             mapInstance.current.setCenter({ lat: 42.3262, lng: -71.1497 });
         }
@@ -308,7 +333,6 @@ const MapEditor = () => {
                     id: countRef.current--,
                     x: e.latLng.lat(),
                     y: e.latLng.lng(),
-                    type: "Intermediary",
                     type: "Intermediary",
                     description: "",
                     suite: "",
@@ -361,6 +385,14 @@ const MapEditor = () => {
 
     return (
         <div id="floorplan" className="relative w-full h-screen overflow-hidden">
+            {alert.visible && (
+                <div className="fixed top-20 left-0 right-0 flex justify-center z-30">
+                    <Alert variant={alert.variant} className="w-fit">
+                        <AlertTitle>{alert.variant === "default" ? "Success" : "Error"}</AlertTitle>
+                        <AlertDescription>{alert.message}</AlertDescription>
+                    </Alert>
+                </div>
+            )}
             <div
                 id="google-map-container"
                 ref={mapRef}
@@ -371,11 +403,10 @@ const MapEditor = () => {
                 <NewNavbar />
             </div>
 
-            <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
+            <div className="absolute bottom-10 left-4 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
-                    className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                    className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                 >
                     Save Map
                 </Button>
@@ -401,8 +432,7 @@ const MapEditor = () => {
                     <AlertDialogTrigger asChild>
                         <Button
                             variant="outline"
-                            className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                            className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                             onClick={() => setIsDialogOpen(true)}
                         >
                             Select Location
