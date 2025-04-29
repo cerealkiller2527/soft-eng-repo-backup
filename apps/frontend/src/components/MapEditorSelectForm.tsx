@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,15 +22,22 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+const buildingData = {
+    "22 Patriot Place": { floors: 4 },
+    "20 Patriot Place": { floors: 4 },
+    "Chestnut Hill": { floors: 1 },
+    "Faulkner Hospital": { floors: 1 },
+    "Main Campus": { floors: 2 },
+};
+
 export const formSchema = z.object({
     building: z.string(),
     floor: z.string(),
 });
 
-const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill", "Faulkner Hospital"];
-const floors = ["1", "2", "3", "4"];
-
 export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z.infer<typeof formSchema>) => void }) {
+    const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -39,9 +46,16 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
         },
     });
 
-    useEffect(() => {
-        // Fetch buildings/floors from backend in future
-    }, []);
+    const handleBuildingChange = (value: string) => {
+        setSelectedBuilding(value);
+        form.setValue('floor', '');
+    };
+
+    const getFloorOptions = () => {
+        if (!selectedBuilding) return [];
+        const floorCount = buildingData[selectedBuilding as keyof typeof buildingData].floors;
+        return Array.from({ length: floorCount }, (_, i) => (i + 1).toString());
+    };
 
     const handleSubmit = (values: z.infer<typeof formSchema>) => {
         if (!values.building || !values.floor) {
@@ -62,7 +76,6 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
         }
     };
 
-    {/* Pasting this back in from my other branch, hope this works */}
     return (
         <div className="bg-white rounded-lg shadow-md p-6 w-64">
             <Form {...form}>
@@ -79,14 +92,20 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                                 <FormLabel className="block text-sm font-medium text-black">
                                     Building
                                 </FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                        handleBuildingChange(value);
+                                    }}
+                                    defaultValue={field.value}
+                                >
                                     <FormControl>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select a building" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent className="max-h-60 overflow-y-auto">
-                                        {buildings.map((building) => (
+                                        {Object.keys(buildingData).map((building) => (
                                             <SelectItem
                                                 key={building}
                                                 value={building}
@@ -112,14 +131,18 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                                 <FormLabel className="block text-sm font-medium text-black">
                                     Floor
                                 </FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                    disabled={!selectedBuilding}
+                                >
                                     <FormControl>
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select a floor" />
+                                            <SelectValue placeholder={selectedBuilding ? "Select a floor" : "Select a building first"} />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent className="max-h-60 overflow-y-auto">
-                                        {floors.map((floor) => (
+                                        {getFloorOptions().map((floor) => (
                                             <SelectItem
                                                 key={floor}
                                                 value={floor}
@@ -130,7 +153,9 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                                     </SelectContent>
                                 </Select>
                                 <FormDescription className="text-xs text-black">
-                                    Choose the floor level
+                                    {selectedBuilding
+                                        ? `This building has ${buildingData[selectedBuilding as keyof typeof buildingData].floors} floor(s)`
+                                        : "Select a building first"}
                                 </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>

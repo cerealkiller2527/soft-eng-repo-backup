@@ -1,40 +1,44 @@
-import { initTRPC } from "@trpc/server";
+import "dotenv/config";
+import { t } from "./trpc.ts";
+import { createContext } from "./context";
+import { clerkMiddleware } from "@clerk/express";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { employeeRouter } from "./routes/employeeRouter";
-import { serviceRouter } from "./routes/serviceRouter";
-import { loginRouter } from "./routes/loginRouter.ts";
-import { searchRouter } from "./routes/search.ts";
-import { csvRouter } from "./routes/csvRouter.ts";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import express from "express";
 import logger from "morgan";
+import { employeeRouter } from "./routes/employeeRouter";
+import { serviceRouter } from "./routes/serviceRouter";
+import { searchRouter } from "./routes/search.ts";
+import { csvRouter } from "./routes/csvRouter.ts";
 import { directoriesRouter } from "./routes/directoriesRouter.ts";
 import { mapEditorRouter } from "./routes/mapEditorRouter.ts";
 import { mapInfoRouter } from "./routes/mapInfoRouter.ts";
 
-// created for each request
-const createContext = ({
-  req,
-  res,
-}: trpcExpress.CreateExpressContextOptions) => ({}); // no context
-type Context = Awaited<ReturnType<typeof createContext>>;
-const t = initTRPC.context<Context>().create();
 const appRouter = t.router({
   employee: employeeRouter,
   service: serviceRouter,
-  login: loginRouter,
   csv: csvRouter,
   directories: directoriesRouter,
   search: searchRouter,
   mapEditor: mapEditorRouter,
   mapInfoRouter: mapInfoRouter,
 });
+
 const app = express();
+
 app.use(
   logger("dev", {
     stream: {
       // This is a "hack" that gets the output to appear in the remote debugger :)
       write: (msg) => console.info(msg),
     },
+  }),
+);
+
+app.use(
+  clerkMiddleware({
+    publishableKey: process.env.CLERK_PUBLISHABLE_KEY!,
+    secretKey: process.env.CLERK_SECRET_KEY!,
   }),
 );
 

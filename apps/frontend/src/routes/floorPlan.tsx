@@ -270,7 +270,7 @@ const FloorPlan = () => {
 
     return (
         <Layout>
-        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-20">
+        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
 
             {/* Main content fills screen excluding navbar/footer */}
             <div className="relative flex-1">
