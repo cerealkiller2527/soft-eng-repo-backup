@@ -12,7 +12,7 @@ import type { Prisma } from '../../../.prisma/client';
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const UserScalarFieldEnumSchema = z.enum(['username','password','email']);
+export const UserScalarFieldEnumSchema = z.enum(['email','username','role']);
 
 export const EmployeeScalarFieldEnumSchema = z.enum(['id','name','employeeType','canService','language']);
 
@@ -73,9 +73,9 @@ export type nodeTypeType = `${z.infer<typeof nodeTypeSchema>}`
 /////////////////////////////////////////
 
 export const UserSchema = z.object({
-  username: z.string(),
-  password: z.string(),
   email: z.string(),
+  username: z.string(),
+  role: z.string(),
 })
 
 export type User = z.infer<typeof UserSchema>
@@ -275,9 +275,9 @@ export type Building = z.infer<typeof BuildingSchema>
 //------------------------------------------------------
 
 export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
-  username: z.boolean().optional(),
-  password: z.boolean().optional(),
   email: z.boolean().optional(),
+  username: z.boolean().optional(),
+  role: z.boolean().optional(),
 }).strict()
 
 // EMPLOYEE
@@ -651,33 +651,33 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
-  username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  role: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z.object({
+  email: z.lazy(() => SortOrderSchema).optional(),
   username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional()
+  role: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> = z.object({
-  username: z.string()
+  email: z.string()
 })
 .and(z.object({
-  username: z.string().optional(),
+  email: z.string().optional(),
   AND: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserWhereInputSchema),z.lazy(() => UserWhereInputSchema).array() ]).optional(),
-  password: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  email: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  username: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  role: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict());
 
 export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z.object({
-  username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
   email: z.lazy(() => SortOrderSchema).optional(),
+  username: z.lazy(() => SortOrderSchema).optional(),
+  role: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => UserCountOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => UserMaxOrderByAggregateInputSchema).optional(),
   _min: z.lazy(() => UserMinOrderByAggregateInputSchema).optional()
@@ -687,9 +687,9 @@ export const UserScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UserScal
   AND: z.union([ z.lazy(() => UserScalarWhereWithAggregatesInputSchema),z.lazy(() => UserScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   OR: z.lazy(() => UserScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => UserScalarWhereWithAggregatesInputSchema),z.lazy(() => UserScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  username: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  password: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   email: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  username: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  role: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const EmployeeWhereInputSchema: z.ZodType<Prisma.EmployeeWhereInput> = z.object({
@@ -1534,45 +1534,45 @@ export const BuildingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Buil
 }).strict();
 
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
+  email: z.string(),
   username: z.string(),
-  password: z.string(),
-  email: z.string()
+  role: z.string()
 }).strict();
 
 export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = z.object({
+  email: z.string(),
   username: z.string(),
-  password: z.string(),
-  email: z.string()
+  role: z.string()
 }).strict();
 
 export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  role: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  role: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = z.object({
+  email: z.string(),
   username: z.string(),
-  password: z.string(),
-  email: z.string()
+  role: z.string()
 }).strict();
 
 export const UserUpdateManyMutationInputSchema: z.ZodType<Prisma.UserUpdateManyMutationInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  role: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const UserUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserUncheckedUpdateManyInput> = z.object({
-  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  password: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  role: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const EmployeeCreateInputSchema: z.ZodType<Prisma.EmployeeCreateInput> = z.object({
@@ -2330,21 +2330,21 @@ export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
 }).strict();
 
 export const UserCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserCountOrderByAggregateInput> = z.object({
+  email: z.lazy(() => SortOrderSchema).optional(),
   username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional()
+  role: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserMaxOrderByAggregateInput> = z.object({
+  email: z.lazy(() => SortOrderSchema).optional(),
   username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional()
+  role: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const UserMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserMinOrderByAggregateInput> = z.object({
+  email: z.lazy(() => SortOrderSchema).optional(),
   username: z.lazy(() => SortOrderSchema).optional(),
-  password: z.lazy(() => SortOrderSchema).optional(),
-  email: z.lazy(() => SortOrderSchema).optional()
+  role: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const StringWithAggregatesFilterSchema: z.ZodType<Prisma.StringWithAggregatesFilter> = z.object({

@@ -52,9 +52,9 @@ enum nodeType {
 }
 
 model User {
-  username String @id
-  password String
-  email    String
+  email    String @id
+  username String
+  role     String
 }
 
 model Employee {

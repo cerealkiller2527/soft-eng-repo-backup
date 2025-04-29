@@ -5248,6 +5248,16 @@ const RAW_RUNTIME_STATE =
           ["proxy-from-env", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:1.9.0", {\
+        "packageLocation": "./.yarn/cache/axios-npm-1.9.0-007b36cf56-9371a56886.zip/node_modules/axios/",\
+        "packageDependencies": [\
+          ["axios", "npm:1.9.0"],\
+          ["follow-redirects", "virtual:8cf735eb2b9f70962d771e00a864e9e0536f45b1a3899af224ac07f4fa06f6303e4a41f37b803333808763ece4c23df875efb5ad0daa70f6856aaaee39943a11#npm:1.15.9"],\
+          ["form-data", "npm:4.0.2"],\
+          ["proxy-from-env", "npm:1.1.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["backend", [\
@@ -6155,6 +6165,7 @@ const RAW_RUNTIME_STATE =
           ["@types/node", "npm:22.14.1"],\
           ["@types/papaparse", "npm:5.3.15"],\
           ["@yarnpkg/pnpify", "npm:4.1.4"],\
+          ["axios", "npm:1.9.0"],\
           ["dotenv", "npm:16.5.0"],\
           ["dotenv-cli", "npm:7.4.4"],\
           ["eslint", "virtual:19a1bbfd66c0a8b6e4e9b4eb3053d58c46601ff49b62144208f9d27690e7d3dafa1ec4b1cf3db192de427911ae217357531df59f991426daf174c7b5b2cfb34e#npm:9.25.1"],\
