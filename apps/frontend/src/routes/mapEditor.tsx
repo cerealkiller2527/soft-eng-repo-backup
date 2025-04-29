@@ -127,10 +127,16 @@ const MapEditor = () => {
         setEdges(prev => prev.filter(edge => edge.id !== edgeId));
     };
 
-    const handleFormSubmit = (values: { suite: string, type: string, description: string }) => {
+    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean }) => {
         if (selectedNode) {
             setNodes(prev => prev.map(node =>
-                node.id === selectedNode.id ? { ...node, ...values } : node
+                node.id === selectedNode.id ? {
+                    ...node,
+                    suite: values.suite,
+                    type: values.type,
+                    description: values.description,
+                    outside: values.isOutside
+                } : node
             ));
             setSelectedNode(null);
             edgeStartRef.current = null;
@@ -429,7 +435,8 @@ const MapEditor = () => {
                         initialValues={edgeStartRef.current ? {
                             suite: edgeStartRef.current.suite,
                             type: edgeStartRef.current.type,
-                            description: edgeStartRef.current.description
+                            description: edgeStartRef.current.description,
+                            isOutside: edgeStartRef.current.outside,
                         } : undefined}
                     />
                 )}

@@ -23,14 +23,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
-import {NodeTypeZod} from "common/src/ZodSchemas.ts"; // Import the Checkbox component
+import {NodeTypeZod} from "common/src/ZodSchemas.ts";
 
 const typeEnum = NodeTypeZod
 const formSchema = z.object({
-    department: z.string(),
+    suite: z.string(),
     type: typeEnum,
     description: z.string(),
-    isOutside: z.boolean().default(false), // Add the new field to the schema
+    isOutside: z.boolean().default(false),
 })
 type FormValues = z.infer<typeof formSchema>
 
@@ -51,8 +51,8 @@ export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
             department: "",
             type: "Entrance",
             description: "",
-            isOutside: false, // Default to false
-            ...initialValues, // This will override the defaults with any provided initialValues
+            isOutside: false,
+            ...initialValues,
         }
     })
 
