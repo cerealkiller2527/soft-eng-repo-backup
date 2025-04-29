@@ -33,7 +33,6 @@ const equipmentTypes = ["Wheelchair", "Stretcher", "IV Pump", "Ventilator", "Mon
 const priority = ["Low", "Medium", "High", "Emergency"]
 
 const formSchema = z.object({
-    employeeName: z.string().min(1, "Employee name is required"),
     priority: z.string().min(1, "Priority is required"),
     deadline: z.coerce.date(),
     equipment: z.array(z.string()).min(1, "At least one equipment type is required"),
@@ -54,7 +53,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeName: "",
             priority: "",
             deadline: new Date(),
             equipment: [],
@@ -65,7 +63,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         addReq.mutate({
-            employee: values.employeeName,
             priority: values.priority,
             deadline: new Date(values.deadline),
             equipment: values.equipment,
@@ -75,7 +72,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
         onFormSubmit?.(values);
     }
     return (
-        <div className="max-w-2xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+        <div className="">
             <div className="text-center">
                 <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Equipment Service Request</h2>
                 <p className="text-sm text-gray-600">Created by Will and Christan</p>
@@ -83,24 +80,6 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="employeeName"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Employee Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Enter Employee Name"
-                                        {...field}
-                                        className="w-full"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                     <FormField
                         control={form.control}
                         name="priority"
@@ -133,19 +112,7 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
                             <FormItem className="space-y-2">
                                 <FormLabel>Deadline</FormLabel>
                                 <FormControl>
-                                    <ReactDatePicker
-                                        selected={field.value}
-                                        onChange={(date) => field.onChange(date)}
-                                        showTimeSelect
-                                        placeholderText="MM/DD/YYYY, HH:MM AM/PM"
-                                        dateFormat="Pp"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                        popperClassName="!z-50"
-                                        calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                        dayClassName={() =>
-                                            "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
-                                        }
-                                    />
+                                    <Input type={"datetime-local"} />
                                 </FormControl>
                                 <FormDescription>Select the requested deadline for service.</FormDescription>
                                 <FormMessage />

@@ -394,12 +394,12 @@ export default function CSV() {
         <Layout>
             <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
                 <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
-                    <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
-                        Department CSV Import/Export
-                    </h1>
 
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                        <div className="flex flex-col gap-4 mb-6">
+                    <div className="bg-white rounded-lg shadow-md p-6 mb-8 min-h-[calc(80vh-40px)]">
+                        <div className="flex flex-col gap-4 ">
+                            <h1 className="text-2xl font-bold text-[#0057B8] mb-3">
+                                Department CSV Import/Export
+                            </h1>
                             <div className="flex gap-4 items-center">
                                 <input
                                     ref={fileInputRef}

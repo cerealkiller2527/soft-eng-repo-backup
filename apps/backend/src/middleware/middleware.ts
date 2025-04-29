@@ -11,7 +11,7 @@ export const isAuthed = async ({ ctx, next }: { ctx: Context; next: any }) => {
 export const hasRole =
   (role: string) =>
   async ({ ctx, next }: { ctx: Context; next: any }) => {
-    if (!ctx.role || !(ctx.role === role)) {
+    if (!ctx.userId || !ctx.role || !(ctx.role === role)) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next();

@@ -16,9 +16,9 @@ const directoryLink = { title: "Directory", href: "/directory" };
 const moreItems = [
     { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
     { title: "Map Editor", href: "/mapeditor", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
-    { title: "Service Requests", href: "/service-request", show: (u) => u.isSignedIn },
-    { title: "About", href: "/about", show: (u) => true },
-    { title: "Credits", href: "/credits", show: (u) => true },
+    { title: "Service Requests", href: "/ServiceRequest", show: (u) => u.isSignedIn},
+    { title: "About", href: "/about", show: (u)=> true},
+    { title: "Credits", href: "/credits", show: (u)=> true},
 ];
 
 export default function NewNavbar() {
