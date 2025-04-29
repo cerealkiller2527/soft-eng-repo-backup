@@ -11,8 +11,6 @@ import MapForm from "../components/MapForm.tsx";
 import {
     AlertDialog,
     AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alertdialog";
 import {
@@ -406,7 +404,7 @@ const MapEditor = () => {
                 <Navbar />
             </div>
 
-            <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
+            <div className="absolute bottom-10 left-4 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
                     className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
