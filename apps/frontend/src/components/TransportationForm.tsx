@@ -6,11 +6,9 @@ import { z } from "zod"
     import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
     import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem,} from "@/components/ui/select"
     import { Textarea } from "@/components/ui/textarea"
-    import { DatetimePicker } from "@/components/ui/datetimepicker"
     import { Input } from "@/components/ui/input"
     import {queryClient, useTRPC} from "@/database/trpc.ts";
-    import { useMutation } from '@tanstack/react-query';
-    import ReactDatePicker from "react-datepicker";
+    import {useMutation, useQuery} from '@tanstack/react-query';
     import 'react-datepicker/dist/react-datepicker.css';
 
 
@@ -23,6 +21,7 @@ import { z } from "zod"
 
 
     const formSchema = z.object({
+        employee: z.coerce.number(),
         patientName: z.string(),
         priority: z.string(),
         pickupTime: z.date(),
@@ -41,9 +40,12 @@ import { z } from "zod"
         const addReq = useMutation(trpc.service.addExternalTransportationRequest.mutationOptions({
         }))
 
+        const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
         const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
+                employee: 0,
                 patientName: "",
                 priority: "",
                 pickupTime: new Date(),
@@ -79,6 +81,54 @@ import { z } from "zod"
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="employee"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Employee</FormLabel>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Employee" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {listofEmployees.data?.map((employee) => (
+                                                <SelectItem key={employee.id} value={String(employee.id)}>
+                                                    {employee.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="employee"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Employee</FormLabel>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Employee" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {listofEmployees.data?.map((employee) => (
+                                                <SelectItem key={employee.id} value={String(employee.id)}>
+                                                    {employee.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="patientName"
