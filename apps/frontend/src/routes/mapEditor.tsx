@@ -409,7 +409,7 @@ const MapEditor = () => {
             <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
-                    className="bg-white/10"
+                    className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                 >
                     Save Map
                 </Button>
@@ -435,8 +435,7 @@ const MapEditor = () => {
                     <AlertDialogTrigger asChild>
                         <Button
                             variant="outline"
-                            className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                            className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                             onClick={() => setIsDialogOpen(true)}
                         >
                             Select Location
