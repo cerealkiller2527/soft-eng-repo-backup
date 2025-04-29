@@ -43,6 +43,11 @@ enum nodeType {
   Help_Desk
 }
 
+enum Algorithm {
+  BFS
+  DFS
+}
+
 model Employee {
   id             Int              @id @default(autoincrement())
   name           String
@@ -172,4 +177,9 @@ model Building {
   address     String
   phoneNumber String
   Location    Location[]
+}
+
+model SearchAlgorithm {
+  id      Int       @id @default(autoincrement())
+  current Algorithm
 }

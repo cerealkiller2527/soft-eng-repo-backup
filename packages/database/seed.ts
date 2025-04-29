@@ -1,4 +1,4 @@
-import { PrismaClient, RequestType, Status, nodeType, Priority } from './.prisma/client';
+import { PrismaClient, RequestType, Status, nodeType, Priority, Algorithm } from './.prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -22,6 +22,7 @@ async function main() {
     await prisma.node.deleteMany();
     await prisma.location.deleteMany();
     await prisma.building.deleteMany();
+    await prisma.searchAlgorithm.deleteMany();
 
     console.log('Existing data purged.');
 
@@ -1010,6 +1011,12 @@ async function main() {
         console.error("error seeding node paths, searched for node with description that does not exist: |" + description + "| does not exist");
         return -1;
     }
+
+    const searchAlgo = await prisma.searchAlgorithm.create({
+        data: {
+            current: Algorithm.BFS
+        }
+    })
 
     console.log('Seed complete!');
 }
