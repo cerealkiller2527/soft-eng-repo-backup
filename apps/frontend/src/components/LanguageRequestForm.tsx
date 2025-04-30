@@ -102,6 +102,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                                 </FormItem>
                             )}
                         />
+                        <br />
                         <FormField
                             control={form.control}
                             name="startTime"
@@ -157,6 +158,30 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="priority"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Priority</FormLabel>
+                                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select priority level" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {priority.map((type) => (
+                                            <SelectItem key={type} value={type}>
+                                                {type}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <FormField
                         control={form.control}
@@ -196,30 +221,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                         )}
                     />
 
-                    <FormField
-                        control={form.control}
-                        name="priority"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Priority</FormLabel>
-                                <Select defaultValue={field.value} onValueChange={field.onChange}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select priority level" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {priority.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+
 
                     <div className="flex justify-center pt-4">
                         <Button

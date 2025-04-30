@@ -8,6 +8,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem,} from "@
 import { Textarea } from "@/components/ui/textarea"
 import {queryClient, useTRPC} from "@/database/trpc.ts";
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
@@ -30,7 +31,7 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
     const trpc = useTRPC();
     const addReq = useMutation(trpc.service.addSecurityRequest.mutationOptions({
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['service.getSecurityRequest'] });
+            queryClient.invalidateQueries({ queryKey: ['service'] });
         }
     }))
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
@@ -54,6 +55,7 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
             additionalNotes: values.additionalNotes,
             priority: values.priority,
         });
+        queryClient.invalidateQueries({ queryKey: ['getSecurityRequests'] });
         onFormSubmit?.(values);
     }
 

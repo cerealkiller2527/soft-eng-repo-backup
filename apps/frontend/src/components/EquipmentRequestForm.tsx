@@ -47,7 +47,8 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
     const trpc = useTRPC()
     const addReq = useMutation(trpc.service.addEquipmentDeliveryRequest.mutationOptions({
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['service.getEquipmentRequests'] })
+            console.log(trpc.service.getEquipmentDeliveryRequests.queryKey());
+            queryClient.invalidateQueries({ queryKey: ['getEquipmentDeliveryRequests'] })
         }
     }))
 

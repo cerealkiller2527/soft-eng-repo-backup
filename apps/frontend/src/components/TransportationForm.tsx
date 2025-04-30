@@ -38,6 +38,9 @@ import { z } from "zod"
 
         const trpc = useTRPC();
         const addReq = useMutation(trpc.service.addExternalTransportationRequest.mutationOptions({
+            onSuccess: (data) => {
+              queryClient.invalidateQueries({ queryKey: ['service', 'getExternalTransportation'] });
+            }
         }))
 
         const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
@@ -105,30 +108,7 @@ import { z } from "zod"
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="employee"
-                            render={({ field }) => (
-                                <FormItem className="space-y-2">
-                                    <FormLabel>Employee</FormLabel>
-                                    <Select onValueChange={field.onChange}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select Employee" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {listofEmployees.data?.map((employee) => (
-                                                <SelectItem key={employee.id} value={String(employee.id)}>
-                                                    {employee.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+
                         <FormField
                             control={form.control}
                             name="patientName"
