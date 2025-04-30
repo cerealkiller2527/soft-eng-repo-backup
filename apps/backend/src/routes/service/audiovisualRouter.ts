@@ -72,10 +72,11 @@ export const audiovisualRouter = t.router({
         audiovisualType: z.string(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
+        employeeID: z.number().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { location, deadline, audiovisualType, additionalNotes, priority } =
+      const { location, deadline, audiovisualType, additionalNotes, priority, employeeID } =
         input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
@@ -85,6 +86,7 @@ export const audiovisualRouter = t.router({
           description: additionalNotes,
           fromEmployee: ctx.username || "",
           priority: priority as Priority,
+          ...(employeeID && { assignedEmployeeID: employeeID }),
         },
       });
       await PrismaClient.audioVisual.create({

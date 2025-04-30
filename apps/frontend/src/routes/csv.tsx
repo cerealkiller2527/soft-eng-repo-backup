@@ -6,16 +6,10 @@ import Papa from 'papaparse';
 import { z } from 'zod';
 import { useTRPC } from '../database/trpc.ts';
 import { useMutation } from '@tanstack/react-query';
+import {NodeTypeZod} from "common/src/ZodSchemas.ts";
 
 // Define nodeType enum to match Prisma schema
-const nodeTypeEnum = z.enum([
-    "Entrance",
-    "Intermediary",
-    "Staircase",
-    "Elevator",
-    "Location",
-    "Help_Desk",
-]);
+const nodeTypeEnum = NodeTypeZod
 
 // Define the schema for CSV rows
 const CSVRowSchema = z.object({
@@ -30,6 +24,7 @@ const CSVRowSchema = z.object({
     'Node Type': nodeTypeEnum,
     'Node Description': z.string(),
     'Node Coordinates': z.string(),
+    "Node Outside": z.string(),
     'From Edges': z.string(),
     'To Edges': z.string(),
     'Department ID': z.string().optional(),
@@ -64,6 +59,7 @@ const allColumns: ColumnDefinition[] = [
     { key: 'Node Type', label: 'Node Type', group: 'Node' },
     { key: 'Node Description', label: 'Node Description', group: 'Node' },
     { key: 'Node Coordinates', label: 'Node Coordinates', group: 'Node' },
+    { key: 'Node Outside', label: 'Node Outside', group: 'Node' },
     { key: 'From Edges', label: 'From Edges', group: 'Node' },
     { key: 'To Edges', label: 'To Edges', group: 'Node' },
     
@@ -394,12 +390,12 @@ export default function CSV() {
         <Layout>
             <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
                 <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
+                    <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
+                        Department CSV Import/Export
+                    </h1>
 
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-8 min-h-[calc(80vh-40px)]">
-                        <div className="flex flex-col gap-4 ">
-                            <h1 className="text-2xl font-bold text-[#0057B8] mb-3">
-                                Department CSV Import/Export
-                            </h1>
+                    <div className="bg-white rounded-lg shadow-md p-6 mb-8 min-h-100">
+                        <div className="flex flex-col gap-4 mb-6">
                             <div className="flex gap-4 items-center">
                                 <input
                                     ref={fileInputRef}

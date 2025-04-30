@@ -6,6 +6,8 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
-        "types": ["node"]
+        "types": ["node"],
+        "strict": true, // zod generato
+        "strictNullChecks": true // for zod
     }
 }

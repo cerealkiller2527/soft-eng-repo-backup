@@ -39,10 +39,12 @@ const DepartmentSchema = z.object({
             "Elevator",
             "Location",
             "Help_Desk",
+            "Parking",
           ]),
           description: z.string(),
           lat: z.number(),
           long: z.number(),
+          outside: z.boolean(),
         })
         .nullable(),
     }),

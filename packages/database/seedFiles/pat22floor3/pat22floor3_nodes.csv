@@ -1,0 +1,18 @@
+suite,description,lat,long,type,floor,building,outside
+0,3left stairs,42.092446,-71.266887,Staircase,3,22 Patriot,FALSE
+0,3a1,42.092464,-71.266866,Intermediary,3,22 Patriot,FALSE
+0,3a2,42.092472,-71.266881,Intermediary,3,22 Patriot,FALSE
+0,3a3,42.09252,-71.26683,Intermediary,3,22 Patriot,FALSE
+0,3a4,42.092505,-71.266806,Intermediary,3,22 Patriot,FALSE
+0,3multi specialty,42.092496,-71.26679,Location,3,22 Patriot,FALSE
+0,3middle stairs,42.092532,-71.266775,Staircase,3,22 Patriot,FALSE
+0,322elevator,42.092589,-71.266719,Elevator,3,22 Patriot,FALSE
+0,3a5,42.09261,-71.266686,Intermediary,3,22 Patriot,FALSE
+0,3a6,42.092642,-71.266661,Intermediary,3,22 Patriot,FALSE
+0,3a7,42.092679,-71.266727,Intermediary,3,22 Patriot,FALSE
+0,3b1,42.092719,-71.266783,Intermediary,3,22 Patriot,FALSE
+0,3b2,42.092773,-71.266725,Intermediary,3,22 Patriot,FALSE
+0,3b3,42.092795,-71.266771,Intermediary,3,22 Patriot,FALSE
+0,3b4,42.092826,-71.266734,Intermediary,3,22 Patriot,FALSE
+0,3b5,42.092847,-71.266733,Intermediary,3,22 Patriot,FALSE
+0,3right stairs,42.092855,-71.266709,Staircase,3,22 Patriot,FALSE

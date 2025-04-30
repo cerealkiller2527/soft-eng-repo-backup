@@ -1,0 +1,7 @@
+suite,description,lat,long,type,floor,building,outside
+0,4left stairs,42.092446,-71.266887,Staircase,4,22 Patriot,FALSE
+0,4a1,42.092548,-71.266732,Intermediary,4,22 Patriot,FALSE
+0,4a2,42.092542,-71.266715,Intermediary,4,22 Patriot,FALSE
+0,4phlebotomy,42.092527,-71.266734,Location,4,22 Patriot,FALSE
+0,4middle stairs,42.092532,-71.266775,Staircase,4,22 Patriot,FALSE
+0,422elevator,42.092589,-71.266719,Elevator,4,22 Patriot,FALSE

@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button"
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem,} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import {DatetimePicker} from "@/components/ui/datetimepicker"
-import { Input } from "@/components/ui/input"
 import {queryClient, useTRPC} from "@/database/trpc.ts";
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -18,6 +16,7 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low","Medium","High","Emergency"]
 
 const formSchema = z.object({
+    employee: z.coerce.number(),
     priority: z.string(),
     location: z.string(),
     additionalNotes: z.string(),
@@ -34,6 +33,8 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
             queryClient.invalidateQueries({ queryKey: ['service.getSecurityRequest'] });
         }
     }))
+    const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
 
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -48,6 +49,7 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
+            employee: values.employee,
             location: values.location,
             additionalNotes: values.additionalNotes,
             priority: values.priority,
@@ -64,6 +66,30 @@ export default function SecurityRequestForm({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="employee"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Employee</FormLabel>
+                                <Select onValueChange={field.onChange}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Employee" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {listofEmployees.data?.map((employee) => (
+                                            <SelectItem key={employee.id} value={String(employee.id)}>
+                                                {employee.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="priority"
