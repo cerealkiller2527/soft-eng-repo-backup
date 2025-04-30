@@ -33,7 +33,7 @@ export async function seedNodes(path: string) {
                 const parsedInfo = nodeCSVRow.parse(node);
                 const parsedNode: z.infer<typeof NodeCreateInputSchema> = {
                     type: nodeTypeSchema.parse(parsedInfo.type),
-                    description: parsedInfo.description,
+                    description: parsedInfo.description.trim(),
                     lat: parsedInfo.lat,
                     long: parsedInfo.long,
                     outside: parsedInfo.outside,
@@ -52,7 +52,7 @@ export async function seedNodes(path: string) {
 
                 const thisDept = await prisma.department.findFirst({
                     where: {
-                        description: { contains: thisNode.description, mode: "insensitive" },
+                        name: thisNode.description,
                         Location: {
                             some: {
                                 buildingId: thisBuilding?.id ?? -1,
@@ -61,6 +61,8 @@ export async function seedNodes(path: string) {
                         }
                     }
                 });
+
+
 
                 if (thisDept) {
                     const thisLocation = await prisma.location.findFirst({
@@ -76,6 +78,7 @@ export async function seedNodes(path: string) {
                         data: { nodeID: thisNode.id }
                     });
                 } else {
+                    // console.log("No dept. found: creating location for node:", thisNode.description)
                     const newLocation: z.infer<typeof LocationUncheckedCreateInputSchema> = {
                         floor: parsedInfo.floor,
                         buildingId: thisBuilding?.id ?? -1,
@@ -169,6 +172,8 @@ async function findNodesFromEdgeInfo(parsedEdge: z.infer<typeof edgeCSVRow>) {
             }
         }
     });
+
+    // console.log(parsedEdge.toNode, ": ", toNode?.id, parsedEdge.fromNode, ": ", fromNode?.id)
     return {
         toNodeId: toNode?.id,
         fromNodeId: fromNode?.id
