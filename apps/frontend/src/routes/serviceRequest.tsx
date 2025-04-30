@@ -1,13 +1,26 @@
 import React from 'react';
-import TransportCard from "../components/TransportCard.tsx";
-import EquipmentCard from "../components/EquipmentCard.tsx";
 import { useState } from "react";
 import Layout from "../components/Layout";
 import DashboardButton from "../components/DashboardButton.tsx";
-import SecurityCard from "@/components/SecurityCard.tsx";
-import LanguageCard from "@/components/LanguageCard.tsx";
 import ServiceCards from "@/components/serviceRequestComponents/ServiceCards.tsx";
-import TransportRequestDisplay from "@/components/allServiceRequests/TransportRequestDisplay.tsx"
+import Services from "@/components/serviceRequestComponents/Services.tsx"
+import {
+    Ambulance,
+    ArrowRight,
+    BarChart3,
+    Languages,
+    LineChart,
+    PieChart,
+    Shield,
+    Stethoscope,
+    TrendingUp
+} from 'lucide-react';
+import Statistics from '@/components/serviceRequestComponents/Statistics.tsx';
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card.tsx';
+import {useTRPC} from "@/database/trpc.ts";
+import {useQuery} from "@tanstack/react-query";
+import { Button } from '@/components/ui/button.tsx';
+import {Link} from "react-router-dom";
 
 
 //This page is used to hold all of the buttons and forms for the different service requests
@@ -32,6 +45,12 @@ const ServiceRequest = () => {
         employee: string,
     }
 
+    const trpc = useTRPC();
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+
     //This whole part is just to locally show the submitted forms on the same page, keeping here for now for consistency
     const [transportRequests, setTransportRequests] = useState<object[]>([]);
     const [securityRequests, setSecurityRequests] = useState<object[]>([]);
@@ -52,19 +71,89 @@ const ServiceRequest = () => {
     }
     return (
         <Layout>
-        <div className="flex flex-col min-h-screen bg-[#f2f2f2]">
-            <div className="flex-grow pt-20 pl-20 pr-20">
-                <h1 className="text-3xl font-bold text-[#012D5A] mb-4">Service Requests</h1>
-                <hr />
+        <div className="flex flex-col min-h-screen bg-[#f2f2f2] ">
+            <div className="text-center mb-8 pt-25">
+                <h1 className="text-4xl font-bold mb-2 text-primary">Hospital Services</h1>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Request assistance for transport, security, equipment, or language services
+                </p>
+            </div>
+            <div className="relative overflow-hidden rounded-xl mx-20 mb-10 bg-gradient-to-r from-primary to-secondary text-white">
+                <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
+                    <div className="absolute bottom-10 right-32">
+                        <LineChart className="h-24 w-24" strokeWidth={1} />
+                    </div>
+                </div>
+                <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center">
+                    <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
+                        <div className="flex items-center mb-4">
+                            <BarChart3 className="h-8 w-8 mr-3" />
+                            <h2 className="text-3xl font-bold">Service Request Dashboard</h2>
+                        </div>
+                        <div className="md:w-1/3 flex justify-center">
+                            <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20 w-full max-w-xs">
+                                <Link to="/requestdashboard" className="block w-full">
+                                    <Button className="w-full bg-white hover:bg-gray-100 text-[#1a365d] font-medium">
+                                        Open Full Dashboard
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
             </div>
-                <DashboardButton />
-            <ServiceCards />
 
-            <div className={"flex flex-wrap justify-center gap-4 my-6 w-full"}>
-                <div className="mt-10">
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mx-20">
+
+            <Services title={"Medical Equipment"} description={"Request specialized medical equipment or repairs"} icon={Stethoscope} formType={"equipment"} />
+            <Services title={"Patient Transport"} description={"Request transportation between hospitals"} icon={Ambulance} formType={"transport"} />
+                <Services title={"Security Assistance"} description ={"Request security personnel for patient or staff safety"} icon={Shield} formType={"security"} />
+                <Services title={"Language Services"} description={"Request interpreter or translation"} icon={Languages} formType={"language"} />
+
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mx-20">
+
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-xl text-[#003153]">Equipment Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsEquipment.data?.length}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg text-[#003153]">Transport Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsTransport.data?.length}</div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg text-[#003153]">Security Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsSecurity.data?.length}</div>
+                    </CardContent>
+                </Card>
+                <Card className="bg-white shadow">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg text-primary">Language Requests</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-4xl font-bold text-secondary">{requestsLanguage.data?.length}</div>
+                    </CardContent>
+
+                </Card>
+            </div>
+            <div className="mb-8 mx-20">
+                <Statistics />
             </div>
             </div>
         </Layout>

@@ -22,22 +22,36 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { Checkbox } from "@/components/ui/checkbox" // Import the Checkbox component
 
 const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"])
 const formSchema = z.object({
-    suite: z.string(),
+    department: z.string(),
     type: typeEnum,
     description: z.string(),
+    isOutside: z.boolean().default(false), // Add the new field to the schema
 })
 type FormValues = z.infer<typeof formSchema>
 
-export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) => void }) {
+interface MapFormProps {
+    onSubmit: (values: FormValues) => void;
+    initialValues?: {
+        department?: string;
+        type?: string;
+        description?: string;
+        isOutside?: boolean;
+    };
+}
+
+export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            suite: "",
+            department: "",
             type: "Entrance",
             description: "",
+            isOutside: false, // Default to false
+            ...initialValues, // This will override the defaults with any provided initialValues
         }
     })
 
@@ -60,27 +74,27 @@ export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) =
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 max-w-md mx-auto">
                     <h2 className="text-2xl font-bold text-center text-[#012D5A] mb-6">
-                        Suite Request Form
+                        {initialValues ? "Edit Node" : "Department Request Form"}
                     </h2>
 
                     <FormField
                         control={form.control}
-                        name="suite"
+                        name="department"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="block text-sm font-medium text-black">
-                                    Suite
+                                    Department
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="Enter suite"
+                                        placeholder="Enter Department"
                                         type="text"
                                         className="w-full"
                                         {...field}
                                     />
                                 </FormControl>
                                 <FormDescription className="text-xs text-black">
-                                    Enter the suite number or identifier
+                                    Enter the Department name or number
                                 </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
@@ -140,14 +154,36 @@ export default function MapForm({ onSubmit }: { onSubmit: (values: FormValues) =
                         )}
                     />
 
+                    <FormField
+                        control={form.control}
+                        name="isOutside"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <FormLabel className="text-sm font-medium text-black">
+                                        Outdoor Location
+                                    </FormLabel>
+                                    <FormDescription className="text-xs text-black">
+                                        Check if this location is outside the building
+                                    </FormDescription>
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+
                     <div className="pt-4">
                         <Button
                             type="submit"
                             className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                            bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                         >
-                            Submit Request
+                            {initialValues ? "Update Node" : "Submit Request"}
                         </Button>
                     </div>
                 </form>

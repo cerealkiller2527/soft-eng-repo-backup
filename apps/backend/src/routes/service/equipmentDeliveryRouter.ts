@@ -1,11 +1,10 @@
-import { initTRPC } from "@trpc/server";
+import { t, protectedProcedure } from "../../trpc.ts";
 import { ServiceRequest, RequestType, Status, Priority } from "database";
 import PrismaClient from "../../bin/prisma-client.ts";
-export const t = initTRPC.create();
 import { z } from "zod";
 
 export const equipmentDeliveryRouter = t.router({
-  getEquipmentDeliveryRequests: t.procedure
+  getEquipmentDeliveryRequests: protectedProcedure
     .input(
       z.object({
         deadline: z.coerce.date().optional(),
@@ -14,10 +13,9 @@ export const equipmentDeliveryRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
-        employee: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const {
         deadline,
         equipment,
@@ -25,29 +23,48 @@ export const equipmentDeliveryRouter = t.router({
         additionalNotes,
         priority,
         status,
-        employee,
       } = input;
-      return PrismaClient.serviceRequest.findMany({
-        where: {
-          type: RequestType.EQUIPMENTDELIVERY,
-          ...(deadline && { equipmentDelivery: { deadline: deadline } }),
-          ...(equipment && {
-            equipmentDelivery: { equipments: { hasSome: equipment } },
-          }),
-          ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(status && { status: status as Status }),
-          ...(employee && { employee: employee }),
-        },
-        include: {
-          equipmentDelivery: true,
-          assignedTo: true,
-        },
-      });
+      if (ctx.role === "admin") {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.EQUIPMENTDELIVERY,
+            ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+            ...(equipment && {
+              equipmentDelivery: { equipments: { hasSome: equipment } },
+            }),
+            ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+          },
+          include: {
+            equipmentDelivery: true,
+            assignedTo: true,
+          },
+        });
+      } else {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.EQUIPMENTDELIVERY,
+            ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+            ...(equipment && {
+              equipmentDelivery: { equipments: { hasSome: equipment } },
+            }),
+            ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+            fromEmployee: ctx.username ?? undefined,
+          },
+          include: {
+            equipmentDelivery: true,
+            assignedTo: true,
+          },
+        });
+      }
     }),
 
-  addEquipmentDeliveryRequest: t.procedure
+  addEquipmentDeliveryRequest: protectedProcedure
     .input(
       z.object({
         deadline: z.coerce.date(),
@@ -55,25 +72,17 @@ export const equipmentDeliveryRouter = t.router({
         toWhere: z.string(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
-        employee: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
-      const {
-        deadline,
-        equipment,
-        toWhere,
-        additionalNotes,
-        priority,
-        employee,
-      } = input;
+    .mutation(async ({ input, ctx }) => {
+      const { deadline, equipment, toWhere, additionalNotes, priority } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.EQUIPMENTDELIVERY,
           dateCreated: new Date(Date.now()),
           status: Status.NOTASSIGNED,
           description: additionalNotes,
-          fromEmployee: employee,
+          fromEmployee: ctx.username || "",
           priority: priority as Priority,
         },
       });
@@ -91,7 +100,7 @@ export const equipmentDeliveryRouter = t.router({
       };
     }),
 
-  updateEquipmentDeliveryRequest: t.procedure
+  updateEquipmentDeliveryRequest: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -100,10 +109,10 @@ export const equipmentDeliveryRouter = t.router({
         toWhere: z.string().optional(),
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
-        employee: z.string().optional(),
+        employeeID: z.number().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         id,
         deadline,
@@ -111,27 +120,49 @@ export const equipmentDeliveryRouter = t.router({
         toWhere,
         additionalNotes,
         priority,
-        employee,
+        employeeID,
       } = input;
-      const serviceRequest = await PrismaClient.serviceRequest.update({
-        where: { id: id },
-        data: {
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(employee && { employee: employee }),
-          ...(deadline || equipment || toWhere
-            ? {
-                equipmentDelivery: {
-                  update: {
-                    ...(deadline && { deadline: deadline }),
-                    ...(equipment && { equipments: equipment }), // if we want to append, then use { push: equipment }
-                    ...(toWhere && { toWhere: toWhere }),
+      if (ctx.role === "admin") {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(employeeID && { assignedEmployeeID: employeeID }),
+            ...(deadline || equipment || toWhere
+              ? {
+                  equipmentDelivery: {
+                    update: {
+                      ...(deadline && { deadline: deadline }),
+                      ...(equipment && { equipments: equipment }), // if we want to append, then use { push: equipment }
+                      ...(toWhere && { toWhere: toWhere }),
+                    },
                   },
-                },
-              }
-            : {}),
-        },
-      });
+                }
+              : {}),
+          },
+        });
+      } else {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(deadline || equipment || toWhere
+              ? {
+                  equipmentDelivery: {
+                    update: {
+                      ...(deadline && { deadline: deadline }),
+                      ...(equipment && { equipments: equipment }), // if we want to append, then use { push: equipment }
+                      ...(toWhere && { toWhere: toWhere }),
+                    },
+                  },
+                }
+              : {}),
+          },
+        });
+      }
+
       console.log("Update equipment delivery request done.");
       return {
         message: "Update equipment delivery request done.",

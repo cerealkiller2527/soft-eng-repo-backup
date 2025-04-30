@@ -1,5 +1,4 @@
-import { initTRPC } from "@trpc/server";
-const t = initTRPC.create();
+import { t } from "../trpc.ts";
 
 import { languageRouter } from "./service/languageRouter.ts";
 import { equipmentDeliveryRouter } from "./service/equipmentDeliveryRouter.ts";

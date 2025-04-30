@@ -1,11 +1,10 @@
-import { initTRPC } from "@trpc/server";
+import { t, protectedProcedure } from "../../trpc.ts";
 import { ServiceRequest, RequestType, Status, Priority } from "database";
 import PrismaClient from "../../bin/prisma-client.ts";
-export const t = initTRPC.create();
 import { z } from "zod";
 
 export const audiovisualRouter = t.router({
-  getAudioVisualRequests: t.procedure
+  getAudioVisualRequests: protectedProcedure
     .input(
       z.object({
         location: z.string().optional(),
@@ -14,10 +13,9 @@ export const audiovisualRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
-        employee: z.string().optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const {
         location,
         deadline,
@@ -25,29 +23,48 @@ export const audiovisualRouter = t.router({
         additionalNotes,
         priority,
         status,
-        employee,
       } = input;
-      return PrismaClient.serviceRequest.findMany({
-        where: {
-          type: RequestType.AUDIOVISUAL,
-          ...(location && { audiovisual: { location: location } }),
-          ...(deadline && { audioVisual: { deadline: deadline } }),
-          ...(audiovisualType && {
-            audioVisual: { audiovisualType: audiovisualType },
-          }),
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(status && { status: status as Status }),
-          ...(employee && { employee: employee }),
-        },
-        include: {
-          audioVisual: true,
-          assignedTo: true,
-        },
-      });
+      if (ctx.role === "admin") {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.AUDIOVISUAL,
+            ...(location && { audiovisual: { location: location } }),
+            ...(deadline && { audioVisual: { deadline: deadline } }),
+            ...(audiovisualType && {
+              audioVisual: { audiovisualType: audiovisualType },
+            }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+          },
+          include: {
+            audioVisual: true,
+            assignedTo: true,
+          },
+        });
+      } else {
+        return PrismaClient.serviceRequest.findMany({
+          where: {
+            type: RequestType.AUDIOVISUAL,
+            ...(location && { audiovisual: { location: location } }),
+            ...(deadline && { audioVisual: { deadline: deadline } }),
+            ...(audiovisualType && {
+              audioVisual: { audiovisualType: audiovisualType },
+            }),
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(status && { status: status as Status }),
+            fromEmployee: ctx.username ?? undefined,
+          },
+          include: {
+            audioVisual: true,
+            assignedTo: true,
+          },
+        });
+      }
     }),
 
-  addAudioVisualRequest: t.procedure
+  addAudioVisualRequest: protectedProcedure
     .input(
       z.object({
         location: z.string(),
@@ -55,25 +72,18 @@ export const audiovisualRouter = t.router({
         audiovisualType: z.string(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
-        employee: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
-      const {
-        location,
-        deadline,
-        audiovisualType,
-        additionalNotes,
-        priority,
-        employee,
-      } = input;
+    .mutation(async ({ input, ctx }) => {
+      const { location, deadline, audiovisualType, additionalNotes, priority } =
+        input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.AUDIOVISUAL,
           dateCreated: new Date(Date.now()),
           status: Status.NOTASSIGNED,
           description: additionalNotes,
-          fromEmployee: employee,
+          fromEmployee: ctx.username || "",
           priority: priority as Priority,
         },
       });
@@ -91,7 +101,7 @@ export const audiovisualRouter = t.router({
       };
     }),
 
-  updateAudioVisualRequest: t.procedure
+  updateAudioVisualRequest: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -100,10 +110,10 @@ export const audiovisualRouter = t.router({
         audiovisualType: z.string().optional(),
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
-        employee: z.string().optional(),
+        employeeID: z.number().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const {
         id,
         location,
@@ -111,29 +121,53 @@ export const audiovisualRouter = t.router({
         audiovisualType,
         additionalNotes,
         priority,
-        employee,
+        employeeID,
       } = input;
-      const serviceRequest = await PrismaClient.serviceRequest.update({
-        where: { id: id },
-        data: {
-          ...(additionalNotes && { additionalNotes: additionalNotes }),
-          ...(priority && { priority: priority as Priority }),
-          ...(employee && { employee: employee }),
-          ...(location || deadline || audiovisualType
-            ? {
-                audioVisual: {
-                  update: {
-                    ...(location && { location: location }),
-                    ...(deadline && { deadline: deadline }),
-                    ...(audiovisualType && {
-                      audioVisualType: audiovisualType,
-                    }),
+      if (ctx.role === "admin") {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(employeeID && { assignedEmployeeID: employeeID }),
+            ...(location || deadline || audiovisualType
+              ? {
+                  audioVisual: {
+                    update: {
+                      ...(location && { location: location }),
+                      ...(deadline && { deadline: deadline }),
+                      ...(audiovisualType && {
+                        audioVisualType: audiovisualType,
+                      }),
+                    },
                   },
-                },
-              }
-            : {}),
-        },
-      });
+                }
+              : {}),
+          },
+        });
+      } else {
+        const serviceRequest = await PrismaClient.serviceRequest.update({
+          where: { id: id },
+          data: {
+            ...(additionalNotes && { additionalNotes: additionalNotes }),
+            ...(priority && { priority: priority as Priority }),
+            ...(location || deadline || audiovisualType
+              ? {
+                  audioVisual: {
+                    update: {
+                      ...(location && { location: location }),
+                      ...(deadline && { deadline: deadline }),
+                      ...(audiovisualType && {
+                        audioVisualType: audiovisualType,
+                      }),
+                    },
+                  },
+                }
+              : {}),
+          },
+        });
+      }
+
       console.log("Update audiovisual request done.");
       return {
         message: "Update audiovisual request done.",
