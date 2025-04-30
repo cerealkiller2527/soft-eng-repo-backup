@@ -49,6 +49,7 @@ enum nodeType {
   Elevator
   Location
   Help_Desk
+  Parking
 }
 
 model User {
@@ -139,6 +140,7 @@ model Node {
   description String
   lat         Float
   long        Float
+  outside     Boolean
   fromEdge    Edge[]     @relation("fromNode")
   toEdge      Edge[]     @relation("toNode")
   Location    Location[]

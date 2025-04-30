@@ -17,6 +17,7 @@ export const nodeCSVRow = z.object({
     long: z.number(),
     type: z.string(),
     floor: z.number().int(),
+    outside: z.boolean(),
     building: z.string()
 });
 

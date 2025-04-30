@@ -19,8 +19,9 @@ import {
     AlertTitle
 } from "@/components/ui/alert";
 import * as z from "zod";
+import {NodeTypeZod} from "common/src/ZodSchemas.ts";
 
-const typeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"]);
+const typeEnum = NodeTypeZod
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -31,6 +32,7 @@ type Node = {
     description: string;
     suite: string;
     type: string;
+    outside: boolean;
 };
 
 type Edge = {
@@ -74,6 +76,7 @@ const MapEditor = () => {
                     type: node.type,
                     description: node.description,
                     suite: node.suite,
+                    outside: node.outside
                 })),
                 edges: edges.map(edge => ({
                     fromNodeId: edge.fromNodeId,
@@ -122,10 +125,16 @@ const MapEditor = () => {
         setEdges(prev => prev.filter(edge => edge.id !== edgeId));
     };
 
-    const handleFormSubmit = (values: { suite: string, type: string, description: string }) => {
+    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean }) => {
         if (selectedNode) {
             setNodes(prev => prev.map(node =>
-                node.id === selectedNode.id ? { ...node, ...values } : node
+                node.id === selectedNode.id ? {
+                    ...node,
+                    suite: values.suite,
+                    type: values.type,
+                    description: values.description,
+                    outside: values.isOutside
+                } : node
             ));
             setSelectedNode(null);
             edgeStartRef.current = null;
@@ -180,6 +189,7 @@ const MapEditor = () => {
             setNodes(fetchFloorMap.data.nodes.map(node => ({
                 ...node,
                 type: typeEnum.parse(node.type),
+                outside: node.outside,
             })));
             setEdges(fetchFloorMap.data.edges);
             console.log(form?.floor);
@@ -336,6 +346,7 @@ const MapEditor = () => {
                     type: "Intermediary",
                     description: "",
                     suite: "",
+                    outside: false
                 }]);
             });
         }
@@ -369,6 +380,7 @@ const MapEditor = () => {
                     type: "Intermediary",
                     description: "",
                     suite: "",
+                    outside: false
                 }]);
             });
 
@@ -421,7 +433,8 @@ const MapEditor = () => {
                         initialValues={edgeStartRef.current ? {
                             suite: edgeStartRef.current.suite,
                             type: edgeStartRef.current.type,
-                            description: edgeStartRef.current.description
+                            description: edgeStartRef.current.description,
+                            isOutside: edgeStartRef.current.outside,
                         } : undefined}
                     />
                 )}

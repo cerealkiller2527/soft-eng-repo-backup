@@ -1,16 +1,16 @@
-description,lat,long,type,floor,building
-1top entrance outside,42.32623497,-71.14950958,Entrance,1,Chestnut
-1top entrance,42.32620375,-71.14950766,Intermediary,1,Chestnut
-1c,42.32613779,-71.14949999,Intermediary,1,Chestnut
-1multi specialty clinic,42.32615339,-71.14959977,Location,1,Chestnut
-1b,42.32597322,-71.14949615,Intermediary,1,Chestnut
-1a,42.32597889,-71.14935895,Intermediary,1,Chestnut
-1d,42.32576254,-71.14935223,Intermediary,1,Chestnut
-1e,42.32574906,-71.14954028,Intermediary,1,Chestnut
-Radiology,42.32577602,-71.1495422,Location,1,Chestnut
-1right entrance,42.32598457,-71.14925916,Intermediary,1,Chestnut
-1right entrance outside,42.3259874,-71.14921599,Location,1,Chestnut
-1drop off,42.32629506,-71.14949802,Intermediary,1,Chestnut
-1lot1,42.32629404,-71.1495987,Intermediary,1,Chestnut
-1lot2,42.32638877,-71.14960193,Intermediary,1,Chestnut
-1parking,42.3263633,-71.14976452,Intermediary,1,Chestnut
+description,lat,long,type,floor,building,outside
+1top entrance outside,42.32623497,-71.14950958,Entrance,1,Chestnut,TRUE
+1top entrance,42.32620375,-71.14950766,Intermediary,1,Chestnut,FALSE
+1c,42.32613779,-71.14949999,Intermediary,1,Chestnut,FALSE
+1multi specialty clinic,42.32615339,-71.14959977,Location,1,Chestnut,FALSE
+1b,42.32597322,-71.14949615,Intermediary,1,Chestnut,FALSE
+1a,42.32597889,-71.14935895,Intermediary,1,Chestnut,FALSE
+1d,42.32576254,-71.14935223,Intermediary,1,Chestnut,FALSE
+1e,42.32574906,-71.14954028,Intermediary,1,Chestnut,FALSE
+Radiology,42.32577602,-71.1495422,Location,1,Chestnut,FALSE
+1right entrance,42.32598457,-71.14925916,Intermediary,1,Chestnut,FALSE
+1right entrance outside,42.3259874,-71.14921599,Location,1,Chestnut,TRUE
+1drop off,42.32629506,-71.14949802,Intermediary,1,Chestnut,TRUE
+1lot1,42.32629404,-71.1495987,Intermediary,1,Chestnut,TRUE
+1lot2,42.32638877,-71.14960193,Intermediary,1,Chestnut,TRUE
+1parking,42.3263633,-71.14976452,Parking,1,Chestnut,TRUE

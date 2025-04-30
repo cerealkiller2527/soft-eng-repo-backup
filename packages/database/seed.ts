@@ -2,7 +2,6 @@ import {nodeType, Priority, Prisma, PrismaClient, RequestType, Status} from './.
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
-import axios from 'axios';
 import {
     DepartmentCreateInputSchema,
     BuildingCreateInputSchema,
@@ -15,18 +14,6 @@ import {seedEdges, seedNodes, seedEmployeesAndReturn} from "./src/seedHelperFunc
 
 const prisma = new PrismaClient();
 
-const CLERK_API_KEY = process.env.CLERK_SECRET_KEY!;
-const CLERK_USERS_ENDPOINT = 'https://api.clerk.dev/v1/users';
-
-async function fetchClerkUsers() {
-    const res = await axios.get(CLERK_USERS_ENDPOINT, {
-        headers: {
-            Authorization: `Bearer ${CLERK_API_KEY}`,
-        },
-    });
-
-    return res.data;
-}
 
 async function main() {
     // drop all data from database
@@ -44,9 +31,9 @@ async function main() {
     await prisma.node.deleteMany();
     await prisma.location.deleteMany();
     await prisma.building.deleteMany();
-    await prisma.user.deleteMany();
 
     console.log('Existing data purged.');
+
 
     // seed buildings
 
@@ -179,17 +166,6 @@ async function main() {
     const seededPat22Flr1Edges = await seedEdges("./seedFiles/pat22floor1/pat22floor1_edges.csv")
     const seededPat22Flr3Edges = await seedEdges("./seedFiles/pat22floor3/pat22floor3_edges.csv")
 
-    //seed the user table by getting info from clerk
-    const clerkUsers = await fetchClerkUsers();
-    clerkUsers.map(async (user: any) => {
-        await prisma.user.create({
-            data: {
-                email: user.email_addresses?.[0]?.email_address || '',
-                username: user.username,
-                role: user.public_metadata?.role || ''
-            }
-        })
-    })
     // seed employees
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
 
@@ -277,5 +253,4 @@ main()
     })
     .finally(async () => {
         await prisma.$disconnect();
-        process.exit(0);
     });
