@@ -35,16 +35,8 @@ export const pathfindingRouter = t.router({
     )
     .mutation(async ({ input }) => {
       try {
-        const searchAlgorithm = await PrismaClient.searchAlgorithm.findFirst();
-        if (!searchAlgorithm) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "SearchAlgorithm not found in the database.",
-          });
-        }
-
         const updatedAlgorithm = await PrismaClient.searchAlgorithm.update({
-          where: { id: searchAlgorithm.id },
+          where: { id: 1 },   // or { id: searchAlgorithm.id } if it's dynamically auto-incremented, but for now it's defaulted to id:1
           data: {
             current: input.algorithm,
           },
