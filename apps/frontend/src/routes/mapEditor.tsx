@@ -47,6 +47,7 @@ type Department = {
     name: string;
 };
 
+
 const MapEditor = () => {
     const trpc = useTRPC();
     const mapRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +59,7 @@ const MapEditor = () => {
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
     const markersRef = useRef<google.maps.Marker[]>([]);
-    const [building, setBuilding] = useState<number>(1);
+    const [building, setBuilding] = useState<number>();
     const polylinesRef = useRef<google.maps.Polyline[]>([]);
     const [form, setForm] = useState<FormData | null>(null);
     const countRef = useRef(-1);
@@ -152,6 +153,8 @@ const MapEditor = () => {
                 } : node
             ));
             setSelectedNode(null);
+
+
             edgeStartRef.current = null;
             
             // Close info window after edit
@@ -252,6 +255,8 @@ const MapEditor = () => {
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
+
+
         // Create new markers
         nodes.forEach(node => {
             const pinElement = document.createElement("div");
@@ -336,6 +341,7 @@ const MapEditor = () => {
 
         loadGoogleLibraries();
     }, []);
+
 
     useEffect(() => {
         if (!mapRef.current || !mapInstance.current) return;
@@ -501,7 +507,23 @@ const MapEditor = () => {
                     <AlertDialogContent className="sm:max-w-[425px]">
                         <MapEditorSelectForm onSubmit={(form, ) => {
                             setForm(form);
+
+
+                            // BOOF FIX
+                            const bd = form.building;
+                            let bdId = 1;
+
+                            if(bd == "Faulkner Hospital") {
+                                bdId = 4
+                            } else if(bd == "20 Patriot Place") {
+                                bdId = 2;
+                            } else if (bd == "22 Patriot Place") {
+                                bdId = 3;
+                            } else if (bd == "Main Campus") {
+                                bdId = 5;
+                            }
                             setIsDialogOpen(false);
+                            setBuilding(bdId)
                         }} />
                         <Button
                             className="absolute right-4 top-4 rounded-sm bg-white hover:bg-gray-100 text-red-500"
