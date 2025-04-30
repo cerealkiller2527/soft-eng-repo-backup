@@ -76,7 +76,14 @@ export const equipmentDeliveryRouter = t.router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { deadline, equipment, toWhere, additionalNotes, priority, employeeID } = input;
+      const {
+        deadline,
+        equipment,
+        toWhere,
+        additionalNotes,
+        priority,
+        employeeID,
+      } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.EQUIPMENTDELIVERY,

@@ -103,9 +103,8 @@ const importWarning = "Warning: Importing a new CSV will delete all existing dat
 
 // Define a base style for the main action buttons
 const actionButtonStyle = `
-    bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-    hover:text-[#012D5A] hover:bg-white
-    hover:ring-2 hover:ring-offset-1 hover:ring-offset-white hover:ring-[#F6BD38]
+    bg-primary text-white font-medium py-2 px-4 rounded-md
+    hover:text-white hover:bg-chart-4
 `;
 
 export default function CSV() {
@@ -356,7 +355,7 @@ export default function CSV() {
     const renderTable = () => (
         <div className="relative overflow-auto max-h-[500px] border rounded-lg pb-4">
             <Table className="min-w-full">
-                <TableHeader className="sticky top-0 bg-[#012D5A] z-10">
+                <TableHeader className="sticky top-0 bg-primary  z-10">
                     <TableRow>
                         {visibleColumns.map(column => (
                             <TableHead 
@@ -390,7 +389,7 @@ export default function CSV() {
         <Layout>
             <div className="min-h-screen flex flex-col bg-[#f2f2f2]">
                 <div className="flex-grow container mx-auto px-4 pt-24 pb-16">
-                    <h1 className="text-3xl font-bold text-[#0057B8] mb-8">
+                    <h1 className="text-3xl font-bold flex justify-center text-primary mb-8">
                         Department CSV Import/Export
                     </h1>
 

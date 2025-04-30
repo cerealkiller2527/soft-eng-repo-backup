@@ -13,6 +13,7 @@ import MapEditor from "./routes/mapEditor.tsx"
 import TestDirectory from "./routes/test.tsx";
 import DepartmentPage from "./routes/department.tsx";
 import Credits from "./routes/credits.tsx";
+import About from "./routes/about.tsx"
 
 export const routes = [
     {
@@ -90,6 +91,12 @@ export const routes = [
         errorElement: <div/>,
         element: <Credits/>,
     },
+
+    {
+        path: '/about',
+        errorElement: <div />,
+        element: <About/>
+    }
 ];
 
 export const router = createBrowserRouter(routes);

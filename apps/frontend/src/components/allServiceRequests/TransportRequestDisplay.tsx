@@ -44,6 +44,11 @@ export default function TransportRequestDisplay() {
     const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
     const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
     const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+    const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
+    function getEmployeeName(id: number): string {
+        return listofEmployees.data?.find(emp => emp.id === id)?.name ?? "Unknown";
+    }
 
     const combinedData = [
         ...(requestsTransport.data ?? []),
@@ -75,17 +80,26 @@ export default function TransportRequestDisplay() {
 
     return (
 
-        <div className="flex flex-1 flex-col">
-            <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-bold text-primary">Service Request Dashboard</h1>
-                <Link to="/serviceRequest">
-                    <Button variant="outline" className="border-primary text-primary">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Services
-                    </Button>
-                </Link>
+        <div className="flex flex-1 flex-col mx-10">
+            <div className="">
+                <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 text-center rounded-lg ">
+                    <div className="max-w-6xl mx-auto flex flex-col gap-4">
+                        <h1 className=" text-white text-4xl font-bold">
+                            Service Request Dashboard
+                        </h1>
+                       <p>Manage and view submitted service requests.</p>
+                        <Link to="/serviceRequest">
+                            <Button variant="outline" className="border-primary text-primary">
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Back to Services
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+
+
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mx-20">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-8 ">
 
                 <Card className="bg-white shadow">
                     <CardHeader className="pb-2">
@@ -127,22 +141,18 @@ export default function TransportRequestDisplay() {
                 <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
                     <div className="@xl/main:grid-cols-1 grid grid-cols-1 gap-4 px-4 lg:px-6">
                         <Card className="@container/card">
-                            <CardHeader className="relative">
-                                <CardDescription>Manage and view submitted service requests.</CardDescription>
-                                <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                                    Service Request Dashboard
+                            <CardHeader className=" mt-2">
+
+                                <CardTitle className="@[250px]/card:text-3xl text-2xl text-primary font-semibold tabular-nums">
+                                    Request Dashboard
                                 </CardTitle>
-                                <div className="absolute right-4 top-4">
-                                    <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
-                                        <TrendingUpIcon className="size-3" />
-                                    </Badge>
-                                </div>
+
                             </CardHeader>
 
                             <CardFooter className="flex-col items-start gap-4 text-sm w-full">
                                 <div className="w-full flex justify-end">
                                     <Input
-                                        className="w-40 hover:border-[#F6BD38] border-2 border-[#F6BD38] hover:border-4"
+                                        className="w-40 hover:border-primary border-2 border-primary hover:border-4"
                                         value={filter}
                                         onChange={(e) => setFilter(e.target.value)}
                                         placeholder="Filter"
@@ -155,7 +165,8 @@ export default function TransportRequestDisplay() {
                                         <TableHeader>
                                             <TableRow className="bg-[#012D5A] hover:bg-[#012D5A]">
                                                 <TableHead className="text-white">Request Type</TableHead>
-                                                <TableHead className="text-white">Employee</TableHead>
+                                                <TableHead className="text-white">Requested By</TableHead>
+                                                <TableHead className="text-white">Assigned To</TableHead>
                                                 <TableHead className="text-white">Priority</TableHead>
                                                 <TableHead className="text-white">Additional Notes</TableHead>
                                                 <TableHead className="text-white">Status</TableHead>
@@ -171,19 +182,20 @@ export default function TransportRequestDisplay() {
                                                     >
                                                         <TableCell>{req.type}</TableCell>
                                                         <TableCell>{req.fromEmployee}</TableCell>
-                                                        <TableCell>{req.priority}</TableCell>
+                                                        <TableCell>{getEmployeeName(Number(req.assignedEmployeeID))}</TableCell>                                                        <TableCell>{req.priority}</TableCell>
                                                         <TableCell>{req.description}</TableCell>
                                                         <TableCell>{req.status}</TableCell>
                                                     </TableRow>
 
                                                     {expandedRowId === req.id && (
                                                         <TableRow className="bg-[#f9f9f9]">
-                                                            <TableCell colSpan={5}>
+                                                            <TableCell colSpan={6}>
                                                                 <div className="p-6 bg-white border border-gray-200 rounded-md shadow-inner text-sm space-y-4">
-                                                                    <h3 className="text-lg font-semibold text-[#012D5A]">Request Details</h3>
+                                                                    <h3 className="text-lg font-semibold text-primary">Request Details</h3>
                                                                     <hr />
                                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-800">
-                                                                        <p><span className="font-medium text-black">Employee:</span> {req.fromEmployee}</p>
+                                                                        <p><span className="font-medium text-primary">Requested By:</span> {req.fromEmployee}</p>
+                                                                        <p><span className="font-medium text-black">Assigned To: </span>{getEmployeeName(Number(req.assignedEmployeeID))}</p>
                                                                         <p><span className="font-medium text-black">Priority:</span> {req.priority}</p>
                                                                         <p><span className="font-medium text-black">Status:</span> {req.status}</p>
                                                                         <p><span className="font-medium text-black">Notes:</span> {req.description}</p>
@@ -191,6 +203,7 @@ export default function TransportRequestDisplay() {
                                                                         {req.type === "EXTERNALTRANSPORTATION" && req.externalTransportation && (
                                                                             <>
                                                                                 <p><span className="font-medium text-black">Transport Type:</span> {req.externalTransportation.transportType}</p>
+                                                                                <p><span className="font-medium text-black">Patient Name:</span> {req.externalTransportation.patientName}</p>
                                                                                 <p><span className="font-medium text-black">From:</span> {req.externalTransportation.fromWhere}</p>
                                                                                 <p><span className="font-medium text-black">To:</span> {req.externalTransportation.toWhere}</p>
                                                                                 <p><span className="font-medium text-black">Pickup Time:</span> {new Date(req.externalTransportation.pickupTime).toLocaleString()}</p>
