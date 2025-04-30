@@ -33,12 +33,18 @@ type Node = {
     suite: string;
     type: string;
     outside: boolean;
+    departmentId?: number;
 };
 
 type Edge = {
     id: number;
     fromNodeId: number;
     toNodeId: number;
+};
+
+type Department = {
+    id: number;
+    name: string;
 };
 
 const MapEditor = () => {
@@ -66,6 +72,13 @@ const MapEditor = () => {
 
     const handleSaveMap = async () => {
         try {
+            // Debug: Log nodes with department information
+            const locationNodes = nodes.filter(node => node.type === "Location");
+            console.log(`Found ${locationNodes.length} Location type nodes`);
+            locationNodes.forEach(node => {
+                console.log(`Location node ID: ${node.id}, Suite: ${node.suite}, Department ID: ${node.departmentId || 'none'}`);
+            });
+            
             const result = await setFloorMap.mutateAsync({
                 buildingId: Number(building),
                 floor: imageIndex + 1,
@@ -76,7 +89,8 @@ const MapEditor = () => {
                     type: node.type,
                     description: node.description,
                     suite: node.suite,
-                    outside: node.outside
+                    outside: node.outside,
+                    departmentId: node.type === "Location" ? node.departmentId : undefined
                 })),
                 edges: edges.map(edge => ({
                     fromNodeId: edge.fromNodeId,
@@ -125,7 +139,7 @@ const MapEditor = () => {
         setEdges(prev => prev.filter(edge => edge.id !== edgeId));
     };
 
-    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean }) => {
+    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean, departmentId?: number }) => {
         if (selectedNode) {
             setNodes(prev => prev.map(node =>
                 node.id === selectedNode.id ? {
@@ -133,20 +147,57 @@ const MapEditor = () => {
                     suite: values.suite,
                     type: values.type,
                     description: values.description,
-                    outside: values.isOutside
+                    outside: values.isOutside,
+                    departmentId: values.type === "Location" ? values.departmentId : undefined
                 } : node
             ));
             setSelectedNode(null);
             edgeStartRef.current = null;
+            
+            // Close info window after edit
+            if (infoWindow) {
+                infoWindow.close();
+            }
         }
     };
-
-
 
     const handleMarkerClick = (clickedNode: Node) => {
         if (!edgeStartRef.current) {
             edgeStartRef.current = clickedNode;
             setSelectedNode(clickedNode);
+            
+            // Show info window
+            if (infoWindow && mapInstance.current) {
+                const marker = markersRef.current.find(m => {
+                    const pos = m.position;
+                    return pos && pos.lat === clickedNode.x && pos.lng === clickedNode.y;
+                });
+                
+                if (marker) {
+                    const content = `
+                        <div class="p-2">
+                            <p><strong>Type:</strong> ${clickedNode.type}</p>
+                            <p><strong>Suite/Room:</strong> ${clickedNode.suite || 'N/A'}</p>
+                            ${clickedNode.type === 'Location' && clickedNode.departmentId ? 
+                                `<p><strong>Department:</strong> ${getDepartmentName(clickedNode.departmentId)}</p>` : ''}
+                            <p><strong>Description:</strong> ${clickedNode.description || 'N/A'}</p>
+                            <p><strong>Outdoor Location:</strong> ${clickedNode.outside ? 'Yes' : 'No'}</p>
+                            <p><strong>ID:</strong> ${clickedNode.id}</p>
+                            <div class="mt-2">
+                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm" 
+                                    onclick="document.dispatchEvent(new CustomEvent('editNode', { detail: ${JSON.stringify(clickedNode)}}))">
+                                    Edit Node
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    infoWindow.setContent(content);
+                    infoWindow.open({
+                        anchor: marker,
+                        map: mapInstance.current,
+                    });
+                }
+            }
         } else if (edgeStartRef.current.id !== clickedNode.id) {
             setEdges(prev => [...prev, {
                 id: countRef.current--,
@@ -156,7 +207,6 @@ const MapEditor = () => {
             edgeStartRef.current = clickedNode;
             setSelectedNode(clickedNode);
         }
-
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -192,18 +242,17 @@ const MapEditor = () => {
                 outside: node.outside,
             })));
             setEdges(fetchFloorMap.data.edges);
-            console.log(form?.floor);
         }
-
     }, [fetchFloorMap.data]);
 
     useEffect(() => {
         if (!form || !AdvancedMarker) return;
 
-
+        // Clear existing markers
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
 
+        // Create new markers
         nodes.forEach(node => {
             const pinElement = document.createElement("div");
             const img = document.createElement("img");
@@ -214,7 +263,6 @@ const MapEditor = () => {
             img.style.objectFit = "contain";
             pinElement.appendChild(img);
 
-            // Create marker
             const marker = new AdvancedMarker({
                 position: { lat: node.x, lng: node.y },
                 map: mapInstance.current,
@@ -222,7 +270,6 @@ const MapEditor = () => {
                 gmpDraggable: true,
             });
 
-            // Add event listeners
             marker.addListener('dragend', () => {
                 const newPosition = marker.position;
                 if (newPosition) {
@@ -236,27 +283,10 @@ const MapEditor = () => {
                 }
             });
 
-            marker.addListener('click', () => {
-                if (infoWindow) {
-                    infoWindow.setContent(`
-                    <div>
-                        <strong>Department: ${node.suite}</strong>
-                        <p>Type: ${node.type}</p>
-                        <p>ID: ${node.id}</p>
-                    </div>
-                `);
-                    infoWindow.open({
-                        anchor: marker,
-                        map: mapInstance.current,
-                    });
-                }
-                handleMarkerClick(node);
-            });
-
+            marker.addListener('click', () => handleMarkerClick(node));
             markersRef.current.push(marker);
         });
 
-        // Cleanup function
         return () => {
             markersRef.current.forEach(marker => {
                 if (marker.map) marker.map = null;
@@ -310,17 +340,17 @@ const MapEditor = () => {
     useEffect(() => {
         if (!mapRef.current || !mapInstance.current) return;
         setImageIndex(Number(form?.floor ?? 1) - 1)
-        if (form?.building === "20 Patriot Place") {
-            mapInstance.current.setCenter({ lat: 42.09280, lng: -71.266 });
-        } else if (form?.building === "22 Patriot Place") {
-            mapInstance.current.setCenter({ lat: 42.09262, lng: -71.267 });
-        } else if (form?.building === "Faulkner Hospital") {
-            mapInstance.current.setCenter({ lat: 42.30163258195755, lng: -71.12812875693645 });
-        } else if (form?.building === "Main Campus") {
-            mapInstance.current.setCenter({ lat: 42.33510876646788,lng: -71.10665415417226 });
-        } else {
-            mapInstance.current.setCenter({ lat: 42.3262, lng: -71.1497 });
-        }
+        
+        // Update map center based on building
+        const buildingCenters = {
+            "20 Patriot Place": { lat: 42.09280, lng: -71.266 },
+            "22 Patriot Place": { lat: 42.09262, lng: -71.267 },
+            "Faulkner Hospital": { lat: 42.30163258195755, lng: -71.12812875693645 },
+            "Main Campus": { lat: 42.33510876646788, lng: -71.10665415417226 },
+        };
+        
+        const center = buildingCenters[form?.building as keyof typeof buildingCenters] || { lat: 42.3262, lng: -71.1497 };
+        mapInstance.current.setCenter(center);
     }, [form]);
 
     useEffect(() => {
@@ -395,6 +425,20 @@ const MapEditor = () => {
         }
     }, [hasInitialized, form]);
 
+    useEffect(() => {
+        // Add event listener for edit node button
+        const handleEditNode = (event: CustomEvent) => {
+            const node = event.detail;
+            setSelectedNode(node);
+            edgeStartRef.current = node;
+        };
+
+        document.addEventListener('editNode', handleEditNode as EventListener);
+        return () => {
+            document.removeEventListener('editNode', handleEditNode as EventListener);
+        };
+    }, []);
+
     return (
         <div id="floorplan" className="relative w-full h-screen overflow-hidden">
             {alert.visible && (
@@ -435,7 +479,10 @@ const MapEditor = () => {
                             type: edgeStartRef.current.type,
                             description: edgeStartRef.current.description,
                             isOutside: edgeStartRef.current.outside,
+                            departmentId: edgeStartRef.current.departmentId,
                         } : undefined}
+                        buildingId={building}
+                        floor={Number(form?.floor ?? 1)}
                     />
                 )}
             </div>
@@ -480,6 +527,12 @@ function getImageFromNodeType(type: string): string {
         Parking: "/map-pins/ParkingIconNOBG.png",
     };
     return images[type] || "/map-pins/BasicLocationNOBG.png";
+}
+
+function getDepartmentName(departmentId: number): string {
+    const departments = fetchFloorMap.data?.departments || [];
+    const department = departments.find(dept => dept.id === departmentId);
+    return department ? department.name : 'Unknown';
 }
 
 export default MapEditor;

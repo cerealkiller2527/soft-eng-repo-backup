@@ -6,86 +6,90 @@ import prismaClient from "../bin/prisma-client";
 import { TRPCError } from "@trpc/server";
 import { NodeTypeZod } from "common/src/ZodSchemas.ts";
 
-// create zod objects for node and edge
-const node = z.object({
-  id: z.number(),
-});
-
+const node = z.object({ id: z.number() });
 const typeEnum = NodeTypeZod;
 
 export const mapEditorRouter = t.router({
-  // Get all nodes and edges for a floor map in a single call
   getFloorMap: adminProcedure
-    .input(
-      z.object({
-        buildingId: z.number(),
-        floor: z.number(),
-      }),
-    )
+    .input(z.object({ buildingId: z.number(), floor: z.number() }))
     .query(async ({ input }) => {
-      try {
-        const locations = await getLocations(input);
+      const locations = await getLocations(input);
+      const validLocations = locations.filter((loc) => loc.node !== null);
+      const nodes = validLocations.map((loc) => loc.node!);
+      const nodeIds = nodes.map((n) => n.id);
 
-        const validLocations = locations.filter(
-          (location) => location.node !== null,
-        );
+      const edges = await PrismaClient.edge.findMany({
+        where: { fromNodeId: { in: nodeIds }, toNodeId: { in: nodeIds } },
+        orderBy: { id: "asc" },
+      });
 
-        const nodes = validLocations.map((location) => location.node!);
-        const nodeIds = nodes.map((node) => node.id);
+      // Get all departments to provide department data
+      const departments = await PrismaClient.department.findMany({
+        select: { id: true, name: true },
+      });
 
-        const edges = await PrismaClient.edge.findMany({
-          where: {
-            fromNodeId: { in: nodeIds },
-            toNodeId: { in: nodeIds },
-          },
-          orderBy: {
-            id: "asc",
-          },
-        });
-
-        const formattedNodes = validLocations.map((location) => {
-          const node = location.node!;
-          return {
-            id: node.id,
-            x: node.lat,
-            y: node.long,
-            outside: node.outside,
-            description: node.description,
-            type: node.type,
-            suite: location.suite,
-          };
-        });
-
-        const formattedEdges = edges.map((edge) => {
-          const fromNode = nodes.find((n) => n.id === edge.fromNodeId);
-          const toNode = nodes.find((n) => n.id === edge.toNodeId);
-
-          return {
-            id: edge.id,
-            fromNodeId: edge.fromNodeId,
-            toNodeId: edge.toNodeId,
-            fromX: fromNode?.lat || 0,
-            fromY: fromNode?.long || 0,
-            toX: toNode?.lat || 0,
-            toY: toNode?.long || 0,
-          };
-        });
-
-        console.log(input.floor);
-
+      const formattedNodes = validLocations.map((loc) => {
+        const node = loc.node!;
         return {
-          nodes: formattedNodes,
-          edges: formattedEdges,
-          buildingId: input.buildingId,
-          floor: input.floor,
+          id: node.id,
+          x: node.lat,
+          y: node.long,
+          outside: node.outside,
+          description: node.description,
+          type: node.type,
+          suite: loc.suite,
+          departmentId: loc.departmentId ?? undefined,
         };
-      } catch (error) {
-        console.error("Error fetching floor map:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch floor map",
-        });
-      }
+      });
+
+      const formattedEdges = edges.map((edge) => {
+        const fromNode = nodes.find((n) => n.id === edge.fromNodeId);
+        const toNode = nodes.find((n) => n.id === edge.toNodeId);
+        return {
+          id: edge.id,
+          fromNodeId: edge.fromNodeId,
+          toNodeId: edge.toNodeId,
+          fromX: fromNode?.lat || 0,
+          fromY: fromNode?.long || 0,
+          toX: toNode?.lat || 0,
+          toY: toNode?.long || 0,
+        };
+      });
+
+      return {
+        nodes: formattedNodes,
+        edges: formattedEdges,
+        departments: departments,
+        buildingId: input.buildingId,
+        floor: input.floor,
+      };
+    }),
+
+  getDepartmentsByBuildingAndFloor: adminProcedure
+    .input(z.object({ buildingId: z.number(), floor: z.number() }))
+    .query(async ({ input }) => {
+      // Get departments that have locations on this floor
+      const departments = await PrismaClient.department.findMany({
+        where: {
+          Location: {
+            some: {
+              buildingId: input.buildingId,
+              floor: input.floor,
+            },
+          },
+        },
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      });
+
+      console.log(
+        `Found ${departments.length} departments for building ID: ${input.buildingId}, floor: ${input.floor}`,
+      );
+      departments.forEach((dept) =>
+        console.log(`Department: ${dept.name} (ID: ${dept.id})`),
+      );
+
+      return departments;
     }),
 
   sendFloorMap: adminProcedure
@@ -102,6 +106,7 @@ export const mapEditorRouter = t.router({
             type: z.string(),
             suite: z.string(),
             outside: z.boolean(),
+            departmentId: z.number().optional(),
           }),
         ),
         edges: z.array(
@@ -114,176 +119,137 @@ export const mapEditorRouter = t.router({
     )
     .mutation(async ({ input }) => {
       const { buildingId, floor, nodes, edges } = input;
-      console.log(floor);
-      try {
-        // get locations of nodes to delete
+      const location = { buildingId, floor };
 
-        // get nodes to delete from locations
-        const location = { buildingId: input.buildingId, floor: input.floor };
-        const nodesSecond = await getNodesFromLocation(location);
-        const nodeIds = nodesSecond.map((node) => node.id);
-        console.log(nodeIds);
+      const nodesToDelete = await getNodesFromLocation(location);
+      const nodeIds = nodesToDelete.map((n) => n.id);
 
-        await prismaClient.edge.deleteMany({
-          where: {
-            OR: [
-              { fromNodeId: { in: nodeIds } },
-              { toNodeId: { in: nodeIds } },
-            ],
-          },
-        });
-        // delete nodes
-        const deletedNodesCount = await prismaClient.node.deleteMany({
-          where: {
-            id: {
-              in: nodeIds,
+      await prismaClient.edge.deleteMany({
+        where: {
+          OR: [{ fromNodeId: { in: nodeIds } }, { toNodeId: { in: nodeIds } }],
+        },
+      });
+
+      await prismaClient.location.deleteMany({
+        where: {
+          buildingId,
+          floor,
+          nodeID: { in: nodeIds },
+        },
+      });
+
+      await prismaClient.node.deleteMany({
+        where: { id: { in: nodeIds } },
+      });
+
+      const idMapping: [number, number][] = [];
+      const proximityThreshold = 0.0001;
+
+      await Promise.all(
+        nodes.map(async (node) => {
+          const parsedType = typeEnum.parse(node.type);
+          const createdNode = await prismaClient.node.create({
+            data: {
+              description: node.description,
+              lat: node.latitude,
+              long: node.longitude,
+              type: parsedType,
+              outside: node?.outside ?? false,
             },
-          },
-        });
-        console.log(
-          "Deleted ",
-          deletedNodesCount.count,
-          " nodes from the database",
-        );
+          });
 
-        const locations = await PrismaClient.location.deleteMany({
-          where: {
-            buildingId: input.buildingId,
-            floor: input.floor,
-            departmentId: null,
-          },
-        });
-        console.log(
-          "Deleted ",
-          locations.count,
-          " locations from the database",
-        );
+          let validatedDepartmentId: number | null = null;
 
-        // create nodes in database
+          if (parsedType === "Location" && node.departmentId) {
+            const matchingDept = await prismaClient.department.findUnique({
+              where: {
+                id: node.departmentId,
+              },
+            });
 
-        const idMapping: [number, number][] = [];
+            if (matchingDept) {
+              validatedDepartmentId = matchingDept.id;
+              console.log(
+                `Found department: ${matchingDept.name} (ID: ${matchingDept.id}) for node ID: ${node.id}`,
+              );
+            } else {
+              console.log(
+                `Department with ID ${node.departmentId} not found for node ID: ${node.id}`,
+              );
+            }
+          }
 
-        const proximityThreshold = 0.0001;
+          console.log(
+            `Creating location with departmentId: ${validatedDepartmentId} for node type: ${parsedType}`,
+          );
 
-        await Promise.all(
-          nodes.map(async (node) => {
-            const parsedType = typeEnum.parse(node.type);
+          await prismaClient.location.create({
+            data: {
+              floor,
+              buildingId,
+              nodeID: createdNode.id,
+              suite: node.suite,
+              departmentId: validatedDepartmentId,
+            },
+          });
 
-            const createdNode = await prismaClient.node.create({
-              data: {
-                description: node.description,
-                lat: node.latitude,
-                long: node.longitude,
+          idMapping.push([node.id, createdNode.id]);
+
+          if (parsedType === "Staircase" || parsedType === "Elevator") {
+            const nearby = await prismaClient.node.findMany({
+              where: {
                 type: parsedType,
-                outside: node?.outside ?? false,
+                NOT: { id: createdNode.id },
+                lat: {
+                  gte: createdNode.lat - proximityThreshold,
+                  lte: createdNode.lat + proximityThreshold,
+                },
+                long: {
+                  gte: createdNode.long - proximityThreshold,
+                  lte: createdNode.long + proximityThreshold,
+                },
               },
             });
 
-            await prismaClient.location.create({
-              data: {
-                floor: floor,
-                buildingId: buildingId,
-                nodeID: createdNode.id,
-                suite: node.suite,
-              },
-            });
-
-            idMapping.push([node.id, createdNode.id]);
-
-            if (parsedType === "Staircase" || parsedType === "Elevator") {
-              // Query DB for existing nearby nodes of the same type
-              const nearbySameTypeNodes = await prismaClient.node.findMany({
+            for (const otherNode of nearby) {
+              const exists = await prismaClient.edge.findFirst({
                 where: {
-                  type: parsedType,
-                  NOT: { id: createdNode.id },
-                  lat: {
-                    gte: createdNode.lat - proximityThreshold,
-                    lte: createdNode.lat + proximityThreshold,
-                  },
-                  long: {
-                    gte: createdNode.long - proximityThreshold,
-                    lte: createdNode.long + proximityThreshold,
-                  },
+                  OR: [
+                    { fromNodeId: createdNode.id, toNodeId: otherNode.id },
+                    { fromNodeId: otherNode.id, toNodeId: createdNode.id },
+                  ],
                 },
               });
 
-              for (const otherNode of nearbySameTypeNodes) {
-                // Check if edge already exists (in either direction)
-                const existingEdge = await prismaClient.edge.findFirst({
-                  where: {
-                    OR: [
-                      {
-                        fromNodeId: createdNode.id,
-                        toNodeId: otherNode.id,
-                      },
-                      {
-                        fromNodeId: otherNode.id,
-                        toNodeId: createdNode.id,
-                      },
-                    ],
-                  },
+              if (!exists) {
+                await prismaClient.edge.createMany({
+                  data: [
+                    { fromNodeId: createdNode.id, toNodeId: otherNode.id },
+                    { fromNodeId: otherNode.id, toNodeId: createdNode.id },
+                  ],
                 });
-
-                if (!existingEdge) {
-                  await prismaClient.edge.create({
-                    data: {
-                      fromNodeId: createdNode.id,
-                      toNodeId: otherNode.id,
-                    },
-                  });
-
-                  await prismaClient.edge.create({
-                    data: {
-                      fromNodeId: otherNode.id,
-                      toNodeId: createdNode.id,
-                    },
-                  });
-
-                  console.log(
-                    `Edge created between ${createdNode.id} and ${otherNode.id}`,
-                  );
-                }
               }
             }
+          }
+        }),
+      );
 
-            return createdNode;
-          }),
-        );
+      await Promise.all(
+        edges.map((edge) => {
+          const fromMapped =
+            idMapping.find(([id]) => id === edge.fromNodeId)?.[1] ??
+            edge.fromNodeId;
+          const toMapped =
+            idMapping.find(([id]) => id === edge.toNodeId)?.[1] ??
+            edge.toNodeId;
 
-        console.log("Created ", nodes.length, " nodes in the database");
-        //make node creation/mapping for neg ids
-        //if from or to node in edge is negative, use lookuptable to map to new id
-        //create edges in database
-        await Promise.all(
-          edges.map((edge) => {
-            const fromNodeEntry = idMapping.find(
-              ([frontendID]) => frontendID === edge.fromNodeId,
-            );
-            const toNodeEntry = idMapping.find(
-              ([frontendID]) => frontendID === edge.toNodeId,
-            );
+          return prismaClient.edge.create({
+            data: { fromNodeId: fromMapped, toNodeId: toMapped },
+          });
+        }),
+      );
 
-            const fromNodeId = fromNodeEntry
-              ? fromNodeEntry[1]
-              : edge.fromNodeId;
-            const toNodeId = toNodeEntry ? toNodeEntry[1] : edge.toNodeId;
-
-            return prismaClient.edge.create({
-              data: {
-                fromNodeId: fromNodeId,
-                toNodeId: toNodeId,
-              },
-            });
-          }),
-        );
-        return { success: true };
-      } catch (error) {
-        console.error("Error adding nodes from map editor: ", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update floor map in database",
-        });
-      }
+      return { success: true };
     }),
 });
 
@@ -294,18 +260,10 @@ async function getLocations({
   buildingId: number;
   floor: number;
 }) {
-  // Get all nodes on this floor
-  const locations = await PrismaClient.location.findMany({
-    where: {
-      buildingId: buildingId,
-      floor: floor,
-    },
-    include: {
-      node: true,
-    },
+  return await PrismaClient.location.findMany({
+    where: { buildingId, floor },
+    include: { node: true },
   });
-  // get the nodes at that location
-  return locations.filter((location) => location.node !== null);
 }
 
 async function getNodesFromLocation({
@@ -315,20 +273,11 @@ async function getNodesFromLocation({
   buildingId: number;
   floor: number;
 }) {
-  // Get all nodes on this floor
   const locations = await PrismaClient.location.findMany({
-    where: {
-      buildingId: buildingId,
-      floor: floor,
-    },
-    include: {
-      node: true,
-    },
+    where: { buildingId, floor },
+    include: { node: true },
   });
-  // get the nodes at that location
-  return locations
-    .filter((location) => location.node !== null)
-    .map((location) => location.node!);
+  return locations.filter((l) => l.node !== null).map((l) => l.node!);
 }
 
 export type MapEditorRouter = typeof mapEditorRouter;
