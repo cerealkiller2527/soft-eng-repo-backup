@@ -68,9 +68,18 @@ export const mapEditorRouter = t.router({
   getDepartmentsByBuildingAndFloor: adminProcedure
     .input(z.object({ buildingId: z.number(), floor: z.number() }))
     .query(async ({ input }) => {
-      // Return all departments instead of filtering by existing locations
+      // Get departments that have locations on this floor
       const departments = await PrismaClient.department.findMany({
+        where: {
+          Location: {
+            some: {
+              buildingId: input.buildingId,
+              floor: input.floor,
+            },
+          },
+        },
         select: { id: true, name: true },
+        orderBy: { name: "asc" },
       });
 
       console.log(

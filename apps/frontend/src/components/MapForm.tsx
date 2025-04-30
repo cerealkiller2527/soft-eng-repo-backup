@@ -26,6 +26,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import {NodeTypeZod} from "common/src/ZodSchemas.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "../database/trpc.ts";
+import { useEffect } from "react";
 
 const typeEnum = NodeTypeZod
 const formSchema = z.object({
@@ -53,7 +54,7 @@ interface MapFormProps {
 export default function MapForm({ onSubmit, initialValues, buildingId, floor }: MapFormProps) {
     const trpc = useTRPC();
     
-    const { data: departments } = useQuery(
+    const { data: departments, isLoading: isLoadingDepartments } = useQuery(
         trpc.mapEditor.getDepartmentsByBuildingAndFloor.queryOptions({
             buildingId: buildingId || 0,
             floor: floor || 0,
@@ -63,28 +64,35 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            suite: "",
-            type: "Entrance",
-            description: "",
-            isOutside: false,
-            departmentId: undefined,
-            ...initialValues,
+            suite: initialValues?.suite || "",
+            type: initialValues?.type || "Entrance",
+            description: initialValues?.description || "",
+            isOutside: initialValues?.isOutside || false,
+            departmentId: initialValues?.departmentId,
         }
-    })
+    });
+
+    useEffect(() => {
+        if (initialValues) {
+            form.reset({
+                suite: initialValues.suite || "",
+                type: initialValues.type || "Entrance",
+                description: initialValues.description || "",
+                isOutside: initialValues.isOutside || false,
+                departmentId: initialValues.departmentId,
+            });
+        }
+    }, [initialValues, form]);
 
     const handleSubmit = (values: FormValues) => {
         try {
-            if (values.type === "Location" && values.departmentId === undefined) {
+            if (values.type === "Location" && !values.departmentId) {
                 toast.error("Please select a department for this location");
                 return;
             }
             
-            toast(
-                <div className="rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-                </div>
-            );
             onSubmit(values);
+            toast.success(initialValues ? "Node updated successfully!" : "Node added successfully!");
         } catch (error) {
             console.error("Form submission error", error);
             toast.error("Failed to submit the form. Please try again.");
@@ -96,8 +104,23 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 max-w-md mx-auto">
                     <h2 className="text-2xl font-bold text-center text-[#012D5A] mb-6">
-                        {initialValues ? "Edit Node" : "Department Request Form"}
+                        {initialValues ? "Edit Node" : "Add Node"}
                     </h2>
+
+                    {initialValues && (
+                        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                            <h3 className="text-lg font-semibold mb-2">Current Node Information</h3>
+                            <div className="space-y-1 text-sm">
+                                <p><span className="font-medium">Type:</span> {initialValues.type}</p>
+                                <p><span className="font-medium">Suite/Room:</span> {initialValues.suite || 'N/A'}</p>
+                                {initialValues.type === 'Location' && initialValues.departmentId && (
+                                    <p><span className="font-medium">Department:</span> {departments?.find(d => d.id === initialValues.departmentId)?.name || 'N/A'}</p>
+                                )}
+                                <p><span className="font-medium">Description:</span> {initialValues.description || 'N/A'}</p>
+                                <p><span className="font-medium">Outdoor Location:</span> {initialValues.isOutside ? 'Yes' : 'No'}</p>
+                            </div>
+                        </div>
+                    )}
 
                     <FormField
                         control={form.control}
@@ -115,9 +138,6 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormDescription className="text-xs text-black">
-                                    Enter the suite or room number for this location
-                                </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
                         )}
@@ -137,7 +157,7 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                                             <SelectValue placeholder="Select a type" />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent className="max-h-60 overflow-y-auto">
+                                    <SelectContent>
                                         {typeEnum.options.map((type) => (
                                             <SelectItem key={type} value={type}>
                                                 {type}
@@ -145,15 +165,12 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <FormDescription className="text-xs text-black">
-                                    Select the type of location (e.g., Entrance, Location, etc.)
-                                </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
                         )}
                     />
 
-                    {form.watch("type") === "Location" && departments && (
+                    {form.watch("type") === "Location" && (
                         <FormField
                             control={form.control}
                             name="departmentId"
@@ -162,23 +179,24 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                                     <FormLabel className="block text-sm font-medium text-black">
                                         Department
                                     </FormLabel>
-                                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                                    <Select 
+                                        onValueChange={(value) => field.onChange(Number(value))} 
+                                        value={field.value?.toString()}
+                                        disabled={isLoadingDepartments}
+                                    >
                                         <FormControl>
                                             <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select a department" />
+                                                <SelectValue placeholder={isLoadingDepartments ? "Loading..." : "Select a department"} />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent className="max-h-60 overflow-y-auto">
-                                            {departments.map((dept) => (
+                                        <SelectContent>
+                                            {departments?.map((dept) => (
                                                 <SelectItem key={dept.id} value={dept.id.toString()}>
                                                     {dept.name}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <FormDescription className="text-xs text-black">
-                                        Select the department that occupies this location
-                                    </FormDescription>
                                     <FormMessage className="text-xs text-red-500" />
                                 </FormItem>
                             )}
@@ -200,9 +218,6 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormDescription className="text-xs text-black">
-                                    Add any additional details about this location
-                                </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
                         )}
@@ -223,9 +238,6 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                                     <FormLabel className="text-sm font-medium text-black">
                                         Outdoor Location
                                     </FormLabel>
-                                    <FormDescription className="text-xs text-black">
-                                        Check if this location is outside the building
-                                    </FormDescription>
                                 </div>
                             </FormItem>
                         )}
@@ -234,14 +246,13 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                     <div className="pt-4">
                         <Button
                             type="submit"
-                            className="w-full bg-[#012D5A] text-white font-medium py-2 px-4 rounded-md
-                            bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
+                            className="w-full bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                         >
-                            {initialValues ? "Update Node" : "Submit Request"}
+                            {initialValues ? "Update Node" : "Add Node"}
                         </Button>
                     </div>
                 </form>
             </Form>
         </div>
-    )
+    );
 }
