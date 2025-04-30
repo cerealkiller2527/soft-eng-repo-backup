@@ -41,14 +41,14 @@ const formSchema = z.object({
     additionalNotes: z.string().optional(),
 })
 
-export default function EquipmentRequestForm({  onFormSubmit,}: {
+export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
     onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+    onSuccess?: () => void;
 }) {
     const trpc = useTRPC()
     const addReq = useMutation(trpc.service.addEquipmentDeliveryRequest.mutationOptions({
         onSuccess: () => {
-            console.log(trpc.service.getEquipmentDeliveryRequests.queryKey());
-            queryClient.invalidateQueries({ queryKey: ['getEquipmentDeliveryRequests'] })
+            onSuccess?.();
         }
     }))
 

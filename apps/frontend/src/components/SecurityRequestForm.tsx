@@ -23,15 +23,16 @@ const formSchema = z.object({
     additionalNotes: z.string(),
 })
 
-export default function SecurityRequestForm({  onFormSubmit,}: {
+export default function SecurityRequestForm({  onFormSubmit, onSuccess}: {
     onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+    onSuccess?: () => void;
 }) {
 
 
     const trpc = useTRPC();
     const addReq = useMutation(trpc.service.addSecurityRequest.mutationOptions({
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['service'] });
+            onSuccess?.();
         }
     }))
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());

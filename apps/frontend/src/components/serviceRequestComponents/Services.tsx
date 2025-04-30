@@ -15,9 +15,10 @@ interface ServiceBannerProps {
     description: string
     icon: LucideIcon
     formType: "transport" | "security" | "equipment" | "language"
+    onSuccess?: () => void
 }
 
-export default function Services({ title, description, icon: Icon, formType }: ServiceBannerProps) {
+export default function Services({ title, description, icon: Icon, formType, onSuccess,}: ServiceBannerProps & { onSuccess?: () => void }) {
     const [open, setOpen] = useState(false)
     const handleFormSubmit = (formData: object) => {
         setOpen(false);
@@ -47,13 +48,13 @@ export default function Services({ title, description, icon: Icon, formType }: S
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
                     {formType === "equipment" ? (
-                        <EquipmentRequestForm onFormSubmit={handleFormSubmit} />
+                        <EquipmentRequestForm onFormSubmit={handleFormSubmit} onSuccess={onSuccess} />
                     ) : formType === "transport" ? (
-                        <TransportationForm onFormSubmit={handleFormSubmit} />
+                        <TransportationForm onFormSubmit={handleFormSubmit} onSuccess={onSuccess}/>
                     ) : formType === "security" ? (
-                        <SecurityForm onFormSubmit={handleFormSubmit} />
+                        <SecurityForm onFormSubmit={handleFormSubmit} onSuccess={onSuccess}/>
                     ) : formType === "language" ? (
-                        <LanguageForm onFormSubmit={handleFormSubmit} />
+                        <LanguageForm onFormSubmit={handleFormSubmit} onSuccess={onSuccess}/>
                     ) : null}
                 </DialogContent>
             </Dialog>

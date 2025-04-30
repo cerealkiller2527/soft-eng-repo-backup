@@ -28,14 +28,15 @@ const formSchema = z.object({
     additionalNotes: z.string(),
 })
 
-export default function LanguageRequestForm ({  onFormSubmit,}: {
+export default function LanguageRequestForm ({  onFormSubmit, onSuccess}: {
     onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+    onSuccess?: () => void;
 }) {
 
     const trpc = useTRPC();
     const addReq = useMutation(trpc.service.addLanguageRequest.mutationOptions({
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['service.getLanguageRequest'] });
+            onSuccess?.();
         }
     }))
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());

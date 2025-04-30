@@ -32,14 +32,15 @@ import { z } from "zod"
     })
 
 
-    export default function TransportationForm({  onFormSubmit,}: {
+    export default function TransportationForm({  onFormSubmit, onSuccess}: {
         onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+        onSuccess?:() => void
     }) {
 
         const trpc = useTRPC();
         const addReq = useMutation(trpc.service.addExternalTransportationRequest.mutationOptions({
             onSuccess: (data) => {
-              queryClient.invalidateQueries({ queryKey: ['service', 'getExternalTransportation'] });
+              onSuccess?.();
             }
         }))
 
