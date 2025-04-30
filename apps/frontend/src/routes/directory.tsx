@@ -96,6 +96,7 @@ const DirectoryPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
 
+
     const { data: departmentsData, isLoading } = useQuery(
         trpc.directories.getAllDepartments.queryOptions()
     );
@@ -211,7 +212,7 @@ const DirectoryPage: React.FC = () => {
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
-        alert("Listening... Please start speaking.");
+        alert("Click OK to start speaking");
 
         recognition.onresult = (event: any) => {
             const spokenText = event.results[0][0].transcript;
@@ -240,6 +241,8 @@ const DirectoryPage: React.FC = () => {
 
                 if(dept){
                     setSelectedDepartment(dept);
+                    setChatOpen(false);
+
                     //setChatInput("");
                     return;
                 }
