@@ -159,6 +159,7 @@ async function main() {
     // const seededPat22Flr1Nodes = await seedNodes("./seedFiles/pat22floor1/pat22floor1_nodes.csv");
     // const seededPat22Flr3Nodes = await seedNodes("./seedFiles/pat22floor3/pat22floor3_nodes.csv");
     // const seededPt22Flr4Nodes = await seedNodes("./seedFiles/pat22floor4/pat22floor4_nodes.csv");
+    const seededFaulknerNodes = await seedNodes("./seedFiles/faulkner/faulkner_nodes.csv");
 
     // seed edges
     // edges with floor id of -1 go inbetween floors (elevators, stairs...)
@@ -166,6 +167,7 @@ async function main() {
     // const seededPat20Flr1Edges = await seedEdges("./seedFiles/pat20floor1/pat20floor1_edges.csv")
     // const seededPat22Flr1Edges = await seedEdges("./seedFiles/pat22floor1/pat22floor1_edges.csv")
     // const seededPat22Flr3Edges = await seedEdges("./seedFiles/pat22floor3/pat22floor3_edges.csv")
+    const seedeedFaulknerEdges = await seedEdges("./seedFiles/faulkner/faulkner_edges.csv")
 
     // seed employees
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
