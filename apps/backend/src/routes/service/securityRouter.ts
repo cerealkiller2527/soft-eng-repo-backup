@@ -73,6 +73,7 @@ export const securityRouter = t.router({
           ...(employeeID && { assignedEmployeeID: employeeID }),
         },
       });
+      console.log(serviceRequest.assignedEmployeeID);
       await PrismaClient.security.create({
         data: {
           id: serviceRequest.id,
