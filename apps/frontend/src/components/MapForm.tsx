@@ -106,22 +106,6 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                     <h2 className="text-2xl font-bold text-center text-[#012D5A] mb-6">
                         {initialValues ? "Edit Node" : "Add Node"}
                     </h2>
-
-                    {initialValues && (
-                        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-                            <h3 className="text-lg font-semibold mb-2">Current Node Information</h3>
-                            <div className="space-y-1 text-sm">
-                                <p><span className="font-medium">Type:</span> {initialValues.type}</p>
-                                <p><span className="font-medium">Suite/Room:</span> {initialValues.suite || 'N/A'}</p>
-                                {initialValues.type === 'Location' && initialValues.departmentId && (
-                                    <p><span className="font-medium">Department:</span> {departments?.find(d => d.id === initialValues.departmentId)?.name || 'N/A'}</p>
-                                )}
-                                <p><span className="font-medium">Description:</span> {initialValues.description || 'N/A'}</p>
-                                <p><span className="font-medium">Outdoor Location:</span> {initialValues.isOutside ? 'Yes' : 'No'}</p>
-                            </div>
-                        </div>
-                    )}
-
                     <FormField
                         control={form.control}
                         name="suite"
