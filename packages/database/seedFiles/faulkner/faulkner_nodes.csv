@@ -2,7 +2,7 @@ description,lat,long,type,floor,building,outside
 Emergency,42.30168649,-71.12785344,Location,1,Faulkner,FALSE
 a,42.30161833,-71.12790829,Intermediary,1,Faulkner,FALSE
 Pre-admission,42.30147271,-71.12816531,Location,1,Faulkner,FALSE
-e,42.3012168,-71.12762714,Intermediary,1,Faulkner,TRUE
+e,42.3012168,-71.12762714,Parking,1,Faulkner,TRUE
 d,42.30130413,-71.12776036,Intermediary,1,Faulkner,FALSE
 b,42.30145763,-71.12806725,Intermediary,1,Faulkner,FALSE
 f,42.30169925,-71.12722739,Intermediary,1,Faulkner,TRUE

@@ -1,5 +1,5 @@
 description,lat,long,type,floor,building,outside
-a,42.3262626,-71.14951471,Intermediary,1,Chestnut,TRUE
+a,42.3262626,-71.14951471,Parking,1,Chestnut,TRUE
 b,42.32611886,-71.14960594,Intermediary,1,Chestnut,FALSE
 Radiology,42.32574912,-71.14953715,Location,1,Chestnut,FALSE
 c,42.32573351,-71.14933341,Intermediary,1,Chestnut,FALSE
@@ -10,7 +10,7 @@ Laboratory,42.32601957,-71.14927839,Location,1,Chestnut,FALSE
 g,42.32621269,-71.14950988,Intermediary,1,Chestnut,FALSE
 h,42.32608008,-71.14949735,Intermediary,1,Chestnut,FALSE
 i,42.3259553,-71.14948481,Intermediary,1,Chestnut,FALSE
-j,42.32597374,-71.14918586,Intermediary,1,Chestnut,TRUE
+j,42.32597374,-71.14918586,Parking,1,Chestnut,TRUE
 k,42.32618238,-71.14950796,Intermediary,1,Chestnut,FALSE
 Multi Specialty Clinic,42.32612913,-71.14964818,Location,1,Chestnut,FALSE
 l,42.32607651,-71.14959475,Intermediary,1,Chestnut,FALSE
