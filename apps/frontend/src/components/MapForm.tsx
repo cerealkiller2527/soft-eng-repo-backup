@@ -103,7 +103,7 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
         <div className="bg-white rounded-lg shadow-md p-6">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 max-w-md mx-auto">
-                    <h2 className="text-2xl font-bold text-center text-[#012D5A] mb-6">
+                    <h2 className="text-2xl font-bold text-center text-primary mb-6">
                         {initialValues ? "Edit Node" : "Add Node"}
                     </h2>
                     <FormField
@@ -230,7 +230,7 @@ export default function MapForm({ onSubmit, initialValues, buildingId, floor }: 
                     <div className="pt-4">
                         <Button
                             type="submit"
-                            className="w-full bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
+                            className="w-full bg-primary hover:bg-chart-4 text-white hover:text-white"
                         >
                             {initialValues ? "Update Node" : "Add Node"}
                         </Button>
