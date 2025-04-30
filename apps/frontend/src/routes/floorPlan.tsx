@@ -35,7 +35,7 @@ const FloorPlan = () => {
     const [form, setForm] = useState<formType>({
         building: passedState?.building || "",
         destination: passedState?.destination || "",
-        location: "", // You can pre-fill this too later if you want
+        location: "",
         transport: "Driving", // Default transport mode
     });
 
