@@ -242,7 +242,7 @@ const DirectoryPage: React.FC = () => {
 
                 if(dept){
                     setSelectedDepartment(dept);
-                    setChatOpen(false);
+
 
                     //setChatInput("");
                     return;
