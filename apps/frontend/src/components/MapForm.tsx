@@ -37,7 +37,7 @@ type FormValues = z.infer<typeof formSchema>
 interface MapFormProps {
     onSubmit: (values: FormValues) => void;
     initialValues?: {
-        department?: string;
+        suite?: string;
         type?: string;
         description?: string;
         isOutside?: boolean;
@@ -48,7 +48,7 @@ export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            department: "",
+            suite: "",
             type: "Entrance",
             description: "",
             isOutside: false,

@@ -97,7 +97,7 @@ const MapEditor = () => {
         } catch (error) {
             setAlert({
                 visible: true,
-                message: 'Failed to save map. Please try again.' + $(error),
+                message: 'Failed to save map. Please try again.',
                 variant: "destructive",
             });
             setTimeout(() => setAlert(prev => ({ ...prev, visible: false })), 3000);
