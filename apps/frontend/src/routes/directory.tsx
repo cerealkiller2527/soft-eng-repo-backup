@@ -87,6 +87,10 @@ const chatbotMappings: Record<string, string> = {
 const DirectoryPage: React.FC = () => {
     const [chatInput, setChatInput] = useState("");
     const [chatOpen, setChatOpen] = useState(false);
+
+
+
+
     const navigate = useNavigate();
     const trpc = useTRPC();
     const [searchTerm, setSearchTerm] = useState("");
@@ -192,6 +196,8 @@ const DirectoryPage: React.FC = () => {
 */
     }
 
+
+    {/*the below two is used for the functionality of the voice command -- uses in buitl web speech API*/}
     const startVoiceRecognition = () => {
         const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -234,7 +240,7 @@ const DirectoryPage: React.FC = () => {
 
                 if(dept){
                     setSelectedDepartment(dept);
-                    setChatInput("");
+                    //setChatInput("");
                     return;
                 }
             }
