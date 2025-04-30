@@ -42,6 +42,8 @@ export const DepartmentServicesScalarFieldEnumSchema = z.enum(['departmentID','s
 
 export const BuildingScalarFieldEnumSchema = z.enum(['id','name','address','phoneNumber']);
 
+export const SearchAlgorithmScalarFieldEnumSchema = z.enum(['id','current']);
+
 export const SortOrderSchema = z.enum(['asc','desc']);
 
 export const QueryModeSchema = z.enum(['default','insensitive']);
@@ -63,6 +65,10 @@ export type PriorityType = `${z.infer<typeof PrioritySchema>}`
 export const nodeTypeSchema = z.enum(['Entrance','Intermediary','Staircase','Elevator','Location','Help_Desk']);
 
 export type nodeTypeType = `${z.infer<typeof nodeTypeSchema>}`
+
+export const AlgorithmSchema = z.enum(['BFS','DFS']);
+
+export type AlgorithmType = `${z.infer<typeof AlgorithmSchema>}`
 
 /////////////////////////////////////////
 // MODELS
@@ -266,6 +272,17 @@ export const BuildingSchema = z.object({
 })
 
 export type Building = z.infer<typeof BuildingSchema>
+
+/////////////////////////////////////////
+// SEARCH ALGORITHM SCHEMA
+/////////////////////////////////////////
+
+export const SearchAlgorithmSchema = z.object({
+  current: AlgorithmSchema,
+  id: z.number().int(),
+})
+
+export type SearchAlgorithm = z.infer<typeof SearchAlgorithmSchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -640,6 +657,14 @@ export const BuildingSelectSchema: z.ZodType<Prisma.BuildingSelect> = z.object({
   phoneNumber: z.boolean().optional(),
   Location: z.union([z.boolean(),z.lazy(() => LocationFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => BuildingCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// SEARCH ALGORITHM
+//------------------------------------------------------
+
+export const SearchAlgorithmSelectSchema: z.ZodType<Prisma.SearchAlgorithmSelect> = z.object({
+  id: z.boolean().optional(),
+  current: z.boolean().optional(),
 }).strict()
 
 
@@ -1533,6 +1558,48 @@ export const BuildingScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.Buil
   phoneNumber: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
+export const SearchAlgorithmWhereInputSchema: z.ZodType<Prisma.SearchAlgorithmWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => SearchAlgorithmWhereInputSchema),z.lazy(() => SearchAlgorithmWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => SearchAlgorithmWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => SearchAlgorithmWhereInputSchema),z.lazy(() => SearchAlgorithmWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  current: z.union([ z.lazy(() => EnumAlgorithmFilterSchema),z.lazy(() => AlgorithmSchema) ]).optional(),
+}).strict();
+
+export const SearchAlgorithmOrderByWithRelationInputSchema: z.ZodType<Prisma.SearchAlgorithmOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  current: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const SearchAlgorithmWhereUniqueInputSchema: z.ZodType<Prisma.SearchAlgorithmWhereUniqueInput> = z.object({
+  id: z.number().int()
+})
+.and(z.object({
+  id: z.number().int().optional(),
+  AND: z.union([ z.lazy(() => SearchAlgorithmWhereInputSchema),z.lazy(() => SearchAlgorithmWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => SearchAlgorithmWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => SearchAlgorithmWhereInputSchema),z.lazy(() => SearchAlgorithmWhereInputSchema).array() ]).optional(),
+  current: z.union([ z.lazy(() => EnumAlgorithmFilterSchema),z.lazy(() => AlgorithmSchema) ]).optional(),
+}).strict());
+
+export const SearchAlgorithmOrderByWithAggregationInputSchema: z.ZodType<Prisma.SearchAlgorithmOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  current: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => SearchAlgorithmCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => SearchAlgorithmAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => SearchAlgorithmMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => SearchAlgorithmMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => SearchAlgorithmSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const SearchAlgorithmScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.SearchAlgorithmScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => SearchAlgorithmScalarWhereWithAggregatesInputSchema),z.lazy(() => SearchAlgorithmScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => SearchAlgorithmScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => SearchAlgorithmScalarWhereWithAggregatesInputSchema),z.lazy(() => SearchAlgorithmScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  current: z.union([ z.lazy(() => EnumAlgorithmWithAggregatesFilterSchema),z.lazy(() => AlgorithmSchema) ]).optional(),
+}).strict();
+
 export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object({
   email: z.string(),
   username: z.string(),
@@ -2312,6 +2379,38 @@ export const BuildingUncheckedUpdateManyInputSchema: z.ZodType<Prisma.BuildingUn
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   phoneNumber: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const SearchAlgorithmCreateInputSchema: z.ZodType<Prisma.SearchAlgorithmCreateInput> = z.object({
+  current: z.lazy(() => AlgorithmSchema)
+}).strict();
+
+export const SearchAlgorithmUncheckedCreateInputSchema: z.ZodType<Prisma.SearchAlgorithmUncheckedCreateInput> = z.object({
+  id: z.number().int().optional(),
+  current: z.lazy(() => AlgorithmSchema)
+}).strict();
+
+export const SearchAlgorithmUpdateInputSchema: z.ZodType<Prisma.SearchAlgorithmUpdateInput> = z.object({
+  current: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => EnumAlgorithmFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const SearchAlgorithmUncheckedUpdateInputSchema: z.ZodType<Prisma.SearchAlgorithmUncheckedUpdateInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  current: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => EnumAlgorithmFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const SearchAlgorithmCreateManyInputSchema: z.ZodType<Prisma.SearchAlgorithmCreateManyInput> = z.object({
+  id: z.number().int().optional(),
+  current: z.lazy(() => AlgorithmSchema)
+}).strict();
+
+export const SearchAlgorithmUpdateManyMutationInputSchema: z.ZodType<Prisma.SearchAlgorithmUpdateManyMutationInput> = z.object({
+  current: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => EnumAlgorithmFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const SearchAlgorithmUncheckedUpdateManyInputSchema: z.ZodType<Prisma.SearchAlgorithmUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  current: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => EnumAlgorithmFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -3163,6 +3262,46 @@ export const BuildingSumOrderByAggregateInputSchema: z.ZodType<Prisma.BuildingSu
   id: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
+export const EnumAlgorithmFilterSchema: z.ZodType<Prisma.EnumAlgorithmFilter> = z.object({
+  equals: z.lazy(() => AlgorithmSchema).optional(),
+  in: z.lazy(() => AlgorithmSchema).array().optional(),
+  notIn: z.lazy(() => AlgorithmSchema).array().optional(),
+  not: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => NestedEnumAlgorithmFilterSchema) ]).optional(),
+}).strict();
+
+export const SearchAlgorithmCountOrderByAggregateInputSchema: z.ZodType<Prisma.SearchAlgorithmCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  current: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const SearchAlgorithmAvgOrderByAggregateInputSchema: z.ZodType<Prisma.SearchAlgorithmAvgOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const SearchAlgorithmMaxOrderByAggregateInputSchema: z.ZodType<Prisma.SearchAlgorithmMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  current: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const SearchAlgorithmMinOrderByAggregateInputSchema: z.ZodType<Prisma.SearchAlgorithmMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  current: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const SearchAlgorithmSumOrderByAggregateInputSchema: z.ZodType<Prisma.SearchAlgorithmSumOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EnumAlgorithmWithAggregatesFilterSchema: z.ZodType<Prisma.EnumAlgorithmWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => AlgorithmSchema).optional(),
+  in: z.lazy(() => AlgorithmSchema).array().optional(),
+  notIn: z.lazy(() => AlgorithmSchema).array().optional(),
+  not: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => NestedEnumAlgorithmWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumAlgorithmFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumAlgorithmFilterSchema).optional()
+}).strict();
+
 export const StringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.StringFieldUpdateOperationsInput> = z.object({
   set: z.string().optional()
 }).strict();
@@ -3930,6 +4069,10 @@ export const LocationUncheckedUpdateManyWithoutBuildingNestedInputSchema: z.ZodT
   deleteMany: z.union([ z.lazy(() => LocationScalarWhereInputSchema),z.lazy(() => LocationScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const EnumAlgorithmFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumAlgorithmFieldUpdateOperationsInput> = z.object({
+  set: z.lazy(() => AlgorithmSchema).optional()
+}).strict();
+
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
   equals: z.string().optional(),
   in: z.string().array().optional(),
@@ -4200,6 +4343,23 @@ export const NestedStringNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Ne
   _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedStringNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedStringNullableFilterSchema).optional()
+}).strict();
+
+export const NestedEnumAlgorithmFilterSchema: z.ZodType<Prisma.NestedEnumAlgorithmFilter> = z.object({
+  equals: z.lazy(() => AlgorithmSchema).optional(),
+  in: z.lazy(() => AlgorithmSchema).array().optional(),
+  notIn: z.lazy(() => AlgorithmSchema).array().optional(),
+  not: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => NestedEnumAlgorithmFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedEnumAlgorithmWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumAlgorithmWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => AlgorithmSchema).optional(),
+  in: z.lazy(() => AlgorithmSchema).array().optional(),
+  notIn: z.lazy(() => AlgorithmSchema).array().optional(),
+  not: z.union([ z.lazy(() => AlgorithmSchema),z.lazy(() => NestedEnumAlgorithmWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumAlgorithmFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumAlgorithmFilterSchema).optional()
 }).strict();
 
 export const ServiceRequestCreateWithoutAssignedToInputSchema: z.ZodType<Prisma.ServiceRequestCreateWithoutAssignedToInput> = z.object({
@@ -6681,6 +6841,63 @@ export const BuildingFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.BuildingFindU
   where: BuildingWhereUniqueInputSchema,
 }).strict() ;
 
+export const SearchAlgorithmFindFirstArgsSchema: z.ZodType<Prisma.SearchAlgorithmFindFirstArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  orderBy: z.union([ SearchAlgorithmOrderByWithRelationInputSchema.array(),SearchAlgorithmOrderByWithRelationInputSchema ]).optional(),
+  cursor: SearchAlgorithmWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ SearchAlgorithmScalarFieldEnumSchema,SearchAlgorithmScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const SearchAlgorithmFindFirstOrThrowArgsSchema: z.ZodType<Prisma.SearchAlgorithmFindFirstOrThrowArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  orderBy: z.union([ SearchAlgorithmOrderByWithRelationInputSchema.array(),SearchAlgorithmOrderByWithRelationInputSchema ]).optional(),
+  cursor: SearchAlgorithmWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ SearchAlgorithmScalarFieldEnumSchema,SearchAlgorithmScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const SearchAlgorithmFindManyArgsSchema: z.ZodType<Prisma.SearchAlgorithmFindManyArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  orderBy: z.union([ SearchAlgorithmOrderByWithRelationInputSchema.array(),SearchAlgorithmOrderByWithRelationInputSchema ]).optional(),
+  cursor: SearchAlgorithmWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ SearchAlgorithmScalarFieldEnumSchema,SearchAlgorithmScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const SearchAlgorithmAggregateArgsSchema: z.ZodType<Prisma.SearchAlgorithmAggregateArgs> = z.object({
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  orderBy: z.union([ SearchAlgorithmOrderByWithRelationInputSchema.array(),SearchAlgorithmOrderByWithRelationInputSchema ]).optional(),
+  cursor: SearchAlgorithmWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const SearchAlgorithmGroupByArgsSchema: z.ZodType<Prisma.SearchAlgorithmGroupByArgs> = z.object({
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  orderBy: z.union([ SearchAlgorithmOrderByWithAggregationInputSchema.array(),SearchAlgorithmOrderByWithAggregationInputSchema ]).optional(),
+  by: SearchAlgorithmScalarFieldEnumSchema.array(),
+  having: SearchAlgorithmScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const SearchAlgorithmFindUniqueArgsSchema: z.ZodType<Prisma.SearchAlgorithmFindUniqueArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereUniqueInputSchema,
+}).strict() ;
+
+export const SearchAlgorithmFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.SearchAlgorithmFindUniqueOrThrowArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereUniqueInputSchema,
+}).strict() ;
+
 export const UserCreateArgsSchema: z.ZodType<Prisma.UserCreateArgs> = z.object({
   select: UserSelectSchema.optional(),
   data: z.union([ UserCreateInputSchema,UserUncheckedCreateInputSchema ]),
@@ -7484,5 +7701,55 @@ export const BuildingUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.BuildingUpd
 
 export const BuildingDeleteManyArgsSchema: z.ZodType<Prisma.BuildingDeleteManyArgs> = z.object({
   where: BuildingWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const SearchAlgorithmCreateArgsSchema: z.ZodType<Prisma.SearchAlgorithmCreateArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  data: z.union([ SearchAlgorithmCreateInputSchema,SearchAlgorithmUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const SearchAlgorithmUpsertArgsSchema: z.ZodType<Prisma.SearchAlgorithmUpsertArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereUniqueInputSchema,
+  create: z.union([ SearchAlgorithmCreateInputSchema,SearchAlgorithmUncheckedCreateInputSchema ]),
+  update: z.union([ SearchAlgorithmUpdateInputSchema,SearchAlgorithmUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const SearchAlgorithmCreateManyArgsSchema: z.ZodType<Prisma.SearchAlgorithmCreateManyArgs> = z.object({
+  data: z.union([ SearchAlgorithmCreateManyInputSchema,SearchAlgorithmCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const SearchAlgorithmCreateManyAndReturnArgsSchema: z.ZodType<Prisma.SearchAlgorithmCreateManyAndReturnArgs> = z.object({
+  data: z.union([ SearchAlgorithmCreateManyInputSchema,SearchAlgorithmCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const SearchAlgorithmDeleteArgsSchema: z.ZodType<Prisma.SearchAlgorithmDeleteArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  where: SearchAlgorithmWhereUniqueInputSchema,
+}).strict() ;
+
+export const SearchAlgorithmUpdateArgsSchema: z.ZodType<Prisma.SearchAlgorithmUpdateArgs> = z.object({
+  select: SearchAlgorithmSelectSchema.optional(),
+  data: z.union([ SearchAlgorithmUpdateInputSchema,SearchAlgorithmUncheckedUpdateInputSchema ]),
+  where: SearchAlgorithmWhereUniqueInputSchema,
+}).strict() ;
+
+export const SearchAlgorithmUpdateManyArgsSchema: z.ZodType<Prisma.SearchAlgorithmUpdateManyArgs> = z.object({
+  data: z.union([ SearchAlgorithmUpdateManyMutationInputSchema,SearchAlgorithmUncheckedUpdateManyInputSchema ]),
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const SearchAlgorithmUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.SearchAlgorithmUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ SearchAlgorithmUpdateManyMutationInputSchema,SearchAlgorithmUncheckedUpdateManyInputSchema ]),
+  where: SearchAlgorithmWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const SearchAlgorithmDeleteManyArgsSchema: z.ZodType<Prisma.SearchAlgorithmDeleteManyArgs> = z.object({
+  where: SearchAlgorithmWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;

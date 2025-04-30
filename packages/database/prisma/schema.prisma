@@ -51,6 +51,11 @@ enum nodeType {
   Help_Desk
 }
 
+enum Algorithm {
+  BFS
+  DFS
+}
+
 model User {
   email    String @id
   username String
@@ -186,4 +191,9 @@ model Building {
   address     String
   phoneNumber String
   Location    Location[]
+}
+
+model SearchAlgorithm {
+  id      Int       @id @default(autoincrement())
+  current Algorithm
 }
