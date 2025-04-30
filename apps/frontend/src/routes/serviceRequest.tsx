@@ -103,7 +103,7 @@ const ServiceRequest = () => {
     }
     return (
         <Layout>
-        <div className="flex flex-col min-h-screen bg-[#f2f2f2] ">
+        <div className="flex flex-col min-h-screen bg-[#f2f2f2]">
             <div className="text-center mb-8 pt-25">
                 <h1 className="text-4xl font-bold mb-2 text-primary">Hospital Services</h1>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">

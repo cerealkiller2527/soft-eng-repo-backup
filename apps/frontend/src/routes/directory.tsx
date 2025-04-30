@@ -340,7 +340,7 @@ const DirectoryPage: React.FC = () => {
                                             >
                                                 <Button
                                                     variant="outline"
-                                                    className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
+                                                    className="bg-primary text-white hover:bg-chart-4 hover:text-white hover:border self-start"
                                                 >
                                                     Call Now
                                                 </Button>
