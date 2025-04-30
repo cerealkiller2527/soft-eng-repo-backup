@@ -8,6 +8,7 @@ import { Search, Phone, MapPin, Bot } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTRPC } from "../database/trpc";
+import Layout from "../components/Layout";
 
 import {
     Accordion,
@@ -164,11 +165,11 @@ const DirectoryPage: React.FC = () => {
     if (isLoading || !departments) {
         return (
             <div className="min-h-screen bg-white flex flex-col">
-                <Navbar />
+
                 <main className="flex-1 flex justify-center items-center">
                     <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-[#012D5A] border-gray-200" />
                 </main>
-                <Footer />
+
             </div>
         );
     }
@@ -192,8 +193,9 @@ const DirectoryPage: React.FC = () => {
     }
 
     return (
+        <Layout>
         <div className="min-h-screen flex flex-col bg-[#F2F2F2]">
-            <Navbar />
+
 
             {/* chat button pop */}
             <div className="fixed bottom-6 right-6 z-50">
@@ -231,25 +233,25 @@ const DirectoryPage: React.FC = () => {
                     <p className="text-lg text-slate-500 text-center text-white">Find a specialty, department or service in a second</p>
 
                     <div className="mt-1 ">
-                    <form onSubmit={handleSearch} className="flex-grow">
-                        <div className="flex shadow-sm rounded-lg bg-white">
-                            <div className="relative flex-grow">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Search className="h-5 w-5 text-slate-400" />
+                        <form onSubmit={handleSearch} className="flex-grow">
+                            <div className="flex shadow-sm rounded-lg bg-white">
+                                <div className="relative flex-grow">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Search className="h-5 w-5 text-slate-400" />
+                                    </div>
+                                    <Input
+                                        type="search"
+                                        placeholder="Search departments, services, or locations..."
+                                        className="block w-full pl-12 pr-4 py-6 text-lg border-0"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                 </div>
-                                <Input
-                                    type="search"
-                                    placeholder="Search departments, services, or locations..."
-                                    className="block w-full pl-12 pr-4 py-6 text-lg border-0"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                                <Button type="submit" className="px-6 py-6 bg-[#012D5A] text-white rounded-r-lg">
+                                    Search
+                                </Button>
                             </div>
-                            <Button type="submit" className="px-6 py-6 bg-[#012D5A] text-white rounded-r-lg">
-                                Search
-                            </Button>
-                        </div>
-                    </form>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -258,7 +260,7 @@ const DirectoryPage: React.FC = () => {
                 <div className="flex flex-col md:flex-row gap-8 items-start">
 
 
-                {/* left section */}
+                    {/* left section */}
                     <div className="w-full md:w-64 lg:w-72 ">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -325,29 +327,29 @@ const DirectoryPage: React.FC = () => {
 
                                 <div className="grid gap-8 md:grid-cols-2">
                                     <Card>
-                                    <CardHeader className="flex items-center gap-2">
-                                        <Phone className="w-5 h-5 text-muted-foreground" />
-                                        <h3 className="text-[#004170FF] font-semibold">Contact</h3>
-                                    </CardHeader>
-                                    <CardContent className="flex flex-col gap-4">
-                                        <p className="text-slate-500">{selectedDepartment.phoneNumber}</p>
+                                        <CardHeader className="flex items-center gap-2">
+                                            <Phone className="w-5 h-5 text-muted-foreground" />
+                                            <h3 className="text-[#004170FF] font-semibold">Contact</h3>
+                                        </CardHeader>
+                                        <CardContent className="flex flex-col gap-4">
+                                            <p className="text-slate-500">{selectedDepartment.phoneNumber}</p>
 
-                                        <a
-                                            href={`tel:${selectedDepartment.phoneNumber}`}
-                                            className="w-fit"
-                                        >
-                                            <Button
-                                                variant="outline"
-                                                className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
+                                            <a
+                                                href={`tel:${selectedDepartment.phoneNumber}`}
+                                                className="w-fit"
                                             >
-                                                Call Now
-                                            </Button>
-                                        </a>
-                                    </CardContent>
-                                </Card>
+                                                <Button
+                                                    variant="outline"
+                                                    className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
+                                                >
+                                                    Call Now
+                                                </Button>
+                                            </a>
+                                        </CardContent>
+                                    </Card>
 
 
-                                <Card>
+                                    <Card>
                                         <CardHeader className="flex items-center gap-2">
                                             <MapPin className="w-5 h-5 text-muted-foreground" />
                                             <h3 className="text-[#004170FF] font-semibold">Location</h3>
@@ -444,8 +446,9 @@ const DirectoryPage: React.FC = () => {
                 </div>
             </main>
 
-            <Footer />
+
         </div>
+        </Layout>
     );
 };
 
