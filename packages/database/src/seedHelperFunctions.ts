@@ -79,7 +79,8 @@ export async function seedNodes(path: string) {
                     const newLocation: z.infer<typeof LocationUncheckedCreateInputSchema> = {
                         floor: parsedInfo.floor,
                         buildingId: thisBuilding?.id ?? -1,
-                        nodeID: thisNode.id
+                        nodeID: thisNode.id,
+                        suite: "-1"
                     };
                     await prisma.location.create({ data: newLocation });
                 }
