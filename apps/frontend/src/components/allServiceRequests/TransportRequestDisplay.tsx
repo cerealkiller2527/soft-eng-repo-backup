@@ -155,7 +155,7 @@ export default function TransportRequestDisplay() {
                                         <TableHeader>
                                             <TableRow className="bg-[#012D5A] hover:bg-[#012D5A]">
                                                 <TableHead className="text-white">Request Type</TableHead>
-                                                <TableHead className="text-white">Employee</TableHead>
+                                                <TableHead className="text-white">Requested By</TableHead>
                                                 <TableHead className="text-white">Priority</TableHead>
                                                 <TableHead className="text-white">Additional Notes</TableHead>
                                                 <TableHead className="text-white">Status</TableHead>
