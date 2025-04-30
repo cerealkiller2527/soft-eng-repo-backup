@@ -192,6 +192,60 @@ const DirectoryPage: React.FC = () => {
 */
     }
 
+    const startVoiceRecognition = () => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+        if (!SpeechRecognition){
+            alert("Speech recognition not supported in this browser.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        alert("Listening... Please start speaking.");
+
+        recognition.onresult = (event: any) => {
+            const spokenText = event.results[0][0].transcript;
+            setChatInput(spokenText);
+            handleChatFromVoice(spokenText);
+        };
+
+        recognition.onerror = (event: any) => {
+            console.error("Speech recognition error: ",event.error);
+        };
+
+
+
+        recognition.start();
+
+    };
+
+    const handleChatFromVoice = (spokenText: string) => {
+        const lowerInput = spokenText.toLowerCase();
+        for (const keyword in chatbotMappings){
+            if(lowerInput.includes(keyword)){
+                const matchName = chatbotMappings[keyword];
+                const dept = departments?.find((d) =>
+                    d.name.toLowerCase().includes(matchName.toLowerCase())
+                );
+
+                if(dept){
+                    setSelectedDepartment(dept);
+                    setChatInput("");
+                    return;
+                }
+            }
+        }
+
+
+        alert("Department couldn't be found!");
+    }
+
+
+
     return (
         <Layout>
         <div className="min-h-screen flex flex-col bg-[#F2F2F2]">
@@ -217,8 +271,17 @@ const DirectoryPage: React.FC = () => {
                             placeholder="Ask about a department..."
                             className="flex-1"
                         />
-                        <Button type="submit" className="bg-[#012D5A] text-white">
+                        <Button type="submit" className="bg-primary text-white">
                             Ask
+                        </Button>
+
+                        <Button
+                            type = "button"
+                            onClick = {startVoiceRecognition}
+                            className = "bg-primary text-white"
+
+                        >
+                            Speak
                         </Button>
                     </form>
                 </div>
