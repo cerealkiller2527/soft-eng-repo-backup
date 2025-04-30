@@ -76,8 +76,14 @@ export const audiovisualRouter = t.router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { location, deadline, audiovisualType, additionalNotes, priority, employeeID } =
-        input;
+      const {
+        location,
+        deadline,
+        audiovisualType,
+        additionalNotes,
+        priority,
+        employeeID,
+      } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.AUDIOVISUAL,

@@ -1,18 +1,18 @@
-fromNode,toNode,floor,building
-1top entrance outside,1drop off,1,Chestnut
-1drop off,1lot1,1,Chestnut
-1lot1,1lot2,1,Chestnut
-1lot2,1parking,1,Chestnut
-1top entrance outside,1top entrance,1,Chestnut
-1top entrance,1c,1,Chestnut
-1top entrance,1multi specialty clinic,1,Chestnut
-1c,1multi specialty clinic,1,Chestnut
-1c,1b,1,Chestnut
-1b,1a,1,Chestnut
-1a,1a,1,Chestnut
-1a,1right entrance,1,Chestnut
-1a,1right entrance,1,Chestnut
-1right entrance outside,1right entrance,1,Chestnut
-1a,1d,1,Chestnut
-1d,1e,1,Chestnut
-1e,Radiology,1,Chestnut
+toNode,fromNode,floor,building
+a,g,1,Chestnut
+b,Multi Specialty Clinic,1,Chestnut
+b,l,1,Chestnut
+b,f,1,Chestnut
+Radiology,m,1,Chestnut
+c,d,1,Chestnut
+c,m,1,Chestnut
+d,e,1,Chestnut
+d,i,1,Chestnut
+e,j,1,Chestnut
+e,Laboratory,1,Chestnut
+f,k,1,Chestnut
+f,b,1,Chestnut
+g,k,1,Chestnut
+h,i,1,Chestnut
+h,k,1,Chestnut
+h,l,1,Chestnut
