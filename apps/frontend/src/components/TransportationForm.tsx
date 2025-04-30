@@ -21,7 +21,7 @@ import { z } from "zod"
 
 
     const formSchema = z.object({
-        employeeID: z.coerce.number(),
+        employeeID: z.coerce.number().optional(),
         patientName: z.string(),
         priority: z.string(),
         pickupTime: z.date(),
@@ -49,7 +49,7 @@ import { z } from "zod"
         const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
-                employeeID: 0,
+                employeeID: undefined,
                 patientName: "",
                 priority: "",
                 pickupTime: new Date(),

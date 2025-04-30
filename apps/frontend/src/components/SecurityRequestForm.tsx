@@ -17,7 +17,7 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low","Medium","High","Emergency"]
 
 const formSchema = z.object({
-    employeeID: z.coerce.number(),
+    employeeID: z.coerce.number().optional(),
     priority: z.string(),
     location: z.string(),
     additionalNotes: z.string(),
@@ -42,7 +42,7 @@ export default function SecurityRequestForm({  onFormSubmit, onSuccess}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeID: 0,
+            employeeID: undefined,
             priority: "",
             location: "",
             additionalNotes: "",
