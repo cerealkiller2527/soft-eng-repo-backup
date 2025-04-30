@@ -475,8 +475,9 @@ function getImageFromNodeType(type: string): string {
         Intermediary: "/map-pins/BasicLocationNOBG.png",
         Staircase: "/map-pins/BlueStairNOBG.png",
         Elevator: "/map-pins/BlueElevatorNOBG.png",
-        Location: "/map-pins/BasicLocationNOBG.png",
+        Location: "/map-pins/LocationIconNOBG.png",
         Help_Desk: "/map-pins/BlueHelpNOBG.png",
+        Parking: "/map-pins/ParkingIconNOBG.png",
     };
     return images[type] || "/map-pins/BasicLocationNOBG.png";
 }
