@@ -242,7 +242,7 @@ const DirectoryPage: React.FC = () => {
                                     <Input
                                         type="search"
                                         placeholder="Search departments, services, or locations..."
-                                        className="block w-full pl-12 pr-4 py-6 text-lg border-0"
+                                        className="block w-full pl-12 pr-4 py-6 text-lg border-0 text-black"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
