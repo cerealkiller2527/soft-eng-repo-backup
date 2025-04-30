@@ -121,9 +121,8 @@ export class SearchSystem {
       longitude: node.longitude,
       latitude: node.latitude,
       floor: floorMap.get(node.id) ?? -1,
-      neighbors: node.neighbors.map((neighbor) => ({
-        id: neighbor.id,
-      })),
+      outside: false,
+      neighbors: node.neighbors.map((neighbor) => neighbor.id),
     }));
 
     return z.array(pNodeZod).parse(pNodeZodObjects);

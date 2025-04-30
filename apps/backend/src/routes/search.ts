@@ -29,7 +29,7 @@ export const searchRouter = t.router({
       // create search system and pass through data for path
       const s = new SearchSystem(new BFS());
 
-      const paths = s.path(
+      const paths = await s.path(
         input.dropOffLatitude,
         input.dropOffLongitude,
         endNodeId!,
