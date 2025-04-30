@@ -20,33 +20,34 @@ export const mapInfoRouter = t.router({
           );
         }
 
-        const locations = await PrismaClient.location.findMany({
+        // Find all departments that have locations in this building with nodes
+        const departments = await PrismaClient.department.findMany({
           where: {
-            buildingId: building.id,
-            nodeID: { not: null },
-            node: {
-              is: {
-                type: "Location",
+            Location: {
+              some: {
+                buildingId: building.id,
+                nodeID: { not: null },
+                node: {
+                  is: {
+                    type: "Location",
+                  },
+                },
               },
             },
           },
+          select: {
+            name: true,
+          },
         });
-        return [
-          ...new Set(
-            locations
-              .map((location) => location.suite)
-              .filter(
-                (suite): suite is string =>
-                  suite !== null && suite !== undefined,
-              ),
-          ),
-        ];
+
+        // Return array of department names
+        return departments.map((dept) => dept.name);
       } catch (error) {
         console.error(
-          `Error fetching nodes for building '${input.buildingName}':`,
+          `Error fetching departments for building '${input.buildingName}':`,
           error,
         );
-        throw new Error("Failed to fetch building nodes");
+        throw new Error("Failed to fetch building departments");
       }
     }),
 });
