@@ -25,7 +25,7 @@ import { DatetimePicker } from "@/components/ui/datetimepicker.tsx"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { queryClient, useTRPC } from "@/database/trpc.ts"
-import { useMutation } from '@tanstack/react-query'
+import {useMutation, useQuery} from '@tanstack/react-query'
 
 const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", "Dana-Farber Brigham Cancer Center", "Hale Building", "221 Longwood",
     "Chestnut Hill Healthcare Center", "Foxborough", "Pembroke", "Westwood", "Harbor Medical Associates", "Dana-Farber at South Shore Health", "Dana-Farber at Foxborough", "Dana-Farber at Chestnut Hill", "Dana-Farber at Milford"]
@@ -34,6 +34,7 @@ const priority = ["Low", "Medium", "High", "Emergency"]
 
 const formSchema = z.object({
     priority: z.string().min(1, "Priority is required"),
+    employee: z.coerce.number().optional(),
     deadline: z.coerce.date(),
     equipment: z.array(z.string()).min(1, "At least one equipment type is required"),
     location: z.string().min(1, "Location is required"),
@@ -50,10 +51,15 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
         }
     }))
 
+    const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
+
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             priority: "",
+            employee: 0,
             deadline: new Date(),
             equipment: [],
             location: "",
@@ -65,10 +71,12 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
         addReq.mutate({
             priority: values.priority,
             deadline: new Date(values.deadline),
+            employeeID: values.employee,
             equipment: values.equipment,
             toWhere: values.location,
             additionalNotes: values.additionalNotes,
         });
+        console.log(values);
         onFormSubmit?.(values);
     }
     return (
@@ -80,6 +88,30 @@ export default function EquipmentRequestForm({  onFormSubmit,}: {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="employee"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Employee</FormLabel>
+                                <Select onValueChange={field.onChange}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select Employee" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {listofEmployees.data?.map((employee) => (
+                                            <SelectItem key={employee.id} value={String(employee.id)}>
+                                                {employee.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="priority"
