@@ -28,14 +28,15 @@ const formSchema = z.object({
     additionalNotes: z.string(),
 })
 
-export default function LanguageRequestForm ({  onFormSubmit,}: {
+export default function LanguageRequestForm ({  onFormSubmit, onSuccess}: {
     onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
+    onSuccess?: () => void;
 }) {
 
     const trpc = useTRPC();
     const addReq = useMutation(trpc.service.addLanguageRequest.mutationOptions({
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['service.getLanguageRequest'] });
+            onSuccess?.();
         }
     }))
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
@@ -102,6 +103,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                                 </FormItem>
                             )}
                         />
+                        <br />
                         <FormField
                             control={form.control}
                             name="startTime"
@@ -157,6 +159,30 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="priority"
+                        render={({ field }) => (
+                            <FormItem className="space-y-2">
+                                <FormLabel>Priority</FormLabel>
+                                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select priority level" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {priority.map((type) => (
+                                            <SelectItem key={type} value={type}>
+                                                {type}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <FormField
                         control={form.control}
@@ -196,30 +222,7 @@ export default function LanguageRequestForm ({  onFormSubmit,}: {
                         )}
                     />
 
-                    <FormField
-                        control={form.control}
-                        name="priority"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel>Priority</FormLabel>
-                                <Select defaultValue={field.value} onValueChange={field.onChange}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select priority level" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {priority.map((type) => (
-                                            <SelectItem key={type} value={type}>
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+
 
                     <div className="flex justify-center pt-4">
                         <Button
