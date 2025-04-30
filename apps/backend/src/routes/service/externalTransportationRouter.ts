@@ -113,7 +113,7 @@ export const externalTransportationRouter = t.router({
         employeeID,
       } = input;
       let status: Status = Status.NOTASSIGNED
-      if(employeeID != null){
+      if(employeeID != undefined){
         status = Status.ASSIGNED
       }
       const serviceRequest = await PrismaClient.serviceRequest.create({
