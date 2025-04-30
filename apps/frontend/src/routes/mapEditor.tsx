@@ -33,12 +33,18 @@ type Node = {
     suite: string;
     type: string;
     outside: boolean;
+    departmentId?: number;
 };
 
 type Edge = {
     id: number;
     fromNodeId: number;
     toNodeId: number;
+};
+
+type Department = {
+    id: number;
+    name: string;
 };
 
 const MapEditor = () => {
@@ -66,6 +72,13 @@ const MapEditor = () => {
 
     const handleSaveMap = async () => {
         try {
+            // Debug: Log nodes with department information
+            const locationNodes = nodes.filter(node => node.type === "Location");
+            console.log(`Found ${locationNodes.length} Location type nodes`);
+            locationNodes.forEach(node => {
+                console.log(`Location node ID: ${node.id}, Suite: ${node.suite}, Department ID: ${node.departmentId || 'none'}`);
+            });
+            
             const result = await setFloorMap.mutateAsync({
                 buildingId: Number(building),
                 floor: imageIndex + 1,
@@ -76,7 +89,8 @@ const MapEditor = () => {
                     type: node.type,
                     description: node.description,
                     suite: node.suite,
-                    outside: node.outside
+                    outside: node.outside,
+                    departmentId: node.type === "Location" ? node.departmentId : undefined
                 })),
                 edges: edges.map(edge => ({
                     fromNodeId: edge.fromNodeId,
@@ -125,7 +139,7 @@ const MapEditor = () => {
         setEdges(prev => prev.filter(edge => edge.id !== edgeId));
     };
 
-    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean }) => {
+    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean, departmentId?: number }) => {
         if (selectedNode) {
             setNodes(prev => prev.map(node =>
                 node.id === selectedNode.id ? {
@@ -133,7 +147,8 @@ const MapEditor = () => {
                     suite: values.suite,
                     type: values.type,
                     description: values.description,
-                    outside: values.isOutside
+                    outside: values.isOutside,
+                    departmentId: values.type === "Location" ? values.departmentId : undefined
                 } : node
             ));
             setSelectedNode(null);
@@ -240,9 +255,10 @@ const MapEditor = () => {
                 if (infoWindow) {
                     infoWindow.setContent(`
                     <div>
-                        <strong>Department: ${node.suite}</strong>
-                        <p>Type: ${node.type}</p>
-                        <p>ID: ${node.id}</p>
+                        <p><strong>Type:</strong> ${node.type}</p>
+                        <p><strong>Suite/Room:</strong> ${node.suite || 'N/A'}</p>
+                        ${node.type === 'Location' && node.departmentId ? `<p><strong>Department:</strong> ${getDepartmentName(node.departmentId)}</p>` : ''}
+                        <p><strong>ID:</strong> ${node.id}</p>
                     </div>
                 `);
                     infoWindow.open({
@@ -435,7 +451,10 @@ const MapEditor = () => {
                             type: edgeStartRef.current.type,
                             description: edgeStartRef.current.description,
                             isOutside: edgeStartRef.current.outside,
+                            departmentId: edgeStartRef.current.departmentId,
                         } : undefined}
+                        buildingId={building}
+                        floor={Number(form?.floor ?? 1)}
                     />
                 )}
             </div>
@@ -480,6 +499,13 @@ function getImageFromNodeType(type: string): string {
         Parking: "/map-pins/ParkingIconNOBG.png",
     };
     return images[type] || "/map-pins/BasicLocationNOBG.png";
+}
+
+function getDepartmentName(departmentId: number): string {
+    // Get departments from fetch results
+    const departments: Department[] = fetchFloorMap.data?.departments || [];
+    const department = departments.find(dept => dept.id === departmentId);
+    return department ? department.name : 'Unknown';
 }
 
 export default MapEditor;

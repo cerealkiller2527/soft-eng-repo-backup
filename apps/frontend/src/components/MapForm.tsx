@@ -24,6 +24,8 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
 import {NodeTypeZod} from "common/src/ZodSchemas.ts";
+import { useQuery } from "@tanstack/react-query";
+import { useTRPC } from "../database/trpc.ts";
 
 const typeEnum = NodeTypeZod
 const formSchema = z.object({
@@ -31,6 +33,7 @@ const formSchema = z.object({
     type: typeEnum,
     description: z.string(),
     isOutside: z.boolean().default(false),
+    departmentId: z.number().optional(),
 })
 type FormValues = z.infer<typeof formSchema>
 
@@ -41,10 +44,22 @@ interface MapFormProps {
         type?: string;
         description?: string;
         isOutside?: boolean;
+        departmentId?: number;
     };
+    buildingId?: number;
+    floor?: number;
 }
 
-export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
+export default function MapForm({ onSubmit, initialValues, buildingId, floor }: MapFormProps) {
+    const trpc = useTRPC();
+    
+    const { data: departments } = useQuery(
+        trpc.mapEditor.getDepartmentsByBuildingAndFloor.queryOptions({
+            buildingId: buildingId || 0,
+            floor: floor || 0,
+        })
+    );
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -52,12 +67,18 @@ export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
             type: "Entrance",
             description: "",
             isOutside: false,
+            departmentId: undefined,
             ...initialValues,
         }
     })
 
     const handleSubmit = (values: FormValues) => {
         try {
+            if (values.type === "Location" && values.departmentId === undefined) {
+                toast.error("Please select a department for this location");
+                return;
+            }
+            
             toast(
                 <div className="rounded-md bg-slate-950 p-4">
                     <code className="text-white">{JSON.stringify(values, null, 2)}</code>
@@ -80,22 +101,22 @@ export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
 
                     <FormField
                         control={form.control}
-                        name="department"
+                        name="suite"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="block text-sm font-medium text-black">
-                                    Department
+                                    Suite/Room Number
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="Enter Department"
+                                        placeholder="Enter Suite/Room Number"
                                         type="text"
                                         className="w-full"
                                         {...field}
                                     />
                                 </FormControl>
                                 <FormDescription className="text-xs text-black">
-                                    Enter the Department name or number
+                                    Enter the suite or room number for this location
                                 </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
@@ -108,7 +129,7 @@ export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="block text-sm font-medium text-black">
-                                    Type
+                                    Location Type
                                 </FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
@@ -125,12 +146,44 @@ export default function MapForm({ onSubmit, initialValues }: MapFormProps) {
                                     </SelectContent>
                                 </Select>
                                 <FormDescription className="text-xs text-black">
-                                    Select the type of location
+                                    Select the type of location (e.g., Entrance, Location, etc.)
                                 </FormDescription>
                                 <FormMessage className="text-xs text-red-500" />
                             </FormItem>
                         )}
                     />
+
+                    {form.watch("type") === "Location" && departments && (
+                        <FormField
+                            control={form.control}
+                            name="departmentId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="block text-sm font-medium text-black">
+                                        Department
+                                    </FormLabel>
+                                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                                        <FormControl>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a department" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="max-h-60 overflow-y-auto">
+                                            {departments.map((dept) => (
+                                                <SelectItem key={dept.id} value={dept.id.toString()}>
+                                                    {dept.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormDescription className="text-xs text-black">
+                                        Select the department that occupies this location
+                                    </FormDescription>
+                                    <FormMessage className="text-xs text-red-500" />
+                                </FormItem>
+                            )}
+                        />
+                    )}
 
                     <FormField
                         control={form.control}
