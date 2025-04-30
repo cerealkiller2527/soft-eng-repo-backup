@@ -112,11 +112,15 @@ export const externalTransportationRouter = t.router({
         priority,
         employeeID,
       } = input;
+      let status: Status = Status.NOTASSIGNED
+      if(employeeID != undefined){
+        status = Status.ASSIGNED
+      }
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.EXTERNALTRANSPORTATION,
           dateCreated: new Date(Date.now()),
-          status: Status.NOTASSIGNED,
+          status: status,
           description: additionalNotes,
           fromEmployee: ctx.username || "",
           priority: priority as Priority,

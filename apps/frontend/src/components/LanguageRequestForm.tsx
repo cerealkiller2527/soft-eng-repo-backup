@@ -19,7 +19,7 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low", "Medium", "High", "Emergency"];
 
 const formSchema = z.object({
-    employee: z.coerce.number(),
+    employeeID: z.coerce.number().optional(),
     priority: z.string(),
     startTime: z.coerce.date(),
     endTime: z.coerce.date(),
@@ -45,7 +45,7 @@ export default function LanguageRequestForm ({  onFormSubmit, onSuccess}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employee: 0,
+            employeeID: undefined,
             priority: "",
             location: "",
             language: "",
@@ -58,7 +58,7 @@ export default function LanguageRequestForm ({  onFormSubmit, onSuccess}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
-            employee: values.employee,
+            employeeID: values.employeeID,
             startTime: new Date(values.startTime),
             endTime: new Date(values.endTime),
             location: values.location,
@@ -81,7 +81,7 @@ export default function LanguageRequestForm ({  onFormSubmit, onSuccess}: {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                             control={form.control}
-                            name="employee"
+                            name="employeeID"
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormLabel>Requested Employee</FormLabel>

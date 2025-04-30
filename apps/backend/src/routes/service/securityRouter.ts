@@ -58,17 +58,22 @@ export const securityRouter = t.router({
     )
     .mutation(async ({ input, ctx }) => {
       const { location, additionalNotes, priority, employeeID } = input;
+      let status: Status = Status.NOTASSIGNED
+      if(employeeID != undefined){
+        status = Status.ASSIGNED
+      }
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.SECURITY,
           dateCreated: new Date(Date.now()),
-          status: Status.NOTASSIGNED,
+          status: status,
           description: additionalNotes,
           fromEmployee: ctx.username || "",
           priority: priority as Priority,
           ...(employeeID && { assignedEmployeeID: employeeID }),
         },
       });
+      console.log(serviceRequest.assignedEmployeeID);
       await PrismaClient.security.create({
         data: {
           id: serviceRequest.id,

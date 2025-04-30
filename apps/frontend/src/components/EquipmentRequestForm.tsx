@@ -34,7 +34,7 @@ const priority = ["Low", "Medium", "High", "Emergency"]
 
 const formSchema = z.object({
     priority: z.string().min(1, "Priority is required"),
-    employee: z.coerce.number().optional(),
+    employeeID: z.coerce.number().optional(),
     deadline: z.coerce.date(),
     equipment: z.array(z.string()).min(1, "At least one equipment type is required"),
     location: z.string().min(1, "Location is required"),
@@ -60,7 +60,7 @@ export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
         resolver: zodResolver(formSchema),
         defaultValues: {
             priority: "",
-            employee: 0,
+            employeeID: undefined,
             deadline: new Date(),
             equipment: [],
             location: "",
@@ -72,7 +72,7 @@ export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
         addReq.mutate({
             priority: values.priority,
             deadline: new Date(values.deadline),
-            employeeID: values.employee,
+            employeeID: values.employeeID,
             equipment: values.equipment,
             toWhere: values.location,
             additionalNotes: values.additionalNotes,
@@ -91,7 +91,7 @@ export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
-                        name="employee"
+                        name="employeeID"
                         render={({ field }) => (
                             <FormItem className="space-y-2">
                                 <FormLabel>Requested Employee</FormLabel>

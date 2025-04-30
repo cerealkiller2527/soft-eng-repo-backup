@@ -21,7 +21,7 @@ import { z } from "zod"
 
 
     const formSchema = z.object({
-        employee: z.coerce.number(),
+        employeeID: z.coerce.number().optional(),
         patientName: z.string(),
         priority: z.string(),
         pickupTime: z.date(),
@@ -49,7 +49,7 @@ import { z } from "zod"
         const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
-                employee: 0,
+                employeeID: undefined,
                 patientName: "",
                 priority: "",
                 pickupTime: new Date(),
@@ -64,13 +64,16 @@ import { z } from "zod"
             console.log(values);
             console.log(values.pickupTime);
             addReq.mutate({
+
                 patientName: values.patientName,
+                employeeID: values.employeeID,
                 pickupTime: new Date(values.pickupTime),
                 transportation: values.transportType,
                 pickupTransport: values.pickupTransport,
                 dropoffTransport: values.dropoffTransport,
                 additionalNotes: values.additionalNotes,
                 priority: values.priority,
+
             });
             onFormSubmit?.(values);
 
@@ -87,7 +90,7 @@ import { z } from "zod"
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                             control={form.control}
-                            name="employee"
+                            name="employeeID"
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormLabel>Requested Employee</FormLabel>
