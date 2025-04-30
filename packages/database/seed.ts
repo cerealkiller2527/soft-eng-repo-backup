@@ -1,4 +1,4 @@
-import {nodeType, Priority, Prisma, PrismaClient, RequestType, Status, Algorithm} from './.prisma/client';
+import {nodeType, Priority, Prisma, PrismaClient, RequestType, Status} from './.prisma/client';
 import Papa from "papaparse";
 import fs from "fs";
 import z from "zod";
@@ -45,7 +45,6 @@ async function main() {
     await prisma.location.deleteMany();
     await prisma.building.deleteMany();
     await prisma.user.deleteMany();
-    await prisma.searchAlgorithm.deleteMany();
 
     console.log('Existing data purged.');
 
@@ -266,13 +265,6 @@ async function main() {
                     break;
             }
         }))
-
-    const searchAlgo = await prisma.searchAlgorithm.create({
-        data: {
-            id: 1,
-            current: Algorithm.BFS
-        }
-    })
 
     console.log("seed done!")
 
