@@ -125,7 +125,7 @@ const ServiceRequest = () => {
                         <div className="md:w-1/3 flex justify-center">
                             <div className="bg-white/10 p-6 rounded-xl backdrop-blur-sm border border-white/20 w-full max-w-xs">
                                 <Link to="/requestdashboard" className="block w-full">
-                                    <Button className="w-full bg-white hover:bg-gray-100 text-[#1a365d] font-medium">
+                                    <Button className="w-full bg-white hover:bg-accent text-[#1a365d] font-medium">
                                         Open Full Dashboard
                                         <ArrowRight className="ml-2 h-4 w-4" />
                                     </Button>
