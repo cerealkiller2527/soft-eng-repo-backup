@@ -160,6 +160,7 @@ const DirectoryPage: React.FC = () => {
                 if (dept) {
                     setSelectedDepartment(dept);
                     setChatInput("");
+                    setChatOpen(false);
                     return;
                 }
             }
