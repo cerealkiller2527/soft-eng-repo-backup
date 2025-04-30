@@ -1,0 +1,15 @@
+description,lat,long,type,floor,building,outside
+Emergency,42.30168649,-71.12785344,Location,1,Faulkner,FALSE
+a,42.30161833,-71.12790829,Intermediary,1,Faulkner,FALSE
+Pre-admission,42.30147271,-71.12816531,Location,1,Faulkner,FALSE
+e,42.3012168,-71.12762714,Intermediary,1,Faulkner,TRUE
+d,42.30130413,-71.12776036,Intermediary,1,Faulkner,FALSE
+b,42.30145763,-71.12806725,Intermediary,1,Faulkner,FALSE
+f,42.30169925,-71.12722739,Intermediary,1,Faulkner,TRUE
+Audiology,42.30170072,-71.12805525,Location,1,Faulkner,FALSE
+Blood Draw,42.30154826,-71.12798446,Location,1,Faulkner,FALSE
+Radiology,42.30131305,-71.12820621,Location,1,Faulkner,FALSE
+Cardiac Rehab,42.30155289,-71.12816624,Location,1,Faulkner,FALSE
+Dialysis,42.30173125,-71.12716943,Location,1,Faulkner,FALSE
+Admission,42.30157119,-71.12788428,Location,1,Faulkner,FALSE
+c,42.30152205,-71.12818297,Intermediary,1,Faulkner,FALSE

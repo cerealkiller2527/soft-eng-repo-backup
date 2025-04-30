@@ -1,0 +1,14 @@
+toNode,fromNode,floor,building
+Emergency,a,1,Faulkner
+a,Admission,1,Faulkner
+a,Audiology,1,Faulkner
+a,Blood Draw,1,Faulkner
+Pre-admission,c,1,Faulkner
+e,d,1,Faulkner
+e,f,1,Faulkner
+d,b,1,Faulkner
+b,c,1,Faulkner
+b,Blood Draw,1,Faulkner
+b,Radiology,1,Faulkner
+f,Dialysis,1,Faulkner
+f,e,1,Faulkner
