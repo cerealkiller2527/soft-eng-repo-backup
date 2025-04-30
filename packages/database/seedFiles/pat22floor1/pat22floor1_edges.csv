@@ -1,0 +1,7 @@
+fromNode,toNode,floor,building
+1entrance outside,1entrance,1,22 Patriot
+1entrance,122elevator,1,22 Patriot
+120/122drop off,120/122parking entrance 1,1,22 Patriot
+120/122parking entrance 1,120/122parking entrance 2,1,22 Patriot
+120/122parking entrance 2,120/122parking,1,22 Patriot
+120/122drop off,1entrance outside,1,22 Patriot

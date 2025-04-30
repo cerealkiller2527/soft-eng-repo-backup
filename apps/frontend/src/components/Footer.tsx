@@ -2,7 +2,7 @@ import MSBLogo from '/MSBlogo.png';
 
 const Footer = () => {
     return(
-        <footer className=" footer mt-auto bg-[#012D5A] text-white py-6 mt-10 w-full">
+        <footer className=" footer mt-auto bg-[#004170] text-white py-6 mt-10 w-full">
             <div className="flex justify-between items-center px-6" >
                 <div>
             <p className="text-sm">&copy; 2025 Brigham and Women's Hospital. All rights reserved.</p>

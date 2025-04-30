@@ -6,11 +6,9 @@ import { z } from "zod"
     import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
     import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem,} from "@/components/ui/select"
     import { Textarea } from "@/components/ui/textarea"
-    import { DatetimePicker } from "@/components/ui/datetimepicker"
     import { Input } from "@/components/ui/input"
     import {queryClient, useTRPC} from "@/database/trpc.ts";
-    import { useMutation } from '@tanstack/react-query';
-    import ReactDatePicker from "react-datepicker";
+    import {useMutation, useQuery} from '@tanstack/react-query';
     import 'react-datepicker/dist/react-datepicker.css';
 
 
@@ -23,7 +21,7 @@ import { z } from "zod"
 
 
     const formSchema = z.object({
-        employeeName: z.string(),
+        employee: z.coerce.number(),
         patientName: z.string(),
         priority: z.string(),
         pickupTime: z.date(),
@@ -42,10 +40,12 @@ import { z } from "zod"
         const addReq = useMutation(trpc.service.addExternalTransportationRequest.mutationOptions({
         }))
 
+        const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
+
         const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
-                employeeName: "",
+                employee: 0,
                 patientName: "",
                 priority: "",
                 pickupTime: new Date(),
@@ -60,7 +60,6 @@ import { z } from "zod"
             console.log(values);
             console.log(values.pickupTime);
             addReq.mutate({
-                employee: values.employeeName,
                 patientName: values.patientName,
                 pickupTime: new Date(values.pickupTime),
                 transportation: values.transportType,
@@ -74,7 +73,7 @@ import { z } from "zod"
         }
 
         return (
-            <div className="max-w-3xl mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 space-y-6 border border-gray-200">
+            <div className="">
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-[#012D5A] mb-2">Transportation Request Form</h2>
                     <p className="text-sm text-gray-600">Created by Matt Nickerson (Iteration 1)</p>
@@ -84,18 +83,52 @@ import { z } from "zod"
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                             control={form.control}
-                            name="employeeName"
+                            name="employee"
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
-                                    <FormLabel>Employee Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Employee Name" {...field} className="w-full" />
-                                    </FormControl>
-                                    <FormDescription>Enter employee name.</FormDescription>
+                                    <FormLabel>Employee</FormLabel>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Employee" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {listofEmployees.data?.map((employee) => (
+                                                <SelectItem key={employee.id} value={String(employee.id)}>
+                                                    {employee.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
-
+                        <FormField
+                            control={form.control}
+                            name="employee"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Employee</FormLabel>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Employee" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {listofEmployees.data?.map((employee) => (
+                                                <SelectItem key={employee.id} value={String(employee.id)}>
+                                                    {employee.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="patientName"
@@ -167,19 +200,7 @@ import { z } from "zod"
                                 <FormItem className="space-y-2">
                                     <FormLabel>Pick Up Time/Date</FormLabel>
                                     <FormControl>
-                                        <ReactDatePicker
-                                            selected={field.value}
-                                            onChange={(date) => field.onChange(date)}
-                                            showTimeSelect
-                                            placeholderText="MM/DD/YYYY, HH:MM AM/PM"
-                                            dateFormat="Pp"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-                                            popperClassName="!z-50"
-                                            calendarClassName="rounded-lg border border-gray-300 shadow-lg bg-white text-sm p-7"
-                                            dayClassName={() =>
-                                                "w-10 h-10 flex items-center justify-center hover:bg-blue-100 rounded"
-                                            }
-                                        />
+                                        <Input type={"datetime-local"} />
                                     </FormControl>
                                     <FormDescription>Add the date and time of pickup.</FormDescription>
                                     <FormMessage />

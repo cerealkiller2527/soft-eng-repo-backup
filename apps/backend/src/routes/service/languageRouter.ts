@@ -73,6 +73,7 @@ export const languageRouter = t.router({
         endTime: z.coerce.date(),
         additionalNotes: z.string(),
         priority: z.nativeEnum(Priority),
+        employeeID: z.number().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -83,6 +84,7 @@ export const languageRouter = t.router({
         endTime,
         additionalNotes,
         priority,
+        employeeID,
       } = input;
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
@@ -92,6 +94,7 @@ export const languageRouter = t.router({
           description: additionalNotes,
           fromEmployee: ctx.username || "",
           priority: priority as Priority,
+          ...(employeeID && { assignedEmployeeID: employeeID }),
         },
       });
       await PrismaClient.language.create({

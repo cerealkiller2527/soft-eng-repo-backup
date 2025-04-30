@@ -1,4 +1,4 @@
-y# Database
+# Database
 
 The database package is powered by Prisma—a next generation TypeScript
 ORM package. Prisma's documentation is quite extensive, and can be found
