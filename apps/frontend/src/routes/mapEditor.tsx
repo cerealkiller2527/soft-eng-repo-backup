@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import Navbar from "../components/Navbar.tsx";
+import NewNavbar from "../components/NewNavbar.tsx";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import MapEditorSelectForm from '../components/MapEditorSelectForm.tsx';
@@ -11,8 +11,6 @@ import MapForm from "../components/MapForm.tsx";
 import {
     AlertDialog,
     AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alertdialog";
 import {
@@ -410,17 +408,17 @@ const MapEditor = () => {
             <div
                 id="google-map-container"
                 ref={mapRef}
-                className="absolute top-20 bottom-0 left-0 right-0 w-full z-0"
+                className="absolute top-14 bottom-0 left-0 right-0 w-full z-0"
             />
 
             <div className="fixed top-0 left-0 right-0 z-20">
-                <Navbar />
+                <NewNavbar />
             </div>
 
-            <div className="absolute bottom-10 left-8 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
+            <div className="absolute bottom-10 left-4 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
-                    className="bg-white/10"
+                    className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                 >
                     Save Map
                 </Button>
@@ -447,8 +445,7 @@ const MapEditor = () => {
                     <AlertDialogTrigger asChild>
                         <Button
                             variant="outline"
-                            className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
-                            hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                            className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
                             onClick={() => setIsDialogOpen(true)}
                         >
                             Select Location
