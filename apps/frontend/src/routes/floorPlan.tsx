@@ -164,7 +164,9 @@ const FloorPlan = () => {
         dropOffLatitude: address.lat ?? 0,
         dropOffLongitude : address.lng ?? 0,
         driving: driving,
-    },{enabled: false}) )
+    },
+        //{enabled: false}
+    ) )
 
 
     useEffect(() => {
@@ -194,7 +196,7 @@ const FloorPlan = () => {
 
     useEffect(() => {
         if (!form) return;
-        search.refetch();
+        //search.refetch();
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
