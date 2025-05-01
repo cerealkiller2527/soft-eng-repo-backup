@@ -194,7 +194,7 @@ const FloorPlan = () => {
 
     useEffect(() => {
         if (!form) return;
-
+        search.refetch();
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -213,6 +213,7 @@ const FloorPlan = () => {
             queryClient.invalidateQueries();
 
             const directionsService = new google.maps.DirectionsService();
+            //tempaddr used because useStates dont update variables fast enough, address useState passed to backend
             let tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363}
             if(form.building ==  "20 Patriot Place"){
                 setAddress({lat: 42.09263772658629, lng: -71.26603830263363});
