@@ -23,7 +23,7 @@ const appRouter = t.router({
   search: searchRouter,
   mapEditor: mapEditorRouter,
   mapInfoRouter: mapInfoRouter,
-  dpImport: dbImportRouter
+  dbEditor: dbImportRouter
 });
 
 const app = express();
