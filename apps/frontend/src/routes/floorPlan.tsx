@@ -354,7 +354,7 @@ const FloorPlan = () => {
                 </div>
 
                 {/* Overlay UI elements */}
-                <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
+                <div className="absolute z-10 p-4 w-80">
                     <LocationRequestForm onSubmit={(form) => setForm(form)} initialForm={form} />
 
                 </div>

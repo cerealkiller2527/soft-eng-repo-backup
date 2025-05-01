@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button"; // adjust the import path as needed
+import { Button } from "@/components/ui/button";
 
 export function DirectionsButton({ directions }: { directions: string[] }) {
     const [instructions, setInstructions] = useState<string[]>([]);
@@ -23,9 +23,15 @@ export function DirectionsButton({ directions }: { directions: string[] }) {
     }
 
     return (
-        <Button onClick={handleAddWithTTS} className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
+        <div className="flex-auto justify-content-center">
+            <Button onClick={handleAddWithTTS} className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
                     hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid">
-            TTS
-        </Button>
+                TTS
+            </Button>
+            <Button onClick={handleAddWithTTS} className="bg-[#012D5A] text-white hover:text-[#012D5A] hover:bg-white
+                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid">
+                TTS
+            </Button>
+        </div>
     );
 }
