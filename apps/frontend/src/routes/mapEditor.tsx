@@ -168,32 +168,26 @@ const MapEditor = () => {
         if (!edgeStartRef.current) {
             edgeStartRef.current = clickedNode;
             setSelectedNode(clickedNode);
-            
+
             // Show info window
             if (infoWindow && mapInstance.current) {
                 const marker = markersRef.current.find(m => {
                     const pos = m.position;
                     return pos && pos.lat === clickedNode.x && pos.lng === clickedNode.y;
                 });
-                
+
                 if (marker) {
                     const content = `
-                        <div class="p-2">
-                            <p><strong>Type:</strong> ${clickedNode.type}</p>
-                            <p><strong>Suite/Room:</strong> ${clickedNode.suite || 'N/A'}</p>
-                            ${clickedNode.type === 'Location' && clickedNode.departmentId ? 
-                                `<p><strong>Department:</strong> ${getDepartmentName(clickedNode.departmentId)}</p>` : ''}
-                            <p><strong>Description:</strong> ${clickedNode.description || 'N/A'}</p>
-                            <p><strong>Outdoor Location:</strong> ${clickedNode.outside ? 'Yes' : 'No'}</p>
-                            <p><strong>ID:</strong> ${clickedNode.id}</p>
-                            <div class="mt-2">
-                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm" 
-                                    onclick="document.dispatchEvent(new CustomEvent('editNode', { detail: ${JSON.stringify(clickedNode)}}))">
-                                    Edit Node
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                    <div class="p-2">
+                        <p><strong>Type:</strong> ${clickedNode.type}</p>
+                        <p><strong>Suite/Room:</strong> ${clickedNode.suite || 'N/A'}</p>
+                        ${clickedNode.type === 'Location' && clickedNode.departmentId ?
+                        `<p><strong>Department:</strong> ${getDepartmentName(clickedNode.departmentId)}</p>` : ''}
+                        <p><strong>Description:</strong> ${clickedNode.description || 'N/A'}</p>
+                        <p><strong>Outdoor Location:</strong> ${clickedNode.outside ? 'Yes' : 'No'}</p>
+                        <p><strong>ID:</strong> ${clickedNode.id}</p>
+                    </div>
+                `;
                     infoWindow.setContent(content);
                     infoWindow.open({
                         anchor: marker,
@@ -468,7 +462,7 @@ const MapEditor = () => {
             <div className="absolute bottom-10 left-4 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
                 <Button
                     onClick={handleSaveMap}
-                    className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
+                    className="bg-primary hover:bg-chart-4 text-white hover:text-white"
                 >
                     Save Map
                 </Button>
@@ -498,7 +492,7 @@ const MapEditor = () => {
                     <AlertDialogTrigger asChild>
                         <Button
                             variant="outline"
-                            className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white"
+                            className="bg-primary hover:bg-chart-4 text-white hover:text-white"
                             onClick={() => setIsDialogOpen(true)}
                         >
                             Select Location

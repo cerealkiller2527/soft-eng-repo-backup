@@ -148,7 +148,7 @@ const ServiceRequest = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8 mx-20">
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-xl text-[#003153]">Equipment Requests</CardTitle>
                     </CardHeader>
@@ -157,7 +157,7 @@ const ServiceRequest = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-[#003153]">Transport Requests</CardTitle>
                     </CardHeader>
@@ -166,7 +166,7 @@ const ServiceRequest = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-[#003153]">Security Requests</CardTitle>
                     </CardHeader>
@@ -174,7 +174,7 @@ const ServiceRequest = () => {
                         <div className="text-4xl font-bold text-secondary">{requestsSecurity.data?.length}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-primary">Language Requests</CardTitle>
                     </CardHeader>
