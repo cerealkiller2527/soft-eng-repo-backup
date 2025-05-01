@@ -1,6 +1,11 @@
 import Layout from "@/components/Layout.tsx";
 import React from "react";
+import { useTRPC } from '../database/trpc.ts';
 
+
+const trpc = useTRPC();
+
+const employees =
 
 export default function DbEditor() {
     return (

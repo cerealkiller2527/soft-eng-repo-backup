@@ -152,106 +152,54 @@ async function getNodesAndEdges(): Promise<z.infer<typeof nodeWithEdgesRow>[]> {
 }
 
 export const dbImportRouter = t.router({
-  dbImport: adminProcedure.query(async () => {
+  dbImportAll: adminProcedure.query(async () => {
     try {
       const parsedEmployees = await getEmployees();
       const parsedBuildings = await getBuildings();
       const parsedDepartments = await getDepartments();
       const parsedNodesWithEdges = await getNodesAndEdges();
-
-      // // buildings with info
-      // const buildings = (await PrismaClient.building.findMany({
-      //   include: {
-      //     Location: {
-      //       include: {
-      //         Department: {
-      //           include: {
-      //             DepartmentServices: {
-      //               include: {
-      //                 service: true,
-      //               },
-      //             },
-      //           },
-      //         },
-      //         node: {
-      //           include: {
-      //             fromEdge: true,
-      //             toEdge: true,
-      //           },
-      //         },
-      //       },
-      //     },
-      //   },
-      // }))
-
-      // const rows: z.infer<typeof CSVRecordSchema>[] = buildings.map(building => {
-      //
-      //   const myRow: z.infer<typeof CSVRecordSchema> = {
-      //     // "Building ID":
-      //     "Building Name": building.name,
-      //     "Building Address": building.address,
-      //     "Building Phone": building.phoneNumber,
-      //     // "Location ID": z.string().optional(), // get rid of!
-      //     Floor: building.Location[0].floor,
-      //     Suite: building.Location[0].suite,
-      //     // "Node ID": z.string().optional(), // get rid of!
-      //     "Node Type": z.string(),
-      //     "Node Description": z.string(),
-      //     "Node Coordinates": z.string(),
-      //     "Node Outside": z.string(),
-      //     "From Edges": z.string(),
-      //     "To Edges": z.string(),
-      //     // "Department ID": z.string().optional(), // get rid of!
-      //     "Department Name": z.string(),
-      //     "Department Phone": z.string(),
-      //     "Department Description": z.string().optional(),
-      //     Services: z.string(),
-      //   }
-      //
-      //   return myRow;
-      // })
-
-      // const rows: CSVRow[] = buildings.flatMap((building) =>
-      //   building.Location.map((location) => ({
-      //     "Building ID": building.id?.toString() ?? "",
-      //     "Building Name": building.name,
-      //     "Building Address": building.address,
-      //     "Building Phone": building.phoneNumber,
-      //     "Location ID": location.id?.toString() ?? "",
-      //     Floor: location.floor?.toString() ?? "0",
-      //     Suite: location.suite ?? "",
-      //     "Node ID": location.nodeID?.toString() ?? "",
-      //     "Node Type": (location.node?.type as nodeType) ?? "Location",
-      //     "Node Description": location.node?.description ?? "",
-      //     "Node Outside": location.node?.outside ?? false,
-      //     "Node Coordinates": location.node
-      //       ? `${location.node.lat}, ${location.node.long}`
-      //       : "",
-      //     "From Edges":
-      //       location.node?.fromEdge
-      //         .map((edge) => edge.toNodeId)
-      //         .filter(Boolean)
-      //         .join(",") ?? "",
-      //     "To Edges":
-      //       location.node?.toEdge
-      //         .map((edge) => edge.fromNodeId)
-      //         .filter(Boolean)
-      //         .join(",") ?? "",
-      //     "Department ID": location.departmentId?.toString() ?? "",
-      //     "Department Name": location.Department?.name ?? "",
-      //     "Department Phone": location.Department?.phoneNumber ?? "",
-      //     "Department Description": location.Department?.description ?? "",
-      //     Services:
-      //       location.Department?.DepartmentServices.map((ds) => ds.service.name)
-      //         .filter(Boolean)
-      //         .join(",") ?? "",
-      //   })),
-      // );
     } catch (error) {
       console.error("Failed to export CSV:", error);
       throw error;
     }
   }),
+
+  getParsedEmployees: adminProcedure.query(async () => {
+    try {
+      return await getEmployees();
+    } catch (error) {
+      console.error("Failed to fetch employees from database")
+      throw error;
+    }
+  }),
+
+  getParsedBuildings: adminProcedure.query(async () => {
+    try {
+      return await getBuildings();
+    } catch (error) {
+      console.error("Failed to fetch buildings from database")
+      throw error;
+    }
+  }),
+
+  getParsedDepartments: adminProcedure.query(async () => {
+    try {
+      return await getDepartments();
+    } catch (error) {
+      console.error("Failed to fetch departments from database")
+      throw error;
+    }
+  }),
+
+  getParsedNodesWithEdges: adminProcedure.query(async () => {
+    try {
+      return await getNodesAndEdges();
+    } catch (error) {
+      console.error("Failed to fetch nodes and edges from database")
+      throw error;
+    }
+  })
+
 });
 
 export type DBImportRouter = typeof dbImportRouter;
