@@ -5,6 +5,8 @@ import { useTRPC } from '../database/trpc.ts';
 import {useMutation, useQuery} from '@tanstack/react-query';
 
 
+const trpc = useTRPC();
+
 export default function DbEditor() {
 
     const trpc = useTRPC();
