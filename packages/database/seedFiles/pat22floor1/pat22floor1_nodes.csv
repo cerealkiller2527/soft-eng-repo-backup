@@ -1,9 +1,8 @@
-suite,description,lat,long,type,floor,building,outside
-0,1entrance outside,42.092584,-71.266532,Entrance,1,22 Patriot,TRUE
-0,1entrance,42.092599,-71.266584,Intermediary,1,22 Patriot,FALSE
-0,122elevator,42.092589,-71.266719,Elevator,1,22 Patriot,FALSE
-0,222elevator,42.092589,-71.266719,Elevator,2,22 Patriot,FALSE
-0,120/122drop off,42.092522,-71.266522,Entrance,1,22 Patriot,TRUE
-0,120/122parking entrance 1,42.092481,-71.266441,Intermediary,1,22 Patriot,TRUE
-0,120/122parking entrance 2,42.092439,-71.266355,Intermediary,1,22 Patriot,TRUE
-0,120/122parking,42.092361,-71.266417,Parking,1,22 Patriot,TRUE
+description,lat,long,type,floor,building,outside
+parking,42.09240814,-71.26652789,Parking,1,22 Patriot Place,TRUE
+elevator 1,42.09264515131932,-71.26674325,Elevator,1,22 Patriot Place,FALSE
+front door,42.09262924769187,-71.26660843,Intermediary,1,22 Patriot Place,FALSE
+a,42.09253012,-71.26643217,Intermediary,1,22 Patriot Place,TRUE
+b,42.09262276272275,-71.26643321,Intermediary,1,22 Patriot Place,TRUE
+stairs,42.09258261763324,-71.26683688,Staircase,1,22 Patriot Place,FALSE
+c,42.09256347151396,-71.26678155,Intermediary,1,22 Patriot Place,FALSE
