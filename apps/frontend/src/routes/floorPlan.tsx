@@ -218,20 +218,20 @@ const FloorPlan = () => {
             //tempaddr used because useStates dont update variables fast enough, address useState passed to backend
             let tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363}
             if(form.building ==  "20 Patriot Place"){
-                setAddress({lat: 42.09263772658629, lng: -71.26603830263363});
-                tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363};
+                setAddress({lat: 42.09252289293114, lng: -71.2665262516987});
+                tempAddr = {lat: 42.09252289293114, lng: -71.2665262516987};
             }else if(form.building ==  "22 Patriot Place"){
-                setAddress({lat: 42.09251994541246, lng: -71.26653442087988});
-                tempAddr = {lat: 42.09251994541246, lng: -71.26653442087988}
+                setAddress({lat: 42.09252289293114, lng: -71.2665262516987});
+                tempAddr = {lat: 42.09252289293114, lng: -71.2665262516987};
             }else if(form.building ==  "Faulkner Hospital"){
-                setAddress({lat: 42.30118405913063, lng: -71.12763594431938});
-                tempAddr = {lat: 42.30118405913063, lng: -71.12763594431938};
+                setAddress({lat: 42.3012168, lng: -71.12762714});
+                tempAddr = {lat: 42.3012168, lng: -71.12762714};
             }else if(form.building ==  "Chestnut Hill Medical Center"){
-                setAddress({lat: 42.32632, lng: -71.14950});
-                tempAddr = {lat: 42.32632, lng: -71.14950};
+                setAddress({lat: 42.3262626, lng: -71.14951471});
+                tempAddr = {lat: 42.3262626, lng: -71.14951471};
             }else if(form.building ==  "Main Campus"){
-                setAddress({lat: 42.33512312333498, lng: -71.10616901382942});
-                tempAddr = {lat: 42.33512312333498, lng: -71.10616901382942};
+                setAddress({lat: 42.33532599, lng: -71.10608207});
+                tempAddr = {lat: 42.33532599, lng: -71.10608207};
             }
             directionsService.route(
                 {
