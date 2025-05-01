@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import { pNodeDTO } from "../../../../share/types.ts";
 
-const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill Medical Center", "Faulkner Hospital"];
+const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill Medical Center", "Faulkner Hospital", "Main Campus"];
 const transport = ["Public Transport", "Walking", "Driving"];
 
 // ✏️ Added type for form

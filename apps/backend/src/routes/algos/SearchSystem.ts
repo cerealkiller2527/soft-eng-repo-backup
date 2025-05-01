@@ -42,6 +42,7 @@ export class SearchSystem {
     }
 
     // create path from start node to end node
+    console.log(startId, endNodeId);
     const toDepartment = await this.algorithm.findPath(startId, endNodeId);
 
     // convert pNode[] to z.array(pNodeZod)
@@ -57,8 +58,8 @@ export class SearchSystem {
     const toDeptartmentZ = this.nodesToZods(toDepartment, floorMap);
 
     const output = {
-      toParking: toParkingZ,
-      toDepartment: toDeptartmentZ,
+      toParking: toParkingZ ?? [],
+      toDepartment: toDeptartmentZ ?? [],
     };
 
     return searchOutput.parse(output);

@@ -20,6 +20,14 @@ export const searchInput = z.object({
     driving: z.boolean(),
 })
 
+export const searchInputForRouter = z.object({
+    buildingName: z.string(),
+    endDeptName: z.string(),
+    dropOffLatitude: z.number(),
+    dropOffLongitude: z.number(),
+    driving: z.boolean(),
+})
+
 export const searchOutput = z.object({
     toParking: z.array(pNodeZod),
     toDepartment: z.array(pNodeZod),
