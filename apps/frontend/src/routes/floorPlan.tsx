@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
-import {useMutation, useQuery} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import { queryClient } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
-import {DirectionsButton} from "@/components/DirectionsButton.tsx";
+import { DirectionsButton } from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 
@@ -120,6 +120,12 @@ const FloorPlan = () => {
         if (filteredCoords.length < 2) return; // Need at least 2 points to draw a line
         console.log(filteredCoords);
 
+
+        const lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 3,
+        };
+
         // Create and display new polyline
         const polyline = new google.maps.Polyline({
             path: filteredCoords,
@@ -127,10 +133,30 @@ const FloorPlan = () => {
             strokeColor: "#00d9ff",
             strokeOpacity: 1.0,
             strokeWeight: 4,
+            icons: [
+                {
+                    icon: lineSymbol,
+                    offset: "100%",
+                }
+            ]
         });
+
+        function animateArrow(line: google.maps.Polyline) {
+            let count = 0;
+
+            window.setInterval(() => {
+                count = (count + 1) % 200;
+
+                const icons = line.get("icons");
+
+                icons[0].offset = count / 2 + "%";
+                line.set("icons", icons);
+            }, 20);
+        }
 
         polyline.setMap(mapInstance.current);
         polylineRef.current = polyline;
+        animateArrow(polyline)
         console.log("polyline rendered")
     }, [pathCoords, imageIndex]);
 
@@ -196,7 +222,7 @@ const FloorPlan = () => {
 
     useEffect(() => {
         if (!form) return;
-        //search.refetch();
+        search.refetch();
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -323,7 +349,7 @@ const FloorPlan = () => {
                     <InstructionsBox key={instructions.join()} instructions={instructions} />
 
                 </div>
-                <div className="absolute top-55 right-9 z-10 p-4 rounded-lg shadow-md w-80 h-64">
+                <div className="absolute top-55 right-9 z-50 p-4 rounded-lg">
                     <DirectionsButton directions={instructions} />
                 </div>
 
@@ -340,13 +366,6 @@ const FloorPlan = () => {
                     hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
                     >
                         Floor: {imageIndex + 1}
-                    </Button>
-                    <Button
-                        onClick={toggleMode}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        {mode}
                     </Button>
                     <Button
                         onClick={toggleCenterMode}

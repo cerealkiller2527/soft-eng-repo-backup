@@ -1,4 +1,3 @@
-// components/InstructionsBox.tsx
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type InstructionsBoxProps = {
