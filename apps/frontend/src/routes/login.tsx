@@ -6,21 +6,18 @@ import { isClerkAPIResponseError } from "@clerk/clerk-js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
-import { FaGithub as GitHubIcon, FaGoogle as GoogleIcon } from "react-icons/fa";
 
 export default function CustomSignIn(){
 
     const[username, setUsername] = useState("");
     const[password, setPassword] = useState("");
     const[error, setError] = useState<string | null>(null);
-    const [stage, setStage] = useState<"username" | "password">("username");
-    const [step, setStep] = useState<1 | 2>(1);
     const [userExists, setUserExists] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
 
-    const handleUsernameSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setIsSubmitting(true);
@@ -28,45 +25,7 @@ export default function CustomSignIn(){
         if (!signInLoaded) return;
 
         try {
-            console.log("[Username Submit] Checking existence:", username);
-
-            await signIn.create({
-                identifier: username,
-            });
-
-            console.log("[Username exists!] Moving to Step 2");
-
-            setUserExists(true);
-            setStep(2);
-            setStage("password");
-
-        } catch (err: unknown) {
-            console.error("Error during username verification:", err);
-
-            if (isClerkAPIResponseError(err)) {
-                const firstError = err.errors?.[0];
-                if (firstError?.code === "form_identifier_not_found") {
-                    setError("User does not exist. Please check your email or username.");
-                } else {
-                    setError(firstError?.message ?? "Error verifying username.");
-                }
-            } else {
-                setError("Unknown error verifying username.");
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handlePasswordSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
-        setIsSubmitting(true);
-
-        if (!signInLoaded) return;
-
-        try {
-            console.log("[Password Submit] Signing in:", username);
+            console.log("[Submit] Signing in:", username);
 
             const signInAttempt = await signIn.create({
                 identifier: username,
@@ -79,40 +38,17 @@ export default function CustomSignIn(){
             await setActive({ session: sessionId });
 
             navigate("/Directory");
-
         } catch (err: unknown) {
-            console.error("Error during password submit:", err);
+            console.error("Error during sign-in:", err);
 
             if (isClerkAPIResponseError(err)) {
                 const firstError = err.errors?.[0];
-                if (firstError?.code === "form_password_incorrect") {
-                    setError("Incorrect password. Please try again.");
-                } else {
-                    setError(firstError?.message ?? "Login failed.");
-                }
+                setError(firstError?.message ?? "Login failed.");
             } else {
                 setError("Unknown error during login.");
             }
         } finally {
             setIsSubmitting(false);
-        }
-    };
-
-    const handleOAuthSignIn = async (provider: "oauth_google" | "oauth_github") => {
-        if (!signInLoaded) return;
-
-        try {
-            await signIn.authenticateWithRedirect({
-                strategy: provider,
-                redirectUrl: "/Directory",
-                redirectUrlComplete: "/Directory",
-            });
-        } catch (err: unknown) {
-            if (isClerkAPIResponseError(err)) {
-                setError(err.errors?.[0]?.message ?? "SSO Login failed");
-            } else {
-                setError("Unknown error during SSO login");
-            }
         }
     };
 
@@ -147,103 +83,43 @@ export default function CustomSignIn(){
                         Welcome back! Please sign in to continue
                     </p>
 
-                    {stage === "username" && (
-                        <>
-                            <div className="flex gap-4">
-                                <Button
-                                    variant="outline"
-                                    className="flex-1"
-                                    onClick={() => handleOAuthSignIn("oauth_github")}
-                                >
-                                    <GitHubIcon className="w-5 h-5 mr-2" /> GitHub
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="flex-1"
-                                    onClick={() => handleOAuthSignIn("oauth_google")}
-                                >
-                                    <GoogleIcon className="w-5 h-5 mr-2" /> Google
-                                </Button>
-                            </div>
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700">
+                                Email address or username
+                            </label>
+                            <Input
+                                type="text"
+                                placeholder="email@domain.com"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                            {/* Divider */}
-                            <div className="relative my-4">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-gray-300"></div>
-                                </div>
-                                <div className="relative flex justify-center text-sm">
-                                    <span className="bg-white px-2 text-gray-500">or continue with</span>
-                                </div>
-                            </div>
-                        </>
-                    )}
-
-                    <form
-                        onSubmit={async (e) => {
-                            e.preventDefault();
-                            if (stage === "username") {
-                                await handleUsernameSubmit(e);
-                            } else {
-                                await handlePasswordSubmit(e);
-                            }
-                        }}
-                        className="flex flex-col gap-4"
-                    >
-                        {stage === "username" && (
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Email address or username
-                                </label>
-                                <Input
-                                    type="text"
-                                    placeholder="email@domain.com"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        )}
-
-                        {stage === "password" && (
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Enter your password
-                                </label>
-                                <Input
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        )}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700">
+                                Enter your password
+                            </label>
+                            <Input
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
 
                         {error && (
                             <div className="text-red-500 text-sm text-center">{error}</div>
                         )}
 
-                        {stage === "password" && (
-                            <Button
-                                variant="outline"
-                                type="button"
-                                className="w-full text-blue-900"
-                                onClick={() => {
-                                    setStage("username");
-                                    setStep(1);
-                                    setError(null);
-                                    setPassword("");
-                                }}
-                            >
-                                Back
-                            </Button>
-                        )}
-
                         <Button
                             type="submit"
                             className="bg-primary hover:bg-chart-4 hover:text-white transition-colors"
+                            disabled={isSubmitting}
                         >
-                            {step === 1 ? "Next" : "Sign In"}
+                            Sign In
                         </Button>
                     </form>
 
