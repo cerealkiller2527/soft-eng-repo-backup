@@ -130,12 +130,14 @@ async function getNodesAndEdges(): Promise<z.infer<typeof nodeWithEdgesRow>[]> {
   return nodes.map((node) => {
     // get all nodes on the "toEdge" that are on the other side of this node (fromNodes)
     const toEdges = node.toEdge.map((thisToEdge) => {
-      thisToEdge.fromNode.description;
+      return thisToEdge.fromNode.description;
     });
     // get all nodes on the "fromEdge" that are on the other side of this node (toNodes)
     const fromEdges = node.fromEdge.map((thisFromEdge) => {
-      thisFromEdge.toNode.description;
+      return thisFromEdge.toNode.description;
     });
+
+    console.log(toEdges);
 
     const myNodeWithEdges: z.infer<typeof nodeWithEdgesRow> = {
       description: node.description,
@@ -168,7 +170,7 @@ export const dbImportRouter = t.router({
     try {
       return await getEmployees();
     } catch (error) {
-      console.error("Failed to fetch employees from database")
+      console.error("Failed to fetch employees from database");
       throw error;
     }
   }),
@@ -177,7 +179,7 @@ export const dbImportRouter = t.router({
     try {
       return await getBuildings();
     } catch (error) {
-      console.error("Failed to fetch buildings from database")
+      console.error("Failed to fetch buildings from database");
       throw error;
     }
   }),
@@ -186,7 +188,7 @@ export const dbImportRouter = t.router({
     try {
       return await getDepartments();
     } catch (error) {
-      console.error("Failed to fetch departments from database")
+      console.error("Failed to fetch departments from database");
       throw error;
     }
   }),
@@ -195,11 +197,10 @@ export const dbImportRouter = t.router({
     try {
       return await getNodesAndEdges();
     } catch (error) {
-      console.error("Failed to fetch nodes and edges from database")
+      console.error("Failed to fetch nodes and edges from database");
       throw error;
     }
-  })
-
+  }),
 });
 
 export type DBImportRouter = typeof dbImportRouter;
