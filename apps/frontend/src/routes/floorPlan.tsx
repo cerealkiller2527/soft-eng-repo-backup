@@ -27,7 +27,9 @@ type formType = {
 const FloorPlan = () => {
     const location = useLocation();
     const passedState = location.state as { building?: string; destination?: string };
-
+    const [address, setAddress] = useState(
+        {lat : 0.00 , lng : 0.00}
+    );
     const trpc = useTRPC();
     const [eta, setEta] = useState<string | undefined>(undefined);
     //const [form, setForm] = useState<formType | null>(null);
@@ -158,22 +160,31 @@ const FloorPlan = () => {
 
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
-        endSuite: form?.destination ?? "",
-        startSuite: "ASDF",
+        endDeptName: form?.destination ?? "",
+        dropOffLatitude: address.lat ?? 0,
+        dropOffLongitude : address.lng ?? 0,
         driving: driving,
-        algorithm: mode,
-    }))
+    },{enabled: false}) )
 
 
     useEffect(() => {
+        console.log("Search results:", search.data);
         if (search.data) {
             console.log("Search results:", search.data.path);
-            const formattedCoords = search.data.path.map((node) => ({
+
+            const formattedCoords = search.data.path.toParking.map((node) => ({
                 latitude: node.longitude,
                 longitude: node.latitude,
                 floor: node.floor,
             }));
-            setPathCoords(formattedCoords);
+            const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
+                latitude: node.longitude,
+                longitude: node.latitude,
+                floor: node.floor,
+            }));
+            setPathCoords([...formattedCoords, ...formattedCoords2]);
+
+            console.log(formattedCoords);
             setInstructions((prev) => [...prev, ...search.data.directions]);
 
         }
@@ -202,18 +213,27 @@ const FloorPlan = () => {
             queryClient.invalidateQueries();
 
             const directionsService = new google.maps.DirectionsService();
-            let address = {lat: 42.3262940433051, lng: -71.1495987024141};
+            let tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363}
             if(form.building ==  "20 Patriot Place"){
-                address = {lat: 42.09263772658629, lng: -71.26603830263363};
+                setAddress({lat: 42.09263772658629, lng: -71.26603830263363});
+                tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363};
             }else if(form.building ==  "22 Patriot Place"){
-                address = {lat: 42.09251994541246, lng: -71.26653442087988};
+                setAddress({lat: 42.09251994541246, lng: -71.26653442087988});
+                tempAddr = {lat: 42.09251994541246, lng: -71.26653442087988}
             }else if(form.building ==  "Faulkner Hospital"){
-                address = {lat: 42.30118405913063, lng: -71.12763594431938};
+                setAddress({lat: 42.30118405913063, lng: -71.12763594431938});
+                tempAddr = {lat: 42.30118405913063, lng: -71.12763594431938};
+            }else if(form.building ==  "Chestnut Hill Medical Center"){
+                setAddress({lat: 42.32632, lng: -71.14950});
+                tempAddr = {lat: 42.32632, lng: -71.14950};
+            }else if(form.building ==  "Main Campus"){
+                setAddress({lat: 42.33512312333498, lng: -71.10616901382942});
+                tempAddr = {lat: 42.33512312333498, lng: -71.10616901382942};
             }
             directionsService.route(
                 {
                     origin: form.location,
-                    destination: address,
+                    destination: tempAddr,
                     travelMode: travelMode,
                 },
                 (result, status) => {
@@ -223,6 +243,7 @@ const FloorPlan = () => {
                         const Mapsinstructions = leg.steps.map(step => step.instructions);
                         setInstructions(Mapsinstructions);
                         setEndMapsLocation(leg.end_location);
+                        console.log(address);
 
                         const route = result.routes[0];
                         const bounds = new google.maps.LatLngBounds();
@@ -256,6 +277,7 @@ const FloorPlan = () => {
         "22 Patriot Place": { lat: 42.09333, lng: -71.26546 },
         "Faulkner Hospital": { lat: 42.30163258195755, lng: -71.12812875693645 },
         "Chestnut Hill Medical Center": { lat: 42.3262, lng: -71.1497 },
+        "Main Campus" : {lat: 42.33512312333498, lng: -71.10616901382942},
         "Default": { lat: 42.3262, lng: -71.1497 }
     };
 

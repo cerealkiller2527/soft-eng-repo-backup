@@ -7,10 +7,15 @@ import { SearchSystem } from "./algos/SearchSystem.ts";
 import { pNodeDTO } from "../../../../share/types.ts";
 import PrismaClient from "../bin/prisma-client.ts";
 import { DFS } from "./algos/DFS.ts";
-import { pNodeZT, searchInput, searchOutput } from "common/src/ZodSchemas.ts";
+import {
+  pNodeZT,
+  searchInput,
+  searchInputForRouter,
+  searchOutput,
+} from "common/src/ZodSchemas.ts";
 
 export const searchRouter = t.router({
-  getPath: t.procedure.input(searchInput).query(async ({ input }) => {
+  getPath: t.procedure.input(searchInputForRouter).query(async ({ input }) => {
     try {
       // get end location and node
       const endLocation = await PrismaClient.location.findFirst({
@@ -28,14 +33,41 @@ export const searchRouter = t.router({
 
       // create search system and pass through data for path
       const s = new SearchSystem(new BFS());
+      if (input.buildingName === "") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Building name cannot be empty.",
+        });
+      }
+      const buildingId = await PrismaClient.building.findFirst({
+        where: {
+          name: input.buildingName,
+        },
+      });
 
+      console.log(buildingId);
       const paths = await s.path(
         input.dropOffLatitude,
         input.dropOffLongitude,
         endNodeId!,
-        input.buildingId,
+        buildingId!.id,
         input.driving,
       );
+      console.log("SEARCH.TS");
+      if (paths.toParking.length > 0) {
+        [paths.toParking[0].latitude, paths.toParking[0].longitude] = [
+          paths.toParking[0].longitude,
+          paths.toParking[0].latitude,
+        ];
+      }
+
+      if (paths.toDepartment.length > 0) {
+        [paths.toDepartment[0].latitude, paths.toDepartment[0].longitude] = [
+          paths.toDepartment[0].longitude,
+          paths.toDepartment[0].latitude,
+        ];
+      }
+      console.log(paths);
 
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];
