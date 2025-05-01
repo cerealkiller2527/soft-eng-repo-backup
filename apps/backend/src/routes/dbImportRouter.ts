@@ -254,4 +254,4 @@ export const dbImportRouter = t.router({
   }),
 });
 
-export type CSVExportRouter = typeof csvExportRouter;
+export type DBImportRouter = typeof dbImportRouter;
