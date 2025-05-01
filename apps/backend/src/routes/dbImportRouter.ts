@@ -1,8 +1,13 @@
-import {adminProcedure, t} from "../trpc.ts";
-import {z} from "zod";
+import { adminProcedure, t } from "../trpc.ts";
+import { z } from "zod";
 import PrismaClient from "../bin/prisma-client";
 
-import {buildingCSVRow, departmentCSVRow, employeeCSVRow, nodeWithEdgesRow} from "database/src/CSVTypes.ts";
+import {
+  buildingCSVRow,
+  departmentCSVRow,
+  employeeCSVRow,
+  nodeWithEdgesRow,
+} from "database/src/CSVTypes.ts";
 
 const CSVRecordSchema = z.object({
   "Building ID": z.string().optional(), // get rid of!
@@ -44,7 +49,6 @@ async function getEmployees(): Promise<z.infer<typeof employeeCSVRow>[]> {
 }
 
 async function getBuildings(): Promise<z.infer<typeof buildingCSVRow>[]> {
-
   // get building info (all)
   const buildings = await PrismaClient.building.findMany({
     where: {},
@@ -68,8 +72,8 @@ async function getDepartments(): Promise<z.infer<typeof departmentCSVRow>[]> {
     include: {
       DepartmentServices: {
         include: {
-          service: true
-        }
+          service: true,
+        },
       },
       Location: {
         include: {
@@ -81,10 +85,10 @@ async function getDepartments(): Promise<z.infer<typeof departmentCSVRow>[]> {
 
   // map services to an array
   const myServices = departments.flatMap((department) => {
-    return department.DepartmentServices.map(deptService => {
+    return department.DepartmentServices.map((deptService) => {
       return deptService.service.name;
     });
-  })
+  });
 
   return departments.map((department) => {
     const myDept: z.infer<typeof departmentCSVRow> = {
@@ -94,20 +98,57 @@ async function getDepartments(): Promise<z.infer<typeof departmentCSVRow>[]> {
       phoneNumber: department.phoneNumber,
       description: department.description ?? "",
       floor: department.Location[0].floor,
-      suite: department.Location[0].suite ?? ""
-    }
-    return myDept
+      suite: department.Location[0].suite ?? "",
+    };
+    return myDept;
   });
 }
 
-const getNodesAndEdges(): Promise<z.infer<typeof nodeWithEdgesRow>[]> {
-  const nodes = PrismaClient.node.findMany({
+async function getNodesAndEdges(): Promise<z.infer<typeof nodeWithEdgesRow>[]> {
+  // get all nodes and nodes that are its neighbors
+  const nodes = await PrismaClient.node.findMany({
     where: {},
     include: {
-      fromEdge: true,
-      toEdge: true,
+      fromEdge: {
+        include: {
+          toNode: true,
+        },
+      },
+      toEdge: {
+        include: {
+          fromNode: true,
+        },
+      },
+      Location: {
+        include: {
+          building: true,
+        },
+      },
     },
-  })
+  });
+
+  return nodes.map((node) => {
+    // get all nodes on the "toEdge" that are on the other side of this node (fromNodes)
+    const toEdges = node.toEdge.map((thisToEdge) => {
+      thisToEdge.fromNode.description;
+    });
+    // get all nodes on the "fromEdge" that are on the other side of this node (toNodes)
+    const fromEdges = node.fromEdge.map((thisFromEdge) => {
+      thisFromEdge.toNode.description;
+    });
+
+    const myNodeWithEdges: z.infer<typeof nodeWithEdgesRow> = {
+      description: node.description,
+      building: node.Location[0].building.name,
+      floor: node.Location[0].floor,
+      type: node.type,
+      lat: node.lat,
+      long: node.long,
+      outside: node.outside,
+      edges: [...toEdges, ...fromEdges].join(";"),
+    };
+    return myNodeWithEdges;
+  });
 }
 
 export const dbImportRouter = t.router({
@@ -116,6 +157,7 @@ export const dbImportRouter = t.router({
       const parsedEmployees = await getEmployees();
       const parsedBuildings = await getBuildings();
       const parsedDepartments = await getDepartments();
+      const parsedNodesWithEdges = await getNodesAndEdges();
 
       // // buildings with info
       // const buildings = (await PrismaClient.building.findMany({
