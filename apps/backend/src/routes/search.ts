@@ -23,6 +23,9 @@ export const searchRouter = t.router({
           Department: {
             name: input.endDeptName,
           },
+          building: {
+            name: input.buildingName,
+          }
         },
         select: {
           nodeID: true,
