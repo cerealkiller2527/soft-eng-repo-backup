@@ -11,6 +11,15 @@ export const departmentCSVRow = z.object({
     suite: z.string()
 });
 
+export const buildingCSVRow = z.object({
+    id: z.number().int(),
+    name: z.string(),
+    address: z.string(),
+    phoneNumber: z.string(),
+
+});
+
+
 export const nodeCSVRow = z.object({
     description: z.string(),
     lat: z.number(),
@@ -20,6 +29,8 @@ export const nodeCSVRow = z.object({
     outside: z.boolean(),
     building: z.string()
 });
+
+export const nodeWithEdgesRow = nodeCSVRow.extend({edges: z.string()})
 
 export const edgeCSVRow = z.object({
     fromNode: z.string(),
