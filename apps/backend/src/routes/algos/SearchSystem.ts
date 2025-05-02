@@ -28,6 +28,7 @@ export class SearchSystem {
       dropOffLatitude,
       dropOffLongitude,
       false,
+        buildingId
     );
 
     // if driving, create path to parking lot and update start node to be in parking lot
@@ -36,14 +37,18 @@ export class SearchSystem {
         dropOffLatitude,
         dropOffLongitude,
         true,
+          buildingId
       );
+      console.log("parking node id:", parkingNodeId);
       toParking = await this.algorithm.findPath(startId, parkingNodeId);
+      console.log('path to parking before zod: ', toParking);
       startId = parkingNodeId;
     }
 
     // create path from start node to end node
-    console.log(startId, endNodeId);
+    console.log('pathing from node: ', startId, 'to node: ', endNodeId);
     const toDepartment = await this.algorithm.findPath(startId, endNodeId);
+    console.log('path to dept before zod: ', toDepartment);
 
     // convert pNode[] to z.array(pNodeZod)
 
@@ -57,6 +62,8 @@ export class SearchSystem {
     const floorMap = await this.getFloorMap(pathIds);
     const toDeptartmentZ = this.nodesToZods(toDepartment, floorMap);
 
+    console.log('paths before returning: ', toParkingZ, toDeptartmentZ);
+
     const output = {
       toParking: toParkingZ ?? [],
       toDepartment: toDeptartmentZ ?? [],
@@ -69,6 +76,7 @@ export class SearchSystem {
     dropOffLatitude: number,
     dropOffLongitude: number,
     parking: boolean,
+    buildingId: number
   ) {
     let closestNode = null;
     let closestDist = Infinity;
@@ -78,12 +86,22 @@ export class SearchSystem {
       outsideNodes = await PrismaClient.node.findMany({
         where: {
           outside: true,
+          Location: {
+            some : {
+              buildingId: buildingId
+            },
+          },
         },
       });
     } else {
       outsideNodes = await PrismaClient.node.findMany({
         where: {
           type: "Parking",
+          Location: {
+            some : {
+              buildingId: buildingId
+            },
+          },
         },
       });
     }

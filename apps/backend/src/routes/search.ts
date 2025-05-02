@@ -33,6 +33,7 @@ export const searchRouter = t.router({
       });
 
       const endNodeId = endLocation!.nodeID;
+      console.log("end node id:", endNodeId);
 
       // check database for which algorithm to use and create search system to match
       const algorithm = await PrismaClient.searchAlgorithm.findFirst();
@@ -65,7 +66,7 @@ export const searchRouter = t.router({
       );
       console.log("SEARCH.TS");
 
-      console.log(paths);
+      console.log('paths after calling s.path: ', paths);
 
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];
