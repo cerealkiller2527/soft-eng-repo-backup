@@ -362,15 +362,13 @@ const FloorPlan = () => {
                 <div className="absolute top-45 right-14 z-10 grid grid-cols-1 md:grid-cols-3 gap-1 mx-auto pt-28">
                     <Button
                         onClick={handleImageSwitch}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                        className="w-full bg-primary hover:bg-chart-4"
                     >
                         Floor: {imageIndex + 1}
                     </Button>
                     <Button
                         onClick={toggleCenterMode}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
+                        className="w-full bg-primary hover:bg-chart-4"
                     >
                         {centerMode}
                     </Button>
