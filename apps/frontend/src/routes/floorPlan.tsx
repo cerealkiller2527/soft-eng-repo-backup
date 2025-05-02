@@ -47,9 +47,8 @@ const FloorPlan = () => {
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
     const polylineRef = useRef<google.maps.Polyline | null>(null);
-    const [endMapsLocation, setEndMapsLocation] = useState([
-        {lat : 0.00 , lng : 0.00}
-    ]);
+    const [endMapsLocation, setEndMapsLocation] = useState({ lat: 0.00, lng: 0.00 });
+
     const [pathCoords, setPathCoords] = useState([
         { latitude: .00, longitude: .00, floor: 1 },
     ]);
@@ -187,8 +186,8 @@ const FloorPlan = () => {
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endDeptName: form?.destination ?? "",
-        dropOffLatitude: address.lat ?? 0,
-        dropOffLongitude : address.lng ?? 0,
+        dropOffLatitude: endMapsLocation.lat ?? 0,
+        dropOffLongitude : endMapsLocation.lng ?? 0,
         driving: driving,
     },
         //{enabled: false}
@@ -199,7 +198,11 @@ const FloorPlan = () => {
         console.log("Search results:", search.data);
         if (search.data) {
             console.log("Search results:", search.data.path);
-
+            const startPoint = {
+                latitude: endMapsLocation.lat,
+                longitude: endMapsLocation.lng,
+                floor: 1,
+            };
             const formattedCoords = search.data.path.toParking.map((node) => ({
                 latitude: node.longitude,
                 longitude: node.latitude,
@@ -210,7 +213,7 @@ const FloorPlan = () => {
                 longitude: node.latitude,
                 floor: node.floor,
             }));
-            setPathCoords([...formattedCoords, ...formattedCoords2]);
+            setPathCoords([startPoint,...formattedCoords, ...formattedCoords2]);
 
             console.log(formattedCoords);
             setInstructions((prev) => [...prev, ...search.data.directions]);
@@ -271,7 +274,11 @@ const FloorPlan = () => {
                         const leg = result.routes[0].legs[0];
                         const Mapsinstructions = leg.steps.map(step => step.instructions);
                         setInstructions(Mapsinstructions);
-                        setEndMapsLocation(leg.end_location);
+                        setEndMapsLocation({
+                            lat: leg.end_location.lat(),
+                            lng: leg.end_location.lng()
+                        });
+
                         console.log(address);
 
                         const route = result.routes[0];
