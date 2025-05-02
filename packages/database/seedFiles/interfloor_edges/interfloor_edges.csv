@@ -1,0 +1,8 @@
+﻿fromNode,toNode,floor,building
+1 elevator,2 elevator,-1,20 Patriot Place
+2 elevator,3 elevator,-1,20 Patriot Place
+3 elevator,4 elevator,-1,20 Patriot Place
+1 elevator,2 elevator,-1,22 Patriot Place
+2 elevator,3 elevator,-1,22 Patriot Place
+3 elevator,4 elevator,-1,22 Patriot Place
+1 elevator,2 elevator,-1,Main
