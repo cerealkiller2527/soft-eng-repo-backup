@@ -30,6 +30,7 @@ async function fetchClerkUsers() {
 
 async function main() {
     // drop all data from database
+    await prisma.user.deleteMany();
     await prisma.audioVisual.deleteMany();
     await prisma.externalTransportation.deleteMany();
     await prisma.equipmentDelivery.deleteMany();
@@ -208,6 +209,7 @@ async function main() {
             }
         })
     })
+
     // seed employees
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
 
