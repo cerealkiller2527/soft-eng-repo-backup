@@ -25,7 +25,7 @@ export const searchRouter = t.router({
           },
           building: {
             name: input.buildingName,
-          }
+          },
         },
         select: {
           nodeID: true,
@@ -35,14 +35,13 @@ export const searchRouter = t.router({
       const endNodeId = endLocation!.nodeID;
 
       // check database for which algorithm to use and create search system to match
-      const algorithm = await PrismaClient.searchAlgorithm.findFirst()
+      const algorithm = await PrismaClient.searchAlgorithm.findFirst();
       const s = new SearchSystem(new BFS());
-      if(algorithm?.current === "BFS"){
-        s.changeAlgorithm(new BFS())
-      }else if (algorithm?.current === "DFS"){
-        s.changeAlgorithm(new DFS())
+      if (algorithm?.current === "BFS") {
+        s.changeAlgorithm(new BFS());
+      } else if (algorithm?.current === "DFS") {
+        s.changeAlgorithm(new DFS());
       }
-
 
       if (input.buildingName === "") {
         throw new TRPCError({

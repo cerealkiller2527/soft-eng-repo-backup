@@ -181,4 +181,17 @@ export const equipmentDeliveryRouter = t.router({
         message: "Update equipment delivery request done.",
       };
     }),
+  deleteEquipmentDeliveryRequest: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await PrismaClient.serviceRequest.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });

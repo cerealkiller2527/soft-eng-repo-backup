@@ -11,10 +11,13 @@ import {
 } from "@/components/ui/table"
 import {Button} from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from "@/database/trpc"
+import { useMutation } from '@tanstack/react-query'
+
 import { Badge } from "@/components/ui/badge"
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {
     Card, CardContent,
     CardDescription,
@@ -78,7 +81,79 @@ export default function TransportRequestDisplay() {
         setExpandedRowId(prev => (prev === id ? null : id));
     };
 
-    return (
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [requestToDelete, setRequestToDelete] = useState<{ id: number; type: string } | null>(null);
+    const deleteTransport = useMutation(
+        trpc.service.deleteExternalTransportationRequest.mutationOptions()
+    )
+
+    const deleteEquipment = useMutation(
+        trpc.service.deleteEquipmentDeliveryRequest.mutationOptions()
+    )
+
+    const deleteSecurity = useMutation(
+        trpc.service.deleteSecurityRequest.mutationOptions()
+    )
+
+    const deleteLanguage = useMutation(
+        trpc.service.deleteLanguageRequest.mutationOptions()
+    )
+    useEffect(() => {
+        if (deleteTransport.isSuccess) {
+            requestsTransport.refetch();
+            deleteTransport.reset();
+        }
+    }, [deleteTransport.isSuccess]);
+
+    useEffect(() => {
+        if (deleteEquipment.isSuccess) {
+            requestsEquipment.refetch();
+            deleteEquipment.reset();
+        }
+    }, [deleteEquipment.isSuccess]);
+
+    useEffect(() => {
+        if (deleteSecurity.isSuccess) {
+            requestsSecurity.refetch();
+            deleteSecurity.reset();
+        }
+    }, [deleteSecurity.isSuccess]);
+
+    useEffect(() => {
+        if (deleteLanguage.isSuccess) {
+            requestsLanguage.refetch();
+            deleteLanguage.reset();
+        }
+    }, [deleteLanguage.isSuccess]);
+
+
+        function handleDelete() {
+            if (!requestToDelete) return;
+
+            const { id, type } = requestToDelete;
+
+            switch (type.toUpperCase()) {
+                case "EXTERNALTRANSPORTATION":
+                    deleteTransport.mutate({ id });
+                    console.log("Deleted external transport", id);
+                    break;
+                case "EQUIPMENTDELIVERY":
+                    deleteEquipment.mutate({ id });
+                    break;
+                case "SECURITY":
+                    deleteSecurity.mutate({ id });
+                    console.log("Deleted external security", id);
+                    break;
+                case "LANGUAGE":
+                    deleteLanguage.mutate({ id });
+                    break;
+                default:
+                    console.warn("Unknown request type:", type);
+            }
+
+        }
+
+        return (
 
         <div className="flex flex-1 flex-col mx-5">
             <div className="">
@@ -231,7 +306,23 @@ export default function TransportRequestDisplay() {
                                                                             </>
                                                                         )}
                                                                     </div>
+                                                                    <div className="flex justify-end gap-4 pt-4">
+                                                                        <Button className="hover:bg-destructive"
+                                                                            variant="outline"
+                                                                            onClick={() => {
+                                                                                setRequestToDelete({ id: req.id, type: req.type });
+                                                                                setConfirmOpen(true);
+                                                                            }}
+                                                                        >
+                                                                            Delete
+                                                                        </Button>
+
+                                                                        <Button variant="default" onClick={() => handleUpdate(req)}>
+                                                                            Update
+                                                                        </Button>
+                                                                    </div>
                                                                 </div>
+
                                                             </TableCell>
                                                         </TableRow>
                                                     )}
@@ -239,6 +330,32 @@ export default function TransportRequestDisplay() {
                                             ))}
                                         </TableBody>
                                     </Table>
+                                    <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Confirm Deletion</DialogTitle>
+                                                <DialogDescription>
+                                                    Are you sure you want to delete this service request? This action cannot be undone.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-end gap-4 mt-6">
+                                                <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    variant="destructive"
+                                                    onClick={() => {
+                                                        if (requestToDelete) {
+                                                            handleDelete(requestToDelete);
+                                                            setConfirmOpen(false);
+                                                        }
+                                                    }}
+                                                >
+                                                    Confirm Delete
+                                                </Button>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </CardFooter>
                         </Card>
