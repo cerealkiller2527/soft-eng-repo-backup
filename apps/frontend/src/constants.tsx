@@ -21,6 +21,15 @@ export const overlays: OverlayImage[][] = [
             },
         },
         {
+            imageUrl: "/BWMainCampus.png",
+            bounds: {
+                north: 42.33795,
+                south: 42.33300,
+                east: -71.10340,
+                west: -71.11050,
+            }
+        },
+        {
             imageUrl: "/20PatriotPlaceFloorOne.png",
             bounds: {
                 north: 42.09309,
@@ -65,16 +74,14 @@ export const overlays: OverlayImage[][] = [
     //Floor 2
     [
         {
-            imageUrl: "/22PatriotPlaceFloorThree.png",
+            imageUrl: "/22PatriotPlaceFloorTwo.png",
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
                 east: -71.26652,
-                west: -71.26634,
+                west: -71.26756,
             },
         },
-        // 42.33694209846247, -71.10742130229114
-        // 42.33320397707655, -71.10606521452486
         {
             imageUrl: "/BWMainCampus.png",
             bounds: {
@@ -83,6 +90,15 @@ export const overlays: OverlayImage[][] = [
                 east: -71.10340,
                 west: -71.11050,
             }
+        },
+        {
+            imageUrl: "/20PatriotPlaceFloorTwo.png",
+            bounds: {
+                north: 42.09309,
+                south: 42.09249,
+                east: -71.26552,
+                west: -71.26656,
+            },
         }
 
     ],
@@ -97,6 +113,15 @@ export const overlays: OverlayImage[][] = [
                 west: -71.26756,
             },
         },
+        {
+            imageUrl: "/20PatriotPlaceFloorThree.png", // 3 the same as 4
+            bounds: {
+                north: 42.09309,
+                south: 42.09249,
+                east: -71.26552,
+                west: -71.26656,
+            },
+        },
 
     ],
     //Floor 4
@@ -108,6 +133,15 @@ export const overlays: OverlayImage[][] = [
                 south: 42.09224,
                 east: -71.26652,
                 west: -71.26756,
+            },
+        },
+        {
+            imageUrl: "/20PatriotPlaceFloorFour.png",
+            bounds: {
+                north: 42.09309,
+                south: 42.09249,
+                east: -71.26552,
+                west: -71.26656,
             },
         },
     ],

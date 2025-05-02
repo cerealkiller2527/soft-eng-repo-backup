@@ -14,6 +14,7 @@ import TestDirectory from "./routes/test.tsx";
 import DepartmentPage from "./routes/department.tsx";
 import Credits from "./routes/credits.tsx";
 import About from "./routes/about.tsx"
+import DbEditor from "@/routes/dbEditor.tsx";
 
 export const routes = [
     {
@@ -96,6 +97,12 @@ export const routes = [
         path: '/about',
         errorElement: <div />,
         element: <About/>
+    },
+
+    {
+        path: '/dbeditor',
+        errorElement: <div />,
+        element: <DbEditor/>,
     }
 ];
 

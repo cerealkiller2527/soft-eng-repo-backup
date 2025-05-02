@@ -1,70 +1,17 @@
-description,lat,long,type,floor,building,outside
-1left entrance outside,42.09247336762025,-71.26641176,Location,1,20 Patriot,FALSE
-1left entrance,42.092519162004315,-71.26635383,Intermediary,1,20 Patriot,FALSE
-1a1,42.09253411526544,-71.26633746,Intermediary,1,20 Patriot,FALSE
-1a2,42.09256776009002,-71.26629967,Intermediary,1,20 Patriot,FALSE
-1a3,42.09259112454105,-71.26627196,Intermediary,1,20 Patriot,FALSE
-1a4,42.09254626478749,-71.26625433,Intermediary,1,20 Patriot,FALSE
-1a5,42.09257990960563,-71.26611328,Intermediary,1,20 Patriot,FALSE
-1middle stairs,42.092620096448364,-71.26612209,Staircase,1,20 Patriot,FALSE
-1a6,42.09259766658581,-71.26601,Intermediary,1,20 Patriot,FALSE
-1a7,42.09261916187092,-71.26592058,Intermediary,1,20 Patriot,FALSE
-1a8,42.09263318053121,-71.26586139,Intermediary,1,20 Patriot,FALSE
-1urology/cardiology,42.092669629033466,-71.26587524,Location,1,20 Patriot,FALSE
-1urology/cardiology2,42.092669629033466,-71.26587524,Location,1,20 Patriot,FALSE
-1a9,42.092651872073446,-71.26577323,Intermediary,1,20 Patriot,FALSE
-1a10,42.092664956149726,-71.26570774,Intermediary,1,20 Patriot,FALSE
-1right stairs,42.092697666328625,-71.26560824,Staircase,1,20 Patriot,FALSE
-120elevator,42.09268458225911,-71.26565232,Elevator,1,20 Patriot,FALSE
-1a11,42.092694,-71.265939,Intermediary,1,20 Patriot,FALSE
-1a12,42.092739,-71.265955,Intermediary,1,20 Patriot,FALSE
-120radiology,42.092654675804305,-71.26635887,Intermediary,1,20 Patriot,FALSE
-1b17,42.09268739,-71.26631479,Intermediary,1,20 Patriot,FALSE
-1b1,42.09262290018065,-71.26635257,Intermediary,1,20 Patriot,FALSE
-1b2,42.09262850764481,-71.26628708,Intermediary,1,20 Patriot,FALSE
-1b3,42.09264626461136,-71.26629589,Intermediary,1,20 Patriot,FALSE
-1b4,42.09264906834246,-71.26627952,Intermediary,1,20 Patriot,FALSE
-1b5,42.09264906834246,-71.26627952,Intermediary,1,20 Patriot,FALSE
-1blood/urgent,42.09267243276353,-71.2662304,Location,1,20 Patriot,FALSE
-1blood/urgent2,42.09267243276352,-71.2662304,Intermediary,1,20 Patriot,FALSE
-1b6,42.092774,-71.265858,Intermediary,1,20 Patriot,FALSE
-1b7,42.092786,-71.26582,Intermediary,1,20 Patriot,FALSE
-1b8,42.092803,-71.26587,Intermediary,1,20 Patriot,FALSE
-1b9,42.092791,-71.265787,Intermediary,1,20 Patriot,FALSE
-1b10,42.092803,-71.265754,Intermediary,1,20 Patriot,FALSE
-1b11,42.092803,-71.265754,Intermediary,1,20 Patriot,FALSE
-1b12,42.092803,-71.265754,Intermediary,1,20 Patriot,FALSE
-1b13,42.092821,-71.265723,Intermediary,1,20 Patriot,FALSE
-1b14,42.092821,-71.265723,Intermediary,1,20 Patriot,FALSE
-1b15,42.092835,-71.265595,Intermediary,1,20 Patriot,FALSE
-1right entrance,42.092835,-71.265595,Intermediary,1,20 Patriot,FALSE
-1right entrance outside,42.09280140421301,-71.26562965,Location,1,20 Patriot,FALSE
-1b16,42.09283317974725,-71.26585383,Intermediary,1,20 Patriot,FALSE
-1c1,42.092715423275855,-71.26632738,Intermediary,1,20 Patriot,FALSE
-1pharmacy,42.092788,-71.266211,Location,1,20 Patriot,FALSE
-1c2,42.092836,-71.266267,Intermediary,1,20 Patriot,FALSE
-1c3,42.092846,-71.266212,Intermediary,1,20 Patriot,FALSE
-1c4,42.09286,-71.26615,Intermediary,1,20 Patriot,FALSE
-1c5,42.092839,-71.266153,Intermediary,1,20 Patriot,FALSE
-1c6,42.092874,-71.266087,Intermediary,1,20 Patriot,FALSE
-1c7,42.092848,-71.266089,Intermediary,1,20 Patriot,FALSE
-1c8,42.092869,-71.265967,Intermediary,1,20 Patriot,FALSE
-1d1,42.092817,-71.26627,Intermediary,1,20 Patriot,FALSE
-1d2,42.092821,-71.266236,Intermediary,1,20 Patriot,FALSE
-1d3,42.092837,-71.266243,Intermediary,1,20 Patriot,FALSE
-1d4,42.09286,-71.266254,Intermediary,1,20 Patriot,FALSE
-1d5,42.092892,-71.266017,Intermediary,1,20 Patriot,FALSE
-1d6,42.092892,-71.266017,Intermediary,1,20 Patriot,FALSE
-1d7,42.092871,-71.265968,Intermediary,1,20 Patriot,FALSE
-1d8,42.092871,-71.265968,Intermediary,1,20 Patriot,FALSE
-1d9,42.092871,-71.265968,Intermediary,1,20 Patriot,FALSE
-1d10,42.092852,-71.265911,Intermediary,1,20 Patriot,FALSE
-1d11,42.092892,-71.266017,Intermediary,1,20 Patriot,FALSE
-1e1,42.092886,-71.266333,Intermediary,1,20 Patriot,FALSE
-1e2,42.092917,-71.266278,Intermediary,1,20 Patriot,FALSE
-1e3,42.09294,-71.26612,Intermediary,1,20 Patriot,FALSE
-1e4,42.09292,-71.266343,Intermediary,1,20 Patriot,FALSE
-1e5,42.09293,-71.26636,Intermediary,1,20 Patriot,FALSE
-1e6,42.092947,-71.266384,Intermediary,1,20 Patriot,FALSE
-1e7,42.092963,-71.266393,Intermediary,1,20 Patriot,FALSE
-120top stairs,42.09296,-71.266427,Staircase,1,20 Patriot,FALSE
+﻿description,lat,long,type,floor,building,outside
+e,42.09267554901404,-71.26561925,Intermediary,1,20 Patriot Place,FALSE
+a,42.09264483931591,-71.26628466,Intermediary,1,20 Patriot Place,FALSE
+c,42.09259224231086,-71.26598637,Intermediary,1,20 Patriot Place,FALSE
+Blood Draw/ Phlebotomy,42.09262595027671,-71.26599941,Location,1,20 Patriot Place,FALSE
+f,42.09253927998246,-71.26623765,Intermediary,1,20 Patriot Place,FALSE
+1 elevator,42.09270374997246,-71.26563074,Elevator,1,20 Patriot Place,FALSE
+Cardiovascular Services,42.09266470249255,-71.26583707,Location,1,20 Patriot Place,FALSE
+stairs 1,42.09269644483917,-71.26557168,Staircase,1,20 Patriot Place,FALSE
+Radiology,42.09267325102748,-71.26634544,Location,1,20 Patriot Place,FALSE
+parking,42.09240935244083,-71.26651698,Parking,1,20 Patriot Place,TRUE
+Pharmacy,42.09270283683112,-71.26627038,Location,1,20 Patriot Place,FALSE
+b,42.09268337394115,-71.26630311,Intermediary,1,20 Patriot Place,FALSE
+d,42.09262776823628,-71.2658241,Intermediary,1,20 Patriot Place,FALSE
+front door,42.09251371194606,-71.26636415,Intermediary,1,20 Patriot Place,FALSE
+Urgent Care Center,42.09265261402209,-71.26624872,Location,1,20 Patriot Place,FALSE
+Urology,42.09265612312601,-71.26588286,Location,1,20 Patriot Place,FALSE
