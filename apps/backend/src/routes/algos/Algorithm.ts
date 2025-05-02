@@ -5,6 +5,10 @@ export abstract class Algorithm {
   abstract findPath(startId: number, endId: number): Promise<pNode[]>;
 
   static async createNodeFromId(id: number) {
+    if (!id) {
+      console.error("ID IS NULL");
+      return new pNode(-1);
+    }
     const node = await PrismaClient.node.findUnique({
       where: { id: id },
     });

@@ -37,7 +37,6 @@ export class BFS implements Algorithm {
 
       if (currentNode.id === endNode.id) {
         // if this node is the end node
-        console.log("found path");
         return currentPath;
       }
 

@@ -17,7 +17,7 @@ export function HelpDialog() {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="outline" className="bg-[#064979FF] hover:bg-[#004170FF] text-white hover:text-white">
+                <Button variant="outline" className="bg-primary hover:bg-chart-4 text-white hover:text-white">
                     Help
                 </Button>
             </AlertDialogTrigger>

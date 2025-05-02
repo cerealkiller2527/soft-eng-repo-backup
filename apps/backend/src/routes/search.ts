@@ -7,10 +7,15 @@ import { SearchSystem } from "./algos/SearchSystem.ts";
 import { pNodeDTO } from "../../../../share/types.ts";
 import PrismaClient from "../bin/prisma-client.ts";
 import { DFS } from "./algos/DFS.ts";
-import { pNodeZT, searchInput, searchOutput } from "common/src/ZodSchemas.ts";
+import {
+  pNodeZT,
+  searchInput,
+  searchInputForRouter,
+  searchOutput,
+} from "common/src/ZodSchemas.ts";
 
 export const searchRouter = t.router({
-  getPath: t.procedure.input(searchInput).query(async ({ input }) => {
+  getPath: t.procedure.input(searchInputForRouter).query(async ({ input }) => {
     try {
       // get end location and node
       const endLocation = await PrismaClient.location.findFirst({
@@ -18,6 +23,9 @@ export const searchRouter = t.router({
           Department: {
             name: input.endDeptName,
           },
+          building: {
+            name: input.buildingName,
+          }
         },
         select: {
           nodeID: true,
@@ -26,16 +34,39 @@ export const searchRouter = t.router({
 
       const endNodeId = endLocation!.nodeID;
 
-      // create search system and pass through data for path
+      // check database for which algorithm to use and create search system to match
+      const algorithm = await PrismaClient.searchAlgorithm.findFirst()
       const s = new SearchSystem(new BFS());
+      if(algorithm?.current === "BFS"){
+        s.changeAlgorithm(new BFS())
+      }else if (algorithm?.current === "DFS"){
+        s.changeAlgorithm(new DFS())
+      }
 
+
+      if (input.buildingName === "") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Building name cannot be empty.",
+        });
+      }
+      const buildingId = await PrismaClient.building.findFirst({
+        where: {
+          name: input.buildingName,
+        },
+      });
+
+      console.log(buildingId);
       const paths = await s.path(
         input.dropOffLatitude,
         input.dropOffLongitude,
         endNodeId!,
-        input.buildingId,
+        buildingId!.id,
         input.driving,
       );
+      console.log("SEARCH.TS");
+
+      console.log(paths);
 
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];

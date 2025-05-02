@@ -99,8 +99,8 @@ export class pNode {
     for (let neighbor of neighborNodes) {
       const newNode = new pNode(
         neighbor.id,
-        neighbor.lat,
         neighbor.long,
+        neighbor.lat,
         neighbor.description,
         0,
       );

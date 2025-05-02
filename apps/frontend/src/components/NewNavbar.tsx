@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { UserCircleIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -9,7 +9,12 @@ import {
     MenubarMenu,
     MenubarTrigger,
 } from "@/components/ui/menubar";
+import { Button } from "@/components/ui/button";
+import { useTRPC } from "@/database/trpc";
+import {useMutation, useQuery} from '@tanstack/react-query';
 import BnWLogo from "/BrighamAndWomensLogo.png";
+
+type AlgorithmType = "BFS" | "DFS";
 
 const primaryLink = { title: "Navigation", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
@@ -20,25 +25,42 @@ const moreItems = [
     { title: "About", href: "/about", show: (u)=> true},
     { title: "Credits", href: "/credits", show: (u)=> true},
     ];
-const profileItems = [
-    {
-        title: "Swap Algorithm",
-        href: "/swap-algorithm",
-        show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin",
-    },
-];
 
 export default function NewNavbar() {
     const { isSignedIn, user } = useUser();
     const { signOut } = useClerk();
     const auth = { isSignedIn, user };
     const location = useLocation();
+    const trpc = useTRPC();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
     const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
+    const [swapOpen, setSwapOpen] = useState(false);
+
+    const {
+        data: currentAlgorithm,
+        isLoading: isAlgLoading,
+        refetch: refetchAlgorithm,
+    } = useQuery(trpc.pathfinding.getCurrentAlgorithm.queryOptions());
+
+    const [algorithm, setAlgorithm] = useState<AlgorithmType>("BFS");
+    useEffect(() => {
+        if (currentAlgorithm) {
+            setAlgorithm(currentAlgorithm as AlgorithmType);
+        }
+    }, [currentAlgorithm]);
+
+    const toggleAlgo = useMutation(
+        trpc.pathfinding.toggleAlgorithm.mutationOptions({
+            onSuccess() {
+                refetchAlgorithm();
+                setSwapOpen(false);
+            },
+        })
+    );
 
     const getLinkClasses = (path: string) =>
-        `px-4 py-2 rounded-md font-bold text-lg transition-colors ${
+        `px-4 py-2 rounded-md text-lg transition-colors ${
             location.pathname === path
                 ? "bg-[#86A2B6] text-black underline"
                 : "text-black hover:underline"
@@ -47,8 +69,10 @@ export default function NewNavbar() {
     const mobileItemClasses =
         "block w-full text-left py-2 px-4 text-black text-lg hover:bg-[#86A2B6] transition-colors rounded-none";
 
+    const nextAlg = currentAlgorithm === "BFS" ? "DFS" : "BFS";
+
     return (
-        <Menubar className="fixed top-0 w-full bg-[#AEC8E0] shadow z-50 h-14 rounded-none">
+        <Menubar className="fixed top-0 w-full shadow-md bg-primary-foreground z-50 h-14 rounded-none">
             <div className="flex items-center justify-between px-4 h-full w-full">
                 {/* Logo */}
                 <Link to="/" className="flex items-center space-x-2">
@@ -65,7 +89,7 @@ export default function NewNavbar() {
                     </Link>
 
                     <MenubarMenu>
-                        <MenubarTrigger className="px-4 py-2 rounded-none text-lg font-bold bg-transparent hover:underline hover:cursor-pointer transition-colors">
+                        <MenubarTrigger className="px-4 py-2 rounded-none text-lg bg-transparent hover:underline hover:cursor-pointer transition-colors">
                             More
                         </MenubarTrigger>
                         <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
@@ -90,17 +114,23 @@ export default function NewNavbar() {
                                 <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
                             <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
-                                {profileItems
-                                         .filter((item) => item.show(auth))
-                                         .map((item) => (
-                                           <MenubarItem key={item.href}>
-                                         <Link
-                                           to={item.href}
-                                           className="block w-full text-left py-2 px-4 text-black">
-                                           {item.title}
-                                         </Link>
-                                   </MenubarItem>
-                             ))}
+                                {user?.publicMetadata?.role === "admin" && (
+                                    <MenubarItem key="toggle-alg">
+                                        {isAlgLoading ? (
+                                            <button disabled className="w-full text-left py-2 px-4">
+                                                Loading…
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => toggleAlgo.mutate({ algorithm: nextAlg })}
+                                                disabled={isAlgLoading}
+                                                className="w-full text-left py-2 px-4"
+                                            >
+                                                Switch to {nextAlg} (current: {currentAlgorithm})
+                                            </button>
+                                        )}
+                                    </MenubarItem>
+                                )}
                                 <MenubarItem>
                                     <button
                                         onClick={() => signOut()}
@@ -114,7 +144,7 @@ export default function NewNavbar() {
                     ) : (
                         <Link
                             to="/login"
-                            className="px-4 py-2 rounded-none text-black font-bold hover:bg-[#86A2B6] transition-colors"
+                            className="px-4 py-2 rounded-none text-black hover:bg-[#86A2B6] transition-colors"
                         >
                             Login
                         </Link>
@@ -155,7 +185,8 @@ export default function NewNavbar() {
                             <div
                                 className={`overflow-hidden transition-all duration-300 ease-in-out ${
                                     mobileMoreOpen ? "max-h-96" : "max-h-0"
-                                }`}>
+                                }`}
+                            >
                                 {mobileMoreOpen && (
                                     <div className="ml-2 space-y-1">
                                         {moreItems
@@ -182,21 +213,10 @@ export default function NewNavbar() {
                             <div
                                 className={`overflow-hidden transition-all duration-300 ease-in-out ${
                                     mobileProfileOpen ? "max-h-40" : "max-h-0"
-                                }`}>
+                                }`}
+                            >
                                 {mobileProfileOpen && (
                                     <div className="ml-2 space-y-1">
-                                        {profileItems
-                                                 .filter((item) => item.show(auth))
-                                                 .map((item) => (
-                                                   <Link
-                                                     key={item.href}
-                                                     to={item.href}
-                                                     onClick={() => setMobileMenuOpen(false)}
-                                                     className={mobileItemClasses}
-                                                   >
-                                                     {item.title}
-                                                   </Link>
-                                                 ))}
                                         {isSignedIn ? (
                                             <button
                                                 onClick={() => {

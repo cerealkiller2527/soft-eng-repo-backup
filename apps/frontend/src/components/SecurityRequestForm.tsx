@@ -17,7 +17,7 @@ const MGBHospitals = ["Brigham and Women's Main Hospital", "Faulkner Hospital", 
 const priority = ["Low","Medium","High","Emergency"]
 
 const formSchema = z.object({
-    employee: z.coerce.number(),
+    employeeID: z.coerce.number().optional(),
     priority: z.string(),
     location: z.string(),
     additionalNotes: z.string(),
@@ -42,6 +42,7 @@ export default function SecurityRequestForm({  onFormSubmit, onSuccess}: {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            employeeID: undefined,
             priority: "",
             location: "",
             additionalNotes: "",
@@ -51,7 +52,7 @@ export default function SecurityRequestForm({  onFormSubmit, onSuccess}: {
     function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
         addReq.mutate({
-            employee: values.employee,
+            employeeID: values.employeeID,
             location: values.location,
             additionalNotes: values.additionalNotes,
             priority: values.priority,
@@ -71,7 +72,7 @@ export default function SecurityRequestForm({  onFormSubmit, onSuccess}: {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
-                        name="employee"
+                        name="employeeID"
                         render={({ field }) => (
                             <FormItem className="space-y-2">
                                 <FormLabel>Requested Employee</FormLabel>
