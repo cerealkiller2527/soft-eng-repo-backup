@@ -9,6 +9,7 @@ import InstructionsBox from "@/components/InstructionsBox";
 import {DirectionsButton} from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 
@@ -47,9 +48,8 @@ const FloorPlan = () => {
     const [imageIndex, setImageIndex] = useState(0);
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
     const polylineRef = useRef<google.maps.Polyline | null>(null);
-    const [endMapsLocation, setEndMapsLocation] = useState([
-        {lat : 0.00 , lng : 0.00}
-    ]);
+    const [endMapsLocation, setEndMapsLocation] = useState({ lat: 0.00, lng: 0.00 });
+
     const [pathCoords, setPathCoords] = useState([
         { latitude: .00, longitude: .00, floor: 1 },
     ]);
@@ -67,6 +67,7 @@ const FloorPlan = () => {
         setCenterMode((prev) => (prev === "Building" ? "Path" : "Building"));
     };
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
+    const [activeTab, setActiveTab] = useState("request");
 
 
 
@@ -120,6 +121,12 @@ const FloorPlan = () => {
         if (filteredCoords.length < 2) return; // Need at least 2 points to draw a line
         console.log(filteredCoords);
 
+
+        const lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 3,
+        };
+
         // Create and display new polyline
         const polyline = new google.maps.Polyline({
             path: filteredCoords,
@@ -127,10 +134,30 @@ const FloorPlan = () => {
             strokeColor: "#00d9ff",
             strokeOpacity: 1.0,
             strokeWeight: 4,
+            icons: [
+                {
+                    icon: lineSymbol,
+                    offset: "100%",
+                }
+            ]
         });
+
+        function animateArrow(line: google.maps.Polyline) {
+            let count = 0;
+
+            window.setInterval(() => {
+                count = (count + 1) % 200;
+
+                const icons = line.get("icons");
+
+                icons[0].offset = count / 2 + "%";
+                line.set("icons", icons);
+            }, 20);
+        }
 
         polyline.setMap(mapInstance.current);
         polylineRef.current = polyline;
+        animateArrow(polyline)
         console.log("polyline rendered")
     }, [pathCoords, imageIndex]);
 
@@ -154,7 +181,11 @@ const FloorPlan = () => {
     }, [imageIndex]);
 
 
-
+    useEffect(() => {
+        if (instructions.length > 0 && form?.location && form?.destination) {
+            setActiveTab("directions");
+        }
+    }, [instructions, form]);
 
 
 
@@ -174,7 +205,11 @@ const FloorPlan = () => {
         console.log("Search results:", search.data);
         if (search.data) {
             console.log("Search results:", search.data.path);
-
+            const startPoint = {
+                latitude: endMapsLocation.lat,
+                longitude: endMapsLocation.lng,
+                floor: 1,
+            };
             const formattedCoords = search.data.path.toParking.map((node) => ({
                 latitude: node.latitude,
                 longitude: node.longitude,
@@ -185,7 +220,7 @@ const FloorPlan = () => {
                 longitude: node.longitude,
                 floor: node.floor,
             }));
-            setPathCoords([...formattedCoords, ...formattedCoords2]);
+            setPathCoords([startPoint, ...formattedCoords, ...formattedCoords2]);
 
             console.log(formattedCoords);
             setInstructions((prev) => [...prev, ...search.data.directions]);
@@ -243,7 +278,11 @@ const FloorPlan = () => {
                         const leg = result.routes[0].legs[0];
                         const Mapsinstructions = leg.steps.map(step => step.instructions);
                         setInstructions(Mapsinstructions);
-                        setEndMapsLocation(leg.end_location);
+                        setEndMapsLocation({
+                            lat: leg.end_location.lat(),
+                            lng: leg.end_location.lng()
+                        });
+
                         console.log(address);
 
                         const route = result.routes[0];
@@ -306,57 +345,76 @@ const FloorPlan = () => {
 
     return (
         <Layout>
-        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
+            <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
+                <div className="relative flex-1">
+                    {/* Google Map full size */}
+                    <div
+                        id="google-map-container"
+                        className="absolute inset-0 z-0"
+                        ref={mapRef}
+                        style={{ width: '100%', height: '100%' }}
+                    />
 
-            {/* Main content fills screen excluding navbar/footer */}
-            <div className="relative flex-1">
-                {/* Google Map full size */}
-                <div
-                    id="google-map-container"
-                    className="absolute inset-0 z-0"
-                    ref={mapRef}
-                    style={{ width: '100%', height: '100%' }}
-                />
-                <div className="absolute top-5 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
-                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                    {/* Combined tabs and controls container */}
+                    <div className="absolute top-4 left-4 z-10 w-80 space-y-2">
+                        <Tabs value={activeTab} onValueChange={setActiveTab}>
+                            <TabsList className="grid w-full grid-cols-2 bg-white">
+                                <TabsTrigger
+                                    value="request"
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                                >
+                                    Location Request
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="directions"
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                                >
+                                    Directions
+                                </TabsTrigger>
+                            </TabsList>
 
+                            <TabsContent value="request" className="mt-0">
+                                <div className="bg-white p-4 rounded-b-lg shadow-md">
+                                    <LocationRequestForm
+                                        onSubmit={(form) => {
+                                            setForm(form);
+                                            if (instructions.length > 0) {
+                                                setActiveTab("directions");
+                                            }
+                                        }}
+                                        initialForm={form}
+                                    />
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="directions" className="mt-0">
+                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-136 relative">
+                                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                                    <div className="absolute top-4 right-4 z-50">
+                                        <DirectionsButton directions={instructions} />
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+
+                        {/* Floor and view mode buttons - now under tabs */}
+                        <div className="grid grid-cols-2 gap-2">
+                            <Button
+                                onClick={handleImageSwitch}
+                                className="w-full bg-primary hover:bg-primary/90"
+                            >
+                                Floor: {imageIndex + 1}
+                            </Button>
+                            <Button
+                                onClick={toggleCenterMode}
+                                className="w-full bg-primary hover:bg-primary/90"
+                            >
+                                {centerMode}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-                <div className="absolute top-55 right-9 z-10 p-4 rounded-lg shadow-md w-80 h-64">
-                    <DirectionsButton directions={instructions} />
-                </div>
-
-                {/* Overlay UI elements */}
-                <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md w-80">
-                    <LocationRequestForm onSubmit={(form) => setForm(form)} initialForm={form} />
-
-                </div>
-
-                <div className="absolute top-45 right-14 z-10 grid grid-cols-1 md:grid-cols-3 gap-1 mx-auto pt-28">
-                    <Button
-                        onClick={handleImageSwitch}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        Floor: {imageIndex + 1}
-                    </Button>
-                    <Button
-                        onClick={toggleMode}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        {mode}
-                    </Button>
-                    <Button
-                        onClick={toggleCenterMode}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        {centerMode}
-                    </Button>
-                </div>
-
             </div>
-        </div>
         </Layout>
     );
 };
