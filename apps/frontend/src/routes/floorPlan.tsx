@@ -388,9 +388,9 @@ const FloorPlan = () => {
                             </TabsContent>
 
                             <TabsContent value="directions" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-md h-64 relative">
+                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-136 relative">
                                     <InstructionsBox key={instructions.join()} instructions={instructions} />
-                                    <div className="absolute bottom-4 right-4">
+                                    <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
                                     </div>
                                 </div>
