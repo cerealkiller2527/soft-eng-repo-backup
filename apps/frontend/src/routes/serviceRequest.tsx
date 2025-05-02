@@ -162,7 +162,7 @@ const ServiceRequest = () => {
                         <CardTitle className="text-lg text-[#003153]">Transport Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsTransport.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-1">{requestsTransport.data?.length}</div>
                     </CardContent>
                 </Card>
 
@@ -171,7 +171,7 @@ const ServiceRequest = () => {
                         <CardTitle className="text-lg text-[#003153]">Security Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsSecurity.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-2">{requestsSecurity.data?.length}</div>
                     </CardContent>
                 </Card>
                 <Card className="bg-white shadow text-center">
@@ -179,7 +179,7 @@ const ServiceRequest = () => {
                         <CardTitle className="text-lg text-primary">Language Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsLanguage.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-3">{requestsLanguage.data?.length}</div>
                     </CardContent>
 
                 </Card>
