@@ -23,6 +23,9 @@ export const searchRouter = t.router({
           Department: {
             name: input.endDeptName,
           },
+          building: {
+            name: input.buildingName,
+          }
         },
         select: {
           nodeID: true,
@@ -31,8 +34,16 @@ export const searchRouter = t.router({
 
       const endNodeId = endLocation!.nodeID;
 
-      // create search system and pass through data for path
+      // check database for which algorithm to use and create search system to match
+      const algorithm = await PrismaClient.searchAlgorithm.findFirst()
       const s = new SearchSystem(new BFS());
+      if(algorithm?.current === "BFS"){
+        s.changeAlgorithm(new BFS())
+      }else if (algorithm?.current === "DFS"){
+        s.changeAlgorithm(new DFS())
+      }
+
+
       if (input.buildingName === "") {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -54,19 +65,7 @@ export const searchRouter = t.router({
         input.driving,
       );
       console.log("SEARCH.TS");
-      if (paths.toParking.length > 0) {
-        [paths.toParking[0].latitude, paths.toParking[0].longitude] = [
-          paths.toParking[0].longitude,
-          paths.toParking[0].latitude,
-        ];
-      }
 
-      if (paths.toDepartment.length > 0) {
-        [paths.toDepartment[0].latitude, paths.toDepartment[0].longitude] = [
-          paths.toDepartment[0].longitude,
-          paths.toDepartment[0].latitude,
-        ];
-      }
       console.log(paths);
 
       const returnPaths = searchOutput.parse(paths);

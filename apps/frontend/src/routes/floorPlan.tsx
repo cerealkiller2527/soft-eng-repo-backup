@@ -165,9 +165,10 @@ const FloorPlan = () => {
         dropOffLongitude : address.lng ?? 0,
         driving: driving,
     },
-        //{enabled: false}
+
     ) )
 
+    const searchKey = trpc.search.getPath.queryKey()
 
     useEffect(() => {
         console.log("Search results:", search.data);
@@ -175,13 +176,13 @@ const FloorPlan = () => {
             console.log("Search results:", search.data.path);
 
             const formattedCoords = search.data.path.toParking.map((node) => ({
-                latitude: node.longitude,
-                longitude: node.latitude,
+                latitude: node.latitude,
+                longitude: node.longitude,
                 floor: node.floor,
             }));
             const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
-                latitude: node.longitude,
-                longitude: node.latitude,
+                latitude: node.latitude,
+                longitude: node.longitude,
                 floor: node.floor,
             }));
             setPathCoords([...formattedCoords, ...formattedCoords2]);
@@ -191,12 +192,13 @@ const FloorPlan = () => {
 
         }
 
-    }, [search.status]);
+    }, [search.data]);
 
 
     useEffect(() => {
         if (!form) return;
-        //search.refetch();
+        queryClient.invalidateQueries({ queryKey: searchKey });
+
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -209,11 +211,7 @@ const FloorPlan = () => {
         }
 
 
-
-
         if (form.location && mapInstance.current && directionsRenderer.current) {
-            queryClient.invalidateQueries();
-
             const directionsService = new google.maps.DirectionsService();
             //tempaddr used because useStates dont update variables fast enough, address useState passed to backend
             let tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363}

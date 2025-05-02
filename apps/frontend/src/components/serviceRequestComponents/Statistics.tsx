@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTRPC } from "@/database/trpc.ts";
 import { useQuery } from "@tanstack/react-query";
 import MiniChart from "@/components/serviceRequestComponents/chart.tsx";
+import NewChart from "@/components/serviceRequestComponents/NewChart.tsx";
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
@@ -107,14 +108,10 @@ export default function MiniDashboard() {
                 </CardContent>
             </Card>
 
-            <Card className="bg-white shadow h-[300px]">
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-xl text-[#003153]">Request Status</CardTitle>
-                </CardHeader>
-                <CardContent className="flex justify-center items-center h-[calc(100%-60px)]">
-                    <MiniChart data={chartData} labels={chartLabels} colors={chartColors} />
-                </CardContent>
-            </Card>
+            <div className="bg-white shadow h-[300px] rounded-xl mb-20">
+                    <NewChart transport={requestsTransport} equipment={requestsEquipment} language={requestsLanguage} security={requestsSecurity} />
+
+            </div>
         </div>
     );
 }
