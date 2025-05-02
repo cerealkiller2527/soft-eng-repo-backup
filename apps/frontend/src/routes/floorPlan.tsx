@@ -9,6 +9,7 @@ import InstructionsBox from "@/components/InstructionsBox";
 import {DirectionsButton} from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 
@@ -66,6 +67,7 @@ const FloorPlan = () => {
         setCenterMode((prev) => (prev === "Building" ? "Path" : "Building"));
     };
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
+    const [activeTab, setActiveTab] = useState("request");
 
 
 
@@ -179,7 +181,11 @@ const FloorPlan = () => {
     }, [imageIndex]);
 
 
-
+    useEffect(() => {
+        if (instructions.length > 0 && form?.location && form?.destination) {
+            setActiveTab("directions");
+        }
+    }, [instructions, form]);
 
 
 
@@ -339,50 +345,76 @@ const FloorPlan = () => {
 
     return (
         <Layout>
-        <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
+            <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
+                <div className="relative flex-1">
+                    {/* Google Map full size */}
+                    <div
+                        id="google-map-container"
+                        className="absolute inset-0 z-0"
+                        ref={mapRef}
+                        style={{ width: '100%', height: '100%' }}
+                    />
 
-            {/* Main content fills screen excluding navbar/footer */}
-            <div className="relative flex-1">
-                {/* Google Map full size */}
-                <div
-                    id="google-map-container"
-                    className="absolute inset-0 z-0"
-                    ref={mapRef}
-                    style={{ width: '100%', height: '100%' }}
-                />
-                <div className="absolute top-5 right-4 z-10 bg-white p-4 rounded-lg shadow-md w-80 h-64">
-                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                    {/* Combined tabs and controls container */}
+                    <div className="absolute top-4 left-4 z-10 w-80 space-y-2">
+                        <Tabs value={activeTab} onValueChange={setActiveTab}>
+                            <TabsList className="grid w-full grid-cols-2 bg-white">
+                                <TabsTrigger
+                                    value="request"
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                                >
+                                    Location Request
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="directions"
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                                >
+                                    Directions
+                                </TabsTrigger>
+                            </TabsList>
 
+                            <TabsContent value="request" className="mt-0">
+                                <div className="bg-white p-4 rounded-b-lg shadow-md">
+                                    <LocationRequestForm
+                                        onSubmit={(form) => {
+                                            setForm(form);
+                                            if (instructions.length > 0) {
+                                                setActiveTab("directions");
+                                            }
+                                        }}
+                                        initialForm={form}
+                                    />
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="directions" className="mt-0">
+                                <div className="bg-white p-4 rounded-b-lg shadow-md h-64 relative">
+                                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                                    <div className="absolute bottom-4 right-4">
+                                        <DirectionsButton directions={instructions} />
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+
+                        {/* Floor and view mode buttons - now under tabs */}
+                        <div className="grid grid-cols-2 gap-2">
+                            <Button
+                                onClick={handleImageSwitch}
+                                className="w-full bg-primary hover:bg-primary/90"
+                            >
+                                Floor: {imageIndex + 1}
+                            </Button>
+                            <Button
+                                onClick={toggleCenterMode}
+                                className="w-full bg-primary hover:bg-primary/90"
+                            >
+                                {centerMode}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-                <div className="absolute top-55 right-9 z-50 p-4 rounded-lg">
-                    <DirectionsButton directions={instructions} />
-                </div>
-
-                {/* Overlay UI elements */}
-                <div className="absolute z-10 p-4 w-80">
-                    <LocationRequestForm onSubmit={(form) => setForm(form)} initialForm={form} />
-
-                </div>
-
-                <div className="absolute top-45 right-14 z-10 grid grid-cols-1 md:grid-cols-3 gap-1 mx-auto pt-28">
-                    <Button
-                        onClick={handleImageSwitch}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        Floor: {imageIndex + 1}
-                    </Button>
-                    <Button
-                        onClick={toggleCenterMode}
-                        className="bg-[#012D5A] rounded-lg text-white hover:text-[#012D5A] hover:bg-white
-                    hover:outline    hover:outline-2 hover:outline-[#F6BD38] hover:outline-solid"
-                    >
-                        {centerMode}
-                    </Button>
-                </div>
-
             </div>
-        </div>
         </Layout>
     );
 };
