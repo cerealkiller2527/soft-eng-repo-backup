@@ -1,178 +1,224 @@
+"use client"
 import { useState, useEffect } from "react";
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import { pNodeDTO } from "../../../../share/types.ts";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const buildings = ["22 Patriot Place", "20 Patriot Place", "Chestnut Hill Medical Center", "Faulkner Hospital", "Main Campus"];
 const transport = ["Public Transport", "Walking", "Driving"];
 
-// ✏️ Added type for form
-type formType = {
-    location: string;
-    destination: string;
-    transport: string;
-    building: string;
-};
+const formSchema = z.object({
+    location: z.string().min(1, "Location is required"),
+    destination: z.string().min(1, "Destination is required"),
+    transport: z.string().default("Walking"),
+    building: z.string().min(1, "Building is required"),
+});
 
-// ✏️ Added props type to accept initialForm
+type FormValues = z.infer<typeof formSchema>;
+
 type LocationRequestFormProps = {
-    onSubmit: (form: formType) => void;
-    initialForm?: formType; // <-- added
+    onSubmit: (form: FormValues) => void;
+    initialForm?: FormValues;
 };
 
-// ✏️ Updated function to accept initialForm
 export default function LocationRequestForm({ onSubmit, initialForm }: LocationRequestFormProps) {
     const trpc = useTRPC();
+    const [MGBHospitals, setMGBHospitals] = useState(["Reception"]);
 
-    const [MGBHospitals, SetMGBHospitals] = useState([
-        "Reception",
-    ]);
-
-    // ✏️ EDIT: Initialize form with initialForm if provided
-    const [form, setForm] = useState<formType>(
-        initialForm ?? {
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: initialForm ?? {
             location: "",
             destination: "",
             transport: "Walking",
             building: "Chestnut Hill Medical Center",
         }
-    );
+    });
 
-    const nodesQuery = useQuery(trpc.mapInfoRouter.mapInfo.queryOptions({ buildingName: form.building }));
+    const buildingWatch = form.watch("building");
+
+    const nodesQuery = useQuery(trpc.mapInfoRouter.mapInfo.queryOptions({ buildingName: buildingWatch }));
 
     useEffect(() => {
         if (nodesQuery.data) {
             const suites = nodesQuery.data;
-            console.log(suites);
-            SetMGBHospitals(suites);
+            setMGBHospitals(suites);
+            // Reset destination when building changes
+            form.resetField("destination");
         }
-    }, [form.building, nodesQuery.status]);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = event.target;
-        setForm({ ...form, [name]: value });
-    };
-
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-
-        const requiredFields = ["location", "destination"];
-        const missingFields = requiredFields.filter((field) => !form[field as keyof typeof form]);
-        if (missingFields.length > 0) {
-            alert("Please fill all required fields.");
-            return;
-        }
-
-        // Geocode the location
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ address: form.location }, (results, status) => {
-            if (status === "OK") {
-                const origin = results[0].geometry.location;
-                console.log(results[0].geometry.location);
-                onSubmit(form);
-                console.log("Form submitted successfully.", form);
-            } else {
-                alert("Geocode was not successful for the following reason: " + status);
-            }
-        });
-    };
+    }, [nodesQuery.data, form]);
 
     useEffect(() => {
         if (typeof google !== "undefined" && google.maps && google.maps.places) {
             const input = document.getElementById("location-input") as HTMLInputElement;
-            if (input) { // ✏️ Added null check
+            if (input) {
                 const autocomplete = new google.maps.places.Autocomplete(input);
 
                 autocomplete.addListener("place_changed", () => {
                     const place = autocomplete.getPlace();
                     if (place.geometry) {
-                        setForm((prevForm) => ({
-                            ...prevForm,
-                            location: place.formatted_address || "",
-                        }));
+                        form.setValue("location", place.formatted_address || "");
                     }
                 });
             }
         }
-    }, []);
+    }, [form]);
+
+    const handleSubmit = async (values: FormValues) => {
+        try {
+            // Geocode the location
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: values.location }, (results, status) => {
+                if (status === "OK") {
+                    const origin = results[0].geometry.location;
+                    console.log(results[0].geometry.location);
+                    onSubmit(values);
+                    toast.success("Request submitted successfully!");
+                } else {
+                    toast.error("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        } catch (error) {
+            console.error("Form submission error", error);
+            toast.error("Failed to submit the form. Please try again.");
+        }
+    };
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-md rounded-2xl">
-            <div className="bg-gray-200 w-full p-4 rounded-t-2xl rounded-b-xl">
-                <h2 className="text-xl font-semibold">Location Request</h2>
-                <p>Select the starting address and destination.</p>
+            <div className="bg-white w-full p-6 rounded-t-2xl">
+                <h2 className="text-xl font-semibold text-primary">Select Destination</h2>
+                <p className="text-muted-foreground">Select the starting address and department.</p>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-6 p-4">
-                {/* Location input */}
-                <label className="p-2 text-gray-800">Enter your starting address:</label>
-                <input
-                    id="location-input"
-                    type="text"
-                    name="location"
-                    value={form.location}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none focus:ring-2 focus:ring-[#012D5A]"
-                    placeholder="Enter location"
-                />
-                <br />
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 p-6">
+                    {/* Location input */}
+                    <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-foreground">Enter your starting address:</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        id="location-input"
+                                        placeholder="Enter location"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                {/* Building select */}
-                <label className="p-2 text-gray-800">Building:</label>
-                <select
-                    name="building"
-                    value={form.building}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100"
-                >
-                    <option value="">Select Building</option>
-                    {buildings.map((building) => (
-                        <option key={building} value={building}>
-                            {building}
-                        </option>
-                    ))}
-                </select>
+                    {/* Building select */}
+                    <FormField
+                        control={form.control}
+                        name="building"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-foreground">Building:</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select Building" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {buildings.map((building) => (
+                                            <SelectItem key={building} value={building}>
+                                                {building}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                {/* Destination select */}
-                <label className="p-2 text-gray-800">Destination:</label>
-                <select
-                    name="destination"
-                    value={form.destination}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100"
-                >
-                    <option value="">Select Destination</option>
-                    {MGBHospitals.map((hospital) => (
-                        <option key={hospital} value={hospital}>
-                            {hospital}
-                        </option>
-                    ))}
-                </select>
+                    {/* Destination select */}
+                    <FormField
+                        control={form.control}
+                        name="destination"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-foreground">Destination:</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select Destination" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {MGBHospitals.map((hospital) => (
+                                            <SelectItem key={hospital} value={hospital}>
+                                                {hospital}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                {/* Transport select */}
-                <label className="p-2 text-gray-800">Transport Type:</label>
-                <select
-                    name="transport"
-                    value={form.transport}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-xl p-1 focus:outline-none hover:bg-blue-100"
-                >
-                    <option value="">Select Transport Type</option>
-                    {transport.map((transportType) => (
-                        <option key={transportType} value={transportType}>
-                            {transportType}
-                        </option>
-                    ))}
-                </select>
-                <br />
+                    {/* Transport select */}
+                    <FormField
+                        control={form.control}
+                        name="transport"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-foreground">Transport Type:</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select Transport Type" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {transport.map((transportType) => (
+                                            <SelectItem key={transportType} value={transportType}>
+                                                {transportType}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                {/* Submit button */}
-                <button
-                    type="submit"
-                    className="border border-3 border-[#012D5A] w-full btn btn-primary p-3 px-8 bg-[#012D5A] text-white rounded-xl hover:bg-white hover:text-[#012D5A]"
-                >
-                    Submit
-                </button>
-            </form>
+                    {/* Submit button */}
+                    <Button
+                        type="submit"
+                        className="w-full bg-primary hover:bg-primary/90"
+                    >
+                        Submit
+                    </Button>
+                </form>
+            </Form>
         </div>
     );
 }
