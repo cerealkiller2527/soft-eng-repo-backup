@@ -52,8 +52,8 @@ export default function BarChartMini({notAssigned, assigned,}: ChartProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Bar Chart - Custom Label</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+                <CardTitle>Assigned & Unassigned Requests</CardTitle>
+                <CardDescription>See how many requests have been assigned...</CardDescription>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
@@ -104,13 +104,11 @@ export default function BarChartMini({notAssigned, assigned,}: ChartProps) {
                     </BarChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col items-start gap-2 text-sm">
-                <div className="flex gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            <CardFooter className="flex-col  gap-2 text-sm">
+                <div className="flex gap-2 font-medium ">
+                    View more on dashboard page
                 </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
-                </div>
+
             </CardFooter>
         </Card>
     )

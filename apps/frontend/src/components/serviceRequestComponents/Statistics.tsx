@@ -60,7 +60,7 @@ export default function MiniDashboard() {
     const chartLabels = ["Assigned", "Not Assigned"]
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-30">
             <Card className="bg-white shadow md:col-span-2">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-[#003153]">Request Quick View</CardTitle>
@@ -110,10 +110,12 @@ export default function MiniDashboard() {
                 </CardContent>
             </Card>
 
-            <div className="bg-white shadow h-[300px] rounded-xl mb-20">
+            <div className="bg-white shadow h-[300px] rounded-xl mb-50">
                     <NewChart transport={requestsTransport} equipment={requestsEquipment} language={requestsLanguage} security={requestsSecurity} />
                 <br />
+                <div className="">
                 <BarChartMini assigned={assignedCount} notAssigned={notAssignedCount} />
+                </div>
             </div >
 
         </div>
