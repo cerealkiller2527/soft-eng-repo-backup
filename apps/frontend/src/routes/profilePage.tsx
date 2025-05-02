@@ -1,24 +1,38 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Layout from '../components/Layout';
 import { useUser } from "@clerk/clerk-react";
 
-function getInitials(firstName?: string, lastName?: string): string {
-    const f = firstName?.[0]  ?? "";
-    const l = lastName?.[0]   ?? "";
+function getInitials(firstName?: string | null, lastName?: string | null): string {
+    const f = firstName?.[0] ?? '';
+    const l = lastName?.[0] ?? '';
     return (f + l).toUpperCase();
 }
 
 export default function ProfilePage() {
-    const { user } = useUser();
-    const name = user.fullName;
-    const username = user.username;
-    const dateJoined = user.createdAt.toLocaleDateString();
-    const email = user.emailAddresses.map(e => e.emailAddress).join(", ");
-    const initials = getInitials(user.firstName, user.lastName);
+    const { isLoaded, user } = useUser();
+
+
+    if (!isLoaded) {
+        return (
+            <div className="min-h-screen bg-white flex flex-col">
+
+                <main className="flex-1 flex justify-center items-center">
+                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-[#012D5A] border-gray-200" />
+                </main>
+
+            </div>
+        );
+    }
+
+    const name = user?.fullName;
+    const username = user?.username;
+    const role = user?.publicMetadata?.role.toString();
+    const dateJoined = user?.createdAt?.toLocaleDateString();
+    const email = user?.emailAddresses.map(e => e.emailAddress).join(", ");
+    const initials = getInitials(user?.firstName, user?.lastName);
 
     return (
         <Layout>
@@ -48,35 +62,30 @@ export default function ProfilePage() {
                                 <CardContent className="space-y-4 text-foreground">
                                     <p><span className="font-medium text-primary">Username:</span> {username}</p>
                                     <p><span className="font-medium text-primary">Email:</span> {email}</p>
+                                    <p><span className="font-medium text-primary">Role:</span> {role}</p>
                                     <p><span className="font-medium text-primary">Location:</span> Worcester, MA</p>
                                     <p><span className="font-medium text-primary">Bio:</span> Developer, cat lover, coffee enthusiast.</p>
                                 </CardContent>
                             </Card>
 
-                            {/* Tabs Section with triggers outside Card */}
+                            {/* Tabs Section */}
                             <div className="md:col-span-2">
-                                <Tabs defaultValue="Privileges" className="w-full">
+                                <Tabs defaultValue="assigned" className="w-full">
                                     <TabsList className="border-b border-secondary mb-2">
-                                        <TabsTrigger value="privileges" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
-                                            Privileges
+                                        <TabsTrigger value="assigned" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
+                                            Assigned Requests
                                         </TabsTrigger>
                                         <TabsTrigger value="submitted" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
                                             Submitted Requests
                                         </TabsTrigger>
-                                        <TabsTrigger value="assigned" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
-                                            Assigned Requests
-                                        </TabsTrigger>
                                     </TabsList>
 
-                                    <Card className="bg-accent p-4 min-h-[22rem]">
-                                        <TabsContent value="privileges">
-                                            {/* Privileges content here */}
-                                        </TabsContent>
+                                    <Card className="bg-gradient-to-r from-accent to-primary p-4 min-h-[22rem]">
                                         <TabsContent value="submitted">
-                                            {/* Submitted requests content here */}
+                                            {/*Placeholder*/}
                                         </TabsContent>
                                         <TabsContent value="assigned">
-                                            {/* Assigned requests content here */}
+                                            {/*Placeholder*/}
                                         </TabsContent>
                                     </Card>
                                 </Tabs>
