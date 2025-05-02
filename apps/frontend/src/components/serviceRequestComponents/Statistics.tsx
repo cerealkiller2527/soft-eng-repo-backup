@@ -4,8 +4,8 @@ import { CheckCircle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTRPC } from "@/database/trpc.ts";
 import { useQuery } from "@tanstack/react-query";
-import MiniChart from "@/components/serviceRequestComponents/chart.tsx";
 import NewChart from "@/components/serviceRequestComponents/NewChart.tsx";
+import BarChartMini from "@/components/serviceRequestComponents/BarChartMini.tsx";
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
@@ -45,6 +45,8 @@ export default function MiniDashboard() {
             employee: req.fromEmployee,
         })),
     ];
+
+
 
 
     const [filterType, setFilterType] = useState<"All" | "Patient Transport" | "Security Assistance" | "Medical Equipment" | "Language Services">("All");
@@ -110,8 +112,10 @@ export default function MiniDashboard() {
 
             <div className="bg-white shadow h-[300px] rounded-xl mb-20">
                     <NewChart transport={requestsTransport} equipment={requestsEquipment} language={requestsLanguage} security={requestsSecurity} />
+                <br />
+                <BarChartMini assigned={assignedCount} notAssigned={notAssignedCount} />
+            </div >
 
-            </div>
         </div>
     );
 }

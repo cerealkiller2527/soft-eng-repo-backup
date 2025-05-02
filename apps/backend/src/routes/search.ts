@@ -66,7 +66,7 @@ export const searchRouter = t.router({
       );
       console.log("SEARCH.TS");
 
-      console.log('paths after calling s.path: ', paths);
+      console.log("paths after calling s.path: ", paths);
 
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];
