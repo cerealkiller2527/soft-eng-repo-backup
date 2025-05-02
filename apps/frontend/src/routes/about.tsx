@@ -23,62 +23,71 @@ const bobbyProps = {
     name: "Robert Branchaud",
     position: "Scrum Master, Algos Dev",
     path: "/public/headshots/rbranchaud.jpg",
-    quote: " 'If you only do what you can do, you'll never be more than who you are.' - Master Shifu, Kung Fu Panda 3"
+    quote: " \"If you only do what you can do, you'll never be more than who you are.\" - Master Shifu, Kung Fu Panda 3"
 }
 
 const tinaProps = {
     name: "Tina Cheng",
     position: "Back End Dev",
-    path: "/public/headshots/tcheng.jpg"
+    path: "/public/headshots/tcheng.jpg",
+    quote: "quote"
 }
 
 const brandonProps = {
     name: "Brandon Contardi",
     position: "Front End Dev",
-    path: "/public/headshots/bcontardi.jpg"
+    path: "/public/headshots/bcontardi.jpg",
+    quote:"Quote"
 }
 
 const christianProps = {
     name: "Christian Dell'Anno",
     position: "Assistant Lead, Front End Dev",
-    path: "/public/headshots/cdellanno.jpg"
+    path: "/public/headshots/cdellanno.jpg",
+    quote:" \"All you need is love. But a little chocolate now and then doesn't hurt.\" ― Charles M. Schulz"
 }
 
 const sahanaProps = {
     name: "Sahana Gokulakrishnan",
     position: "Product Owner, Front End Dev",
-    path: "/public/headshots/sgokulakrishnan.jpg"
+    path: "/public/headshots/sgokulakrishnan.jpg",
+    quote:"Quote"
 }
 
 const maxProps = {
     name: "Max Inman",
     position: "Documentation, Algorithms Dev",
-    path: "/public/headshots/minman.jpg"
+    path: "/public/headshots/minman.jpg",
+    quote:"Quote"
 }
 
 const madhavProps = {
     name: "Madhav Lodha",
     position: "Assistant Lead, Back End Dev",
-    path: "/public/headshots/mlodha.jpg"
+    path: "/public/headshots/mlodha.jpg",
+    quote:"Quote"
 }
 
 const mattNickersonProps = {
     name: "Matt Nickerson",
     position: "Assistant Lead, Front End Dev",
-    path: "/public/headshots/mnickerson.jpg"
+    path: "/public/headshots/mnickerson.jpg",
+    quote:"Quote"
 }
 
 const kaylieProps = {
     name: "Kaylie Quach",
     position: "Back End Dev",
-    path: "/public/headshots/kquach.jpg"
+    path: "/public/headshots/kquach.jpg",
+    quote:" \"The gentleness that comes, not from the absence of violence, but despite the abundance of it.\" - Richard Siken"
 
 }
 
 const willProps = {
     name: "William Schieffer",
     position: "Product Manager, Front End Dev",
-    path: "public/headshots/wschieffer.jpg"
+    path: "public/headshots/wschieffer.jpg",
+    quote:"Quote"
 }
 
 
