@@ -23,6 +23,9 @@ export const searchRouter = t.router({
           Department: {
             name: input.endDeptName,
           },
+          building: {
+            name: input.buildingName,
+          }
         },
         select: {
           nodeID: true,
@@ -54,19 +57,7 @@ export const searchRouter = t.router({
         input.driving,
       );
       console.log("SEARCH.TS");
-      if (paths.toParking.length > 0) {
-        [paths.toParking[0].latitude, paths.toParking[0].longitude] = [
-          paths.toParking[0].longitude,
-          paths.toParking[0].latitude,
-        ];
-      }
 
-      if (paths.toDepartment.length > 0) {
-        [paths.toDepartment[0].latitude, paths.toDepartment[0].longitude] = [
-          paths.toDepartment[0].longitude,
-          paths.toDepartment[0].latitude,
-        ];
-      }
       console.log(paths);
 
       const returnPaths = searchOutput.parse(paths);
