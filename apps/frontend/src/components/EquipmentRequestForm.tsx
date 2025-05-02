@@ -41,20 +41,23 @@ const formSchema = z.object({
     additionalNotes: z.string().optional(),
 })
 
-export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
+export default function EquipmentRequestForm({onFormSubmit, onSuccess, defaultValues, id, mode = "create",}: {
     onFormSubmit?: (data: z.infer<typeof formSchema>) => void;
     onSuccess?: () => void;
+    defaultValues?: Partial<z.infer<typeof formSchema>>;
+    id?: number;
+    mode?: "create" | "update";
 }) {
-    const trpc = useTRPC()
-    const addReq = useMutation(trpc.service.addEquipmentDeliveryRequest.mutationOptions({
-        onSuccess: () => {
-            onSuccess?.();
-        }
-    }))
-
+    const trpc = useTRPC();
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
 
+    const addReq = useMutation(trpc.service.addEquipmentDeliveryRequest.mutationOptions({
+        onSuccess: () => onSuccess?.(),
+    }));
 
+    const updateReq = useMutation(trpc.service.updateEquipmentDeliveryRequest.mutationOptions({
+        onSuccess: () => onSuccess?.(),
+    }));
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -65,19 +68,26 @@ export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
             equipment: [],
             location: "",
             additionalNotes: "",
-        }
-    })
+            ...defaultValues, // <- overrides for update
+        },
+    });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        addReq.mutate({
+        const payload = {
             priority: values.priority,
             deadline: new Date(values.deadline),
             employeeID: values.employeeID,
             equipment: values.equipment,
             toWhere: values.location,
             additionalNotes: values.additionalNotes,
-        });
-        console.log(values);
+        };
+
+        if (mode === "update" && id !== undefined) {
+            updateReq.mutate({ id, ...payload });
+        } else {
+            addReq.mutate(payload);
+        }
+
         onFormSubmit?.(values);
     }
     return (
