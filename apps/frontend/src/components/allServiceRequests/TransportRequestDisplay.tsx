@@ -80,7 +80,7 @@ export default function TransportRequestDisplay() {
 
     return (
 
-        <div className="flex flex-1 flex-col mx-10">
+        <div className="flex flex-1 flex-col mx-5">
             <div className="">
                 <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 text-center rounded-lg ">
                     <div className="max-w-6xl mx-auto flex flex-col gap-4">
@@ -99,9 +99,9 @@ export default function TransportRequestDisplay() {
 
 
             </div>
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-8 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-2 mt-8">
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-xl text-[#003153]">Equipment Requests</CardTitle>
                     </CardHeader>
@@ -110,29 +110,29 @@ export default function TransportRequestDisplay() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-[#003153]">Transport Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsTransport.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-1">{requestsTransport.data?.length}</div>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-[#003153]">Security Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsSecurity.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-2">{requestsSecurity.data?.length}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-primary">Language Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsLanguage.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-3">{requestsLanguage.data?.length}</div>
                     </CardContent>
 
                 </Card>
