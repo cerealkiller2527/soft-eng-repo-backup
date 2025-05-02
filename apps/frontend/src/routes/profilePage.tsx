@@ -1,9 +1,16 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {useState} from "react";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Layout from '../components/Layout';
 import { useUser } from "@clerk/clerk-react";
+import { useTRPC } from "@/database/trpc";
+import { useQuery } from "@tanstack/react-query";
+import {Input} from "@/components/ui/input.tsx";
+import {TableCaption, TableCell, TableHead, TableHeader, TableRow, TableBody, Table} from "@/components/ui/table.tsx";
+
+
 
 function getInitials(firstName?: string | null, lastName?: string | null): string {
     const f = firstName?.[0] ?? '';
@@ -14,7 +21,30 @@ function getInitials(firstName?: string | null, lastName?: string | null): strin
 export default function ProfilePage() {
     const { isLoaded, user } = useUser();
 
+    const trpc = useTRPC();
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+    const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
 
+    const combinedData = [
+        ...(requestsTransport.data ?? []),
+        ...(requestsSecurity.data ?? []),
+        ...(requestsEquipment.data ?? []),
+        ...(requestsLanguage.data ?? []),
+    ];
+    const [filter, setFilter] = useState("");
+
+    const filteredData = combinedData.filter((req) => {
+        const filterLower = filter.toLowerCase();
+        return (
+            req.type.toLowerCase().includes(filterLower) ||
+            req.fromEmployee.toLowerCase().includes(filterLower) ||
+            req.priority.toLowerCase().includes(filterLower) ||
+            req.status.toLowerCase().includes(filterLower)
+        );
+    });
     if (!isLoaded) {
         return (
             <div className="min-h-screen bg-white flex flex-col">
@@ -34,66 +64,104 @@ export default function ProfilePage() {
     const email = user?.emailAddresses.map(e => e.emailAddress).join(", ");
     const initials = getInitials(user?.firstName, user?.lastName);
 
-    return (
-        <Layout>
-            <div className="flex flex-col min-h-screen bg-white text-foreground">
-                <main className="flex-grow">
-                    <div className="max-w-4xl mx-auto p-6 space-y-8 pt-16">
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                                <Avatar>
-                                    <AvatarFallback>{initials}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <h1 className="text-2xl font-semibold">{name}</h1>
-                                    <p className="text-sm text-secondary">Joined {dateJoined}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Main Content */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* Profile Info Card */}
-                            <Card className="md:col-span-1 bg-accent min-h-[22rem]">
-                                <CardHeader>
-                                    <CardTitle className="text-primary text-xl font-bold">Profile Info</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4 text-foreground">
-                                    <p><span className="font-medium text-primary">Username:</span> {username}</p>
-                                    <p><span className="font-medium text-primary">Email:</span> {email}</p>
-                                    <p><span className="font-medium text-primary">Role:</span> {role}</p>
-                                    <p><span className="font-medium text-primary">Location:</span> Worcester, MA</p>
-                                    <p><span className="font-medium text-primary">Bio:</span> Developer, cat lover, coffee enthusiast.</p>
-                                </CardContent>
-                            </Card>
-
-                            {/* Tabs Section */}
-                            <div className="md:col-span-2">
-                                <Tabs defaultValue="assigned" className="w-full">
-                                    <TabsList className="border-b border-secondary mb-2">
-                                        <TabsTrigger value="assigned" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
-                                            Assigned Requests
-                                        </TabsTrigger>
-                                        <TabsTrigger value="submitted" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
-                                            Submitted Requests
-                                        </TabsTrigger>
-                                    </TabsList>
-
-                                    <Card className="bg-gradient-to-r from-accent to-primary p-4 min-h-[22rem]">
-                                        <TabsContent value="submitted">
-                                            {/*Placeholder*/}
-                                        </TabsContent>
-                                        <TabsContent value="assigned">
-                                            {/*Placeholder*/}
-                                        </TabsContent>
-                                    </Card>
-                                </Tabs>
+    return <Layout>
+        <div className="flex flex-col min-h-screen bg-white text-foreground">
+            <main className="flex-grow">
+                <div className="max-w-4xl mx-auto p-6 space-y-8 pt-16">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <Avatar>
+                                <AvatarFallback>{initials}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <h1 className="text-2xl font-semibold">{name}</h1>
+                                <p className="text-sm text-secondary">Joined {dateJoined}</p>
                             </div>
                         </div>
                     </div>
-                </main>
-            </div>
-        </Layout>
-    );
+
+                    {/* Main Content */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Profile Info Card */}
+                        <Card className="md:col-span-1 bg-accent min-h-[22rem]">
+                            <CardHeader>
+                                <CardTitle className="text-primary text-xl font-bold">Profile Info</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4 text-foreground">
+                                <p><span className="font-medium text-primary">Username:</span> {username}</p>
+                                <p><span className="font-medium text-primary">Email:</span> {email}</p>
+                                <p><span className="font-medium text-primary">Role:</span> {role}</p>
+                                <p><span className="font-medium text-primary">Location:</span> Worcester, MA</p>
+                                <p><span className="font-medium text-primary">Bio:</span> Developer, cat lover, coffee enthusiast.</p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Tabs Section */}
+                        <div className="md:col-span-2">
+                            <Tabs defaultValue="assigned" className="w-full">
+                                <TabsList className="border-b bg-accent mb-2">
+                                    <TabsTrigger value="assigned" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
+                                        Assigned Requests
+                                    </TabsTrigger>
+                                    <TabsTrigger value="submitted" className="data-[state=active]:bg-primary data-[state=active]:text-background hover:cursor-pointer">
+                                        Submitted Requests
+                                    </TabsTrigger>
+                                </TabsList>
+
+                                <Card className="bg-gradient-to-r from-accent to-primary p-4 min-h-[22rem]">
+                                    <TabsContent value="submitted">
+                                        <div className="@container/main flex flex-1 flex-col gap-2">
+                                            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                                                <div className="@xl/main:grid-cols-1 grid grid-cols-1 gap-4 px-4 lg:px-6">
+                                                    <Card className="@container/card">
+
+                                                        <CardFooter className="flex-col items-start gap-4 text-sm w-full">
+
+                                                            <div className="w-full overflow-auto">
+                                                                <Table className=" border border-gray-200 rounded-xl shadow-sm mt-2">
+                                                                    <TableCaption>A list of Requests</TableCaption>
+                                                                    <TableHeader>
+                                                                        <TableRow className="bg-[#012D5A] hover:bg-[#012D5A]">
+                                                                            <TableHead className="text-white">Request Type</TableHead>
+                                                                            <TableHead className="text-white">Assigned To</TableHead>
+                                                                            <TableHead className="text-white">Priority</TableHead>
+                                                                            <TableHead className="text-white">Status</TableHead>
+                                                                        </TableRow>
+                                                                    </TableHeader>
+                                                                    <TableBody>
+                                                                        {filteredData.map((req) => <>
+                                                                                <TableRow
+                                                                                    key={req.id}
+                                                                                    onClick={() => toggleRow(req.id)}
+                                                                                    className="odd:bg-white even:bg-gray-100 cursor-pointer hover:outline-[#012D5A] hover:outline-4 transition"
+                                                                                >
+                                                                                    <TableCell>{req.type}</TableCell>
+                                                                                    <TableCell>{req.fromEmployee}</TableCell>
+                                                                                    <TableCell>{getEmployeeName(Number(req.assignedEmployeeID))}</TableCell>                                                        <TableCell>{req.priority}</TableCell>
+                                                                                    <TableCell>{req.description}</TableCell>
+                                                                                    <TableCell>{req.status}</TableCell>
+                                                                                </TableRow>
+                                                                            </>
+                                                                        )}
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        </CardFooter>
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TabsContent>
+                                    <TabsContent value="assigned">
+                                        {/*Placeholder*/}
+                                    </TabsContent>
+                                </Card>
+                            </Tabs>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </Layout>;
 }
