@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import { queryClient } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
-import { DirectionsButton } from "@/components/DirectionsButton.tsx";
+import {DirectionsButton} from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 
@@ -186,13 +186,14 @@ const FloorPlan = () => {
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endDeptName: form?.destination ?? "",
-        dropOffLatitude: endMapsLocation.lat ?? 0,
-        dropOffLongitude : endMapsLocation.lng ?? 0,
+        dropOffLatitude: address.lat ?? 0,
+        dropOffLongitude : address.lng ?? 0,
         driving: driving,
     },
-        //{enabled: false}
+
     ) )
 
+    const searchKey = trpc.search.getPath.queryKey()
 
     useEffect(() => {
         console.log("Search results:", search.data);
@@ -204,28 +205,29 @@ const FloorPlan = () => {
                 floor: 1,
             };
             const formattedCoords = search.data.path.toParking.map((node) => ({
-                latitude: node.longitude,
-                longitude: node.latitude,
+                latitude: node.latitude,
+                longitude: node.longitude,
                 floor: node.floor,
             }));
             const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
-                latitude: node.longitude,
-                longitude: node.latitude,
+                latitude: node.latitude,
+                longitude: node.longitude,
                 floor: node.floor,
             }));
-            setPathCoords([startPoint,...formattedCoords, ...formattedCoords2]);
+            setPathCoords([startPoint, ...formattedCoords, ...formattedCoords2]);
 
             console.log(formattedCoords);
             setInstructions((prev) => [...prev, ...search.data.directions]);
 
         }
 
-    }, [search.status]);
+    }, [search.data]);
 
 
     useEffect(() => {
         if (!form) return;
-        search.refetch();
+        queryClient.invalidateQueries({ queryKey: searchKey });
+
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
@@ -238,11 +240,7 @@ const FloorPlan = () => {
         }
 
 
-
-
         if (form.location && mapInstance.current && directionsRenderer.current) {
-            queryClient.invalidateQueries();
-
             const directionsService = new google.maps.DirectionsService();
             //tempaddr used because useStates dont update variables fast enough, address useState passed to backend
             let tempAddr = {lat: 42.09263772658629, lng: -71.26603830263363}
