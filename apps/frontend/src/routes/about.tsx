@@ -7,20 +7,23 @@ import {Card, CardHeader, CardTitle, CardDescription, CardContent} from "@/compo
 type teamProps = {
     name: string,
     position: string,
-    path: string
+    path: string,
+    quote: string
 }
 
 
 const mattAlexProps = {
     name: "Matthew Alex",
     position: "Lead Engineer, Front End Dev",
-    path: "/headshots/malex.jpg"
+    path: "/headshots/malex.jpg",
+    quote: "Quote"
 }
 
 const bobbyProps = {
     name: "Robert Branchaud",
     position: "Scrum Master, Algos Dev",
-    path: "/public/headshots/rbranchaud.jpg"
+    path: "/public/headshots/rbranchaud.jpg",
+    quote: " 'If you only do what you can do, you'll never be more than who you are.' - Master Shifu, Kung Fu Panda 3"
 }
 
 const tinaProps = {
@@ -69,6 +72,7 @@ const kaylieProps = {
     name: "Kaylie Quach",
     position: "Back End Dev",
     path: "/public/headshots/kquach.jpg"
+
 }
 
 const willProps = {
@@ -79,28 +83,68 @@ const willProps = {
 
 
 
-function TeamCard(props: teamProps){
+function TeamCard(props: teamProps) {
     return (
-        <div className={"p-4"}>
-            <Card className={"w-70 pb-1"}>
-                <CardHeader className={"justify-items-center"}>
-                    <img
-                        src={props.path}
-                        alt={props.name + " Headshot"}
-                        className={"h-54 w-full object-cover rounded-xl drop-shadow-xl/20"}
-                    />
-                    <CardTitle className={"flex-1"}>
-                        {props.name}
-                    </CardTitle>
-                    <CardDescription className={"text-center italic"}>
-                        <p>{props.position}</p>
-                    </CardDescription>
-                </CardHeader>
-            </Card>
-        </div>
+        <div className="p-4 w-72 h-96 group" style={{ perspective: "1000px" }}>
+            <div
+                className="relative w-full h-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)]"
+                style={{
+                    transformStyle: "preserve-3d",
+                }}
+            >
 
-    )
+                <div
+                    className="absolute w-full h-full rounded-xl overflow-hidden"
+                    style={{
+                        backfaceVisibility: "hidden",
+                    }}
+                >
+                    <Card className="w-full h-full pb-1">
+                        <CardHeader className="justify-items-center p-0">
+                            <img
+                                src={props.path}
+                                alt={props.name + " Headshot"}
+                                className="h-64 w-full object-cover rounded-t-xl"
+                            />
+                            <CardTitle className="text-center mt-2">{props.name}</CardTitle>
+                            <CardDescription className="text-center italic">
+                                {props.position}
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </div>
+
+
+                <div
+                    className="absolute w-full h-full rounded-xl overflow-hidden flex items-center justify-center text-white text-center"
+                    style={{
+                        transform: "rotateY(180deg)",
+                        backfaceVisibility: "hidden",
+                    }}
+                >
+
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            backgroundImage: `url(${props.path})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            filter: "blur(8px) brightness(60%)" ,
+
+                        }}
+                    />
+
+                    <div className="z-20 p-4">
+                        <p className="text-lg italic text-bold max-w-[90%] text-white drop-shadow-xl">{props.quote}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
+
+
+
 
 function WPICard(){
     return(
