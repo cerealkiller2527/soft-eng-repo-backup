@@ -1,82 +1,16 @@
-fromNode,toNode,floor,building
-1left entrance outside,1left entrance,1,20 Patriot
-1left entrance,1a1,1,20 Patriot
-1a1,1a2,1,20 Patriot
-1a2,1a3,1,20 Patriot
-1a3,1a4,1,20 Patriot
-1a1,1a4,1,20 Patriot
-1a4,1a5,1,20 Patriot
-1a5,1middle stairs,1,20 Patriot
-1a5,1a6,1,20 Patriot
-1a6,1a11,1,20 Patriot
-1a11,1a12,1,20 Patriot
-1a6,1a7,1,20 Patriot
-1a7,1a8,1,20 Patriot
-1a8,1urology/cardiology,1,20 Patriot
-1a8,1urology/cardiology2,1,20 Patriot
-1a8,1a9,1,20 Patriot
-1a9,1a10,1,20 Patriot
-1a10,120elevator,1,20 Patriot
-1a10,1right stairs,1,20 Patriot
-1a3,1b2,1,20 Patriot
-1a12,1b7,1,20 Patriot
-1a7,1b9,1,20 Patriot
-1a9,1b12,1,20 Patriot
-1a10,1b13,1,20 Patriot
-1b1,1b2,1,20 Patriot
-1b2,1b3,1,20 Patriot
-1b3,1b4,1,20 Patriot
-1b4,1blood/urgent,1,20 Patriot
-1b4,1blood/urgent2,1,20 Patriot
-1b3,1b17,1,20 Patriot
-1b3,1b17,1,20 Patriot
-120radiology,1b17,1,20 Patriot
-1b1,120radiology,1,20 Patriot
-1b2,1b5,1,20 Patriot
-1b5,1b6,1,20 Patriot
-1b6,1b7,1,20 Patriot
-1b6,1b8,1,20 Patriot
-1b7,1b9,1,20 Patriot
-1b9,1b10,1,20 Patriot
-1b10,1b11,1,20 Patriot
-1b10,1b12,1,20 Patriot
-1b11,1b16,1,20 Patriot
-1b13,1b14,1,20 Patriot
-1b14,1b15,1,20 Patriot
-1b15,1right entrance,1,20 Patriot
-1right entrance,1right entrance outside,1,20 Patriot
-1b17,1c1,1,20 Patriot
-1b8,1c5,1,20 Patriot
-1b9,1c7,1,20 Patriot
-1b16,1c8,1,20 Patriot
-1c1,1pharmacy,1,20 Patriot
-1c1,1c2,1,20 Patriot
-1c2,1c3,1,20 Patriot
-1c3,1c4,1,20 Patriot
-1c4,1c5,1,20 Patriot
-1c4,1c6,1,20 Patriot
-1c5,1c7,1,20 Patriot
-1c6,1c7,1,20 Patriot
-1c8,1d10,1,20 Patriot
-1c6,1d8,1,20 Patriot
-1c2,1d1,1,20 Patriot
-1d1,1d2,1,20 Patriot
-1d2,1d3,1,20 Patriot
-1d3,1d4,1,20 Patriot
-1d4,1d5,1,20 Patriot
-1d5,1d11,1,20 Patriot
-1d5,1d6,1,20 Patriot
-1d6,1d7,1,20 Patriot
-1d7,1d8,1,20 Patriot
-1d7,1d9,1,20 Patriot
-1d8,1d9,1,20 Patriot
-1d9,1d10,1,20 Patriot
-1d4,1e1,1,20 Patriot
-1d11,1e3,1,20 Patriot
-1e1,1e2,1,20 Patriot
-1e2,1e3,1,20 Patriot
-1e1,1e4,1,20 Patriot
-1e4,1e5,1,20 Patriot
-1e5,1e6,1,20 Patriot
-1e6,1e7,1,20 Patriot
-1e7,120top stairs,1,20 Patriot
+﻿fromNode,toNode,floor,building
+e,stairs 1,1,20 Patriot
+e,d,1,20 Patriot
+e,1 elevator,1,20 Patriot
+a,Urgent Care Center,1,20 Patriot
+a,b,1,20 Patriot
+c,Blood Draw/ Phlebotomy,1,20 Patriot
+c,d,1,20 Patriot
+f,front door,1,20 Patriot
+f,c,1,20 Patriot
+f,a,1,20 Patriot
+Cardiovascular Services,d,1,20 Patriot
+Radiology,b,1,20 Patriot
+parking,front door,1,20 Patriot
+Pharmacy,b,1,20 Patriot
+d,Urology,1,20 Patriot

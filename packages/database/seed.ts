@@ -155,21 +155,34 @@ async function main() {
     // will work as long as department names are unique on each floor of each building (eg, "Radiology" can exist
     // as a department in both floor 3 and 4 of 22 patriot place, but cannot have duplicates on each floor).
     const seededChestnutNodes = await seedNodes("./seedFiles/chestnut/chestnut_nodes.csv");
-    // const seededPat20Flr1Nodes = await seedNodes("./seedFiles/pat20floor1/pat20floor1_nodes.csv");
-    // const seededPat22Flr1Nodes = await seedNodes("./seedFiles/pat22floor1/pat22floor1_nodes.csv");
-    // const seededPat22Flr3Nodes = await seedNodes("./seedFiles/pat22floor3/pat22floor3_nodes.csv");
-    // const seededPt22Flr4Nodes = await seedNodes("./seedFiles/pat22floor4/pat22floor4_nodes.csv");
+    const seededPat20Flr1Nodes = await seedNodes("./seedFiles/pat20floor1/pat20floor1_nodes.csv");
+    const seededPat20Flr2Nodes = await seedNodes("./seedFiles/pat20floor2/pat20floor2_nodes.csv");
+    const seededPat20Flr3Nodes = await seedNodes("./seedFiles/pat20floor3/pat20floor3_nodes.csv");
+    const seededPat20Flr4Nodes = await seedNodes("./seedFiles/pat20floor4/pat20floor4_nodes.csv");
+    const seededPat22Flr1Nodes = await seedNodes("./seedFiles/pat22floor1/pat22floor1_nodes.csv");
+    const seededPat22Flr2Nodes = await seedNodes("./seedFiles/pat22floor2/pat22floor2_nodes.csv");
+    const seededPat22Flr3Nodes = await seedNodes("./seedFiles/pat22floor3/pat22floor3_nodes.csv");
+    const seededPt22Flr4Nodes = await seedNodes("./seedFiles/pat22floor4/pat22floor4_nodes.csv");
     const seededFaulknerNodes = await seedNodes("./seedFiles/faulkner/faulkner_nodes.csv");
+    const seededMain1Nodes = await seedNodes("./seedFiles/main1/main1_nodes.csv");
     const seededMain2Nodes = await seedNodes("./seedFiles/main2/main2_nodes.csv");
-
+    //
     // seed edges
     // edges with floor id of -1 go inbetween floors (elevators, stairs...)
     const seededChestnutEdges = await seedEdges("./seedFiles/chestnut/chestnut_edges.csv");
-    // const seededPat20Flr1Edges = await seedEdges("./seedFiles/pat20floor1/pat20floor1_edges.csv")
-    // const seededPat22Flr1Edges = await seedEdges("./seedFiles/pat22floor1/pat22floor1_edges.csv")
-    // const seededPat22Flr3Edges = await seedEdges("./seedFiles/pat22floor3/pat22floor3_edges.csv")
-    const seedeedFaulknerEdges = await seedEdges("./seedFiles/faulkner/faulkner_edges.csv")
+    const seededPat20Flr1Edges = await seedEdges("./seedFiles/pat20floor1/pat20floor1_edges.csv");
+    const seededPat20Flr2Edges = await seedEdges("./seedFiles/pat20floor2/pat20floor2_edges.csv");
+    const seededPat20Flr3Edges = await seedEdges("./seedFiles/pat20floor3/pat20floor3_edges.csv");
+    const seededPat20Flr4Edges = await seedEdges("./seedFiles/pat20floor4/pat20floor4_edges.csv");
+    const seededPat22Flr1Edges = await seedEdges("./seedFiles/pat22floor1/pat22floor1_edges.csv");
+    const seededPat22Flr2Edges = await seedEdges("./seedFiles/pat22floor2/pat22floor2_edges.csv");
+    const seededPat22Flr3Edges = await seedEdges("./seedFiles/pat22floor3/pat22floor3_edges.csv")
+    const seededPt22Flr4Edges = await seedEdges("./seedFiles/pat22floor4/pat22floor4_edges.csv");
+    const seedeedFaulknerEdges = await seedEdges("./seedFiles/faulkner/faulkner_edges.csv");
+    const seededMain1Edges = await seedEdges("./seedFiles/main1/main1_edges.csv");
     const seededMain2Edges = await seedEdges("./seedFiles/main2/main2_edges.csv")
+
+    const seededInterfloorEdges = await seedEdges("./seedFiles/interfloor_edges/interfloor_edges.csv")
 
     // seed employees
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
