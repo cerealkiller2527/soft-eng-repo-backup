@@ -186,16 +186,16 @@ export const audiovisualRouter = t.router({
       };
     }),
   deleteAudioVisualRequest: protectedProcedure
-      .input(
-          z.object({
-            id: z.number()
-          })
-      )
-      .mutation(async ({ input, ctx }) => {
-        await PrismaClient.audioVisual.delete({
-          where: {
-            id: input.id,
-          }
-        });
-      })
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await PrismaClient.serviceRequest.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });

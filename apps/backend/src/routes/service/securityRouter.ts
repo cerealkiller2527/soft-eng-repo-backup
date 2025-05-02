@@ -128,14 +128,14 @@ export const securityRouter = t.router({
       }
     }),
   deleteSecurityRequest: protectedProcedure
-      .input(
-          z.object({
-            id: z.number()
-          })
-      )
-      .mutation(async ({ input, ctx }) => {
-        await PrismaClient.serviceRequest.delete({
-          where: { id: input.id }
-        })
-      })
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await PrismaClient.serviceRequest.delete({
+        where: { id: input.id },
+      });
+    }),
 });

@@ -189,14 +189,14 @@ export const languageRouter = t.router({
       };
     }),
   deleteLanguageRequest: protectedProcedure
-      .input(
-          z.object({
-            id: z.number()
-          })
-      )
-      .mutation(async ({ input, ctx }) => {
-          await PrismaClient.language.delete({
-            where: { id: input.id }
-          })
-      })
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await PrismaClient.serviceRequest.delete({
+        where: { id: input.id },
+      });
+    }),
 });
