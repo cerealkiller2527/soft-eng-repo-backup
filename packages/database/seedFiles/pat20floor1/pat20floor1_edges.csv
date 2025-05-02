@@ -1,7 +1,7 @@
 ﻿fromNode,toNode,floor,building
 e,stairs 1,1,20 Patriot
 e,d,1,20 Patriot
-e,elevator 1,1,20 Patriot
+e,1 elevator,1,20 Patriot
 a,Urgent Care Center,1,20 Patriot
 a,b,1,20 Patriot
 c,Blood Draw/ Phlebotomy,1,20 Patriot

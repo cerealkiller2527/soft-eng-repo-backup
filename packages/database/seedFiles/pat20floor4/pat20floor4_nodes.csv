@@ -1,0 +1,11 @@
+﻿description,lat,long,type,floor,building,outside
+Day Surgery Center,42.09255158010596,-71.26629369,Location,4,20 Patriot Place,FALSE
+a,42.09267828567236,-71.26562567,Intermediary,4,20 Patriot Place,FALSE
+Electromyography (EMG),42.09254356637227,-71.26629063,Location,4,20 Patriot Place,FALSE
+Nutrition,42.09253577980073,-71.26628664,Location,4,20 Patriot Place,FALSE
+Pain Medicine,42.09252136302194,-71.26627811,Location,4,20 Patriot Place,FALSE
+Physiatry,42.09252795993596,-71.26628301,Location,4,20 Patriot Place,FALSE
+Pulmonary Function Testing,42.09255754,-71.26629724,Location,4,20 Patriot Place,FALSE
+b,42.09255714277341,-71.26615996,Intermediary,4,20 Patriot Place,FALSE
+4 stairs,42.09269266840707,-71.26556593,Staircase,4,20 Patriot Place,FALSE
+4 elevator,42.09271271211827,-71.26563527,Elevator,4,20 Patriot Place,FALSE

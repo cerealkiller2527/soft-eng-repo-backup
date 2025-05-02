@@ -1,8 +1,8 @@
 fromNode,toNode,floor,building
 parking,a,1,22 Patriot
-elevator 1,front door,1,22 Patriot
+1 elevator,front door,1,22 Patriot
 front door,b,1,22 Patriot
 front door,c,1,22 Patriot
 a,b,1,22 Patriot
-stairs,c,1,22 Patriot
+1 stairs,c,1,22 Patriot
 c,front door,1,22 Patriot

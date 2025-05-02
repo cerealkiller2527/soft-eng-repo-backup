@@ -1,0 +1,6 @@
+toNode,fromNode,floor,building
+parking,d,1,Main Campus
+parking,c,1,Main Campus
+b,c,1,Main Campus
+d,1 elevator,1,Main Campus
+a,c,1,Main Campus
