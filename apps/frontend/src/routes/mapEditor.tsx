@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert";
 import * as z from "zod";
 import {NodeTypeZod} from "common/src/ZodSchemas.ts";
+import floorPlan from "@/routes/floorPlan.tsx";
 
 const typeEnum = NodeTypeZod
 

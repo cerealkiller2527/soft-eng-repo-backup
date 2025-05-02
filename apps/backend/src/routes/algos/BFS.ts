@@ -37,7 +37,6 @@ export class BFS implements Algorithm {
 
       if (currentNode.id === endNode.id) {
         // if this node is the end node
-        console.log("found path");
         return currentPath;
       }
 
@@ -47,7 +46,6 @@ export class BFS implements Algorithm {
 
         // search DB for neighbors
         await currentNode.addNeighbors();
-        console.log("got node (id)", currentNode.id, "'s neighbors");
 
         for (let neighbor of currentNode.neighbors) {
           // unzip current path list into elements, adding neighbor at the end

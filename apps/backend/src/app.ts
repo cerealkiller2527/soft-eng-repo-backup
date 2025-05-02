@@ -13,6 +13,8 @@ import { csvRouter } from "./routes/csvRouter.ts";
 import { directoriesRouter } from "./routes/directoriesRouter.ts";
 import { mapEditorRouter } from "./routes/mapEditorRouter.ts";
 import { mapInfoRouter } from "./routes/mapInfoRouter.ts";
+import { dbImportRouter } from "./routes/dbImportRouter.ts";
+import { pathfindingRouter } from "./routes/pathfindingRouter.ts";
 
 const appRouter = t.router({
   employee: employeeRouter,
@@ -22,6 +24,8 @@ const appRouter = t.router({
   search: searchRouter,
   mapEditor: mapEditorRouter,
   mapInfoRouter: mapInfoRouter,
+  dbEditor: dbImportRouter,
+  pathfinding: pathfindingRouter,
 });
 
 const app = express();

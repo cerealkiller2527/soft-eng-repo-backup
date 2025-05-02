@@ -1,12 +1,9 @@
 fromNode,toNode,floor,building
-322elevator,422elevator,-1,22 Patriot
-3left stairs,4left stairs,-1,22 Patriot
-3middle stairs,4middle stairs,-1,22 Patriot
-322elevator,422elevator,-1,22 Patriot
-3left stairs,4left stairs,4,22 Patriot
-3middle stairs,4middle stairs,4,22 Patriot
-4left stairs,4middle stairs,4,22 Patriot
-4middle stairs,4a1,4,22 Patriot
-4a1,4a2,4,22 Patriot
-4a1,4phlebotomy,4,22 Patriot
-4a1,422elevator,4,22 Patriot
+Primary Care,Community Room,4,22 Patriot Place
+4 elevator,c,4,22 Patriot Place
+b,4 stairs,4,22 Patriot Place
+b,a,4,22 Patriot Place
+a,c,4,22 Patriot Place
+a,Blood Draw/Phlebotomy,4,22 Patriot Place
+Blood Draw/Phlebotomy,Community Room,4,22 Patriot Place
+4 stairs,b,4,22 Patriot Place

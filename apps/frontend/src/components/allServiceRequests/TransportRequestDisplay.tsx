@@ -11,10 +11,13 @@ import {
 } from "@/components/ui/table"
 import {Button} from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { useQuery } from '@tanstack/react-query'
 import { useTRPC } from "@/database/trpc"
+import { useMutation } from '@tanstack/react-query'
+
 import { Badge } from "@/components/ui/badge"
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {
     Card, CardContent,
     CardDescription,
@@ -78,9 +81,81 @@ export default function TransportRequestDisplay() {
         setExpandedRowId(prev => (prev === id ? null : id));
     };
 
-    return (
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [requestToDelete, setRequestToDelete] = useState<{ id: number; type: string } | null>(null);
+    const deleteTransport = useMutation(
+        trpc.service.deleteExternalTransportationRequest.mutationOptions()
+    )
 
-        <div className="flex flex-1 flex-col mx-10">
+    const deleteEquipment = useMutation(
+        trpc.service.deleteEquipmentDeliveryRequest.mutationOptions()
+    )
+
+    const deleteSecurity = useMutation(
+        trpc.service.deleteSecurityRequest.mutationOptions()
+    )
+
+    const deleteLanguage = useMutation(
+        trpc.service.deleteLanguageRequest.mutationOptions()
+    )
+    useEffect(() => {
+        if (deleteTransport.isSuccess) {
+            requestsTransport.refetch();
+            deleteTransport.reset();
+        }
+    }, [deleteTransport.isSuccess]);
+
+    useEffect(() => {
+        if (deleteEquipment.isSuccess) {
+            requestsEquipment.refetch();
+            deleteEquipment.reset();
+        }
+    }, [deleteEquipment.isSuccess]);
+
+    useEffect(() => {
+        if (deleteSecurity.isSuccess) {
+            requestsSecurity.refetch();
+            deleteSecurity.reset();
+        }
+    }, [deleteSecurity.isSuccess]);
+
+    useEffect(() => {
+        if (deleteLanguage.isSuccess) {
+            requestsLanguage.refetch();
+            deleteLanguage.reset();
+        }
+    }, [deleteLanguage.isSuccess]);
+
+
+        function handleDelete() {
+            if (!requestToDelete) return;
+
+            const { id, type } = requestToDelete;
+
+            switch (type.toUpperCase()) {
+                case "EXTERNALTRANSPORTATION":
+                    deleteTransport.mutate({ id });
+                    console.log("Deleted external transport", id);
+                    break;
+                case "EQUIPMENTDELIVERY":
+                    deleteEquipment.mutate({ id });
+                    break;
+                case "SECURITY":
+                    deleteSecurity.mutate({ id });
+                    console.log("Deleted external security", id);
+                    break;
+                case "LANGUAGE":
+                    deleteLanguage.mutate({ id });
+                    break;
+                default:
+                    console.warn("Unknown request type:", type);
+            }
+
+        }
+
+        return (
+
+        <div className="flex flex-1 flex-col mx-5">
             <div className="">
                 <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 text-center rounded-lg ">
                     <div className="max-w-6xl mx-auto flex flex-col gap-4">
@@ -99,9 +174,9 @@ export default function TransportRequestDisplay() {
 
 
             </div>
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-8 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-2 mt-8">
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-xl text-[#003153]">Equipment Requests</CardTitle>
                     </CardHeader>
@@ -110,29 +185,29 @@ export default function TransportRequestDisplay() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-[#003153]">Transport Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsTransport.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-1">{requestsTransport.data?.length}</div>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-[#003153]">Security Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsSecurity.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-2">{requestsSecurity.data?.length}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-white shadow">
+                <Card className="bg-white shadow text-center">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg text-primary">Language Requests</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-4xl font-bold text-secondary">{requestsLanguage.data?.length}</div>
+                        <div className="text-4xl font-bold text-chart-3">{requestsLanguage.data?.length}</div>
                     </CardContent>
 
                 </Card>
@@ -231,7 +306,23 @@ export default function TransportRequestDisplay() {
                                                                             </>
                                                                         )}
                                                                     </div>
+                                                                    <div className="flex justify-end gap-4 pt-4">
+                                                                        <Button className="hover:bg-destructive"
+                                                                            variant="outline"
+                                                                            onClick={() => {
+                                                                                setRequestToDelete({ id: req.id, type: req.type });
+                                                                                setConfirmOpen(true);
+                                                                            }}
+                                                                        >
+                                                                            Delete
+                                                                        </Button>
+
+                                                                        <Button variant="default" onClick={() => handleUpdate(req)}>
+                                                                            Update
+                                                                        </Button>
+                                                                    </div>
                                                                 </div>
+
                                                             </TableCell>
                                                         </TableRow>
                                                     )}
@@ -239,6 +330,32 @@ export default function TransportRequestDisplay() {
                                             ))}
                                         </TableBody>
                                     </Table>
+                                    <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Confirm Deletion</DialogTitle>
+                                                <DialogDescription>
+                                                    Are you sure you want to delete this service request? This action cannot be undone.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex justify-end gap-4 mt-6">
+                                                <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    variant="destructive"
+                                                    onClick={() => {
+                                                        if (requestToDelete) {
+                                                            handleDelete(requestToDelete);
+                                                            setConfirmOpen(false);
+                                                        }
+                                                    }}
+                                                >
+                                                    Confirm Delete
+                                                </Button>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </CardFooter>
                         </Card>

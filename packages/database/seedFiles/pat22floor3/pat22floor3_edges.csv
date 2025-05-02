@@ -1,18 +1,5 @@
 fromNode,toNode,floor,building
-3left stairs,3a1,3,22 Patriot
-3a1,3a3,3,22 Patriot
-3a2,3a3,3,22 Patriot
-3a3,3a4,3,22 Patriot
-3a4,3multi specialty,3,22 Patriot
-3a4,3middle stairs,3,22 Patriot
-3middle stairs,322elevator,3,22 Patriot
-322elevator,3a5,3,22 Patriot
-3a5,3a6,3,22 Patriot
-3a6,3a7,3,22 Patriot
-3a7,3b1,3,22 Patriot
-3a1,3b2,3,22 Patriot
-3a2,3b3,3,22 Patriot
-3a3,3b4,3,22 Patriot
-3a4,3b5,3,22 Patriot
-3a5,3right stairs,3,22 Patriot
-222elevator,322elevator,-1,22 Patriot
+3 elevator,b,3,22 Patriot Place
+b,a,3,22 Patriot Place
+a,3 stairs,3,22 Patriot Place
+a,Multi Specialty Clinic,3,22 Patriot Place

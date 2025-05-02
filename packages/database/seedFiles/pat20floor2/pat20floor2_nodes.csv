@@ -1,0 +1,9 @@
+﻿description,lat,long,type,floor,building,outside
+Clinical Lab,42.09252034723909,-71.26628253,Location,2,20 Patriot Place,FALSE
+2 stairs,42.09269071018215,-71.26556812,Staircase,2,20 Patriot Place,FALSE
+Orthopaedics,42.09254849942169,-71.26629571,Location,2,20 Patriot Place,FALSE
+Surgi-Care,42.09256240717601,-71.26631883,Location,2,20 Patriot Place,FALSE
+b,42.09256264557808,-71.26612397,Intermediary,2,20 Patriot Place,FALSE
+a,42.09267276,-71.26562201,Intermediary,2,20 Patriot Place,FALSE
+2 elevator,42.09271459736997,-71.26563676,Elevator,2,20 Patriot Place,FALSE
+Rehabilitation Services,42.09253687369413,-71.26627917,Location,2,20 Patriot Place,FALSE

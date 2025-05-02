@@ -227,4 +227,15 @@ export const externalTransportationRouter = t.router({
         message: "Update ext. transportation request done.",
       };
     }),
+  deleteExternalTransportationRequest: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await PrismaClient.serviceRequest.delete({
+        where: { id: input.id },
+      });
+    }),
 });
