@@ -1,8 +1,9 @@
 description,lat,long,type,floor,building,outside
-parking,42.09240814,-71.26652789,Parking,1,22 Patriot Place,TRUE
+parking,42.0925296,-71.26645107,Parking,1,22 Patriot Place,TRUE
 1 elevator,42.09264515131932,-71.26674325,Elevator,1,22 Patriot Place,FALSE
 front door,42.09262924769187,-71.26660843,Intermediary,1,22 Patriot Place,FALSE
 a,42.09253012,-71.26643217,Intermediary,1,22 Patriot Place,TRUE
 b,42.09262276272275,-71.26643321,Intermediary,1,22 Patriot Place,TRUE
 1 stairs,42.09258261763324,-71.26683688,Staircase,1,22 Patriot Place,FALSE
 c,42.09256347151396,-71.26678155,Intermediary,1,22 Patriot Place,FALSE
+d,42.09252180783758,-71.26649051,Intermediary,1,22 Patriot Place,TRUE
