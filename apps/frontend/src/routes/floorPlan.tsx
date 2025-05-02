@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-
-
+import html2canvas from "html2canvas";
 
 import {pNodeDTO} from "../../../../share/types.ts";
 
@@ -343,6 +342,63 @@ const FloorPlan = () => {
         setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
     };
 
+    const handlePrint = () => {
+        // html2canvas(mapRef.current).then((canvas) => {
+        //     const image = canvas.toDataURL();
+
+            const printWindow = window.open("", "_blank");
+            if (printWindow) {
+                const printContent = `
+                <html>
+                    <head>
+                        <title>Directions</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 20px;
+                                color: #333;
+                            }
+                            h2 {
+                                text-align: center;
+                            }
+                            .directions {
+                                margin: 20px 0;
+                            }
+                            .directions p {
+                                margin: 8px 0;
+                            }
+                            .map-capture {
+                                text-align: center;
+                                margin-top: 20px;
+                            }
+                            .map-capture img {
+                                width: 80%;
+                                border: 1px solid #ccc;
+                                border-radius: 8px;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Directions</h2>
+                        <div class="directions">
+                            ${instructions.map((step, index) => `<p><strong>Step ${index + 1}:</strong> ${step}</p>`).join('')}
+                        </div>
+                        <div class="map-capture">
+                            <h3>Map Capture</h3>
+                            <img src="" alt="Map Screenshot" />
+                        </div>
+                    </body>
+                </html>
+            `;
+                printWindow.document.write(printContent);
+                printWindow.document.close();
+                printWindow.print();
+            } else {
+                console.error('Unable to open the print window');
+            }
+        // });
+    };
+
     return (
         <Layout>
             <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
@@ -392,6 +448,11 @@ const FloorPlan = () => {
                                     <InstructionsBox key={instructions.join()} instructions={instructions} />
                                     <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
+                                    </div>
+                                    <div className="absolute top-4 right-20 z-50">
+                                        <Button onClick={handlePrint} className="bg-primary hover:bg-primary/90 text-white">
+                                            Print Directions
+                                        </Button>
                                     </div>
                                 </div>
                             </TabsContent>
