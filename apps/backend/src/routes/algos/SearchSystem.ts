@@ -135,8 +135,10 @@ export class SearchSystem {
     dropLat: number,
     dropLong: number,
   ) {
-    const dLa = ((nLat * 10) ^ 6) - dropLat;
-    const dLn = ((nLong * 10) ^ 6) - dropLong;
+    const latScale = 111000;
+    const lngScale = 85000;
+    const dLa = (nLat - dropLat) * latScale;
+    const dLn = (nLong - dropLong) * lngScale;
     return dLa * dLa + dLn * dLn;
   }
 
