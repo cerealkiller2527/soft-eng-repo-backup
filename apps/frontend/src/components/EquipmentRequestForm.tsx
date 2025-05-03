@@ -104,7 +104,7 @@ export default function EquipmentRequestForm({  onFormSubmit, onSuccess}: {
                                     <SelectContent>
                                         {listofEmployees.data?.map((employee) => (
                                             <SelectItem key={employee.id} value={String(employee.id)}>
-                                                {employee.name}
+                                                {employee.firstName} {employee.lastName}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
