@@ -40,7 +40,9 @@ export const edgeCSVRow = z.object({
 })
 
 export const employeeCSVRow = z.object({
-    employee: z.string(),
+    username: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
     type: z.string(),
     services: z.string(),
     languages: z.string(),

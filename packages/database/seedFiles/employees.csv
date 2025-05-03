@@ -1,6 +1,6 @@
-employee,type,services,languages
-John Pork,Chiller,EXTERNALTRANSPORTATION,English
-Tim Cheese,Opp,EXTERNALTRANSPORTATION; LANGUAGE; SECURITY,English; French
-Sam Butter,Foenem,EQUIPMENTDELIVERY,English
-Gary Bacon,Translator,LANGUAGE,English; French; Spanish
-Steve Pineapple,Chiller,SECURITY; AUDIOVISUAL,English
+username,firstName,lastName,type,services,languages
+staff2d25g,John,Pork,Chiller,EXTERNALTRANSPORTATION,English
+staff3d25g,Tim,Cheese,Opp,EXTERNALTRANSPORTATION; LANGUAGE; SECURITY,English; French
+staff4d25g,Sam,Butter,Foenem,EQUIPMENTDELIVERY,English
+staff5d25g,Gary,Bacon,Translator,LANGUAGE,English; French; Spanish
+staff6d25g,Steve,Pineapple,Chiller,SECURITY; AUDIOVISUAL,English
