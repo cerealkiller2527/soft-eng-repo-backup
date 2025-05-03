@@ -52,12 +52,6 @@ enum nodeType {
   Parking
 }
 
-model User {
-  email    String @id
-  username String
-  role     String
-}
-
 enum Algorithm {
   BFS
   DFS
@@ -65,8 +59,12 @@ enum Algorithm {
 
 model Employee {
   id             Int              @id @default(autoincrement())
-  name           String
-  employeeType   String
+  email          String
+  username       String           @unique
+  role           String
+  firstName      String
+  lastName       String
+  title          String
   canService     RequestType[]
   language       String[]
   ServiceRequest ServiceRequest[] @relation("assign to")

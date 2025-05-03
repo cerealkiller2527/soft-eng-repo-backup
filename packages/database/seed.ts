@@ -30,7 +30,6 @@ async function fetchClerkUsers() {
 
 async function main() {
     // drop all data from database
-    await prisma.user.deleteMany();
     await prisma.audioVisual.deleteMany();
     await prisma.externalTransportation.deleteMany();
     await prisma.equipmentDelivery.deleteMany();
@@ -201,11 +200,16 @@ async function main() {
     //seed the user table by getting info from clerk
     const clerkUsers = await fetchClerkUsers();
     clerkUsers.map(async (user: any) => {
-        await prisma.user.create({
+        await prisma.employee.create({
             data: {
+                firstName: user.first_name,
+                lastName: user.last_name,
                 email: user.email_addresses?.[0]?.email_address || '',
                 username: user.username,
-                role: user.public_metadata?.role || ''
+                role: user.public_metadata?.role || '',
+                title: user.public_metadata?.role || 'staff',
+                canService: [],
+                language: []
             }
         })
     })
@@ -226,7 +230,7 @@ async function main() {
                     type: type,
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
                     description: `No additional note`,
-                    assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
+                    assignedEmployeeID: i < 5? employees[i % employees.length]?.id ?? null : null,
                     fromEmployee: 'admin',
                     priority: priority,
                 },

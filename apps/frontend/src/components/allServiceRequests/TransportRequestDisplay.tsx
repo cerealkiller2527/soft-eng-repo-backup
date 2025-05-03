@@ -50,7 +50,12 @@ export default function TransportRequestDisplay() {
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
 
     function getEmployeeName(id: number): string {
-        return listofEmployees.data?.find(emp => emp.id === id)?.name ?? "Unknown";
+        const employee = listofEmployees.data?.find(emp => emp.id === id)
+        if (!employee) {
+            return "Unknown"
+        }else{
+            return `${employee.firstName} ${employee.lastName}`
+        }
     }
 
     const combinedData = [
