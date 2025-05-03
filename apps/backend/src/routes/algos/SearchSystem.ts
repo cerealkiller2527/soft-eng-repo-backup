@@ -76,7 +76,7 @@ export class SearchSystem {
     dropOffLatitude: number,
     dropOffLongitude: number,
     parking: boolean,
-    buildingId: number
+    buildingId: number,
   ) {
     let closestNode = null;
     let closestDist = Infinity;
