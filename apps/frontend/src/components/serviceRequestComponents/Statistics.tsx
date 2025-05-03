@@ -9,10 +9,10 @@ import BarChartMini from "@/components/serviceRequestComponents/BarChartMini.tsx
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
-    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
-    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
-    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
-    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({assigned: false}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({assigned: false}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({assigned: false}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({assigned: false}));
 
     // Combine all fetched requests into one array
     const combinedRequests = [
@@ -21,28 +21,28 @@ export default function MiniDashboard() {
             type: "Patient Transport",
             status: req.status,
             details: req.description ?? "Transport request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
         ...(requestsSecurity.data ?? []).map(req => ({
             id: req.id,
             type: "Security Assistance",
             status: req.status,
             details: req.description ?? "Security request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
         ...(requestsEquipment.data ?? []).map(req => ({
             id: req.id,
             type: "Medical Equipment",
             status: req.status,
             details: req.description ?? "Equipment request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
         ...(requestsLanguage.data ?? []).map(req => ({
             id: req.id,
             type: "Language Services",
             status: req.status,
             details: req.description ?? "Language request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
     ];
 

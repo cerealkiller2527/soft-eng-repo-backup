@@ -14,7 +14,7 @@ export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCo
 
 export const EmployeeScalarFieldEnumSchema = z.enum(['id','email','username','role','firstName','lastName','title','canService','language']);
 
-export const ServiceRequestScalarFieldEnumSchema = z.enum(['id','type','dateCreated','dateUpdated','status','description','assignedEmployeeID','fromEmployee','priority']);
+export const ServiceRequestScalarFieldEnumSchema = z.enum(['id','type','dateCreated','dateUpdated','status','description','assignedEmployeeID','fromEmployeeID','priority']);
 
 export const AudioVisualScalarFieldEnumSchema = z.enum(['id','location','deadline','audiovisualType']);
 
@@ -103,7 +103,7 @@ export const ServiceRequestSchema = z.object({
   dateUpdated: z.coerce.date().nullable(),
   description: z.string(),
   assignedEmployeeID: z.number().int().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
 })
 
 export type ServiceRequest = z.infer<typeof ServiceRequestSchema>
@@ -284,6 +284,7 @@ export type SearchAlgorithm = z.infer<typeof SearchAlgorithmSchema>
 
 export const EmployeeIncludeSchema: z.ZodType<Prisma.EmployeeInclude> = z.object({
   ServiceRequest: z.union([z.boolean(),z.lazy(() => ServiceRequestFindManyArgsSchema)]).optional(),
+  CreatedServiceRequest: z.union([z.boolean(),z.lazy(() => ServiceRequestFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => EmployeeCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -298,6 +299,7 @@ export const EmployeeCountOutputTypeArgsSchema: z.ZodType<Prisma.EmployeeCountOu
 
 export const EmployeeCountOutputTypeSelectSchema: z.ZodType<Prisma.EmployeeCountOutputTypeSelect> = z.object({
   ServiceRequest: z.boolean().optional(),
+  CreatedServiceRequest: z.boolean().optional(),
 }).strict();
 
 export const EmployeeSelectSchema: z.ZodType<Prisma.EmployeeSelect> = z.object({
@@ -311,6 +313,7 @@ export const EmployeeSelectSchema: z.ZodType<Prisma.EmployeeSelect> = z.object({
   canService: z.boolean().optional(),
   language: z.boolean().optional(),
   ServiceRequest: z.union([z.boolean(),z.lazy(() => ServiceRequestFindManyArgsSchema)]).optional(),
+  CreatedServiceRequest: z.union([z.boolean(),z.lazy(() => ServiceRequestFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => EmployeeCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -319,6 +322,7 @@ export const EmployeeSelectSchema: z.ZodType<Prisma.EmployeeSelect> = z.object({
 
 export const ServiceRequestIncludeSchema: z.ZodType<Prisma.ServiceRequestInclude> = z.object({
   assignedTo: z.union([z.boolean(),z.lazy(() => EmployeeArgsSchema)]).optional(),
+  fromEmployee: z.union([z.boolean(),z.lazy(() => EmployeeArgsSchema)]).optional(),
   audioVisual: z.union([z.boolean(),z.lazy(() => AudioVisualArgsSchema)]).optional(),
   externalTransportation: z.union([z.boolean(),z.lazy(() => ExternalTransportationArgsSchema)]).optional(),
   equipmentDelivery: z.union([z.boolean(),z.lazy(() => EquipmentDeliveryArgsSchema)]).optional(),
@@ -339,9 +343,10 @@ export const ServiceRequestSelectSchema: z.ZodType<Prisma.ServiceRequestSelect> 
   status: z.boolean().optional(),
   description: z.boolean().optional(),
   assignedEmployeeID: z.boolean().optional(),
-  fromEmployee: z.boolean().optional(),
+  fromEmployeeID: z.boolean().optional(),
   priority: z.boolean().optional(),
   assignedTo: z.union([z.boolean(),z.lazy(() => EmployeeArgsSchema)]).optional(),
+  fromEmployee: z.union([z.boolean(),z.lazy(() => EmployeeArgsSchema)]).optional(),
   audioVisual: z.union([z.boolean(),z.lazy(() => AudioVisualArgsSchema)]).optional(),
   externalTransportation: z.union([z.boolean(),z.lazy(() => ExternalTransportationArgsSchema)]).optional(),
   equipmentDelivery: z.union([z.boolean(),z.lazy(() => EquipmentDeliveryArgsSchema)]).optional(),
@@ -672,7 +677,8 @@ export const EmployeeWhereInputSchema: z.ZodType<Prisma.EmployeeWhereInput> = z.
   title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   canService: z.lazy(() => EnumRequestTypeNullableListFilterSchema).optional(),
   language: z.lazy(() => StringNullableListFilterSchema).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestListRelationFilterSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestListRelationFilterSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestListRelationFilterSchema).optional()
 }).strict();
 
 export const EmployeeOrderByWithRelationInputSchema: z.ZodType<Prisma.EmployeeOrderByWithRelationInput> = z.object({
@@ -685,7 +691,8 @@ export const EmployeeOrderByWithRelationInputSchema: z.ZodType<Prisma.EmployeeOr
   title: z.lazy(() => SortOrderSchema).optional(),
   canService: z.lazy(() => SortOrderSchema).optional(),
   language: z.lazy(() => SortOrderSchema).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestOrderByRelationAggregateInputSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestOrderByRelationAggregateInputSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const EmployeeWhereUniqueInputSchema: z.ZodType<Prisma.EmployeeWhereUniqueInput> = z.union([
@@ -713,7 +720,8 @@ export const EmployeeWhereUniqueInputSchema: z.ZodType<Prisma.EmployeeWhereUniqu
   title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   canService: z.lazy(() => EnumRequestTypeNullableListFilterSchema).optional(),
   language: z.lazy(() => StringNullableListFilterSchema).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestListRelationFilterSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestListRelationFilterSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestListRelationFilterSchema).optional()
 }).strict());
 
 export const EmployeeOrderByWithAggregationInputSchema: z.ZodType<Prisma.EmployeeOrderByWithAggregationInput> = z.object({
@@ -759,9 +767,10 @@ export const ServiceRequestWhereInputSchema: z.ZodType<Prisma.ServiceRequestWher
   status: z.union([ z.lazy(() => EnumStatusFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   assignedEmployeeID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-  fromEmployee: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  fromEmployeeID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   priority: z.union([ z.lazy(() => EnumPriorityFilterSchema),z.lazy(() => PrioritySchema) ]).optional(),
   assignedTo: z.union([ z.lazy(() => EmployeeNullableScalarRelationFilterSchema),z.lazy(() => EmployeeWhereInputSchema) ]).optional().nullable(),
+  fromEmployee: z.union([ z.lazy(() => EmployeeScalarRelationFilterSchema),z.lazy(() => EmployeeWhereInputSchema) ]).optional(),
   audioVisual: z.union([ z.lazy(() => AudioVisualNullableScalarRelationFilterSchema),z.lazy(() => AudioVisualWhereInputSchema) ]).optional().nullable(),
   externalTransportation: z.union([ z.lazy(() => ExternalTransportationNullableScalarRelationFilterSchema),z.lazy(() => ExternalTransportationWhereInputSchema) ]).optional().nullable(),
   equipmentDelivery: z.union([ z.lazy(() => EquipmentDeliveryNullableScalarRelationFilterSchema),z.lazy(() => EquipmentDeliveryWhereInputSchema) ]).optional().nullable(),
@@ -777,9 +786,10 @@ export const ServiceRequestOrderByWithRelationInputSchema: z.ZodType<Prisma.Serv
   status: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   assignedEmployeeID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  fromEmployee: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional(),
   priority: z.lazy(() => SortOrderSchema).optional(),
   assignedTo: z.lazy(() => EmployeeOrderByWithRelationInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeOrderByWithRelationInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualOrderByWithRelationInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationOrderByWithRelationInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryOrderByWithRelationInputSchema).optional(),
@@ -801,9 +811,10 @@ export const ServiceRequestWhereUniqueInputSchema: z.ZodType<Prisma.ServiceReque
   status: z.union([ z.lazy(() => EnumStatusFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   assignedEmployeeID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number().int() ]).optional().nullable(),
-  fromEmployee: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  fromEmployeeID: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   priority: z.union([ z.lazy(() => EnumPriorityFilterSchema),z.lazy(() => PrioritySchema) ]).optional(),
   assignedTo: z.union([ z.lazy(() => EmployeeNullableScalarRelationFilterSchema),z.lazy(() => EmployeeWhereInputSchema) ]).optional().nullable(),
+  fromEmployee: z.union([ z.lazy(() => EmployeeScalarRelationFilterSchema),z.lazy(() => EmployeeWhereInputSchema) ]).optional(),
   audioVisual: z.union([ z.lazy(() => AudioVisualNullableScalarRelationFilterSchema),z.lazy(() => AudioVisualWhereInputSchema) ]).optional().nullable(),
   externalTransportation: z.union([ z.lazy(() => ExternalTransportationNullableScalarRelationFilterSchema),z.lazy(() => ExternalTransportationWhereInputSchema) ]).optional().nullable(),
   equipmentDelivery: z.union([ z.lazy(() => EquipmentDeliveryNullableScalarRelationFilterSchema),z.lazy(() => EquipmentDeliveryWhereInputSchema) ]).optional().nullable(),
@@ -819,7 +830,7 @@ export const ServiceRequestOrderByWithAggregationInputSchema: z.ZodType<Prisma.S
   status: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   assignedEmployeeID: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  fromEmployee: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional(),
   priority: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => ServiceRequestCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => ServiceRequestAvgOrderByAggregateInputSchema).optional(),
@@ -839,7 +850,7 @@ export const ServiceRequestScalarWhereWithAggregatesInputSchema: z.ZodType<Prism
   status: z.union([ z.lazy(() => EnumStatusWithAggregatesFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   assignedEmployeeID: z.union([ z.lazy(() => IntNullableWithAggregatesFilterSchema),z.number() ]).optional().nullable(),
-  fromEmployee: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  fromEmployeeID: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   priority: z.union([ z.lazy(() => EnumPriorityWithAggregatesFilterSchema),z.lazy(() => PrioritySchema) ]).optional(),
 }).strict();
 
@@ -1585,7 +1596,8 @@ export const EmployeeCreateInputSchema: z.ZodType<Prisma.EmployeeCreateInput> = 
   title: z.string(),
   canService: z.union([ z.lazy(() => EmployeeCreatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeCreatelanguageInputSchema),z.string().array() ]).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestCreateNestedManyWithoutAssignedToInputSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestCreateNestedManyWithoutAssignedToInputSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestCreateNestedManyWithoutFromEmployeeInputSchema).optional()
 }).strict();
 
 export const EmployeeUncheckedCreateInputSchema: z.ZodType<Prisma.EmployeeUncheckedCreateInput> = z.object({
@@ -1598,7 +1610,8 @@ export const EmployeeUncheckedCreateInputSchema: z.ZodType<Prisma.EmployeeUnchec
   title: z.string(),
   canService: z.union([ z.lazy(() => EmployeeCreatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeCreatelanguageInputSchema),z.string().array() ]).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestUncheckedCreateNestedManyWithoutAssignedToInputSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestUncheckedCreateNestedManyWithoutAssignedToInputSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestUncheckedCreateNestedManyWithoutFromEmployeeInputSchema).optional()
 }).strict();
 
 export const EmployeeUpdateInputSchema: z.ZodType<Prisma.EmployeeUpdateInput> = z.object({
@@ -1610,7 +1623,8 @@ export const EmployeeUpdateInputSchema: z.ZodType<Prisma.EmployeeUpdateInput> = 
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   canService: z.union([ z.lazy(() => EmployeeUpdatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeUpdatelanguageInputSchema),z.string().array() ]).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestUpdateManyWithoutAssignedToNestedInputSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestUpdateManyWithoutAssignedToNestedInputSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestUpdateManyWithoutFromEmployeeNestedInputSchema).optional()
 }).strict();
 
 export const EmployeeUncheckedUpdateInputSchema: z.ZodType<Prisma.EmployeeUncheckedUpdateInput> = z.object({
@@ -1623,7 +1637,8 @@ export const EmployeeUncheckedUpdateInputSchema: z.ZodType<Prisma.EmployeeUnchec
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   canService: z.union([ z.lazy(() => EmployeeUpdatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeUpdatelanguageInputSchema),z.string().array() ]).optional(),
-  ServiceRequest: z.lazy(() => ServiceRequestUncheckedUpdateManyWithoutAssignedToNestedInputSchema).optional()
+  ServiceRequest: z.lazy(() => ServiceRequestUncheckedUpdateManyWithoutAssignedToNestedInputSchema).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestUncheckedUpdateManyWithoutFromEmployeeNestedInputSchema).optional()
 }).strict();
 
 export const EmployeeCreateManyInputSchema: z.ZodType<Prisma.EmployeeCreateManyInput> = z.object({
@@ -1667,9 +1682,9 @@ export const ServiceRequestCreateInputSchema: z.ZodType<Prisma.ServiceRequestCre
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
   assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -1685,7 +1700,7 @@ export const ServiceRequestUncheckedCreateInputSchema: z.ZodType<Prisma.ServiceR
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -1700,9 +1715,9 @@ export const ServiceRequestUpdateInputSchema: z.ZodType<Prisma.ServiceRequestUpd
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -1718,7 +1733,7 @@ export const ServiceRequestUncheckedUpdateInputSchema: z.ZodType<Prisma.ServiceR
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -1735,7 +1750,7 @@ export const ServiceRequestCreateManyInputSchema: z.ZodType<Prisma.ServiceReques
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema)
 }).strict();
 
@@ -1745,7 +1760,6 @@ export const ServiceRequestUpdateManyMutationInputSchema: z.ZodType<Prisma.Servi
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -1757,7 +1771,7 @@ export const ServiceRequestUncheckedUpdateManyInputSchema: z.ZodType<Prisma.Serv
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -2567,6 +2581,11 @@ export const EmployeeNullableScalarRelationFilterSchema: z.ZodType<Prisma.Employ
   isNot: z.lazy(() => EmployeeWhereInputSchema).optional().nullable()
 }).strict();
 
+export const EmployeeScalarRelationFilterSchema: z.ZodType<Prisma.EmployeeScalarRelationFilter> = z.object({
+  is: z.lazy(() => EmployeeWhereInputSchema).optional(),
+  isNot: z.lazy(() => EmployeeWhereInputSchema).optional()
+}).strict();
+
 export const AudioVisualNullableScalarRelationFilterSchema: z.ZodType<Prisma.AudioVisualNullableScalarRelationFilter> = z.object({
   is: z.lazy(() => AudioVisualWhereInputSchema).optional().nullable(),
   isNot: z.lazy(() => AudioVisualWhereInputSchema).optional().nullable()
@@ -2605,13 +2624,14 @@ export const ServiceRequestCountOrderByAggregateInputSchema: z.ZodType<Prisma.Se
   status: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   assignedEmployeeID: z.lazy(() => SortOrderSchema).optional(),
-  fromEmployee: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional(),
   priority: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ServiceRequestAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ServiceRequestAvgOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  assignedEmployeeID: z.lazy(() => SortOrderSchema).optional()
+  assignedEmployeeID: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ServiceRequestMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ServiceRequestMaxOrderByAggregateInput> = z.object({
@@ -2622,7 +2642,7 @@ export const ServiceRequestMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Serv
   status: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   assignedEmployeeID: z.lazy(() => SortOrderSchema).optional(),
-  fromEmployee: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional(),
   priority: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2634,13 +2654,14 @@ export const ServiceRequestMinOrderByAggregateInputSchema: z.ZodType<Prisma.Serv
   status: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
   assignedEmployeeID: z.lazy(() => SortOrderSchema).optional(),
-  fromEmployee: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional(),
   priority: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const ServiceRequestSumOrderByAggregateInputSchema: z.ZodType<Prisma.ServiceRequestSumOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
-  assignedEmployeeID: z.lazy(() => SortOrderSchema).optional()
+  assignedEmployeeID: z.lazy(() => SortOrderSchema).optional(),
+  fromEmployeeID: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const EnumRequestTypeWithAggregatesFilterSchema: z.ZodType<Prisma.EnumRequestTypeWithAggregatesFilter> = z.object({
@@ -3296,10 +3317,24 @@ export const ServiceRequestCreateNestedManyWithoutAssignedToInputSchema: z.ZodTy
   connect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const ServiceRequestCreateNestedManyWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestCreateNestedManyWithoutFromEmployeeInput> = z.object({
+  create: z.union([ z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema).array(),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ServiceRequestCreateManyFromEmployeeInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const ServiceRequestUncheckedCreateNestedManyWithoutAssignedToInputSchema: z.ZodType<Prisma.ServiceRequestUncheckedCreateNestedManyWithoutAssignedToInput> = z.object({
   create: z.union([ z.lazy(() => ServiceRequestCreateWithoutAssignedToInputSchema),z.lazy(() => ServiceRequestCreateWithoutAssignedToInputSchema).array(),z.lazy(() => ServiceRequestUncheckedCreateWithoutAssignedToInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutAssignedToInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ServiceRequestCreateOrConnectWithoutAssignedToInputSchema),z.lazy(() => ServiceRequestCreateOrConnectWithoutAssignedToInputSchema).array() ]).optional(),
   createMany: z.lazy(() => ServiceRequestCreateManyAssignedToInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const ServiceRequestUncheckedCreateNestedManyWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUncheckedCreateNestedManyWithoutFromEmployeeInput> = z.object({
+  create: z.union([ z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema).array(),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ServiceRequestCreateManyFromEmployeeInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
@@ -3331,6 +3366,20 @@ export const ServiceRequestUpdateManyWithoutAssignedToNestedInputSchema: z.ZodTy
   deleteMany: z.union([ z.lazy(() => ServiceRequestScalarWhereInputSchema),z.lazy(() => ServiceRequestScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const ServiceRequestUpdateManyWithoutFromEmployeeNestedInputSchema: z.ZodType<Prisma.ServiceRequestUpdateManyWithoutFromEmployeeNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema).array(),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ServiceRequestUpsertWithWhereUniqueWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUpsertWithWhereUniqueWithoutFromEmployeeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ServiceRequestCreateManyFromEmployeeInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ServiceRequestUpdateWithWhereUniqueWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUpdateWithWhereUniqueWithoutFromEmployeeInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ServiceRequestUpdateManyWithWhereWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUpdateManyWithWhereWithoutFromEmployeeInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ServiceRequestScalarWhereInputSchema),z.lazy(() => ServiceRequestScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
   set: z.number().optional(),
   increment: z.number().optional(),
@@ -3353,9 +3402,29 @@ export const ServiceRequestUncheckedUpdateManyWithoutAssignedToNestedInputSchema
   deleteMany: z.union([ z.lazy(() => ServiceRequestScalarWhereInputSchema),z.lazy(() => ServiceRequestScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const ServiceRequestUncheckedUpdateManyWithoutFromEmployeeNestedInputSchema: z.ZodType<Prisma.ServiceRequestUncheckedUpdateManyWithoutFromEmployeeNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema).array(),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ServiceRequestUpsertWithWhereUniqueWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUpsertWithWhereUniqueWithoutFromEmployeeInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ServiceRequestCreateManyFromEmployeeInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ServiceRequestWhereUniqueInputSchema),z.lazy(() => ServiceRequestWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ServiceRequestUpdateWithWhereUniqueWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUpdateWithWhereUniqueWithoutFromEmployeeInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ServiceRequestUpdateManyWithWhereWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUpdateManyWithWhereWithoutFromEmployeeInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ServiceRequestScalarWhereInputSchema),z.lazy(() => ServiceRequestScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const EmployeeCreateNestedOneWithoutServiceRequestInputSchema: z.ZodType<Prisma.EmployeeCreateNestedOneWithoutServiceRequestInput> = z.object({
   create: z.union([ z.lazy(() => EmployeeCreateWithoutServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedCreateWithoutServiceRequestInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => EmployeeCreateOrConnectWithoutServiceRequestInputSchema).optional(),
+  connect: z.lazy(() => EmployeeWhereUniqueInputSchema).optional()
+}).strict();
+
+export const EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeCreateNestedOneWithoutCreatedServiceRequestInput> = z.object({
+  create: z.union([ z.lazy(() => EmployeeCreateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedCreateWithoutCreatedServiceRequestInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => EmployeeCreateOrConnectWithoutCreatedServiceRequestInputSchema).optional(),
   connect: z.lazy(() => EmployeeWhereUniqueInputSchema).optional()
 }).strict();
 
@@ -3447,6 +3516,14 @@ export const EmployeeUpdateOneWithoutServiceRequestNestedInputSchema: z.ZodType<
   delete: z.union([ z.boolean(),z.lazy(() => EmployeeWhereInputSchema) ]).optional(),
   connect: z.lazy(() => EmployeeWhereUniqueInputSchema).optional(),
   update: z.union([ z.lazy(() => EmployeeUpdateToOneWithWhereWithoutServiceRequestInputSchema),z.lazy(() => EmployeeUpdateWithoutServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedUpdateWithoutServiceRequestInputSchema) ]).optional(),
+}).strict();
+
+export const EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema: z.ZodType<Prisma.EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInput> = z.object({
+  create: z.union([ z.lazy(() => EmployeeCreateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedCreateWithoutCreatedServiceRequestInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => EmployeeCreateOrConnectWithoutCreatedServiceRequestInputSchema).optional(),
+  upsert: z.lazy(() => EmployeeUpsertWithoutCreatedServiceRequestInputSchema).optional(),
+  connect: z.lazy(() => EmployeeWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => EmployeeUpdateToOneWithWhereWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUpdateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedUpdateWithoutCreatedServiceRequestInputSchema) ]).optional(),
 }).strict();
 
 export const AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema: z.ZodType<Prisma.AudioVisualUpdateOneWithoutServiceRequestNestedInput> = z.object({
@@ -4364,8 +4441,8 @@ export const ServiceRequestCreateWithoutAssignedToInputSchema: z.ZodType<Prisma.
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4380,7 +4457,7 @@ export const ServiceRequestUncheckedCreateWithoutAssignedToInputSchema: z.ZodTyp
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4396,6 +4473,47 @@ export const ServiceRequestCreateOrConnectWithoutAssignedToInputSchema: z.ZodTyp
 
 export const ServiceRequestCreateManyAssignedToInputEnvelopeSchema: z.ZodType<Prisma.ServiceRequestCreateManyAssignedToInputEnvelope> = z.object({
   data: z.union([ z.lazy(() => ServiceRequestCreateManyAssignedToInputSchema),z.lazy(() => ServiceRequestCreateManyAssignedToInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const ServiceRequestCreateWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestCreateWithoutFromEmployeeInput> = z.object({
+  type: z.lazy(() => RequestTypeSchema),
+  dateCreated: z.coerce.date().optional(),
+  dateUpdated: z.coerce.date().optional().nullable(),
+  status: z.lazy(() => StatusSchema),
+  description: z.string(),
+  priority: z.lazy(() => PrioritySchema),
+  assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  language: z.lazy(() => LanguageCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  security: z.lazy(() => SecurityCreateNestedOneWithoutServiceRequestInputSchema).optional()
+}).strict();
+
+export const ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUncheckedCreateWithoutFromEmployeeInput> = z.object({
+  id: z.number().int().optional(),
+  type: z.lazy(() => RequestTypeSchema),
+  dateCreated: z.coerce.date().optional(),
+  dateUpdated: z.coerce.date().optional().nullable(),
+  status: z.lazy(() => StatusSchema),
+  description: z.string(),
+  assignedEmployeeID: z.number().int().optional().nullable(),
+  priority: z.lazy(() => PrioritySchema),
+  audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  equipmentDelivery: z.lazy(() => EquipmentDeliveryUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  language: z.lazy(() => LanguageUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  security: z.lazy(() => SecurityUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional()
+}).strict();
+
+export const ServiceRequestCreateOrConnectWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestCreateOrConnectWithoutFromEmployeeInput> = z.object({
+  where: z.lazy(() => ServiceRequestWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema) ]),
+}).strict();
+
+export const ServiceRequestCreateManyFromEmployeeInputEnvelopeSchema: z.ZodType<Prisma.ServiceRequestCreateManyFromEmployeeInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => ServiceRequestCreateManyFromEmployeeInputSchema),z.lazy(() => ServiceRequestCreateManyFromEmployeeInputSchema).array() ]),
   skipDuplicates: z.boolean().optional()
 }).strict();
 
@@ -4426,8 +4544,24 @@ export const ServiceRequestScalarWhereInputSchema: z.ZodType<Prisma.ServiceReque
   status: z.union([ z.lazy(() => EnumStatusFilterSchema),z.lazy(() => StatusSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   assignedEmployeeID: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-  fromEmployee: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  fromEmployeeID: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   priority: z.union([ z.lazy(() => EnumPriorityFilterSchema),z.lazy(() => PrioritySchema) ]).optional(),
+}).strict();
+
+export const ServiceRequestUpsertWithWhereUniqueWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUpsertWithWhereUniqueWithoutFromEmployeeInput> = z.object({
+  where: z.lazy(() => ServiceRequestWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => ServiceRequestUpdateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedUpdateWithoutFromEmployeeInputSchema) ]),
+  create: z.union([ z.lazy(() => ServiceRequestCreateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedCreateWithoutFromEmployeeInputSchema) ]),
+}).strict();
+
+export const ServiceRequestUpdateWithWhereUniqueWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUpdateWithWhereUniqueWithoutFromEmployeeInput> = z.object({
+  where: z.lazy(() => ServiceRequestWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => ServiceRequestUpdateWithoutFromEmployeeInputSchema),z.lazy(() => ServiceRequestUncheckedUpdateWithoutFromEmployeeInputSchema) ]),
+}).strict();
+
+export const ServiceRequestUpdateManyWithWhereWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUpdateManyWithWhereWithoutFromEmployeeInput> = z.object({
+  where: z.lazy(() => ServiceRequestScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => ServiceRequestUpdateManyMutationInputSchema),z.lazy(() => ServiceRequestUncheckedUpdateManyWithoutFromEmployeeInputSchema) ]),
 }).strict();
 
 export const EmployeeCreateWithoutServiceRequestInputSchema: z.ZodType<Prisma.EmployeeCreateWithoutServiceRequestInput> = z.object({
@@ -4439,6 +4573,7 @@ export const EmployeeCreateWithoutServiceRequestInputSchema: z.ZodType<Prisma.Em
   title: z.string(),
   canService: z.union([ z.lazy(() => EmployeeCreatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeCreatelanguageInputSchema),z.string().array() ]).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestCreateNestedManyWithoutFromEmployeeInputSchema).optional()
 }).strict();
 
 export const EmployeeUncheckedCreateWithoutServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUncheckedCreateWithoutServiceRequestInput> = z.object({
@@ -4451,11 +4586,42 @@ export const EmployeeUncheckedCreateWithoutServiceRequestInputSchema: z.ZodType<
   title: z.string(),
   canService: z.union([ z.lazy(() => EmployeeCreatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeCreatelanguageInputSchema),z.string().array() ]).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestUncheckedCreateNestedManyWithoutFromEmployeeInputSchema).optional()
 }).strict();
 
 export const EmployeeCreateOrConnectWithoutServiceRequestInputSchema: z.ZodType<Prisma.EmployeeCreateOrConnectWithoutServiceRequestInput> = z.object({
   where: z.lazy(() => EmployeeWhereUniqueInputSchema),
   create: z.union([ z.lazy(() => EmployeeCreateWithoutServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedCreateWithoutServiceRequestInputSchema) ]),
+}).strict();
+
+export const EmployeeCreateWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeCreateWithoutCreatedServiceRequestInput> = z.object({
+  email: z.string(),
+  username: z.string(),
+  role: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  title: z.string(),
+  canService: z.union([ z.lazy(() => EmployeeCreatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
+  language: z.union([ z.lazy(() => EmployeeCreatelanguageInputSchema),z.string().array() ]).optional(),
+  ServiceRequest: z.lazy(() => ServiceRequestCreateNestedManyWithoutAssignedToInputSchema).optional()
+}).strict();
+
+export const EmployeeUncheckedCreateWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUncheckedCreateWithoutCreatedServiceRequestInput> = z.object({
+  id: z.number().int().optional(),
+  email: z.string(),
+  username: z.string(),
+  role: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  title: z.string(),
+  canService: z.union([ z.lazy(() => EmployeeCreatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
+  language: z.union([ z.lazy(() => EmployeeCreatelanguageInputSchema),z.string().array() ]).optional(),
+  ServiceRequest: z.lazy(() => ServiceRequestUncheckedCreateNestedManyWithoutAssignedToInputSchema).optional()
+}).strict();
+
+export const EmployeeCreateOrConnectWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeCreateOrConnectWithoutCreatedServiceRequestInput> = z.object({
+  where: z.lazy(() => EmployeeWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => EmployeeCreateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedCreateWithoutCreatedServiceRequestInputSchema) ]),
 }).strict();
 
 export const AudioVisualCreateWithoutServiceRequestInputSchema: z.ZodType<Prisma.AudioVisualCreateWithoutServiceRequestInput> = z.object({
@@ -4565,6 +4731,7 @@ export const EmployeeUpdateWithoutServiceRequestInputSchema: z.ZodType<Prisma.Em
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   canService: z.union([ z.lazy(() => EmployeeUpdatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeUpdatelanguageInputSchema),z.string().array() ]).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestUpdateManyWithoutFromEmployeeNestedInputSchema).optional()
 }).strict();
 
 export const EmployeeUncheckedUpdateWithoutServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUncheckedUpdateWithoutServiceRequestInput> = z.object({
@@ -4577,6 +4744,43 @@ export const EmployeeUncheckedUpdateWithoutServiceRequestInputSchema: z.ZodType<
   title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   canService: z.union([ z.lazy(() => EmployeeUpdatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
   language: z.union([ z.lazy(() => EmployeeUpdatelanguageInputSchema),z.string().array() ]).optional(),
+  CreatedServiceRequest: z.lazy(() => ServiceRequestUncheckedUpdateManyWithoutFromEmployeeNestedInputSchema).optional()
+}).strict();
+
+export const EmployeeUpsertWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUpsertWithoutCreatedServiceRequestInput> = z.object({
+  update: z.union([ z.lazy(() => EmployeeUpdateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedUpdateWithoutCreatedServiceRequestInputSchema) ]),
+  create: z.union([ z.lazy(() => EmployeeCreateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedCreateWithoutCreatedServiceRequestInputSchema) ]),
+  where: z.lazy(() => EmployeeWhereInputSchema).optional()
+}).strict();
+
+export const EmployeeUpdateToOneWithWhereWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUpdateToOneWithWhereWithoutCreatedServiceRequestInput> = z.object({
+  where: z.lazy(() => EmployeeWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => EmployeeUpdateWithoutCreatedServiceRequestInputSchema),z.lazy(() => EmployeeUncheckedUpdateWithoutCreatedServiceRequestInputSchema) ]),
+}).strict();
+
+export const EmployeeUpdateWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUpdateWithoutCreatedServiceRequestInput> = z.object({
+  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  role: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  firstName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lastName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  canService: z.union([ z.lazy(() => EmployeeUpdatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
+  language: z.union([ z.lazy(() => EmployeeUpdatelanguageInputSchema),z.string().array() ]).optional(),
+  ServiceRequest: z.lazy(() => ServiceRequestUpdateManyWithoutAssignedToNestedInputSchema).optional()
+}).strict();
+
+export const EmployeeUncheckedUpdateWithoutCreatedServiceRequestInputSchema: z.ZodType<Prisma.EmployeeUncheckedUpdateWithoutCreatedServiceRequestInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  username: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  role: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  firstName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  lastName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  canService: z.union([ z.lazy(() => EmployeeUpdatecanServiceInputSchema),z.lazy(() => RequestTypeSchema).array() ]).optional(),
+  language: z.union([ z.lazy(() => EmployeeUpdatelanguageInputSchema),z.string().array() ]).optional(),
+  ServiceRequest: z.lazy(() => ServiceRequestUncheckedUpdateManyWithoutAssignedToNestedInputSchema).optional()
 }).strict();
 
 export const AudioVisualUpsertWithoutServiceRequestInputSchema: z.ZodType<Prisma.AudioVisualUpsertWithoutServiceRequestInput> = z.object({
@@ -4702,9 +4906,9 @@ export const ServiceRequestCreateWithoutAudioVisualInputSchema: z.ZodType<Prisma
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
   assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   language: z.lazy(() => LanguageCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4719,7 +4923,7 @@ export const ServiceRequestUncheckedCreateWithoutAudioVisualInputSchema: z.ZodTy
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4749,9 +4953,9 @@ export const ServiceRequestUpdateWithoutAudioVisualInputSchema: z.ZodType<Prisma
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   language: z.lazy(() => LanguageUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -4766,7 +4970,7 @@ export const ServiceRequestUncheckedUpdateWithoutAudioVisualInputSchema: z.ZodTy
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -4780,9 +4984,9 @@ export const ServiceRequestCreateWithoutExternalTransportationInputSchema: z.Zod
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
   assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   language: z.lazy(() => LanguageCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4797,7 +5001,7 @@ export const ServiceRequestUncheckedCreateWithoutExternalTransportationInputSche
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4827,9 +5031,9 @@ export const ServiceRequestUpdateWithoutExternalTransportationInputSchema: z.Zod
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   language: z.lazy(() => LanguageUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -4844,7 +5048,7 @@ export const ServiceRequestUncheckedUpdateWithoutExternalTransportationInputSche
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -4858,9 +5062,9 @@ export const ServiceRequestCreateWithoutEquipmentDeliveryInputSchema: z.ZodType<
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
   assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   language: z.lazy(() => LanguageCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4875,7 +5079,7 @@ export const ServiceRequestUncheckedCreateWithoutEquipmentDeliveryInputSchema: z
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4905,9 +5109,9 @@ export const ServiceRequestUpdateWithoutEquipmentDeliveryInputSchema: z.ZodType<
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   language: z.lazy(() => LanguageUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -4922,7 +5126,7 @@ export const ServiceRequestUncheckedUpdateWithoutEquipmentDeliveryInputSchema: z
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -4936,9 +5140,9 @@ export const ServiceRequestCreateWithoutLanguageInputSchema: z.ZodType<Prisma.Se
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
   assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4953,7 +5157,7 @@ export const ServiceRequestUncheckedCreateWithoutLanguageInputSchema: z.ZodType<
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -4983,9 +5187,9 @@ export const ServiceRequestUpdateWithoutLanguageInputSchema: z.ZodType<Prisma.Se
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -5000,7 +5204,7 @@ export const ServiceRequestUncheckedUpdateWithoutLanguageInputSchema: z.ZodType<
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -5014,9 +5218,9 @@ export const ServiceRequestCreateWithoutSecurityInputSchema: z.ZodType<Prisma.Se
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
   priority: z.lazy(() => PrioritySchema),
   assignedTo: z.lazy(() => EmployeeCreateNestedOneWithoutServiceRequestInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeCreateNestedOneWithoutCreatedServiceRequestInputSchema),
   audioVisual: z.lazy(() => AudioVisualCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -5031,7 +5235,7 @@ export const ServiceRequestUncheckedCreateWithoutSecurityInputSchema: z.ZodType<
   status: z.lazy(() => StatusSchema),
   description: z.string(),
   assignedEmployeeID: z.number().int().optional().nullable(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
   priority: z.lazy(() => PrioritySchema),
   audioVisual: z.lazy(() => AudioVisualUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedCreateNestedOneWithoutServiceRequestInputSchema).optional(),
@@ -5061,9 +5265,9 @@ export const ServiceRequestUpdateWithoutSecurityInputSchema: z.ZodType<Prisma.Se
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -5078,7 +5282,7 @@ export const ServiceRequestUncheckedUpdateWithoutSecurityInputSchema: z.ZodType<
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -5727,7 +5931,18 @@ export const ServiceRequestCreateManyAssignedToInputSchema: z.ZodType<Prisma.Ser
   dateUpdated: z.coerce.date().optional().nullable(),
   status: z.lazy(() => StatusSchema),
   description: z.string(),
-  fromEmployee: z.string(),
+  fromEmployeeID: z.number().int(),
+  priority: z.lazy(() => PrioritySchema)
+}).strict();
+
+export const ServiceRequestCreateManyFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestCreateManyFromEmployeeInput> = z.object({
+  id: z.number().int().optional(),
+  type: z.lazy(() => RequestTypeSchema),
+  dateCreated: z.coerce.date().optional(),
+  dateUpdated: z.coerce.date().optional().nullable(),
+  status: z.lazy(() => StatusSchema),
+  description: z.string(),
+  assignedEmployeeID: z.number().int().optional().nullable(),
   priority: z.lazy(() => PrioritySchema)
 }).strict();
 
@@ -5737,8 +5952,8 @@ export const ServiceRequestUpdateWithoutAssignedToInputSchema: z.ZodType<Prisma.
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployee: z.lazy(() => EmployeeUpdateOneRequiredWithoutCreatedServiceRequestNestedInputSchema).optional(),
   audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -5753,7 +5968,7 @@ export const ServiceRequestUncheckedUpdateWithoutAssignedToInputSchema: z.ZodTyp
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
   audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
   externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
@@ -5769,7 +5984,49 @@ export const ServiceRequestUncheckedUpdateManyWithoutAssignedToInputSchema: z.Zo
   dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  fromEmployee: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  fromEmployeeID: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ServiceRequestUpdateWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUpdateWithoutFromEmployeeInput> = z.object({
+  type: z.union([ z.lazy(() => RequestTypeSchema),z.lazy(() => EnumRequestTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  dateCreated: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
+  assignedTo: z.lazy(() => EmployeeUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  audioVisual: z.lazy(() => AudioVisualUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  externalTransportation: z.lazy(() => ExternalTransportationUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  equipmentDelivery: z.lazy(() => EquipmentDeliveryUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  language: z.lazy(() => LanguageUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  security: z.lazy(() => SecurityUpdateOneWithoutServiceRequestNestedInputSchema).optional()
+}).strict();
+
+export const ServiceRequestUncheckedUpdateWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUncheckedUpdateWithoutFromEmployeeInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => RequestTypeSchema),z.lazy(() => EnumRequestTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  dateCreated: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
+  audioVisual: z.lazy(() => AudioVisualUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  externalTransportation: z.lazy(() => ExternalTransportationUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  equipmentDelivery: z.lazy(() => EquipmentDeliveryUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  language: z.lazy(() => LanguageUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional(),
+  security: z.lazy(() => SecurityUncheckedUpdateOneWithoutServiceRequestNestedInputSchema).optional()
+}).strict();
+
+export const ServiceRequestUncheckedUpdateManyWithoutFromEmployeeInputSchema: z.ZodType<Prisma.ServiceRequestUncheckedUpdateManyWithoutFromEmployeeInput> = z.object({
+  id: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => RequestTypeSchema),z.lazy(() => EnumRequestTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  dateCreated: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  dateUpdated: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  status: z.union([ z.lazy(() => StatusSchema),z.lazy(() => EnumStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assignedEmployeeID: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   priority: z.union([ z.lazy(() => PrioritySchema),z.lazy(() => EnumPriorityFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 

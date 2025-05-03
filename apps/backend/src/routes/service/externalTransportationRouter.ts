@@ -15,6 +15,8 @@ export const externalTransportationRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
+        username: z.string().optional(),
+        assigned: z.boolean(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -27,64 +29,133 @@ export const externalTransportationRouter = t.router({
         additionalNotes,
         priority,
         status,
+        username,
+        assigned,
       } = input;
       if (ctx.role === "admin") {
-        return PrismaClient.serviceRequest.findMany({
-          where: {
-            type: RequestType.EXTERNALTRANSPORTATION,
-            ...(patientName && {
-              externalTransportation: { patientName: patientName },
-            }),
-            ...(pickupTime && {
-              externalTransportation: { pickupTime: pickupTime },
-            }),
-            ...(transportation && {
-              externalTransportation: { transportType: transportation },
-            }),
-            ...(pickupTransport && {
-              externalTransportation: { fromWhere: pickupTransport },
-            }),
-            ...(dropoffTransport && {
-              externalTransportation: { toWhere: dropoffTransport },
-            }),
-            ...(additionalNotes && { additionalNotes: additionalNotes }),
-            ...(priority && { priority: priority as Priority }),
-            ...(status && { status: status as Status }),
-          },
-          include: {
-            externalTransportation: true,
-            assignedTo: true,
-          },
-        });
+        if (assigned) {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              ...(username && { assignedTo: { username: username } }),
+              type: RequestType.EXTERNALTRANSPORTATION,
+              ...(patientName && {
+                externalTransportation: { patientName: patientName },
+              }),
+              ...(pickupTime && {
+                externalTransportation: { pickupTime: pickupTime },
+              }),
+              ...(transportation && {
+                externalTransportation: { transportType: transportation },
+              }),
+              ...(pickupTransport && {
+                externalTransportation: { fromWhere: pickupTransport },
+              }),
+              ...(dropoffTransport && {
+                externalTransportation: { toWhere: dropoffTransport },
+              }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+            },
+            include: {
+              externalTransportation: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        } else {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              ...(username && { fromEmployee: { username: username } }),
+              type: RequestType.EXTERNALTRANSPORTATION,
+              ...(patientName && {
+                externalTransportation: { patientName: patientName },
+              }),
+              ...(pickupTime && {
+                externalTransportation: { pickupTime: pickupTime },
+              }),
+              ...(transportation && {
+                externalTransportation: { transportType: transportation },
+              }),
+              ...(pickupTransport && {
+                externalTransportation: { fromWhere: pickupTransport },
+              }),
+              ...(dropoffTransport && {
+                externalTransportation: { toWhere: dropoffTransport },
+              }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+            },
+            include: {
+              externalTransportation: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        }
       } else {
-        return PrismaClient.serviceRequest.findMany({
-          where: {
-            type: RequestType.EXTERNALTRANSPORTATION,
-            ...(patientName && {
-              externalTransportation: { patientName: patientName },
-            }),
-            ...(pickupTime && {
-              externalTransportation: { pickupTime: pickupTime },
-            }),
-            ...(transportation && {
-              externalTransportation: { transportType: transportation },
-            }),
-            ...(pickupTransport && {
-              externalTransportation: { fromWhere: pickupTransport },
-            }),
-            ...(dropoffTransport && {
-              externalTransportation: { toWhere: dropoffTransport },
-            }),
-            ...(additionalNotes && { additionalNotes: additionalNotes }),
-            ...(priority && { priority: priority as Priority }),
-            ...(status && { status: status as Status }),
-            fromEmployee: ctx.username || "",
-          },
-          include: {
-            externalTransportation: true,
-            assignedTo: true,
-          },
-        });
+        if (assigned) {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.EXTERNALTRANSPORTATION,
+              ...(patientName && {
+                externalTransportation: { patientName: patientName },
+              }),
+              ...(pickupTime && {
+                externalTransportation: { pickupTime: pickupTime },
+              }),
+              ...(transportation && {
+                externalTransportation: { transportType: transportation },
+              }),
+              ...(pickupTransport && {
+                externalTransportation: { fromWhere: pickupTransport },
+              }),
+              ...(dropoffTransport && {
+                externalTransportation: { toWhere: dropoffTransport },
+              }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              assignedTo: { username: ctx.username ?? undefined },
+            },
+            include: {
+              externalTransportation: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        } else {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.EXTERNALTRANSPORTATION,
+              ...(patientName && {
+                externalTransportation: { patientName: patientName },
+              }),
+              ...(pickupTime && {
+                externalTransportation: { pickupTime: pickupTime },
+              }),
+              ...(transportation && {
+                externalTransportation: { transportType: transportation },
+              }),
+              ...(pickupTransport && {
+                externalTransportation: { fromWhere: pickupTransport },
+              }),
+              ...(dropoffTransport && {
+                externalTransportation: { toWhere: dropoffTransport },
+              }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              fromEmployee: { username: ctx.username ?? undefined },
+            },
+            include: {
+              externalTransportation: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        }
       }
     }),
 
@@ -116,13 +187,24 @@ export const externalTransportationRouter = t.router({
       if (employeeID != undefined) {
         status = Status.ASSIGNED;
       }
+      if (!ctx.username) {
+        throw new Error("Username does not exist!");
+      }
+      const employee = await PrismaClient.employee.findUnique({
+        where: {
+          username: ctx.username,
+        },
+      });
+      if (!employee) {
+        throw new Error("Employee not found");
+      }
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.EXTERNALTRANSPORTATION,
           dateCreated: new Date(Date.now()),
           status: status,
           description: additionalNotes,
-          fromEmployee: ctx.username || "",
+          fromEmployeeID: employee.id,
           priority: priority as Priority,
           ...(employeeID && { assignedEmployeeID: employeeID }),
         },

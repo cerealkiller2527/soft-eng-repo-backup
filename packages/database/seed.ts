@@ -218,6 +218,14 @@ async function main() {
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
 
     // seed some service requests for the employees
+    const admin = await prisma.employee.findFirst({
+        where: {
+            role: "admin",
+        }
+    })
+    if (!admin) {
+        throw new Error("Admin does not exist!");
+    }
     // from the old seed file
     await Promise.all(
         Array.from({ length: 10 }).map(async (_, i) => {
@@ -231,7 +239,7 @@ async function main() {
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
                     description: `No additional note`,
                     assignedEmployeeID: i < 5? employees[i % employees.length]?.id ?? null : null,
-                    fromEmployee: 'admin',
+                    fromEmployeeID: admin.id,
                     priority: priority,
                 },
             });
