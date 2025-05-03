@@ -157,6 +157,10 @@ async function findNodesFromEdgeInfo(parsedEdge: z.infer<typeof edgeCSVRow>) {
         }
     });
 
+    if(!toNode){
+        console.log('no node with desc: ', parsedEdge.toNode)
+    }
+
     const fromNode = await prisma.node.findFirst({
         where: {
             description: parsedEdge.fromNode,
@@ -173,6 +177,10 @@ async function findNodesFromEdgeInfo(parsedEdge: z.infer<typeof edgeCSVRow>) {
             }
         }
     });
+
+    if(!fromNode){
+        console.log('no node with desc: ', parsedEdge.fromNode)
+    }
 
     // console.log(parsedEdge.toNode, ": ", toNode?.id, parsedEdge.fromNode, ": ", fromNode?.id)
     return {

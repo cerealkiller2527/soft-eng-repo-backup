@@ -11,6 +11,22 @@ f,c,1,20 Patriot
 f,a,1,20 Patriot
 Cardiovascular Services,d,1,20 Patriot
 Radiology,b,1,20 Patriot
-parking,front door,1,20 Patriot
 Pharmacy,b,1,20 Patriot
 d,Urology,1,20 Patriot
+parking,20o3,1,20 Patriot
+20o2,20o3,1,20 Patriot
+20o2,20o3,1,20 Patriot
+20o5,20o4,1,20 Patriot
+20o3,20o4,1,20 Patriot
+20o3,parking,1,20 Patriot
+20o4,20o5,1,20 Patriot
+20o4,20o3,1,20 Patriot
+20o1,20o2,1,20 Patriot
+new1,front door,1,20 Patriot
+new1,20o3,1,20 Patriot
+new1,new2,1,20 Patriot
+new2,20o2,1,20 Patriot
+new3,20o1,1,20 Patriot
+new1,20o3,1,20 Patriot
+new2,front door,1,20 Patriot
+

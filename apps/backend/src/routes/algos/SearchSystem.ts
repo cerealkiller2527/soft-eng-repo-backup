@@ -41,14 +41,12 @@ export class SearchSystem {
       );
       console.log("parking node id:", parkingNodeId);
       toParking = await this.algorithm.findPath(startId, parkingNodeId);
-      console.log("path to parking before zod: ", toParking);
       startId = parkingNodeId;
     }
 
     // create path from start node to end node
-    console.log("pathing from node: ", startId, "to node: ", endNodeId);
     const toDepartment = await this.algorithm.findPath(startId, endNodeId);
-    console.log("path to dept before zod: ", toDepartment);
+    const toDepartment = await this.algorithm.findPath(startId, endNodeId);
 
     // convert pNode[] to z.array(pNodeZod)
 
@@ -113,12 +111,19 @@ export class SearchSystem {
         dropOffLatitude,
         dropOffLongitude,
       );
+      console.log("dist from start to ", node.description, ": ", dist);
       if (dist < closestDist) {
         closestDist = dist;
         closestNode = node;
       }
     }
 
+    console.log(
+      "returning closest node to start: ",
+      closestNode!.description,
+      " when looking for parking = ",
+      parking,
+    );
     return closestNode!.id;
   }
 
@@ -128,8 +133,10 @@ export class SearchSystem {
     dropLat: number,
     dropLong: number,
   ) {
-    const dLa = nLat - dropLat;
-    const dLn = nLong - dropLong;
+    const latScale = 111000;
+    const lngScale = 85000;
+    const dLa = (nLat - dropLat) * latScale;
+    const dLn = (nLong - dropLong) * lngScale;
     return dLa * dLa + dLn * dLn;
   }
 

@@ -194,7 +194,7 @@ async function main() {
     const seedeedFaulknerEdges = await seedEdges("./seedFiles/faulkner/faulkner_edges.csv");
     const seededMain1Edges = await seedEdges("./seedFiles/main1/main1_edges.csv");
     const seededMain2Edges = await seedEdges("./seedFiles/main2/main2_edges.csv")
-
+    //
     const seededInterfloorEdges = await seedEdges("./seedFiles/interfloor_edges/interfloor_edges.csv")
 
     //seed the user table by getting info from clerk

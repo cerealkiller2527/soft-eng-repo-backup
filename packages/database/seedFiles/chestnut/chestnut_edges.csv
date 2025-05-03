@@ -1,5 +1,4 @@
 toNode,fromNode,floor,building
-a,g,1,Chestnut
 b,Multi Specialty Clinic,1,Chestnut
 b,l,1,Chestnut
 b,f,1,Chestnut
@@ -16,3 +15,18 @@ g,k,1,Chestnut
 h,i,1,Chestnut
 h,k,1,Chestnut
 h,l,1,Chestnut
+c4,c3,1,Chestnut
+c4,c5,1,Chestnut
+c5,g,1,Chestnut
+c5,c4,1,Chestnut
+c5,c2,1,Chestnut
+c3,a,1,Chestnut
+g,k,1,Chestnut
+c3,c2,1,Chestnut
+c3,c4,1,Chestnut
+c2,c1,1,Chestnut
+c2,c3,1,Chestnut
+c2,c5,1,Chestnut
+g,c5,1,Chestnut
+c1,c2,1,Chestnut
+a,c3,1,Chestnut

@@ -1,9 +1,26 @@
 fromNode,toNode,floor,building
-parking,a,1,22 Patriot
+parking,22o3,1,22 Patriot
 1 elevator,front door,1,22 Patriot
+22o2,22o3,1,22 Patriot
+22o2,22o3,1,22 Patriot
+22o5,22o4,1,22 Patriot
+front door,1 elevator,1,22 Patriot
 front door,b,1,22 Patriot
-front door,c,1,22 Patriot
-a,b,1,22 Patriot
+front door,22i1,1,22 Patriot
+d,a,1,22 Patriot
+d,22o1,1,22 Patriot
 1 stairs,c,1,22 Patriot
-c,front door,1,22 Patriot
-d,parking,1,22 Patriot
+c,22i1,1,22 Patriot
+c,1 stairs,1,22 Patriot
+a,d,1,22 Patriot
+a,b,1,22 Patriot
+b,a,1,22 Patriot
+b,front door,1,22 Patriot
+22o3,22o4,1,22 Patriot
+22o3,parking,1,22 Patriot
+22o4,22o5,1,22 Patriot
+22o4,22o3,1,22 Patriot
+22o1,22o2,1,22 Patriot
+22o1,d,1,22 Patriot
+22i1,front door,1,22 Patriot
+22i1,c,1,22 Patriot

@@ -1,27 +1,68 @@
 toNode,fromNode,floor,building
 Rheumatology,2a,2,Main Campus
-2a,2b,2,Main Campus
-2b,2c,2,Main Campus
-2c,2d,2,Main Campus
-2d,2e,2,Main Campus
-2e,2f,2,Main Campus
-2f,2g,2,Main Campus
-2g,2h,2,Main Campus
-2h,Dental Group/Oral Medicine,2,Main Campus
-2h,Lee Bell Center,2,Main Campus
-Dental Group/Oral Medicine,2i,2,Main Campus
-2i,Endoscopy,2,Main Campus
-Lee Bell Center,Jen Center for Primary Care,2,Main Campus
-Jen Center for Primary Care,2j,2,Main Campus
-2j,"Ear, Nose, Throat",2,Main Campus
-"Ear, Nose, Throat",2k,2,Main Campus
-2k,Brigham Medical Specialties,2,Main Campus
-2j,2l,2,Main Campus
-2l,2m,2,Main Campus
-2m,2n,2,Main Campus
-2m,Weiner Center,2,Main Campus
-Weiner Center,International Patient Center,2,Main Campus
 International Patient Center,2q,2,Main Campus
-2q,Thoracic Surgery Center,2,Main Campus
-2q,Center for Chest Diseases,2,Main Campus
+International Patient Center,Weiner Center,2,Main Campus
+Dental Group/Oral Medicine,2i,2,Main Campus
+Dental Group/Oral Medicine,2h,2,Main Campus
+2f,2g,2,Main Campus
+2f,2e,2,Main Campus
+2b,2c,2,Main Campus
+2b,2a,2,Main Campus
+2h,Lee Bell Center,2,Main Campus
+2h,Dental Group/Oral Medicine,2,Main Campus
+2h,2g,2,Main Campus
+2d,2c,2,Main Campus
+2d,m2,2,Main Campus
+m1,Endoscopy,2,Main Campus
+m1,2e,2,Main Campus
+m2,2e,2,Main Campus
+m2,2d,2,Main Campus
+,2k,2,Main Campus
+,2 elevator,2,Main Campus
+,2l,2,Main Campus
+m4,2q,2,Main Campus
+m4,Thoracic Surgery Center,2,Main Campus
+m4,Center for Chest Diseases,2,Main Campus
+2m,Weiner Center,2,Main Campus
+2m,2n,2,Main Campus
+2m,2l,2,Main Campus
+Brigham Medical Specialties,2k,2,Main Campus
+Brigham Medical Specialties,2i,2,Main Campus
+2j,"Ear, Nose, Throat",2,Main Campus
+2j,2l,2,Main Campus
+2j,Jen Center for Primary Care,2,Main Campus
+Jen Center for Primary Care,Lee Bell Center,2,Main Campus
+2a,2b,2,Main Campus
+2a,Rheumatology,2,Main Campus
+Thoracic Surgery Center,m4,2,Main Campus
+2q,International Patient Center,2,Main Campus
+2q,m4,2,Main Campus
 2 elevator,2n,2,Main Campus
+2 elevator,,2,Main Campus
+2e,2f,2,Main Campus
+2e,m1,2,Main Campus
+2e,m2,2,Main Campus
+2l,2m,2,Main Campus
+2l,,2,Main Campus
+2l,2j,2,Main Campus
+Weiner Center,International Patient Center,2,Main Campus
+Weiner Center,2m,2,Main Campus
+2i,Endoscopy,2,Main Campus
+2i,Brigham Medical Specialties,2,Main Campus
+2i,Dental Group/Oral Medicine,2,Main Campus
+2g,2h,2,Main Campus
+2g,2f,2,Main Campus
+Endoscopy,2i,2,Main Campus
+Endoscopy,m1,2,Main Campus
+Center for Chest Diseases,m4,2,Main Campus
+"Ear, Nose, Throat",2k,2,Main Campus
+"Ear, Nose, Throat",2j,2,Main Campus
+2n,2m,2,Main Campus
+2n,2 elevator,2,Main Campus
+Lee Bell Center,Jen Center for Primary Care,2,Main Campus
+Lee Bell Center,2h,2,Main Campus
+2c,2d,2,Main Campus
+2c,2b,2,Main Campus
+2k,Brigham Medical Specialties,2,Main Campus
+2k,,2,Main Campus
+2k,"Ear, Nose, Throat",2,Main Campus

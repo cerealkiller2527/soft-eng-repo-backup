@@ -56,7 +56,7 @@ export const searchRouter = t.router({
         },
       });
 
-      console.log(buildingId);
+      // console.log(buildingId);
       const paths = await s.path(
         input.dropOffLatitude,
         input.dropOffLongitude,
@@ -64,10 +64,8 @@ export const searchRouter = t.router({
         buildingId!.id,
         input.driving,
       );
-      console.log("SEARCH.TS");
-
-      console.log("paths after calling s.path: ", paths);
-
+      
+      // console.log("SEARCH.TS");
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];
 
