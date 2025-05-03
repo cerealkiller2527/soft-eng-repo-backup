@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { UserCircleIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/database/trpc";
-import {useMutation, useQuery} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import BnWLogo from "/BrighamAndWomensLogo.png";
 
 type AlgorithmType = "BFS" | "DFS";
@@ -19,12 +19,12 @@ type AlgorithmType = "BFS" | "DFS";
 const primaryLink = { title: "Navigation", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
 const moreItems = [
-    { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
-    { title: "Map Editor", href: "/mapeditor", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
-    { title: "Service Requests", href: "/ServiceRequest", show: (u) => u.isSignedIn},
-    { title: "About", href: "/about", show: (u)=> true},
-    { title: "Credits", href: "/credits", show: (u)=> true},
-    ];
+    { title: "CSV Import", href: "/csv", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
+    { title: "Map Editor", href: "/mapeditor", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
+    { title: "Service Requests", href: "/ServiceRequest", show: u => u.isSignedIn },
+    { title: "About", href: "/about", show: () => true },
+    { title: "Credits", href: "/credits", show: () => true },
+];
 
 export default function NewNavbar() {
     const { isSignedIn, user } = useUser();
@@ -35,7 +35,10 @@ export default function NewNavbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
     const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
-    const [swapOpen, setSwapOpen] = useState(false);
+
+    // More dropdown hover/click state without ref
+    const [moreOpen, setMoreOpen] = useState(false);
+    const [moreClicked, setMoreClicked] = useState(false);
 
     const {
         data: currentAlgorithm,
@@ -43,18 +46,14 @@ export default function NewNavbar() {
         refetch: refetchAlgorithm,
     } = useQuery(trpc.pathfinding.getCurrentAlgorithm.queryOptions());
 
-    const [algorithm, setAlgorithm] = useState<AlgorithmType>("BFS");
     useEffect(() => {
-        if (currentAlgorithm) {
-            setAlgorithm(currentAlgorithm as AlgorithmType);
-        }
+        // handle algorithm updates if needed
     }, [currentAlgorithm]);
 
     const toggleAlgo = useMutation(
         trpc.pathfinding.toggleAlgorithm.mutationOptions({
             onSuccess() {
                 refetchAlgorithm();
-                setSwapOpen(false);
             },
         })
     );
@@ -88,14 +87,34 @@ export default function NewNavbar() {
                         {directoryLink.title}
                     </Link>
 
-                    <MenubarMenu>
-                        <MenubarTrigger className="px-4 py-2 rounded-none text-lg bg-transparent hover:underline hover:cursor-pointer transition-colors">
+                    {/* More dropdown with hover+click stability using onOpenChange */}
+                    <MenubarMenu
+                        open={moreOpen}
+                        onOpenChange={open => {
+                            setMoreOpen(open);
+                            if (!open) setMoreClicked(false);
+                        }}
+                    >
+                        <MenubarTrigger
+                            onClick={() => {
+                                setMoreClicked(prev => !prev);
+                                setMoreOpen(true);
+                            }}
+                            onMouseEnter={() => !moreClicked && setMoreOpen(true)}
+                            onMouseLeave={() => !moreClicked && setMoreOpen(false)}
+                            className="px-4 py-2 rounded-none text-lg bg-background font-normal hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                        >
                             More
                         </MenubarTrigger>
-                        <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
+                        <MenubarContent
+                            align="end"
+                            className="border rounded-none shadow-md bg-white"
+                            onMouseEnter={() => !moreClicked && setMoreOpen(true)}
+                            onMouseLeave={() => !moreClicked && setMoreOpen(false)}
+                        >
                             {moreItems
-                                .filter((item) => item.show(auth))
-                                .map((item) => (
+                                .filter(item => item.show(auth))
+                                .map(item => (
                                     <MenubarItem key={item.href}>
                                         <Link
                                             to={item.href}
@@ -108,33 +127,43 @@ export default function NewNavbar() {
                         </MenubarContent>
                     </MenubarMenu>
 
+                    {/* Profile dropdown */}
                     {isSignedIn ? (
                         <MenubarMenu>
-                            <MenubarTrigger className="p-2 rounded-full text-black bg-transparent hover:cursor-pointer transition-colors">
+                            <MenubarTrigger
+                                className="p-2 rounded-full text-black bg-background hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                            >
                                 <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
                             <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
                                 {user?.publicMetadata?.role === "admin" && (
-                                    <MenubarItem key="toggle-alg">
+                                    <MenubarItem>
                                         {isAlgLoading ? (
-                                            <button disabled className="w-full text-left py-2 px-4">
+                                            <button disabled className="block w-full py-2 px-4 text-left">
                                                 Loading…
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={() => toggleAlgo.mutate({ algorithm: nextAlg })}
-                                                disabled={isAlgLoading}
-                                                className="w-full text-left py-2 px-4"
+                                                className="block w-full py-2 px-4 text-left"
                                             >
-                                                Switch to {nextAlg} (current: {currentAlgorithm})
+                                                Switch to {nextAlg}
                                             </button>
                                         )}
                                     </MenubarItem>
                                 )}
                                 <MenubarItem>
+                                    <Link
+                                        to="/profile"
+                                        className="block w-full py-2 px-4 text-black hover:bg-accent"
+                                    >
+                                        My Profile
+                                    </Link>
+                                </MenubarItem>
+                                <MenubarItem>
                                     <button
                                         onClick={() => signOut()}
-                                        className="w-full text-left py-2 px-4 text-black"
+                                        className="block w-full py-2 px-4 text-left text-black"
                                     >
                                         Log Out
                                     </button>

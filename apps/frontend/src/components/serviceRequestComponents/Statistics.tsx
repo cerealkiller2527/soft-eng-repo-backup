@@ -4,8 +4,8 @@ import { CheckCircle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTRPC } from "@/database/trpc.ts";
 import { useQuery } from "@tanstack/react-query";
-import MiniChart from "@/components/serviceRequestComponents/chart.tsx";
 import NewChart from "@/components/serviceRequestComponents/NewChart.tsx";
+import BarChartMini from "@/components/serviceRequestComponents/BarChartMini.tsx";
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
@@ -47,6 +47,8 @@ export default function MiniDashboard() {
     ];
 
 
+
+
     const [filterType, setFilterType] = useState<"All" | "Patient Transport" | "Security Assistance" | "Medical Equipment" | "Language Services">("All");
 
     const filteredRequests = filterType === "All" ? combinedRequests : combinedRequests.filter(req => req.type === filterType);
@@ -58,7 +60,7 @@ export default function MiniDashboard() {
     const chartLabels = ["Assigned", "Not Assigned"]
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-30">
             <Card className="bg-white shadow md:col-span-2">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-[#003153]">Request Quick View</CardTitle>
@@ -108,10 +110,14 @@ export default function MiniDashboard() {
                 </CardContent>
             </Card>
 
-            <div className="bg-white shadow h-[300px] rounded-xl mb-20">
+            <div className="bg-white shadow h-[300px] rounded-xl mb-50">
                     <NewChart transport={requestsTransport} equipment={requestsEquipment} language={requestsLanguage} security={requestsSecurity} />
+                <br />
+                <div className="">
+                <BarChartMini assigned={assignedCount} notAssigned={notAssignedCount} />
+                </div>
+            </div >
 
-            </div>
         </div>
     );
 }

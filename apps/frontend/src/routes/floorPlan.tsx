@@ -11,11 +11,6 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-
-
-
-import {pNodeDTO} from "../../../../share/types.ts";
-
 type formType = {
     location: string;
     destination: string;

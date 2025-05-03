@@ -24,6 +24,8 @@ export const audiovisualRouter = t.router({
         priority,
         status,
       } = input;
+      console.log(ctx.role);
+      console.log(ctx.username);
       if (ctx.role === "admin") {
         return PrismaClient.serviceRequest.findMany({
           where: {

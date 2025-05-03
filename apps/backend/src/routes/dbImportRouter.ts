@@ -39,8 +39,10 @@ async function getEmployees(): Promise<z.infer<typeof employeeCSVRow>[]> {
   // map the employee prisma return to the csv row employee type
   return employees.map((employee) => {
     const parsedEmployees: z.infer<typeof employeeCSVRow> = {
-      type: employee.employeeType,
-      employee: employee.name,
+      username: employee.username,
+      type: employee.title,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
       services: employee.canService.join(";"),
       languages: employee.language.join(";"),
     };

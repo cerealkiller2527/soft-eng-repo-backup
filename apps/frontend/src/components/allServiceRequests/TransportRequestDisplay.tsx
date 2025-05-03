@@ -27,6 +27,23 @@ import {
 } from "@/components/ui/card"
 import {ArrowLeft, TrendingUpIcon} from "lucide-react"
 import {Link} from "react-router-dom";
+import TransportationForm from "@/components/TransportationForm.tsx";
+import EquipmentRequestForm from '@/components/EquipmentRequestForm.tsx';
+import SecurityRequestForm from "@/components/SecurityRequestForm.tsx";
+
+function LanguageForm(props: {
+    defaultValues: {
+        language: any;
+        startTime: Date;
+        endTime: Date;
+        location: any;
+        additionalNotes: any;
+    };
+    mode: string;
+    onClose: () => void;
+}) {
+    return null;
+}
 
 export default function TransportRequestDisplay() {
 
@@ -50,7 +67,12 @@ export default function TransportRequestDisplay() {
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
 
     function getEmployeeName(id: number): string {
-        return listofEmployees.data?.find(emp => emp.id === id)?.name ?? "Unknown";
+        const employee = listofEmployees.data?.find(emp => emp.id === id)
+        if (!employee) {
+            return "Unknown"
+        }else{
+            return `${employee.firstName} ${employee.lastName}`
+        }
     }
 
     const combinedData = [
@@ -152,6 +174,9 @@ export default function TransportRequestDisplay() {
             }
 
         }
+
+    const [updateOpen, setUpdateOpen] = useState(false);
+    const [requestToUpdate, setRequestToUpdate] = useState<any | null>(null);
 
         return (
 
@@ -317,7 +342,10 @@ export default function TransportRequestDisplay() {
                                                                             Delete
                                                                         </Button>
 
-                                                                        <Button variant="default" onClick={() => handleUpdate(req)}>
+                                                                        <Button variant="default" onClick={() => {
+                                                                            setRequestToUpdate(req);
+                                                                            setUpdateOpen(true);
+                                                                        }}>
                                                                             Update
                                                                         </Button>
                                                                     </div>
@@ -354,6 +382,84 @@ export default function TransportRequestDisplay() {
                                                     Confirm Delete
                                                 </Button>
                                             </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                    <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
+                                        <DialogContent className="max-w-3xl">
+                                            <DialogHeader>
+                                                <DialogTitle>Update Request</DialogTitle>
+                                                <DialogDescription>Modify the request information below and submit to save changes.</DialogDescription>
+                                            </DialogHeader>
+
+                                            {requestToUpdate?.type === "EXTERNALTRANSPORTATION" && requestToUpdate.externalTransportation && (
+                                                <TransportationForm
+                                                    defaultValues={{
+                                                        patientName: requestToUpdate.externalTransportation.patientName,
+                                                        pickupTime: new Date(requestToUpdate.externalTransportation.pickupTime),
+                                                        transportType: requestToUpdate.externalTransportation.transportType,
+                                                        pickupTransport: requestToUpdate.externalTransportation.fromWhere,
+                                                        dropoffTransport: requestToUpdate.externalTransportation.toWhere,
+                                                        additionalNotes: requestToUpdate.description ?? "",
+                                                    }}
+                                                    id={requestToUpdate.id}
+                                                    mode="update"
+                                                    onClose={() => {
+                                                        setUpdateOpen(false);
+                                                        requestsTransport.refetch();
+                                                    }}
+                                                />
+                                            )}
+
+                                            {requestToUpdate?.type === "EQUIPMENTDELIVERY" && requestToUpdate.equipmentDelivery && (
+                                                <EquipmentRequestForm
+                                                    defaultValues={{
+                                                        priority: requestToUpdate.priority,
+                                                        deadline: new Date(requestToUpdate.equipmentDelivery.pickupTime),
+                                                        equipment: requestToUpdate.equipmentDelivery.equipments,
+                                                        location: requestToUpdate.equipmentDelivery.toWhere,
+                                                        additionalNotes: requestToUpdate.description ?? "",
+                                                    }}
+                                                    id={requestToUpdate.id}
+                                                    mode="update"
+                                                    onClose={() => {
+                                                        setUpdateOpen(false);
+                                                        requestsEquipment.refetch();
+                                                    }}
+                                                />
+                                            )}
+
+                                            {requestToUpdate?.type === "SECURITY" && requestToUpdate.security && (
+                                                <SecurityRequestForm
+                                                    defaultValues={{
+                                                        location: requestToUpdate.security.location,
+                                                        additionalNotes: requestToUpdate.description ?? "",
+                                                    }}
+                                                    id={requestToUpdate.id}
+                                                    mode="update"
+                                                    onClose={() => {
+                                                        setUpdateOpen(false);
+                                                        requestsSecurity.refetch();
+                                                    }}
+                                                />
+                                            )}
+
+                                            {requestToUpdate?.type === "LANGUAGE" && requestToUpdate.language && (
+                                                <LanguageForm
+                                                    defaultValues={{
+                                                        language: requestToUpdate.language.language,
+                                                        startTime: new Date(requestToUpdate.language.startTime),
+                                                        endTime: new Date(requestToUpdate.language.endTime),
+                                                        location: requestToUpdate.language.location,
+                                                        additionalNotes: requestToUpdate.description ?? "",
+                                                    }}
+                                                    id={requestToUpdate.id}
+                                                    mode="update"
+                                                    onClose={() => {
+                                                        setUpdateOpen(false);
+                                                        requestsLanguage.refetch();
+                                                    }}
+                                                />
+                                            )}
                                         </DialogContent>
                                     </Dialog>
                                 </div>

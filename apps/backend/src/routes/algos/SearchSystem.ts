@@ -41,14 +41,12 @@ export class SearchSystem {
       );
       console.log("parking node id:", parkingNodeId);
       toParking = await this.algorithm.findPath(startId, parkingNodeId);
-      // console.log("path to parking before zod: ", toParking);
       startId = parkingNodeId;
     }
 
     // create path from start node to end node
-    // console.log("pathing from node: ", startId, "to node: ", endNodeId);
     const toDepartment = await this.algorithm.findPath(startId, endNodeId);
-    // console.log("path to dept before zod: ", toDepartment);
+    const toDepartment = await this.algorithm.findPath(startId, endNodeId);
 
     // convert pNode[] to z.array(pNodeZod)
 
@@ -62,7 +60,7 @@ export class SearchSystem {
     const floorMap = await this.getFloorMap(pathIds);
     const toDeptartmentZ = this.nodesToZods(toDepartment, floorMap);
 
-    // console.log("paths before returning: ", toParkingZ, toDeptartmentZ);
+    console.log("paths before returning: ", toParkingZ, toDeptartmentZ);
 
     const output = {
       toParking: toParkingZ ?? [],
