@@ -237,12 +237,18 @@ const FloorPlan = () => {
 
         let travelMode = google.maps.TravelMode.DRIVING;
         switch (form.transport) {
-            case "Public Transport": travelMode = google.maps.TravelMode.TRANSIT;
-            setDriving(false)
-            break;
-            case "Walking": travelMode = google.maps.TravelMode.WALKING;
-            setDriving(false)
-            break;
+            case "Public Transport":
+                travelMode = google.maps.TravelMode.TRANSIT;
+                setDriving(false)
+                break;
+            case "Walking":
+                travelMode = google.maps.TravelMode.WALKING;
+                setDriving(false)
+                break;
+            case "Driving":
+                travelMode = google.maps.TravelMode.DRIVING;
+                setDriving(true)
+                break;
         }
 
 

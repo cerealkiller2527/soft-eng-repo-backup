@@ -1,15 +1,65 @@
 toNode,fromNode,floor,building
+Emergency,entrance 2,1,Faulkner
 Emergency,a,1,Faulkner
+Blood Draw,b,1,Faulkner
+Blood Draw,a,1,Faulkner
+f,f8,1,Faulkner
+f,f7,1,Faulkner
+f11,f10,1,Faulkner
+f11,f12,1,Faulkner
+entrance 2,f1,1,Faulkner
+entrance 2,Emergency,1,Faulkner
+f5,f6,1,Faulkner
+f5,f4,1,Faulkner
+f1,f2,1,Faulkner
+f1,entrance 2,1,Faulkner
+f13,f2,1,Faulkner
+f13,f14,1,Faulkner
+f8,f7,1,Faulkner
+f8,f9,1,Faulkner
+f14,f13,1,Faulkner
+f14,f15,1,Faulkner
+f15,f17,1,Faulkner
+f15,f14,1,Faulkner
+f17,f15,1,Faulkner
+f17,f16,1,Faulkner
+f16,d,1,Faulkner
+f18,Dialysis Unit,1,Faulkner
+f18,f,1,Faulkner
+Cardiac Rehab,c,1,Faulkner
+Pre-admission,c,1,Faulkner
+Admission,a,1,Faulkner
 a,Admission,1,Faulkner
 a,Audiology,1,Faulkner
 a,Blood Draw,1,Faulkner
-Pre-admission,c,1,Faulkner
-e,d,1,Faulkner
-e,f,1,Faulkner
-d,b,1,Faulkner
-b,c,1,Faulkner
+a,Emergency,1,Faulkner
+e,f12,1,Faulkner
+c,Cardiac Rehab,1,Faulkner
+c,Pre-admission,1,Faulkner
+c,b,1,Faulkner
+Dialysis Unit,f18,1,Faulkner
+Audiology,a,1,Faulkner
 b,Blood Draw,1,Faulkner
+b,c,1,Faulkner
 b,Radiology,1,Faulkner
-f,Dialysis,1,Faulkner
-f,e,1,Faulkner
-Cardiac Rehab,c,1,Faulkner
+b,d,1,Faulkner
+f10,f9,1,Faulkner
+f10,f11,1,Faulkner
+f6,f5,1,Faulkner
+f6,f7,1,Faulkner
+f9,f8,1,Faulkner
+f9,f10,1,Faulkner
+Radiology,b,1,Faulkner
+f2,f3,1,Faulkner
+f2,f1,1,Faulkner
+f2,f3,1,Faulkner
+f7,f6,1,Faulkner
+f7,f8,1,Faulkner
+f7,f,1,Faulkner
+f3,f4,1,Faulkner
+f3,f2,1,Faulkner
+d,b,1,Faulkner
+f4,f3,1,Faulkner
+f4,f5,1,Faulkner
+f12,f11,1,Faulkner
+f12,e,1,Faulkner
