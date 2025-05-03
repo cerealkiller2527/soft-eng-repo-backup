@@ -66,13 +66,14 @@ export const searchRouter = t.router({
       );
       console.log("SEARCH.TS");
 
-      console.log('paths after calling s.path: ', paths);
+      console.log("paths after calling s.path: ", paths);
 
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];
 
       //////////////////////////////////////////////////////////////////////////////////////
       // SKIPPER'S WACK AH CODE STARTS HERE
+      // (SORRY SKIPPER I HAD TO FIX DIRECTIONS NOW THAT NODES NO LONGER HAVE DESCRIPTIONS)
       type Direction = string;
 
       function getWalkingDirections(pNodeZTs: pNodeZT[]): Direction[] {
@@ -94,14 +95,14 @@ export const searchRouter = t.router({
             next.longitude,
           );
 
-          let step = `Walk from "${current.description}" to "${next.description}"`;
+          let step = `Walk `;
+
+          step += `${Math.round(distance)} meters, heading ${compass}`;
 
           if (floorChanged) {
             const floorDirection = next.floor > current.floor ? "up" : "down";
             step += `, go ${floorDirection} to floor ${next.floor}`;
           }
-
-          step += ` (${Math.round(distance)} meters, heading ${compass})`;
 
           directions.push(step);
         }
