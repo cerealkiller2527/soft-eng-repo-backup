@@ -43,10 +43,10 @@ export default function TransportRequestDisplay() {
     };
 
     const trpc = useTRPC();
-    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
-    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
-    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
-    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({assigned: false}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({assigned: false}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({assigned: false}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({assigned: false}));
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
 
     function getEmployeeName(id: number): string {
@@ -71,9 +71,10 @@ export default function TransportRequestDisplay() {
 
     const filteredData = combinedData.filter((req) => {
         const filterLower = filter.toLowerCase();
+        const employeeName = getEmployeeName(Number(req.fromEmployeeID));
         return (
             req.type.toLowerCase().includes(filterLower) ||
-            req.fromEmployee.toLowerCase().includes(filterLower) ||
+            employeeName.toLowerCase().includes(filterLower) ||
             req.priority.toLowerCase().includes(filterLower) ||
             req.status.toLowerCase().includes(filterLower)
         );
@@ -261,7 +262,7 @@ export default function TransportRequestDisplay() {
                                                         className="odd:bg-white even:bg-gray-100 cursor-pointer hover:outline-[#012D5A] hover:outline-4 transition"
                                                     >
                                                         <TableCell>{req.type}</TableCell>
-                                                        <TableCell>{req.fromEmployee}</TableCell>
+                                                        <TableCell>{getEmployeeName(Number(req.fromEmployeeID))}</TableCell>
                                                         <TableCell>{getEmployeeName(Number(req.assignedEmployeeID))}</TableCell>                                                        <TableCell>{req.priority}</TableCell>
                                                         <TableCell>{req.description}</TableCell>
                                                         <TableCell>{req.status}</TableCell>
@@ -274,7 +275,7 @@ export default function TransportRequestDisplay() {
                                                                     <h3 className="text-lg font-semibold text-primary">Request Details</h3>
                                                                     <hr />
                                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-800">
-                                                                        <p><span className="font-medium text-primary">Requested By:</span> {req.fromEmployee}</p>
+                                                                        <p><span className="font-medium text-primary">Requested By:</span> {getEmployeeName(Number(req.fromEmployeeID))}</p>
                                                                         <p><span className="font-medium text-black">Assigned To: </span>{getEmployeeName(Number(req.assignedEmployeeID))}</p>
                                                                         <p><span className="font-medium text-black">Priority:</span> {req.priority}</p>
                                                                         <p><span className="font-medium text-black">Status:</span> {req.status}</p>

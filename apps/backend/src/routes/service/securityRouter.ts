@@ -11,39 +11,87 @@ export const securityRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
+        username: z.string().optional(),
+        assigned: z.boolean(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { location, additionalNotes, priority, status } = input;
+      const {
+        location,
+        additionalNotes,
+        priority,
+        status,
+        username,
+        assigned,
+      } = input;
       if (ctx.role === "admin") {
-        return PrismaClient.serviceRequest.findMany({
-          where: {
-            type: RequestType.SECURITY,
-            ...(location && { security: { location: location } }),
-            ...(additionalNotes && { additionalNotes: additionalNotes }),
-            ...(priority && { priority: priority as Priority }),
-            ...(status && { status: status as Status }),
-          },
-          include: {
-            security: true,
-            assignedTo: true,
-          },
-        });
+        if (assigned) {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.SECURITY,
+              ...(location && { security: { location: location } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              ...(username && { assignedTo: { username: username } }),
+            },
+            include: {
+              security: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        } else {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.SECURITY,
+              ...(location && { security: { location: location } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              ...(username && { fromEmployee: { username: username } }),
+            },
+            include: {
+              security: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        }
       } else {
-        return PrismaClient.serviceRequest.findMany({
-          where: {
-            type: RequestType.SECURITY,
-            ...(location && { security: { location: location } }),
-            ...(additionalNotes && { additionalNotes: additionalNotes }),
-            ...(priority && { priority: priority as Priority }),
-            ...(status && { status: status as Status }),
-            fromEmployee: ctx.username || "",
-          },
-          include: {
-            security: true,
-            assignedTo: true,
-          },
-        });
+        if (assigned) {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.SECURITY,
+              ...(location && { security: { location: location } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              assignedTo: { username: ctx.username ?? undefined },
+            },
+            include: {
+              security: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        } else {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.SECURITY,
+              ...(location && { security: { location: location } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              fromEmployee: { username: ctx.username ?? undefined },
+            },
+            include: {
+              security: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        }
       }
     }),
 
@@ -62,13 +110,24 @@ export const securityRouter = t.router({
       if (employeeID != undefined) {
         status = Status.ASSIGNED;
       }
+      if (!ctx.username) {
+        throw new Error("Username does not exist!");
+      }
+      const employee = await PrismaClient.employee.findUnique({
+        where: {
+          username: ctx.username,
+        },
+      });
+      if (!employee) {
+        throw new Error("Employee not found");
+      }
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.SECURITY,
           dateCreated: new Date(Date.now()),
           status: status,
           description: additionalNotes,
-          fromEmployee: ctx.username || "",
+          fromEmployeeID: employee.id,
           priority: priority as Priority,
           ...(employeeID && { assignedEmployeeID: employeeID }),
         },
