@@ -191,8 +191,8 @@ const FloorPlan = () => {
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endDeptName: form?.destination ?? "",
-        dropOffLatitude: address.lat ?? 0,
-        dropOffLongitude : address.lng ?? 0,
+        dropOffLatitude: endMapsLocation.lat ?? 0,
+        dropOffLongitude : endMapsLocation.lng ?? 0,
         driving: driving,
     },
 
