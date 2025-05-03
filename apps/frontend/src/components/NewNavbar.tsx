@@ -19,9 +19,9 @@ type AlgorithmType = "BFS" | "DFS";
 const primaryLink = { title: "Navigation", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
 const moreItems = [
-    { title: "CSV Import", href: "/csv", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
-    { title: "Map Editor", href: "/mapeditor", show: (u) => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
-    { title: "Service Requests", href: "/ServiceRequest", show: (u) => u.isSignedIn },
+    { title: "CSV Import", href: "/csv", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
+    { title: "Map Editor", href: "/mapeditor", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
+    { title: "Service Requests", href: "/ServiceRequest", show: u => u.isSignedIn },
     { title: "About", href: "/about", show: () => true },
     { title: "Credits", href: "/credits", show: () => true },
 ];
@@ -35,7 +35,10 @@ export default function NewNavbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
     const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
+
+    // More dropdown hover/click state without ref
     const [moreOpen, setMoreOpen] = useState(false);
+    const [moreClicked, setMoreClicked] = useState(false);
 
     const {
         data: currentAlgorithm,
@@ -84,50 +87,65 @@ export default function NewNavbar() {
                         {directoryLink.title}
                     </Link>
 
-                    {/* More menu opens on hover, transparent background */}
-                    <div
-                        className="relative"
-                        onMouseEnter={() => setMoreOpen(true)}
-                        onMouseLeave={() => setMoreOpen(false)}
+                    {/* More dropdown with hover+click stability using onOpenChange */}
+                    <MenubarMenu
+                        open={moreOpen}
+                        onOpenChange={open => {
+                            setMoreOpen(open);
+                            if (!open) setMoreClicked(false);
+                        }}
                     >
-                        <MenubarMenu open={moreOpen} onOpenChange={setMoreOpen}>
-                            <MenubarTrigger className="px-4 py-2 rounded-none text-lg bg-transparent font-normal hover:cursor-pointer focus:outline-none focus:bg-transparent data-[state=open]:bg-transparent">
-                                More
-                            </MenubarTrigger>
-                            <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
-                                {moreItems
-                                    .filter((item) => item.show(auth))
-                                    .map((item) => (
-                                        <MenubarItem key={item.href}>
-                                            <Link
-                                                to={item.href}
-                                                className="block w-full text-left py-2 px-4 text-black"
-                                            >
-                                                {item.title}
-                                            </Link>
-                                        </MenubarItem>
-                                    ))}
-                            </MenubarContent>
-                        </MenubarMenu>
-                    </div>
+                        <MenubarTrigger
+                            onClick={() => {
+                                setMoreClicked(prev => !prev);
+                                setMoreOpen(true);
+                            }}
+                            onMouseEnter={() => !moreClicked && setMoreOpen(true)}
+                            onMouseLeave={() => !moreClicked && setMoreOpen(false)}
+                            className="px-4 py-2 rounded-none text-lg bg-background font-normal hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                        >
+                            More
+                        </MenubarTrigger>
+                        <MenubarContent
+                            align="end"
+                            className="border rounded-none shadow-md bg-white"
+                            onMouseEnter={() => !moreClicked && setMoreOpen(true)}
+                            onMouseLeave={() => !moreClicked && setMoreOpen(false)}
+                        >
+                            {moreItems
+                                .filter(item => item.show(auth))
+                                .map(item => (
+                                    <MenubarItem key={item.href}>
+                                        <Link
+                                            to={item.href}
+                                            className="block w-full text-left py-2 px-4 text-black"
+                                        >
+                                            {item.title}
+                                        </Link>
+                                    </MenubarItem>
+                                ))}
+                        </MenubarContent>
+                    </MenubarMenu>
 
+                    {/* Profile dropdown */}
                     {isSignedIn ? (
                         <MenubarMenu>
-                            <MenubarTrigger className="p-2 rounded-full text-black bg-transparent hover:cursor-pointer focus:outline-none focus:bg-transparent data-[state=open]:bg-transparent">
+                            <MenubarTrigger
+                                className="p-2 rounded-full text-black bg-background hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                            >
                                 <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
                             <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
                                 {user?.publicMetadata?.role === "admin" && (
-                                    <MenubarItem key="toggle-alg">
+                                    <MenubarItem>
                                         {isAlgLoading ? (
-                                            <button disabled className="w-full text-left py-2 px-4">
+                                            <button disabled className="block w-full py-2 px-4 text-left">
                                                 Loading…
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={() => toggleAlgo.mutate({ algorithm: nextAlg })}
-                                                disabled={isAlgLoading}
-                                                className="w-full text-left py-2 px-4"
+                                                className="block w-full py-2 px-4 text-left"
                                             >
                                                 Switch to {nextAlg}
                                             </button>
@@ -135,14 +153,17 @@ export default function NewNavbar() {
                                     </MenubarItem>
                                 )}
                                 <MenubarItem>
-                                    <Link to="/profile" className="block w-full text-left py-2 px-4 text-black hover:bg-accent">
+                                    <Link
+                                        to="/profile"
+                                        className="block w-full py-2 px-4 text-black hover:bg-accent"
+                                    >
                                         My Profile
                                     </Link>
                                 </MenubarItem>
                                 <MenubarItem>
                                     <button
                                         onClick={() => signOut()}
-                                        className="w-full text-left py-2 px-4 text-black"
+                                        className="block w-full py-2 px-4 text-left text-black"
                                     >
                                         Log Out
                                     </button>
