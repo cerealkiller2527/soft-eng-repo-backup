@@ -188,7 +188,6 @@ const FloorPlan = () => {
     }, [instructions, form]);
 
 
-
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endDeptName: form?.destination ?? "",
@@ -210,6 +209,7 @@ const FloorPlan = () => {
                 longitude: endMapsLocation.lng,
                 floor: 1,
             };
+
             const formattedCoords = search.data.path.toParking.map((node) => ({
                 latitude: node.latitude,
                 longitude: node.longitude,
@@ -220,7 +220,15 @@ const FloorPlan = () => {
                 longitude: node.longitude,
                 floor: node.floor,
             }));
-            setPathCoords([startPoint, ...formattedCoords, ...formattedCoords2]);
+            const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
+            console.log("Valid end location: ", hasValidEndLocation);
+            console.log("End location: ", endMapsLocation);
+            const path = [
+                ...(hasValidEndLocation ? [startPoint] : []),
+                ...(hasValidEndLocation ? formattedCoords : []),
+                ...formattedCoords2
+            ];
+            setPathCoords(path);
 
             console.log(formattedCoords);
             setInstructions((prev) => [...prev, ...search.data.directions]);
