@@ -1,5 +1,5 @@
 description,lat,long,type,floor,building,outside
 2 stairs,42.09258689007955,-71.26684339,Staircase,2,22 Patriot Place,FALSE
-2 elevator,42.09264923,-71.26672834,Elevator,2,22 Patriot Place,FALSE
+Floor Two Elevator,42.09264923,-71.26672834,Elevator,2,22 Patriot Place,FALSE
 a,42.09261467051518,-71.26667355,Intermediary,2,22 Patriot Place,FALSE
 b,42.09255708,-71.26676577,Intermediary,2,22 Patriot Place,FALSE

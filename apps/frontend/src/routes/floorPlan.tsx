@@ -10,12 +10,26 @@ import { DirectionsButton } from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { NodeTypeZod } from "common/src/ZodSchemas.ts";
+const typeEnum = NodeTypeZod;
 
 type formType = {
     location: string;
     destination: string;
     transport: string;
     building: string;
+};
+
+type Node = {
+    id: number;
+    latitude: number;
+    longitude: number;
+    description: string;
+    suite: string;
+    type: string;
+    outside: boolean;
+    floor: number;
+    departmentId?: number;
 };
 
 const FloorPlan = () => {
@@ -68,6 +82,7 @@ const FloorPlan = () => {
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
     const [activeTab, setActiveTab] = useState("request");
     const polylineRef2 = useRef<google.maps.Polyline | null>(null);
+    const [markers, setMarkers] = useState<google.maps.marker.AdvancedMarkerElement[]>([]);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -119,6 +134,8 @@ const FloorPlan = () => {
                 polylineRef2.current.setMap(null);
                 polylineRef2.current = null;
             }
+            markers.forEach(marker => marker.map = null);
+            setMarkers([]);
         };
         cleanup();
 
@@ -519,6 +536,136 @@ const FloorPlan = () => {
         setImageIndex(nextIndex);
     };
 
+    const getImageFromNodeType = (type: string): string => {
+        const images = {
+            Entrance: "/map-pins/BlueDoorNOBG.png",
+            Intermediary: "/map-pins/BasicLocationNOBG.png",
+            Staircase: "/map-pins/BlueStairNOBG.png",
+            Elevator: "/map-pins/BlueElevatorNOBG.png",
+            Location: "/map-pins/LocationIconNOBG.png",
+            Help_Desk: "/map-pins/BlueHelpNOBG.png",
+            Parking: "/map-pins/ParkingIconNOBG.png",
+        };
+        return images[type] || "/map-pins/BasicLocationNOBG.png";
+    };
+
+    useEffect(() => {
+        if (!mapInstance.current || !AdvancedMarker || !Pin) return;
+
+        // Clear existing markers
+        const cleanupMarkers = () => {
+            markers.forEach(marker => {
+                if (marker?.map) marker.map = null;
+            });
+            setMarkers([]);
+        };
+
+        if (!search.data?.path) {
+            cleanupMarkers();
+            return;
+        }
+
+        const currentFloor = imageIndex + 1;
+
+        const createMarker = (node: Node) => {
+            if (!node?.latitude || !node?.longitude || node.floor !== currentFloor) return null;
+
+            const pinElement = document.createElement("div");
+            const img = document.createElement("img");
+            img.src = getImageFromNodeType(node.type);
+            img.alt = node.type;
+            img.style.width = "40px";
+            img.style.height = "40px";
+            img.style.objectFit = "contain";
+            img.style.zIndex = "1000";
+            pinElement.appendChild(img);
+
+            const marker = new AdvancedMarker({
+                position: { lat: node.latitude, lng: node.longitude },
+                map: mapInstance.current,
+                content: pinElement,
+            });
+
+            marker.addListener("click", () => {
+                infoWindow?.setContent(node.description || node.type);
+                infoWindow?.open({
+                    anchor: marker,
+                    map: mapInstance.current,
+                });
+            });
+
+            return marker;
+        };
+
+        const processPathData = () => {
+            const newMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
+            const { toDepartment, toParking } = search.data.path;
+
+            // Always show elevator nodes on current floor
+            const allPathNodes = [
+                ...(Array.isArray(toDepartment) ? toDepartment : []),
+                ...(Array.isArray(toParking) ? toParking : [])
+            ];
+
+            // Find elevator nodes on current floor
+            const elevatorNodes = allPathNodes.filter(n =>
+                n.type === "Elevator" && n.floor === currentFloor
+            );
+
+            // Add elevator markers
+            elevatorNodes.forEach(node => {
+                newMarkers.push(createMarker(node));
+            });
+
+            // Walking mode - final destination
+            if (!driving) {
+                const destinationPath = Array.isArray(toDepartment) ? toDepartment : [];
+                const finalNode = [...destinationPath].reverse().find(n =>
+                    n.type === "Location" && n.floor === currentFloor
+                );
+
+                if (finalNode) newMarkers.push(createMarker(finalNode));
+
+                // Show drop-off only on first floor
+                if (currentFloor === 1) {
+                    const dropOffNode = destinationPath.find(n =>
+                        n.type === "Intermediary" && n.floor === 1
+                    );
+                    if (dropOffNode) newMarkers.push(createMarker(dropOffNode));
+                }
+            }
+            // Driving mode - parking and final destination
+            else {
+                const parkingPath = Array.isArray(toParking) ? toParking : [];
+                const destinationPath = Array.isArray(toDepartment) ? toDepartment : [];
+
+                const parkingNode = [...parkingPath].reverse().find(n =>
+                    n.type === "Parking" && n.floor === currentFloor
+                );
+
+                const finalNode = [...destinationPath].reverse().find(n =>
+                    n.type === "Location" && n.floor === currentFloor
+                );
+
+                if (parkingNode) newMarkers.push(createMarker(parkingNode));
+                if (finalNode) newMarkers.push(createMarker(finalNode));
+            }
+
+            return newMarkers.filter(Boolean) as google.maps.marker.AdvancedMarkerElement[];
+        };
+
+        const debounceTimer = setTimeout(() => {
+            cleanupMarkers();
+            const validMarkers = processPathData();
+            setMarkers(validMarkers);
+        }, 100);
+
+        return () => {
+            clearTimeout(debounceTimer);
+            cleanupMarkers();
+        };
+    }, [search.data, driving, imageIndex, AdvancedMarker, Pin, infoWindow]);
+
     return (
         <Layout>
             <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
@@ -532,9 +679,9 @@ const FloorPlan = () => {
                     />
 
                     {/* Combined tabs and controls container */}
-                    <div className="absolute top-4 left-4 z-10 w-80 space-y-2">
+                    <div className="absolute top-4 left-4 z-10 w-80 space-y-2 bg-white shadow-md">
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="grid w-full grid-cols-2 bg-white">
+                            <TabsList className="grid w-full grid-cols-2 chart-4">
                                 <TabsTrigger
                                     value="request"
                                     className="data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -550,21 +697,19 @@ const FloorPlan = () => {
                             </TabsList>
 
                             <TabsContent value="request" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-md">
-                                    <LocationRequestForm
-                                        onSubmit={(form) => {
-                                            setForm(form);
-                                            if (instructions.length > 0) {
-                                                setActiveTab("directions");
-                                            }
-                                        }}
-                                        initialForm={form}
-                                    />
-                                </div>
+                                <LocationRequestForm
+                                    onSubmit={(form) => {
+                                        setForm(form);
+                                        if (instructions.length > 0) {
+                                            setActiveTab("directions");
+                                        }
+                                    }}
+                                    initialForm={form}
+                                />
                             </TabsContent>
 
                             <TabsContent value="directions" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-120 relative">
+                                <div className="bg-white p-4 shadow-lg h-120 relative">
                                     <InstructionsBox key={instructions.join()} instructions={ instructions } />
                                     <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
@@ -572,22 +717,22 @@ const FloorPlan = () => {
                                 </div>
                             </TabsContent>
                         </Tabs>
+                    </div>
 
-                        {/* Floor and view mode buttons - now under tabs */}
-                        <div className="grid grid-cols-2 gap-2">
-                            <Button
-                                onClick={handleImageSwitch}
-                                className="w-full bg-primary hover:bg-primary/90"
-                            >
-                                Floor: {imageIndex + 1}
-                            </Button>
-                            <Button
-                                onClick={toggleCenterMode}
-                                className="w-full bg-primary hover:bg-primary/90"
-                            >
-                                {centerMode}
-                            </Button>
-                        </div>
+                    {/* Floor Button Cycling */}
+                    <div className="absolute grid grid-cols-2 gap-2 top-5 right-5">
+                        <Button
+                            onClick={handleImageSwitch}
+                            className="w-full bg-primary hover:bg-primary/90"
+                        >
+                            Floor: {imageIndex + 1}
+                        </Button>
+                        <Button
+                            onClick={toggleCenterMode}
+                            className="w-full bg-primary hover:bg-primary/90"
+                        >
+                            {centerMode}
+                        </Button>
                     </div>
                 </div>
             </div>

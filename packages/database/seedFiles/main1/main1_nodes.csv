@@ -1,8 +1,8 @@
 description,lat,long,type,floor,building,outside
-parking,42.33531213,-71.10617028,Parking,1,Main Campus,FALSE
+Parking,42.33531213,-71.10617028,Parking,1,Main Campus,FALSE
 b,42.33515839,-71.10604948,Intermediary,1,Main Campus,TRUE
 d,42.33557759,-71.10578589,Intermediary,1,Main Campus,FALSE
-1 elevator,42.3356367,-71.10586982,Elevator,1,Main Campus,FALSE
+Floor One Elevator,42.3356367,-71.10586982,Elevator,1,Main Campus,FALSE
 i,42.33511299,-71.1061062,Intermediary,1,Main Campus,TRUE
 f,42.33547076,-71.10609562,Intermediary,1,Main Campus,TRUE
 k,42.33534648,-71.10605176,Intermediary,1,Main Campus,TRUE
