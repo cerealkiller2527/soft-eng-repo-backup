@@ -1,6 +1,6 @@
 description,lat,long,type,floor,building,outside
 Primary Care,42.09261407225078,-71.26662354,Location,4,22 Patriot Place,FALSE
-4 elevator,42.09263301817176,-71.26673416,Elevator,4,22 Patriot Place,FALSE
+Floor Four Elevator,42.09263301817176,-71.26673416,Elevator,4,22 Patriot Place,FALSE
 b,42.09256155096976,-71.26679458,Intermediary,4,22 Patriot Place,FALSE
 a,42.09258573,-71.26675923,Intermediary,4,22 Patriot Place,FALSE
 Blood Draw/Phlebotomy,42.09257587562318,-71.26668585,Location,4,22 Patriot Place,FALSE

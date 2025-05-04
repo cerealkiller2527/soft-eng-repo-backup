@@ -18,7 +18,7 @@ m1,2e,2,Main Campus
 m2,2e,2,Main Campus
 m2,2d,2,Main Campus
 ,2k,2,Main Campus
-,2 elevator,2,Main Campus
+,Floor Two Elevator,2,Main Campus
 ,2l,2,Main Campus
 m4,2q,2,Main Campus
 m4,Thoracic Surgery Center,2,Main Campus
@@ -37,8 +37,8 @@ Jen Center for Primary Care,Lee Bell Center,2,Main Campus
 Thoracic Surgery Center,m4,2,Main Campus
 2q,International Patient Center,2,Main Campus
 2q,m4,2,Main Campus
-2 elevator,2n,2,Main Campus
-2 elevator,,2,Main Campus
+Floor Two Elevator,2n,2,Main Campus
+Floor Two Elevator,,2,Main Campus
 2e,2f,2,Main Campus
 2e,m1,2,Main Campus
 2e,m2,2,Main Campus
@@ -58,7 +58,7 @@ Center for Chest Diseases,m4,2,Main Campus
 "Ear, Nose, Throat",2k,2,Main Campus
 "Ear, Nose, Throat",2j,2,Main Campus
 2n,2m,2,Main Campus
-2n,2 elevator,2,Main Campus
+2n,Floor Two Elevator,2,Main Campus
 Lee Bell Center,Jen Center for Primary Care,2,Main Campus
 Lee Bell Center,2h,2,Main Campus
 2c,2d,2,Main Campus
