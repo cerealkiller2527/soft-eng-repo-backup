@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
-import {useMutation, useQuery} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import { queryClient } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
-import {DirectionsButton} from "@/components/DirectionsButton.tsx";
+import { DirectionsButton } from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,6 +48,9 @@ const FloorPlan = () => {
     const [pathCoords, setPathCoords] = useState([
         { latitude: .00, longitude: .00, floor: 1 },
     ]);
+    const [pathCoords2, setPathCoords2] = useState([
+        { latitude: .00, longitude: .00, floor: 1 },
+    ]);
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
     const [AdvancedMarker, setAdvancedMarker] = useState<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
     const [Pin, setPin] = useState<typeof google.maps.marker.PinElement | null>(null);
@@ -63,6 +66,7 @@ const FloorPlan = () => {
     };
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
     const [activeTab, setActiveTab] = useState("request");
+    const polylineRef2 = useRef<google.maps.Polyline | null>(null);
 
 
 
@@ -102,59 +106,91 @@ const FloorPlan = () => {
     useEffect(() => {
         if (!mapInstance.current) return;
 
-        // Remove the previous polyline if it exists
+        // Remove previous polylines
         if (polylineRef.current) {
             polylineRef.current.setMap(null);
             polylineRef.current = null;
         }
+        if (polylineRef2.current) {
+            polylineRef2.current.setMap(null);
+            polylineRef2.current = null;
+        }
 
-        // Filter the pathCoords to only those matching the current floor
-        const filteredCoords = pathCoords
-            .filter(node => node.floor === imageIndex + 1) // assuming floor index starts from 1
-            .map(node => ({ lat: node.latitude, lng: node.longitude }));
-
-        if (filteredCoords.length < 2) return; // Need at least 2 points to draw a line
-        console.log(filteredCoords);
-
-
-        const lineSymbol = {
-            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-            scale: 3,
-        };
-
-        // Create and display new polyline
-        const polyline = new google.maps.Polyline({
-            path: filteredCoords,
-            geodesic: true,
-            strokeColor: "#00d9ff",
-            strokeOpacity: 1.0,
-            strokeWeight: 4,
-            icons: [
-                {
-                    icon: lineSymbol,
-                    offset: "100%",
-                }
-            ]
-        });
-
+        // Arrow animation function
         function animateArrow(line: google.maps.Polyline) {
             let count = 0;
-
             window.setInterval(() => {
                 count = (count + 1) % 200;
-
                 const icons = line.get("icons");
-
                 icons[0].offset = count / 2 + "%";
                 line.set("icons", icons);
             }, 20);
         }
 
-        polyline.setMap(mapInstance.current);
-        polylineRef.current = polyline;
-        animateArrow(polyline)
-        console.log("polyline rendered")
-    }, [pathCoords, imageIndex]);
+        // First polyline (to parking)
+        const filteredCoords = pathCoords
+            .filter(node => node.floor === imageIndex + 1)
+            .map(node => ({ lat: node.latitude, lng: node.longitude }));
+
+        if (filteredCoords.length >= 2) {
+            const lineSymbol = {
+                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                scale: 3,
+            };
+
+            // Check if this is the final destination point
+            if (filteredCoords[filteredCoords.length - 1].lat === endMapsLocation.lat &&
+                filteredCoords[filteredCoords.length - 1].lng === endMapsLocation.lng) {
+                lineSymbol.path = google.maps.SymbolPath.FORWARD_OPEN_ARROW;
+                lineSymbol.scale = 5;
+            }
+
+            const polyline = new google.maps.Polyline({
+                path: filteredCoords,
+                geodesic: true,
+                strokeColor: "#00d9ff",
+                strokeOpacity: 1.0,
+                strokeWeight: 4,
+                icons: [{
+                    icon: lineSymbol,
+                    offset: "100%",
+                }]
+            });
+            polyline.setMap(mapInstance.current);
+            polylineRef.current = polyline;
+            animateArrow(polyline);
+        }
+
+        // Second polyline (to department)
+        const filteredCoords2 = pathCoords2
+            .filter(node => node.floor === imageIndex + 1)
+            .map(node => ({ lat: node.latitude, lng: node.longitude }));
+
+        if (filteredCoords2.length >= 2) {
+            const lineSymbol2 = {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 3,
+                fillColor: "#FF0000",
+                fillOpacity: 1.0,
+                strokeWeight: 1
+            };
+
+            const polyline2 = new google.maps.Polyline({
+                path: filteredCoords2,
+                geodesic: true,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 4,
+                icons: [{
+                    icon: lineSymbol2,
+                    offset: "100%",
+                }]
+            });
+            polyline2.setMap(mapInstance.current);
+            polylineRef2.current = polyline2;
+            animateArrow(polyline2);
+        }
+    }, [pathCoords, pathCoords2, imageIndex, endMapsLocation]);
 
     useEffect(() => {
         if (!mapInstance.current) return;
@@ -196,9 +232,7 @@ const FloorPlan = () => {
     const searchKey = trpc.search.getPath.queryKey()
 
     useEffect(() => {
-        console.log("Search results:", search.data);
         if (search.data) {
-            console.log("Search results:", search.data.path);
             const startPoint = {
                 latitude: endMapsLocation.lat,
                 longitude: endMapsLocation.lng,
@@ -210,26 +244,23 @@ const FloorPlan = () => {
                 longitude: node.longitude,
                 floor: node.floor,
             }));
+
             const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
                 latitude: node.latitude,
                 longitude: node.longitude,
                 floor: node.floor,
             }));
+
             const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
-            console.log("Valid end location: ", hasValidEndLocation);
-            console.log("End location: ", endMapsLocation);
             const path = [
                 ...(hasValidEndLocation ? [startPoint] : []),
                 ...(hasValidEndLocation ? formattedCoords : []),
-                ...formattedCoords2
             ];
+
             setPathCoords(path);
-
-            console.log(formattedCoords);
+            setPathCoords2(formattedCoords2);
             setInstructions((prev) => [...prev, ...search.data.directions]);
-
         }
-
     }, [search.data]);
 
 
@@ -397,8 +428,8 @@ const FloorPlan = () => {
                             </TabsContent>
 
                             <TabsContent value="directions" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-136 relative">
-                                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-120 relative">
+                                    <InstructionsBox key={instructions.join()} instructions={ instructions } />
                                     <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
                                     </div>
