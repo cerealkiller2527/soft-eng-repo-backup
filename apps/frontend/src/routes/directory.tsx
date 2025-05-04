@@ -232,6 +232,8 @@ const DirectoryPage: React.FC = () => {
         }
 
         setIsTyping(false);
+        setChatInput("");
+
     };
 
     if (isLoading || !departments) {
@@ -329,7 +331,7 @@ const DirectoryPage: React.FC = () => {
                             onClick={() => {
                                 if (isSignedIn) {
                                     navigate("/profile");
-                                    setChatOpen(false); // optional: close chatbot
+                                    setChatOpen(false);
                                 } else {
                                     alert("Please log in to view your profile.");
                                 }
@@ -394,6 +396,7 @@ const DirectoryPage: React.FC = () => {
                                         >
                                             {msg.message}
                                         </div>
+                                        {/*
                                         {msg.role === "user" && (
                                             <img
                                                 src="/user-avatar.png"
@@ -401,6 +404,7 @@ const DirectoryPage: React.FC = () => {
                                                 className="w-8 h-8 rounded-full border border-gray-300"
                                             />
                                         )}
+                                        */}
                                     </div>
                                 ))}
                                 <div ref={chatBoxRef} />
