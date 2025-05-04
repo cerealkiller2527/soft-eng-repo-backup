@@ -147,6 +147,7 @@ export class SearchSystem {
       latitude: node.latitude,
       floor: floorMap.get(node.id) ?? -1,
       outside: false,
+      type: node.type,
       neighbors: node.neighbors.map((neighbor) => neighbor.id),
     }));
 
