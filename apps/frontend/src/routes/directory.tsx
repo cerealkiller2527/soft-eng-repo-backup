@@ -299,13 +299,14 @@ const DirectoryPage: React.FC = () => {
                     onClick={() => setChatOpen(!chatOpen)}
                     className="rounded-full p-4 bg-[#012D5A] hover:bg-[#01356A]"
                 >
-                    <Bot className="h-6 w-6 text-white" />
+                    <Bot className="w-5 h-5 text-white" />
                 </Button>
+
             </div>
 
             {/* chat opens */}
             {chatOpen && (
-                <div className="fixed bottom-24 right-6 w-80 h-[500px] bg-white shadow-lg border rounded-lg flex flex-col overflow-hidden z-50">
+                <div className="fixed bottom-24 right-6 w-[360px] h-[500px] bg-white shadow-xl border border-gray-200 rounded-2xl flex flex-col overflow-hidden z-50">
                     <div className="flex-1 overflow-y-auto p-3 space-y-2">
                         {chatHistory.map((msg, idx) => (
                             <div
