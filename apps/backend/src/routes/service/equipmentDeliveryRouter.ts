@@ -13,6 +13,8 @@ export const equipmentDeliveryRouter = t.router({
         additionalNotes: z.string().optional(),
         priority: z.nativeEnum(Priority).optional(),
         status: z.nativeEnum(Status).optional(),
+        username: z.string().optional(),
+        assigned: z.boolean(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -23,44 +25,93 @@ export const equipmentDeliveryRouter = t.router({
         additionalNotes,
         priority,
         status,
+        username,
+        assigned,
       } = input;
       if (ctx.role === "admin") {
-        return PrismaClient.serviceRequest.findMany({
-          where: {
-            type: RequestType.EQUIPMENTDELIVERY,
-            ...(deadline && { equipmentDelivery: { deadline: deadline } }),
-            ...(equipment && {
-              equipmentDelivery: { equipments: { hasSome: equipment } },
-            }),
-            ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
-            ...(additionalNotes && { additionalNotes: additionalNotes }),
-            ...(priority && { priority: priority as Priority }),
-            ...(status && { status: status as Status }),
-          },
-          include: {
-            equipmentDelivery: true,
-            assignedTo: true,
-          },
-        });
+        if (assigned) {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.EQUIPMENTDELIVERY,
+              ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+              ...(username && { assignedTo: { username: username } }),
+              ...(equipment && {
+                equipmentDelivery: { equipments: { hasSome: equipment } },
+              }),
+              ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+            },
+            include: {
+              equipmentDelivery: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        } else {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.EQUIPMENTDELIVERY,
+              ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+              ...(username && { fromEmployee: { username: username } }),
+              ...(equipment && {
+                equipmentDelivery: { equipments: { hasSome: equipment } },
+              }),
+              ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+            },
+            include: {
+              equipmentDelivery: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        }
       } else {
-        return PrismaClient.serviceRequest.findMany({
-          where: {
-            type: RequestType.EQUIPMENTDELIVERY,
-            ...(deadline && { equipmentDelivery: { deadline: deadline } }),
-            ...(equipment && {
-              equipmentDelivery: { equipments: { hasSome: equipment } },
-            }),
-            ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
-            ...(additionalNotes && { additionalNotes: additionalNotes }),
-            ...(priority && { priority: priority as Priority }),
-            ...(status && { status: status as Status }),
-            fromEmployee: ctx.username ?? undefined,
-          },
-          include: {
-            equipmentDelivery: true,
-            assignedTo: true,
-          },
-        });
+        if (assigned) {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.EQUIPMENTDELIVERY,
+              ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+              ...(equipment && {
+                equipmentDelivery: { equipments: { hasSome: equipment } },
+              }),
+              ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              assignedTo: { username: ctx.username ?? undefined },
+            },
+            include: {
+              equipmentDelivery: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        } else {
+          return PrismaClient.serviceRequest.findMany({
+            where: {
+              type: RequestType.EQUIPMENTDELIVERY,
+              ...(deadline && { equipmentDelivery: { deadline: deadline } }),
+              ...(equipment && {
+                equipmentDelivery: { equipments: { hasSome: equipment } },
+              }),
+              ...(toWhere && { equipmentDelivery: { toWhere: toWhere } }),
+              ...(additionalNotes && { additionalNotes: additionalNotes }),
+              ...(priority && { priority: priority as Priority }),
+              ...(status && { status: status as Status }),
+              fromEmployee: { username: ctx.username ?? undefined },
+            },
+            include: {
+              equipmentDelivery: true,
+              assignedTo: true,
+              fromEmployee: true,
+            },
+          });
+        }
       }
     }),
 
@@ -88,13 +139,24 @@ export const equipmentDeliveryRouter = t.router({
       if (employeeID != undefined) {
         status = Status.ASSIGNED;
       }
+      if (!ctx.username) {
+        throw new Error("Username does not exist!");
+      }
+      const employee = await PrismaClient.employee.findUnique({
+        where: {
+          username: ctx.username,
+        },
+      });
+      if (!employee) {
+        throw new Error("Employee not found");
+      }
       const serviceRequest = await PrismaClient.serviceRequest.create({
         data: {
           type: RequestType.EQUIPMENTDELIVERY,
           dateCreated: new Date(Date.now()),
           status: status,
           description: additionalNotes,
-          fromEmployee: ctx.username || "",
+          fromEmployeeID: employee.id,
           priority: priority as Priority,
           ...(employeeID && { assignedEmployeeID: employeeID }),
         },

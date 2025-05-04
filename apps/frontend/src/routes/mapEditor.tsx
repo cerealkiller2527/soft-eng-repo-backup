@@ -309,7 +309,7 @@ const MapEditor = () => {
                         { lat: toNode.x, lng: toNode.y },
                     ],
                     strokeColor: "#0A75C2FF", // Chart-2 on style guide
-                    strokeWeight: 3,
+                    strokeWeight: 10,
                     map: mapInstance.current,
                 });
 

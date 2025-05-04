@@ -1,15 +1,34 @@
 description,lat,long,type,floor,building,outside
-Emergency,42.30168649,-71.12785344,Location,1,Faulkner,FALSE
-a,42.30161833,-71.12790829,Intermediary,1,Faulkner,FALSE
-Pre-admission,42.30147271,-71.12816531,Location,1,Faulkner,FALSE
-e,42.3012168,-71.12762714,Parking,1,Faulkner,TRUE
-d,42.30130413,-71.12776036,Intermediary,1,Faulkner,FALSE
-b,42.30145763,-71.12806725,Intermediary,1,Faulkner,FALSE
-f,42.30169925,-71.12722739,Intermediary,1,Faulkner,TRUE
-Audiology,42.30170072,-71.12805525,Location,1,Faulkner,FALSE
-Blood Draw,42.30154826,-71.12798446,Location,1,Faulkner,FALSE
-Radiology,42.30131305,-71.12820621,Location,1,Faulkner,FALSE
-Cardiac Rehab,42.30155289,-71.12816624,Location,1,Faulkner,FALSE
-Dialysis,42.30173125,-71.12716943,Location,1,Faulkner,FALSE
-Admission,42.30157119,-71.12788428,Location,1,Faulkner,FALSE
-c,42.30152205,-71.12818297,Intermediary,1,Faulkner,FALSE
+Emergency,42.30168649,-71.12785344,Location,1,Faulkner Hospital,FALSE
+Blood Draw,42.30154826,-71.12798446,Location,1,Faulkner Hospital,FALSE
+f,42.30172192,-71.12721997,Intermediary,1,Faulkner Hospital,TRUE
+f11,42.30148476,-71.12725414,Intermediary,1,Faulkner Hospital,TRUE
+entrance 2,42.30162204,-71.12772254,Entrance,1,Faulkner Hospital,FALSE
+f5,42.30161791,-71.12743404,Intermediary,1,Faulkner Hospital,TRUE
+f1,42.30155786,-71.12769551,Intermediary,1,Faulkner Hospital,TRUE
+f13,42.301396,-71.12760408,Intermediary,1,Faulkner Hospital,TRUE
+f8,42.30159963,-71.12728509,Intermediary,1,Faulkner Hospital,TRUE
+f14,42.3013482,-71.1275728,Intermediary,1,Faulkner Hospital,TRUE
+f15,42.3013003,-71.12757385,Intermediary,1,Faulkner Hospital,TRUE
+f17,42.3012634,-71.12758402,Intermediary,1,Faulkner Hospital,TRUE
+f16,42.30123171,-71.1276038,Intermediary,1,Faulkner Hospital,TRUE
+f18,42.30174073,-71.12716744,Intermediary,1,Faulkner Hospital,FALSE
+Cardiac Rehab,42.30155289,-71.12816624,Location,1,Faulkner Hospital,FALSE
+Pre-admission,42.30147271,-71.12816531,Location,1,Faulkner Hospital,FALSE
+Admission,42.30157119,-71.12788428,Location,1,Faulkner Hospital,FALSE
+a,42.30161833,-71.12790829,Intermediary,1,Faulkner Hospital,FALSE
+e,42.30091261,-71.12774427,Parking,1,Faulkner Hospital,TRUE
+c,42.30152205,-71.12818297,Intermediary,1,Faulkner Hospital,FALSE
+Dialysis Unit,42.30172859,-71.12712322,Location,1,Faulkner Hospital,FALSE
+Audiology,42.30170072,-71.12805525,Location,1,Faulkner Hospital,FALSE
+b,42.30145763,-71.12806725,Intermediary,1,Faulkner Hospital,FALSE
+f10,42.30152876,-71.1272282,Intermediary,1,Faulkner Hospital,TRUE
+f6,42.30162855,-71.12737423,Intermediary,1,Faulkner Hospital,TRUE
+f9,42.30156677,-71.12724056,Intermediary,1,Faulkner Hospital,TRUE
+Radiology,42.30131305,-71.12820621,Location,1,Faulkner Hospital,FALSE
+f2,42.30148639,-71.12754619,Intermediary,1,Faulkner Hospital,TRUE
+f7,42.30162422,-71.12733904,Intermediary,1,Faulkner Hospital,TRUE
+f3,42.30157909,-71.1274797,Intermediary,1,Faulkner Hospital,TRUE
+d,42.30127867,-71.12772303,Intermediary,1,Faulkner Hospital,FALSE
+f4,42.30161004,-71.12744897,Intermediary,1,Faulkner Hospital,TRUE
+f12,42.30109675,-71.12754877,Intermediary,1,Faulkner Hospital,TRUE
