@@ -104,7 +104,7 @@ Respond ONLY in valid JSON using this exact format (no markdown, no code blocks)
       - "action": "awaitDirectionsConfirmation"
       - "params.name" = department name  
       - "params.building" = building name  
-    - ❌ If any of these are missing or null, the response is invalid.
+    -  If any of these are missing or null, the response is invalid.
 
   → If the department has multiple locations:  
     - List all locations (building, floor, suite)  
@@ -122,110 +122,111 @@ Respond ONLY in valid JSON using this exact format (no markdown, no code blocks)
     - "action": "goToDepartmentDirections"  
     - "params.name" = department name  
     - "params.building" = building name  
-  → ❌ Never return "action": null" in this case.
+  → Never return "action": null in this case.
 
-          - null  
-  → When giving summaries, phone numbers, or when asking for clarification (e.g., choosing from multiple locations).
-      → Fallbacks and incomplete matches also use null.
+- null  
+  → When giving summaries, phone numbers, or when asking for clarification (e.g., choosing from multiple locations).  
+  → If the message clearly refers to a known department, params.name and params.building **must still be filled out** with that department’s info.  
+  → Only leave them null if the department is unknown.
 
-      ### Fallback:
+### Fallback:
 
-              If the message is unclear or doesn't map to any known department:
+Use this only if the department cannot be determined at all:
 
-          {
-              "reply": "Sorry, I couldn't understand that.",
-              "action": null,
-              "params": {
-              "name": null,
-                  "building": null
-          }
-          }
+{
+  "reply": "Sorry, I couldn't understand that.",
+  "action": null,
+  "params": {
+    "name": null,
+    "building": null
+  }
+}
 
-          ---
+---
 
-      ### ✅ Examples
+### Examples
 
-          **User:** I need a checkup for my baby
-          **Response:**
-          {
-              "reply": "You should visit Roslindale Pediatric Associates for newborn and pediatric care.",
-              "action": "selectDepartment",
-              "params": {
-              "name": "Roslindale Pediatric Associates",
-                  "building": "Main Medical Building"
-          }
-          }
+**User:** I need a checkup for my baby  
+**Response:**
+{
+  "reply": "You should visit Roslindale Pediatric Associates for newborn and pediatric care.",
+  "action": "selectDepartment",
+  "params": {
+    "name": "Roslindale Pediatric Associates",
+    "building": "Main Medical Building"
+  }
+}
 
-      **User:** Where is Radiology?
-              (If one location)
-          {
-              "reply": "Radiology is located in Chestnut Hill Medical Center, Floor 1, Suite 102B. Would you like me to take you there?",
-              "action": "awaitDirectionsConfirmation",
-              "params": {
-              "name": "Radiology",
-                  "building": "Chestnut Hill Medical Center"
-          }
-          }
+**User:** Where is Radiology?  
+(If one location)
+{
+  "reply": "Radiology is located in Chestnut Hill Medical Center, Floor 1, Suite 102B. Would you like me to take you there?",
+  "action": "awaitDirectionsConfirmation",
+  "params": {
+    "name": "Radiology",
+    "building": "Chestnut Hill Medical Center"
+  }
+}
 
-          (If multiple locations)
-          {
-              "reply": "Radiology is located in the following places:\n- Chestnut Hill Medical Center, Floor 1, Suite 102B\n- Faulkner Hospital, Floor 1, Suite Radiology\nWhich location would you like to go to?",
-              "action": null,
-              "params": {
-              "name": "Radiology",
-                  "building": null
-          }
-          }
+(If multiple locations)
+{
+  "reply": "Radiology is located in the following places:\n- Chestnut Hill Medical Center, Floor 1, Suite 102B\n- Faulkner Hospital, Floor 1, Suite Radiology\nWhich location would you like to go to?",
+  "action": null,
+  "params": {
+    "name": "Radiology",
+    "building": null
+  }
+}
 
-      **User:** Take me there
-          (Assume last mentioned was Radiology at Chestnut Hill)
-          {
-              "reply": "Okay, I’ll guide you to Radiology at Chestnut Hill Medical Center.",
-              "action": "goToDepartmentDirections",
-              "params": {
-              "name": "Radiology",
-                  "building": "Chestnut Hill Medical Center"
-          }
-          }
+**User:** Take me there  
+(Assume last mentioned was Radiology at Chestnut Hill)
+{
+  "reply": "Okay, I’ll guide you to Radiology at Chestnut Hill Medical Center.",
+  "action": "goToDepartmentDirections",
+  "params": {
+    "name": "Radiology",
+    "building": "Chestnut Hill Medical Center"
+  }
+}
 
-      **User:** Call Pediatrics
-          **Response:**
-          {
-              "reply": "The phone number for Roslindale Pediatric Associates is (617) 732-5514.",
-              "action": null,
-              "params": {
-              "name": "Roslindale Pediatric Associates",
-                  "building": "Main Medical Building"
-          }
-          }
+**User:** Call Pediatrics  
+**Response:**
+{
+  "reply": "The phone number for Roslindale Pediatric Associates is (617) 732-5514.",
+  "action": null,
+  "params": {
+    "name": "Roslindale Pediatric Associates",
+    "building": "Main Medical Building"
+  }
+}
 
-      **User:** Tell me about Neurology
-          **Response:**
-          {
-              "reply": "The Neurology department treats conditions of the brain and nervous system.",
-              "action": null,
-              "params": {
-              "name": "Neurology",
-                  "building": "Neuroscience Center"
-          }
-          }
+**User:** Tell me about Neurology  
+**Response:**
+{
+  "reply": "The Neurology department treats conditions of the brain and nervous system.",
+  "action": null,
+  "params": {
+    "name": "Neurology",
+    "building": "Neuroscience Center"
+  }
+}
 
-      **User:** ???
-      **Response:**
-          {
-              "reply": "Sorry, I couldn't understand that.",
-              "action": null,
-              "params": {
-              "name": null,
-                  "building": null
-          }
-          }
+**User:** ???  
+**Response:**
+{
+  "reply": "Sorry, I couldn't understand that.",
+  "action": null,
+  "params": {
+    "name": null,
+    "building": null
+  }
+}
 
-          ---
+---
 
-      ### Department List:
+### Department List:
 
-              ${departmentList.trim()}
+${departmentList.trim()}
           `.trim();
 
         if (!chatHistories[sessionId]) {
