@@ -147,7 +147,7 @@ const FloorPlan = () => {
                     icon: {
                         path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
                         scale: 3,
-                        fillOpacity: 0.7
+                        fillOpacity: 1,
                     },
                     offset: "0%"
                 }]
@@ -160,15 +160,15 @@ const FloorPlan = () => {
             polylineRef2.current = new google.maps.Polyline({
                 path: filteredCoords2,
                 geodesic: true,
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.7, // Slightly transparent when not animating
+                strokeColor: "#86A2B6FF",
+                strokeOpacity: 0.7,
                 strokeWeight: 3,
                 icons: [{
                     icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
+                        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
                         scale: 3,
-                        fillColor: "#FF0000",
-                        fillOpacity: 0.7
+                        fillColor: "#86A2B6FF",
+                        fillOpacity: 1,
                     },
                     offset: "0%"
                 }]
@@ -195,7 +195,7 @@ const FloorPlan = () => {
             });
             if (otherPolyline) {
                 otherPolyline.setOptions({
-                    strokeOpacity: 0.7,
+                    strokeOpacity: 0.5,
                     strokeWeight: 3
                 });
             }
