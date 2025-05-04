@@ -69,24 +69,6 @@ const FloorPlan = () => {
     const [activeTab, setActiveTab] = useState("request");
     const polylineRef2 = useRef<google.maps.Polyline | null>(null);
 
-    const getFloorsWithPaths = () => {
-        const floors = new Set<number>();
-
-        // Check first path
-        pathCoords.forEach(coord => {
-            floors.add(coord.floor);
-        });
-
-        // Check second path (if driving)
-        if (driving) {
-            pathCoords2.forEach(coord => {
-                floors.add(coord.floor);
-            });
-        }
-
-        return Array.from(floors).sort((a, b) => a - b);
-    };
-
     useEffect(() => {
         const loadGoogleLibraries = async () => {
             const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
