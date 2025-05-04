@@ -109,8 +109,12 @@ const DirectoryPage: React.FC = () => {
     const [chatHistory, setChatHistory] = useState<{ role: "user" | "assistant"; message: string }[]>([]);
     const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
 
+
+
     const chatBoxRef = useRef<HTMLDivElement>(null);
     const askMutation = useMutation(trpc.chat.ask.mutationOptions());
+    const [isTyping, setIsTyping] = useState(false);
+
 
     const goToDirections = () => {
         const location = selectedDepartment?.Location[0];
@@ -188,6 +192,7 @@ const DirectoryPage: React.FC = () => {
         if (!text || !sessionId) return;
 
         setChatHistory((prev) => [...prev, { role: "user", message: text }]);
+        setIsTyping(true);
 
         try {
             const result = await askMutation.mutateAsync({ message: text, sessionId });
@@ -217,6 +222,8 @@ const DirectoryPage: React.FC = () => {
                 { role: "assistant", message: "Sorry, I couldn't understand that." },
             ]);
         }
+
+        setIsTyping(false);
     };
 
     if (isLoading || !departments) {
@@ -306,23 +313,76 @@ const DirectoryPage: React.FC = () => {
 
             {/* chat opens */}
             {chatOpen && (
-                <div className="fixed bottom-24 right-6 w-[360px] h-[500px] bg-white shadow-xl border border-gray-200 rounded-2xl flex flex-col overflow-hidden z-50">
-                    <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                        {chatHistory.map((msg, idx) => (
-                            <div
-                                key={idx}
-                                className={`px-4 py-2 rounded-xl text-sm max-w-[75%] whitespace-pre-wrap ${
-                                    msg.role === "user"
-                                        ? "ml-auto bg-[#004170] text-white"
-                                        : "mr-auto bg-gray-100 text-gray-800"
-                                }`}
-                            >
-                                {msg.message}
-                            </div>
+                <div className="fixed bottom-24 right-6 w-[320px] h-[420px] bg-white shadow-2xl border border-gray-200 rounded-2xl flex flex-col overflow-hidden z-50 font-sans">
 
-                        ))}
-                        <div ref={chatBoxRef} />
+                    <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 bg-[#F8FAFC]">
+                        {chatHistory.length === 0 ? (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3 }}
+                                className="flex flex-col gap-2"
+                            >
+                                <p className="text-sm text-gray-600 font-medium mb-1">Try asking:</p>
+                                {[
+                                    "Where is Radiology?",
+                                    "Call Pediatrics",
+                                    "How do I get to Emergency?",
+                                    "Find Women's Health",
+                                    "Show me Mental Health services",
+                                ].map((q, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => {
+                                            setChatInput(q);
+                                            handleChatInput(q);
+                                        }}
+                                        className="text-left bg-white border border-gray-200 hover:bg-[#F0F4F8] text-sm px-4 py-2 rounded-lg shadow-sm transition"
+                                    >
+                                        {q}
+                                    </button>
+                                ))}
+                            </motion.div>
+                        ) : (
+                            <>
+                                {chatHistory.map((msg, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`flex items-start gap-2 ${
+                                            msg.role === "user" ? "justify-end" : "justify-start"
+                                        }`}
+                                    >
+                                        {msg.role === "assistant" && (
+                                            <img
+                                                src="/bot-avatar.png"
+                                                alt="Bot"
+                                                className="w-8 h-8 rounded-full border border-gray-300"
+                                            />
+                                        )}
+                                        <div
+                                            className={`px-4 py-2 rounded-2xl text-sm max-w-[75%] whitespace-pre-wrap shadow-sm ${
+                                                msg.role === "user"
+                                                    ? "bg-[#004170] text-white rounded-br-none"
+                                                    : "bg-white text-gray-800 border border-gray-200 rounded-bl-none"
+                                            }`}
+                                        >
+                                            {msg.message}
+                                        </div>
+                                        {msg.role === "user" && (
+                                            <img
+                                                src="/user-avatar.png"
+                                                alt="You"
+                                                className="w-8 h-8 rounded-full border border-gray-300"
+                                            />
+                                        )}
+                                    </div>
+                                ))}
+                                <div ref={chatBoxRef} />
+                            </>
+                        )}
                     </div>
+
+
 
                     <form
                         onSubmit={(e) => {
@@ -330,34 +390,34 @@ const DirectoryPage: React.FC = () => {
                             handleChatInput(chatInput.trim());
                             setChatInput("");
                         }}
-                        className="p-3 border-t flex gap-2"
+                        className="border-t border-gray-200 bg-white px-3 py-2"
                     >
-                        <div className="flex w-full rounded-md shadow-sm bg-white border border-gray-300">
+                        <div className="flex items-center gap-2">
                             <div className="relative flex-grow">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Search className="h-5 w-5 text-slate-400" />
-                                </div>
                                 <Input
                                     value={chatInput}
                                     onChange={(e) => setChatInput(e.target.value)}
-                                    placeholder="Ask about a department..."
-                                    className="pl-10 pr-10 py-2 text-sm border-0"
+                                    placeholder="Ask a question..."
+                                    className="pl-4 pr-10 py-2 text-sm rounded-full bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#004170] focus:outline-none"
                                 />
                                 <button
                                     type="button"
                                     onClick={startVoiceRecognition}
-                                    className="absolute inset-y-0 right-2 flex items-center justify-center text-gray-500 hover:text-[#004170]"
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#004170]"
                                 >
                                     🎤
                                 </button>
                             </div>
-                            <Button type="submit" className="rounded-l-none bg-[#004170] text-white px-4">
+                            <Button
+                                type="submit"
+                                className="px-4 py-2 rounded-full bg-[#004170] text-white text-sm hover:bg-[#003055]"
+                            >
                                 Ask
                             </Button>
                         </div>
-
                     </form>
                 </div>
+
             )}
 
             {/*  show search bar */}
