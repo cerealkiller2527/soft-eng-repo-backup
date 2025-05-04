@@ -54,7 +54,9 @@ Do NOT wrap the response in triple backticks or markdown blocks. Return raw JSON
 
 If unsure, still return valid JSON with "reply" and "action": null.
 
-Always respond with "awaitDirectionsConfirmation" first. Do NOT use "goToDepartmentDirections" unless the user explicitly asks for directions.
+If the user asks for directions, such as saying “take me there”, “show me how to get there”, or “get me the location”, respond with action: "goToDepartmentDirections".
+
+You are not responsible for physical transportation — your job is only to trigger in-app directions inside the hospital's app.
 
 DEPARTMENTS:
 ${departmentList}
