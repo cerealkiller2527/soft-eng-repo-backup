@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Search, Phone, MapPin, Bot } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
+
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useTRPC } from "../database/trpc";
@@ -90,7 +92,6 @@ const DirectoryPage: React.FC = () => {
     const [sessionId, setSessionId] = useState<string | null>(null);
 
     useEffect(() => {
-        // Load or create a session ID once per user
         let existing = localStorage.getItem("chatSessionId");
         if (!existing) {
             existing = uuidv4();
@@ -354,7 +355,7 @@ const DirectoryPage: React.FC = () => {
                                     >
                                         {msg.role === "assistant" && (
                                             <img
-                                                src="/bot-avatar.png"
+                                                src="/hospitalLogoChatBot.png"
                                                 alt="Bot"
                                                 className="w-8 h-8 rounded-full border border-gray-300"
                                             />
