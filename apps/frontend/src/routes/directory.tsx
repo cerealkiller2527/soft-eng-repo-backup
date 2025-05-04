@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Search, Phone, MapPin, Bot } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
+import { useUser } from "@clerk/clerk-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 
 import Navbar from "../components/Navbar";
@@ -90,6 +92,11 @@ const chatbotMappings: Record<string, string> = {
 
 const DirectoryPage: React.FC = () => {
     const [sessionId, setSessionId] = useState<string | null>(null);
+
+
+    const { isSignedIn, user } = useUser();
+    const initials = (user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '');
+
 
     useEffect(() => {
         let existing = localStorage.getItem("chatSessionId");
@@ -315,6 +322,24 @@ const DirectoryPage: React.FC = () => {
             {/* chat opens */}
             {chatOpen && (
                 <div className="fixed bottom-24 right-6 w-[320px] h-[420px] bg-white shadow-2xl border border-gray-200 rounded-2xl flex flex-col overflow-hidden z-50 font-sans">
+                    {/* Chatbot header with profile avatar */}
+                    <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 bg-white">
+                        <h2 className="text-sm font-semibold text-[#004170]">Hospital Assistant</h2>
+                        <Avatar
+                            onClick={() => {
+                                if (isSignedIn) {
+                                    navigate("/profile");
+                                    setChatOpen(false); // optional: close chatbot
+                                } else {
+                                    alert("Please log in to view your profile.");
+                                }
+                            }}
+                            className="cursor-pointer hover:ring-2 hover:ring-[#004170] transition"
+                            title="View Profile"
+                        >
+                            <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                    </div>
 
                     <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 bg-[#F8FAFC]">
                         {chatHistory.length === 0 ? (
