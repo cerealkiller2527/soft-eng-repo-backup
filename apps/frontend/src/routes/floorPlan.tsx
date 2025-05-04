@@ -44,6 +44,9 @@ const FloorPlan = () => {
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
     const polylineRef = useRef<google.maps.Polyline | null>(null);
     const [endMapsLocation, setEndMapsLocation] = useState({ lat: 0.00, lng: 0.00 });
+    const animationInterval = useRef<number>();
+    const isFirstAnimating = useRef(true);
+    const animationPaused = useRef(false);
 
     const [pathCoords, setPathCoords] = useState([
         { latitude: .00, longitude: .00, floor: 1 },
@@ -106,91 +109,131 @@ const FloorPlan = () => {
     useEffect(() => {
         if (!mapInstance.current) return;
 
-        // Remove previous polylines
-        if (polylineRef.current) {
-            polylineRef.current.setMap(null);
-            polylineRef.current = null;
-        }
-        if (polylineRef2.current) {
-            polylineRef2.current.setMap(null);
-            polylineRef2.current = null;
-        }
+        // Cleanup previous animations and polylines
+        const cleanup = () => {
+            if (animationInterval.current) {
+                clearInterval(animationInterval.current);
+                animationInterval.current = undefined;
+            }
+            if (polylineRef.current) {
+                polylineRef.current.setMap(null);
+                polylineRef.current = null;
+            }
+            if (polylineRef2.current) {
+                polylineRef2.current.setMap(null);
+                polylineRef2.current = null;
+            }
+        };
+        cleanup();
 
-        // Arrow animation function
-        function animateArrow(line: google.maps.Polyline) {
-            let count = 0;
-            window.setInterval(() => {
-                count = (count + 1) % 200;
-                const icons = line.get("icons");
-                icons[0].offset = count / 2 + "%";
-                line.set("icons", icons);
-            }, 20);
-        }
-
-        // First polyline (to parking)
+        // Create both polylines immediately (visible but not animating yet)
         const filteredCoords = pathCoords
             .filter(node => node.floor === imageIndex + 1)
             .map(node => ({ lat: node.latitude, lng: node.longitude }));
 
-        if (filteredCoords.length >= 2) {
-            const lineSymbol = {
-                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                scale: 3,
-            };
-
-            // Check if this is the final destination point
-            if (filteredCoords[filteredCoords.length - 1].lat === endMapsLocation.lat &&
-                filteredCoords[filteredCoords.length - 1].lng === endMapsLocation.lng) {
-                lineSymbol.path = google.maps.SymbolPath.FORWARD_OPEN_ARROW;
-                lineSymbol.scale = 5;
-            }
-
-            const polyline = new google.maps.Polyline({
-                path: filteredCoords,
-                geodesic: true,
-                strokeColor: "#00d9ff",
-                strokeOpacity: 1.0,
-                strokeWeight: 4,
-                icons: [{
-                    icon: lineSymbol,
-                    offset: "100%",
-                }]
-            });
-            polyline.setMap(mapInstance.current);
-            polylineRef.current = polyline;
-            animateArrow(polyline);
-        }
-
-        // Second polyline (to department)
         const filteredCoords2 = pathCoords2
             .filter(node => node.floor === imageIndex + 1)
             .map(node => ({ lat: node.latitude, lng: node.longitude }));
 
-        if (filteredCoords2.length >= 2) {
-            const lineSymbol2 = {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 3,
-                fillColor: "#FF0000",
-                fillOpacity: 1.0,
-                strokeWeight: 1
-            };
+        // First polyline (always visible)
+        if (filteredCoords.length >= 2) {
+            polylineRef.current = new google.maps.Polyline({
+                path: filteredCoords,
+                geodesic: true,
+                strokeColor: "#00d9ff",
+                strokeOpacity: 0.7, // Slightly transparent when not animating
+                strokeWeight: 3,
+                icons: [{
+                    icon: {
+                        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                        scale: 3,
+                        fillOpacity: 0.7
+                    },
+                    offset: "0%"
+                }]
+            });
+            polylineRef.current.setMap(mapInstance.current);
+        }
 
-            const polyline2 = new google.maps.Polyline({
+        // Second polyline (always visible)
+        if (filteredCoords2.length >= 2) {
+            polylineRef2.current = new google.maps.Polyline({
                 path: filteredCoords2,
                 geodesic: true,
                 strokeColor: "#FF0000",
-                strokeOpacity: 1.0,
-                strokeWeight: 4,
+                strokeOpacity: 0.7, // Slightly transparent when not animating
+                strokeWeight: 3,
                 icons: [{
-                    icon: lineSymbol2,
-                    offset: "100%",
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 3,
+                        fillColor: "#FF0000",
+                        fillOpacity: 0.7
+                    },
+                    offset: "0%"
                 }]
             });
-            polyline2.setMap(mapInstance.current);
-            polylineRef2.current = polyline2;
-            animateArrow(polyline2);
+            polylineRef2.current.setMap(mapInstance.current);
         }
-    }, [pathCoords, pathCoords2, imageIndex, endMapsLocation]);
+
+        // Animation function that alternates between polylines
+        const animateAlternating = () => {
+            if (animationPaused.current) return;
+
+            const currentPolyline = isFirstAnimating.current ? polylineRef.current : polylineRef2.current;
+            const otherPolyline = isFirstAnimating.current ? polylineRef2.current : polylineRef.current;
+
+            if (!currentPolyline) {
+                isFirstAnimating.current = !isFirstAnimating.current;
+                return;
+            }
+
+            // Highlight the active polyline
+            currentPolyline.setOptions({
+                strokeOpacity: 1.0,
+                strokeWeight: 4
+            });
+            if (otherPolyline) {
+                otherPolyline.setOptions({
+                    strokeOpacity: 0.7,
+                    strokeWeight: 3
+                });
+            }
+
+            let count = 0;
+            const totalSteps = 200;
+            const duration = 20; // ms per frame
+
+            const animateStep = () => {
+                if (animationPaused.current) return;
+
+                count = (count + 1) % (totalSteps + 1);
+                const percent = count / 2;
+
+                // Update the active polyline's icon
+                const icons = currentPolyline.get("icons");
+                icons[0].offset = `${percent}%`;
+                currentPolyline.set("icons", icons);
+
+                if (count >= totalSteps) {
+                    // Switch to animating the other polyline
+                    isFirstAnimating.current = !isFirstAnimating.current;
+                    animateAlternating();
+                } else {
+                    animationInterval.current = window.setTimeout(animateStep, duration);
+                }
+            };
+
+            animateStep();
+        };
+
+        // Start the alternating animation
+        animateAlternating();
+
+        return () => {
+            cleanup();
+        };
+    }, [pathCoords, pathCoords2, imageIndex]);
 
     useEffect(() => {
         if (!mapInstance.current) return;
