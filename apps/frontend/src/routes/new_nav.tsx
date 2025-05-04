@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect } from "react"
-import { AppHeader, SidebarContainer } from "@/components/map/Layout"
+import { SidebarContainer } from "@/components/map/Layout"
 import { MapProvider, useMap } from "../contexts/MapContext"
 import { MapErrorBoundary } from "@/components/map/MapErrorBoundary"
 import type { Hospital } from "@/types/hospital"
@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { MainMap } from "@/components/map/MainMap";
 import { SidebarContent, type SidebarContentProps } from "@/components/map/SidebarContent";
 import { MapElements, type MapElementsProps } from "@/components/map/MapElements";
+import Layout from "../components/Layout";
 
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
 
@@ -145,39 +146,40 @@ function AppContent() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <AppHeader />
-      <div className="relative pt-16 h-[calc(100vh-0px)]">
-        <SidebarContainer 
-          isOpen={sidebarOpen} 
-          onToggleSidebar={toggleSidebar}
-        >
-           <SidebarContent {...sidebarProps} />
-        </SidebarContainer>
-        <div className="absolute top-16 bottom-0 left-0 right-0 h-[calc(100%-0px)]" style={{ zIndex: Z_INDEX.map }}>
-          <MainMap /> 
-          <RouteLayerManager routes={allRoutes} onSelectRoute={selectRoute} />
-          <MapElements {...mapElementsProps} />
+      <div className="relative min-h-screen overflow-hidden">
+        <div className="relative h-[calc(100vh-0px)]">
+          <SidebarContainer
+              isOpen={sidebarOpen}
+              onToggleSidebar={toggleSidebar}
+          >
+            <SidebarContent {...sidebarProps} />
+          </SidebarContainer>
+          <div className="absolute top-0 bottom-0 left-0 right-0 h-full" style={{ zIndex: Z_INDEX.map }}>
+            <MainMap />
+            <RouteLayerManager routes={allRoutes} onSelectRoute={selectRoute} />
+            <MapElements {...mapElementsProps} />
+          </div>
         </div>
       </div>
-    </div>
   )
 }
 
 export default function App() {
   return (
-    <MapErrorBoundary fallback={<p>Map failed to load. Please refresh.</p>}> 
-      <MapProvider>
-        <AppContent />
-        <Toaster 
-          position="top-center" 
-          richColors 
-          closeButton 
-          toastOptions={{
-            style: { marginTop: `${LAYOUT_DIMENSIONS.HEADER_HEIGHT + 8}px` },
-          }}
-        />
-    </MapProvider>
-    </MapErrorBoundary>
+      <MapErrorBoundary fallback={<p>Map failed to load. Please refresh.</p>}>
+        <MapProvider>
+          <Layout>
+            <AppContent />
+            <Toaster
+                position="top-center"
+                richColors
+                closeButton
+                toastOptions={{
+                  style: { marginTop: `${LAYOUT_DIMENSIONS.HEADER_HEIGHT + 8}px` },
+                }}
+            />
+          </Layout>
+        </MapProvider>
+      </MapErrorBoundary>
   )
 }
