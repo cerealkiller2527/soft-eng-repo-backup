@@ -332,96 +332,96 @@ const DirectoryPage: React.FC = () => {
 
     return (
         <Layout>
-        <div className="min-h-screen flex flex-col bg-[#F2F2F2]">
+            <div className="min-h-screen flex flex-col bg-[#F2F2F2]">
 
 
-            {/* chat button pop */}
-            <div className="fixed bottom-6 right-6 z-50">
-                <Button
-                    onClick={() => setChatOpen(!chatOpen)}
-                    className="rounded-full p-4 bg-[#012D5A] hover:bg-[#01356A]"
-                >
-                    <Bot className="w-5 h-5 text-white" />
-                </Button>
+                {/* chat button pop */}
+                <div className="fixed bottom-6 right-6 z-50">
+                    <Button
+                        onClick={() => setChatOpen(!chatOpen)}
+                        className="rounded-full p-4 bg-[#012D5A] hover:bg-[#01356A]"
+                    >
+                        <Bot className="w-5 h-5 text-white" />
+                    </Button>
 
-            </div>
+                </div>
 
-            {/* chat opens */}
-            {chatOpen && (
-                <div className="fixed bottom-24 right-6 w-[320px] h-[420px] bg-white shadow-md border border-gray-200 rounded-lg flex flex-col overflow-hidden z-50 font-sans">
-                    {/* Chatbot header with profile avatar */}
-                    <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 bg-white">
-                        <h2 className="text-sm font-semibold text-[#004170]">Hospital Assistant</h2>
-                        <Avatar
-                            onClick={() => {
-                                if (isSignedIn) {
-                                    navigate("/profile");
-                                    setChatOpen(false);
-                                } else {
-                                    alert("Please log in to view your profile.");
-                                }
-                            }}
-                            className="cursor-pointer hover:ring-2 hover:ring-[#004170] transition"
-                            title="View Profile"
-                        >
-                            <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 bg-[#F8FAFC]">
-                        {chatHistory.length === 0 ? (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.3 }}
-                                className="flex flex-col gap-2"
+                {/* chat opens */}
+                {chatOpen && (
+                    <div className="fixed bottom-24 right-6 w-[320px] h-[420px] bg-white shadow-md border border-gray-200 rounded-lg flex flex-col overflow-hidden z-50 font-sans">
+                        {/* Chatbot header with profile avatar */}
+                        <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 bg-white">
+                            <h2 className="text-sm font-semibold text-[#004170]">Hospital Assistant</h2>
+                            <Avatar
+                                onClick={() => {
+                                    if (isSignedIn) {
+                                        navigate("/profile");
+                                        setChatOpen(false);
+                                    } else {
+                                        alert("Please log in to view your profile.");
+                                    }
+                                }}
+                                className="cursor-pointer hover:ring-2 hover:ring-[#004170] transition"
+                                title="View Profile"
                             >
-                                <p className="text-sm text-gray-600 font-medium mb-1">Try asking:</p>
-                                {[
-                                    "Where is Radiology?",
-                                    "Call Pediatrics",
-                                    "How do I get to Emergency?",
-                                    "Find Women's Health",
-                                    "Show me Mental Health services",
-                                ].map((q, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => {
-                                            setChatInput(q);
-                                            handleChatInput(q);
-                                        }}
-                                        className="text-left bg-white border border-gray-200 hover:bg-[#F0F4F8] text-sm px-4 py-2 rounded-lg shadow-sm transition"
-                                    >
-                                        {q}
-                                    </button>
-                                ))}
-                            </motion.div>
-                        ) : (
-                            <>
-                                {chatHistory.map((msg, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={`flex items-start gap-2 ${
-                                            msg.role === "user" ? "justify-end" : "justify-start"
-                                        }`}
-                                    >
-                                        {msg.role === "assistant" && (
-                                            <img
-                                                src="/hospitalLogoChatBot.png"
-                                                alt="Bot"
-                                                className="w-8 h-8 rounded-full border border-gray-300"
-                                            />
-                                        )}
+                                <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 bg-[#F8FAFC]">
+                            {chatHistory.length === 0 ? (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="flex flex-col gap-2"
+                                >
+                                    <p className="text-sm text-gray-600 font-medium mb-1">Try asking:</p>
+                                    {[
+                                        "Where is Radiology?",
+                                        "Call Pediatrics",
+                                        "How do I get to Emergency?",
+                                        "Find Women's Health",
+                                        "Show me Mental Health services",
+                                    ].map((q, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => {
+                                                setChatInput(q);
+                                                handleChatInput(q);
+                                            }}
+                                            className="text-left bg-white border border-gray-200 hover:bg-[#F0F4F8] text-sm px-4 py-2 rounded-lg shadow-sm transition"
+                                        >
+                                            {q}
+                                        </button>
+                                    ))}
+                                </motion.div>
+                            ) : (
+                                <>
+                                    {chatHistory.map((msg, idx) => (
                                         <div
-                                            className={`px-4 py-2 rounded-2xl text-sm max-w-[75%] whitespace-pre-wrap shadow-sm ${
-                                                msg.role === "user"
-                                                    ? "bg-[#004170] text-white rounded-br-none"
-                                                    : "bg-white text-gray-800 border border-gray-200 rounded-bl-none"
+                                            key={idx}
+                                            className={`flex items-start gap-2 ${
+                                                msg.role === "user" ? "justify-end" : "justify-start"
                                             }`}
                                         >
-                                            {msg.message}
-                                        </div>
-                                        {/*
+                                            {msg.role === "assistant" && (
+                                                <img
+                                                    src="/hospitalLogoChatBot.png"
+                                                    alt="Bot"
+                                                    className="w-8 h-8 rounded-full border border-gray-300"
+                                                />
+                                            )}
+                                            <div
+                                                className={`px-4 py-2 rounded-2xl text-sm max-w-[75%] whitespace-pre-wrap shadow-sm ${
+                                                    msg.role === "user"
+                                                        ? "bg-[#004170] text-white rounded-br-none"
+                                                        : "bg-white text-gray-800 border border-gray-200 rounded-bl-none"
+                                                }`}
+                                            >
+                                                {msg.message}
+                                            </div>
+                                            {/*
                                         {msg.role === "user" && (
                                             <img
                                                 src="/user-avatar.png"
@@ -430,206 +430,206 @@ const DirectoryPage: React.FC = () => {
                                             />
                                         )}
                                         */}
-                                    </div>
-                                ))}
-                                <div ref={chatBoxRef} />
-                            </>
-                        )}
-                    </div>
-
-
-
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            handleChatInput(chatInput.trim());
-                            setChatInput("");
-                        }}
-                        className="border-t border-gray-200 bg-white px-3 py-2"
-                    >
-                        <div className="flex items-center gap-2">
-                            <div className="relative flex-grow">
-                                <Input
-                                    value={chatInput}
-                                    onChange={(e) => setChatInput(e.target.value)}
-                                    placeholder="Ask a question..."
-                                    className="pl-4 pr-12 py-2 text-sm rounded-md bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#004170] focus:outline-none"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={startVoiceRecognition}
-                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#004170]"
-                                >
-                                    🎤
-                                </button>
-                            </div>
-                            <Button
-                                type="submit"
-                                className="px-4 py-2 rounded-md bg-[#004170] text-white text-sm hover:bg-[#003055]"
-                            >
-                                Ask
-                            </Button>
+                                        </div>
+                                    ))}
+                                    <div ref={chatBoxRef} />
+                                </>
+                            )}
                         </div>
-                    </form>
-                </div>
 
-            )}
 
-            {/*  show search bar */}
-            <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 text-center mt-12 rounded-lg ">
-                <div className="max-w-6xl mx-auto flex flex-col gap-4">
-                    <h1 className=" text-white text-4xl font-bold">
-                        What are you looking for?
-                    </h1>
-                    <p className="text-lg text-slate-500 text-center text-white">Find a specialty, department or service in a second</p>
 
-                    <div className="mt-1 ">
-                        <form onSubmit={handleSearch} className="flex-grow">
-                            <div className="flex shadow-sm rounded-lg bg-white">
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleChatInput(chatInput.trim());
+                                setChatInput("");
+                            }}
+                            className="border-t border-gray-200 bg-white px-3 py-2"
+                        >
+                            <div className="flex items-center gap-2">
                                 <div className="relative flex-grow">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Search className="h-5 w-5 text-slate-400" />
-                                    </div>
                                     <Input
-                                        type="search"
-                                        placeholder="Search departments, services, or locations..."
-                                        className="block w-full pl-12 pr-4 py-6 text-lg border-0 text-black"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        value={chatInput}
+                                        onChange={(e) => setChatInput(e.target.value)}
+                                        placeholder="Ask a question..."
+                                        className="pl-4 pr-12 py-2 text-sm rounded-md bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#004170] focus:outline-none"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={startVoiceRecognition}
+                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[#004170]"
+                                    >
+                                        🎤
+                                    </button>
                                 </div>
-                                <Button type="submit" className="px-6 py-6 bg-[#012D5A] text-white rounded-r-lg">
-                                    Search
+                                <Button
+                                    type="submit"
+                                    className="px-4 py-2 rounded-md bg-[#004170] text-white text-sm hover:bg-[#003055]"
+                                >
+                                    Ask
                                 </Button>
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
 
-            <main className="flex-1 max-w-7xl mx-20 px-6 py-12">
-                <div className="flex flex-col md:flex-row gap-8 items-start">
+                )}
 
+                {/*  show search bar */}
+                <div className="bg-gradient-to-r from-primary to-secondary text-white p-8 text-center mt-12 rounded-lg ">
+                    <div className="max-w-6xl mx-auto flex flex-col gap-4">
+                        <h1 className=" text-white text-4xl font-bold">
+                            What are you looking for?
+                        </h1>
+                        <p className="text-lg text-slate-500 text-center text-white">Find a specialty, department or service in a second</p>
 
-                    {/* left section */}
-                    <div className="w-full md:w-64 lg:w-72 ">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6 }}
-                            className="space-y-4"
-                        >
-                            <h2 className="text-lg font-semibold text-[#012D5A]">
-                                Healthcare Services
-                            </h2>
-                            <Card className="max-h-[500px] overflow-y-auto shadow-sm">
-                                <CardContent>
-                                    <Accordion type="single" collapsible>
-                                        {Object.entries(groupedDepartments).map(
-                                            ([category, depts]) => (
-                                                <AccordionItem value={category} key={category}>
-                                                    <AccordionTrigger className="text-left font-medium">
-                                                        {category}
-                                                    </AccordionTrigger>
-                                                    <AccordionContent>
-                                                        {depts.map((dept) => (
-                                                            <Button
-                                                                key={dept.id}
-                                                                variant="ghost"
-                                                                className={`w-full justify-start text-left truncate 
-        ${selectedDepartment?.id === dept.id
-                                                                    ? "bg-[#86A2B6] text-white"
-                                                                    : "text-[#004170] hover:bg-[#86A2B6] hover:text-white"}`}
-                                                                title={dept.name}
-                                                                onClick={() => setSelectedDepartment(dept)}
-                                                            >
-                                                                {dept.name}
-                                                            </Button>
-                                                        ))}
-                                                    </AccordionContent>
-                                                </AccordionItem>
-                                            )
-                                        )}
-                                    </Accordion>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
+                        <div className="mt-1 ">
+                            <form onSubmit={handleSearch} className="flex-grow">
+                                <div className="flex shadow-sm rounded-lg bg-white">
+                                    <div className="relative flex-grow">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <Search className="h-5 w-5 text-slate-400" />
+                                        </div>
+                                        <Input
+                                            type="search"
+                                            placeholder="Search departments, services, or locations..."
+                                            className="block w-full pl-12 pr-4 py-6 text-lg border-0 text-black"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                    <Button type="submit" className="px-6 py-6 bg-[#012D5A] text-white rounded-r-lg">
+                                        Search
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                </div>
 
-                    {/* department info */}
-                    <div className="flex-1">
-                        {selectedDepartment && (
+                <main className="flex-1 max-w-7xl mx-20 px-6 py-12">
+                    <div className="flex flex-col md:flex-row gap-8 items-start">
+
+
+                        {/* left section */}
+                        <div className="w-full md:w-64 lg:w-72 ">
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="space-y-8"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.6 }}
+                                className="space-y-4"
                             >
-                                <Card className="bg-[#004170FF] text-white p-8 text-center mt-12 rounded-lg ">
-                                    <h1 className="text-4xl font-bold">
-                                        {selectedDepartment.name}
-                                    </h1>
-                                    {/*
+                                <h2 className="text-lg font-semibold text-[#012D5A]">
+                                    Healthcare Services
+                                </h2>
+                                <Card className="max-h-[500px] overflow-y-auto shadow-sm">
+                                    <CardContent>
+                                        <Accordion type="single" collapsible>
+                                            {Object.entries(groupedDepartments).map(
+                                                ([category, depts]) => (
+                                                    <AccordionItem value={category} key={category}>
+                                                        <AccordionTrigger className="text-left font-medium">
+                                                            {category}
+                                                        </AccordionTrigger>
+                                                        <AccordionContent>
+                                                            {depts.map((dept) => (
+                                                                <Button
+                                                                    key={dept.id}
+                                                                    variant="ghost"
+                                                                    className={`w-full justify-start text-left truncate 
+        ${selectedDepartment?.id === dept.id
+                                                                        ? "bg-[#86A2B6] text-white"
+                                                                        : "text-[#004170] hover:bg-[#86A2B6] hover:text-white"}`}
+                                                                    title={dept.name}
+                                                                    onClick={() => setSelectedDepartment(dept)}
+                                                                >
+                                                                    {dept.name}
+                                                                </Button>
+                                                            ))}
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                )
+                                            )}
+                                        </Accordion>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        </div>
+
+                        {/* department info */}
+                        <div className="flex-1">
+                            {selectedDepartment && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="space-y-8"
+                                >
+                                    <Card className="bg-[#004170FF] text-white p-8 text-center mt-12 rounded-lg ">
+                                        <h1 className="text-4xl font-bold">
+                                            {selectedDepartment.name}
+                                        </h1>
+                                        {/*
                                     {selectedDepartment.description && (
                                         <p className="mt-4 text-lg text-slate-600">{selectedDepartment.description}</p>
                                     )}
                                     */}
-                                </Card>
+                                    </Card>
 
-                                <div className="grid gap-8 md:grid-cols-2">
-                                    <Card>
-                                        <CardHeader className="flex items-center gap-2">
-                                            <Phone className="w-5 h-5 text-muted-foreground" />
-                                            <h3 className="text-[#004170FF] font-semibold">Contact</h3>
-                                        </CardHeader>
-                                        <CardContent className="flex flex-col gap-4">
-                                            <p className="text-slate-500">{selectedDepartment.phoneNumber}</p>
+                                    <div className="grid gap-8 md:grid-cols-2">
+                                        <Card>
+                                            <CardHeader className="flex items-center gap-2">
+                                                <Phone className="w-5 h-5 text-muted-foreground" />
+                                                <h3 className="text-[#004170FF] font-semibold">Contact</h3>
+                                            </CardHeader>
+                                            <CardContent className="flex flex-col gap-4">
+                                                <p className="text-slate-500">{selectedDepartment.phoneNumber}</p>
 
-                                            <a
-                                                href={`tel:${selectedDepartment.phoneNumber}`}
-                                                className="w-fit"
-                                            >
+                                                <a
+                                                    href={`tel:${selectedDepartment.phoneNumber}`}
+                                                    className="w-fit"
+                                                >
+                                                    <Button
+                                                        variant="outline"
+                                                        className="bg-primary text-white hover:bg-chart-4 hover:text-white hover:border self-start"
+                                                    >
+                                                        Call Now
+                                                    </Button>
+                                                </a>
+                                            </CardContent>
+                                        </Card>
+
+
+                                        <Card>
+                                            <CardHeader className="flex items-center gap-2">
+                                                <MapPin className="w-5 h-5 text-muted-foreground" />
+                                                <h3 className="text-[#004170FF] font-semibold">Location</h3>
+                                            </CardHeader>
+                                            <CardContent className="flex flex-col gap-4">
+                                                <p className="text-slate-500">
+                                                    {selectedDepartment.Location[0]?.building.name}
+                                                    {selectedDepartment.Location[0]?.suite &&
+                                                        `, Suite ${selectedDepartment.Location[0].suite}`}
+                                                </p>
+
                                                 <Button
                                                     variant="outline"
-                                                    className="bg-primary text-white hover:bg-chart-4 hover:text-white hover:border self-start"
+                                                    onClick={() => {
+                                                        navigate("/floorplan", {
+                                                            state: {
+                                                                building: selectedDepartment?.Location[0]?.building.name,
+                                                                destination: selectedDepartment?.Location[0]?.suite || "",
+                                                            },
+                                                        });
+                                                    }}
+                                                    className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
                                                 >
-                                                    Call Now
+                                                    Get Directions
                                                 </Button>
-                                            </a>
-                                        </CardContent>
-                                    </Card>
+                                            </CardContent>
+                                        </Card>
 
-
-                                    <Card>
-                                        <CardHeader className="flex items-center gap-2">
-                                            <MapPin className="w-5 h-5 text-muted-foreground" />
-                                            <h3 className="text-[#004170FF] font-semibold">Location</h3>
-                                        </CardHeader>
-                                        <CardContent className="flex flex-col gap-4">
-                                            <p className="text-slate-500">
-                                                {selectedDepartment.Location[0]?.building.name}
-                                                {selectedDepartment.Location[0]?.suite &&
-                                                    `, Suite ${selectedDepartment.Location[0].suite}`}
-                                            </p>
-
-                                            <Button
-                                                variant="outline"
-                                                onClick={() => {
-                                                    navigate("/floorplan", {
-                                                        state: {
-                                                            building: selectedDepartment?.Location[0]?.building.name,
-                                                            destination: selectedDepartment?.Location[0]?.suite || "",
-                                                        },
-                                                    });
-                                                }}
-                                                className="bg-[#004170FF] text-white hover:bg-chart-4 hover:text-white hover:border hover:border-[#004170FF] self-start"
-                                            >
-                                                Get Directions
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-
-                                    {/*
+                                        {/*
                                     <Card>
                                         <CardHeader className="flex items-center gap-2">
                                             <MapPin className="w-5 h-5 text-muted-foreground" />
@@ -646,30 +646,30 @@ const DirectoryPage: React.FC = () => {
                                         </CardContent>
                                     </Card>
                                     */}
-                                </div>
+                                    </div>
 
-                                {selectedDepartment.DepartmentServices.length > 0 && (
-                                    <Card>
-                                        <CardHeader>
-                                            <h4 className="text-lg font-medium text-[#012D5A]">
-                                                Services
-                                            </h4>
-                                        </CardHeader>
-                                        <CardContent className="flex flex-wrap gap-2">
-                                            {selectedDepartment.DepartmentServices.map(
-                                                (service) => (
-                                                    <span
-                                                        key={service.service.id}
-                                                        className="inline-block bg-[#86A2B6FF] text-white text-sm sm:text-base font-medium px-4 py-2 rounded-md shadow-sm hover:opacity-90 transition"
-                                                    >
+                                    {selectedDepartment.DepartmentServices.length > 0 && (
+                                        <Card>
+                                            <CardHeader>
+                                                <h4 className="text-lg font-medium text-[#012D5A]">
+                                                    Services
+                                                </h4>
+                                            </CardHeader>
+                                            <CardContent className="flex flex-wrap gap-2">
+                                                {selectedDepartment.DepartmentServices.map(
+                                                    (service) => (
+                                                        <span
+                                                            key={service.service.id}
+                                                            className="inline-block bg-[#86A2B6FF] text-white text-sm sm:text-base font-medium px-4 py-2 rounded-md shadow-sm hover:opacity-90 transition"
+                                                        >
       {service.service.name}
     </span>
-                                                )
-                                            )}
-                                        </CardContent>
-                                    </Card>
-                                )}
-                                {/*
+                                                    )
+                                                )}
+                                            </CardContent>
+                                        </Card>
+                                    )}
+                                    {/*
                                 <div className="flex justify-end">
                                     <Button
                                         variant="outline"
@@ -691,14 +691,14 @@ const DirectoryPage: React.FC = () => {
                                     </Button>
                                 </div>
                                 */}
-                            </motion.div>
-                        )}
+                                </motion.div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </main>
+                </main>
 
 
-        </div>
+            </div>
         </Layout>
     );
 };
