@@ -18,8 +18,6 @@ type formType = {
     building: string;
 };
 
-
-
 const FloorPlan = () => {
     const location = useLocation();
     const passedState = location.state as { building?: string; destination?: string };
@@ -70,8 +68,6 @@ const FloorPlan = () => {
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
     const [activeTab, setActiveTab] = useState("request");
     const polylineRef2 = useRef<google.maps.Polyline | null>(null);
-
-
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -126,7 +122,7 @@ const FloorPlan = () => {
         };
         cleanup();
 
-        // Create both polylines immediately (visible but not animating yet)
+        // Create polylines based on current mode
         const filteredCoords = pathCoords
             .filter(node => node.floor === imageIndex + 1)
             .map(node => ({ lat: node.latitude, lng: node.longitude }));
@@ -140,8 +136,8 @@ const FloorPlan = () => {
             polylineRef.current = new google.maps.Polyline({
                 path: filteredCoords,
                 geodesic: true,
-                strokeColor: "#6db4fa",
-                strokeOpacity: 0.7, // Slightly transparent when not animating
+                strokeColor: driving ? "#6db4fa" : "#00d9ff", // Different color for walking
+                strokeOpacity: 0.7,
                 strokeWeight: 3,
                 icons: [{
                     icon: {
@@ -155,8 +151,8 @@ const FloorPlan = () => {
             polylineRef.current.setMap(mapInstance.current);
         }
 
-        // Second polyline (always visible)
-        if (filteredCoords2.length >= 2) {
+        // Second polyline (only for driving mode)
+        if (driving && filteredCoords2.length >= 2) {
             polylineRef2.current = new google.maps.Polyline({
                 path: filteredCoords2,
                 geodesic: true,
@@ -176,64 +172,88 @@ const FloorPlan = () => {
             polylineRef2.current.setMap(mapInstance.current);
         }
 
-        // Animation function that alternates between polylines
-        const animateAlternating = () => {
+        // Animation function that handles both single and dual polyline cases
+        const animatePath = () => {
             if (animationPaused.current) return;
 
-            const currentPolyline = isFirstAnimating.current ? polylineRef.current : polylineRef2.current;
-            const otherPolyline = isFirstAnimating.current ? polylineRef2.current : polylineRef.current;
+            // For walking mode or when there's only one polyline
+            if (!driving || !polylineRef2.current) {
+                if (!polylineRef.current) return;
 
-            if (!currentPolyline) {
-                isFirstAnimating.current = !isFirstAnimating.current;
-                return;
+                let count = 0;
+                const totalSteps = 200;
+                const duration = 20;
+
+                const animateStep = () => {
+                    if (animationPaused.current) return;
+
+                    count = (count + 1) % (totalSteps + 1);
+                    const percent = count / 2;
+
+                    const icons = polylineRef.current.get("icons");
+                    icons[0].offset = `${percent}%`;
+                    polylineRef.current.set("icons", icons);
+
+                    if (count < totalSteps) {
+                        animationInterval.current = window.setTimeout(animateStep, duration);
+                    } else {
+                        animatePath(); // Restart animation
+                    }
+                };
+
+                animateStep();
             }
+            // For driving mode with two polylines
+            else {
+                const currentPolyline = isFirstAnimating.current ? polylineRef.current : polylineRef2.current;
+                const otherPolyline = isFirstAnimating.current ? polylineRef2.current : polylineRef.current;
 
-            // Highlight the active polyline
-            currentPolyline.setOptions({
-                strokeOpacity: 1.0,
-                strokeWeight: 4
-            });
-            if (otherPolyline) {
-                otherPolyline.setOptions({
-                    strokeOpacity: 0.3,
-                    strokeWeight: 2
+                // Highlight the active polyline
+                currentPolyline.setOptions({
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
                 });
-            }
-
-            let count = 0;
-            const totalSteps = 200;
-            const duration = 20; // ms per frame
-
-            const animateStep = () => {
-                if (animationPaused.current) return;
-
-                count = (count + 1) % (totalSteps + 1);
-                const percent = count / 2;
-
-                // Update the active polyline's icon
-                const icons = currentPolyline.get("icons");
-                icons[0].offset = `${percent}%`;
-                currentPolyline.set("icons", icons);
-
-                if (count >= totalSteps) {
-                    // Switch to animating the other polyline
-                    isFirstAnimating.current = !isFirstAnimating.current;
-                    animateAlternating();
-                } else {
-                    animationInterval.current = window.setTimeout(animateStep, duration);
+                if (otherPolyline) {
+                    otherPolyline.setOptions({
+                        strokeOpacity: 0.3,
+                        strokeWeight: 2
+                    });
                 }
-            };
 
-            animateStep();
+                let count = 0;
+                const totalSteps = 200;
+                const duration = 20;
+
+                const animateStep = () => {
+                    if (animationPaused.current) return;
+
+                    count = (count + 1) % (totalSteps + 1);
+                    const percent = count / 2;
+
+                    const icons = currentPolyline.get("icons");
+                    icons[0].offset = `${percent}%`;
+                    currentPolyline.set("icons", icons);
+
+                    if (count >= totalSteps) {
+                        // Switch to animating the other polyline
+                        isFirstAnimating.current = !isFirstAnimating.current;
+                        animatePath();
+                    } else {
+                        animationInterval.current = window.setTimeout(animateStep, duration);
+                    }
+                };
+
+                animateStep();
+            }
         };
 
-        // Start the alternating animation
-        animateAlternating();
+        // Start the animation
+        animatePath();
 
         return () => {
             cleanup();
         };
-    }, [pathCoords, pathCoords2, imageIndex]);
+    }, [pathCoords, pathCoords2, imageIndex, driving]);
 
     useEffect(() => {
         if (!mapInstance.current) return;
@@ -282,26 +302,47 @@ const FloorPlan = () => {
                 floor: 1,
             };
 
-            const formattedCoords = search.data.path.toParking.map((node) => ({
-                latitude: node.latitude,
-                longitude: node.longitude,
-                floor: node.floor,
-            }));
+            // For walking mode, we only have one path
+            if (!driving) {
+                const formattedCoords = search.data.path.toDepartment.map((node) => ({
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    floor: node.floor,
+                }));
 
-            const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
-                latitude: node.latitude,
-                longitude: node.longitude,
-                floor: node.floor,
-            }));
+                const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
+                const path = [
+                    ...(hasValidEndLocation ? [startPoint] : []),
+                    ...formattedCoords,
+                ];
 
-            const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
-            const path = [
-                ...(hasValidEndLocation ? [startPoint] : []),
-                ...(hasValidEndLocation ? formattedCoords : []),
-            ];
+                setPathCoords(path);
+                setPathCoords2([]); // Clear the second path
+            }
+            // For driving mode, we have two paths (to parking and then to department)
+            else {
+                const formattedCoords = search.data.path.toParking.map((node) => ({
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    floor: node.floor,
+                }));
 
-            setPathCoords(path);
-            setPathCoords2(formattedCoords2);
+                const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    floor: node.floor,
+                }));
+
+                const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
+                const path = [
+                    ...(hasValidEndLocation ? [startPoint] : []),
+                    ...(hasValidEndLocation ? formattedCoords : []),
+                ];
+
+                setPathCoords(path);
+                setPathCoords2(formattedCoords2);
+            }
+
             setInstructions((prev) => [...prev, ...search.data.directions]);
         }
     }, [search.data]);
