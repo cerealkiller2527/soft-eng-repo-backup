@@ -69,6 +69,24 @@ const FloorPlan = () => {
     const [activeTab, setActiveTab] = useState("request");
     const polylineRef2 = useRef<google.maps.Polyline | null>(null);
 
+    const getFloorsWithPaths = () => {
+        const floors = new Set<number>();
+
+        // Check first path
+        pathCoords.forEach(coord => {
+            floors.add(coord.floor);
+        });
+
+        // Check second path (if driving)
+        if (driving) {
+            pathCoords2.forEach(coord => {
+                floors.add(coord.floor);
+            });
+        }
+
+        return Array.from(floors).sort((a, b) => a - b);
+    };
+
     useEffect(() => {
         const loadGoogleLibraries = async () => {
             const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
@@ -291,7 +309,6 @@ const FloorPlan = () => {
         }
     }, [instructions, form]);
 
-
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endDeptName: form?.destination ?? "",
@@ -473,8 +490,51 @@ const FloorPlan = () => {
         }
     }, [centerMode, form?.building, pathCenter]);
 
+    const getFloorsWithVisiblePaths = () => {
+        const floorNodeCounts = new Map<number, number>();
+
+        // Count nodes on each floor from first path
+        pathCoords.forEach(coord => {
+            floorNodeCounts.set(coord.floor, (floorNodeCounts.get(coord.floor) || 0) + 1);
+        });
+
+        // Count nodes on each floor from second path (if driving)
+        if (driving) {
+            pathCoords2.forEach(coord => {
+                floorNodeCounts.set(coord.floor, (floorNodeCounts.get(coord.floor) || 0) + 1);
+            });
+        }
+
+        // Filter to only floors with at least 2 nodes
+        return Array.from(floorNodeCounts.entries())
+            .filter(([_, count]) => count >= 2)
+            .map(([floor]) => floor)
+            .sort((a, b) => a - b);
+    };
+
     const handleImageSwitch = () => {
-        setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
+        const floorsWithPaths = getFloorsWithVisiblePaths();
+
+        if (floorsWithPaths.length === 0) {
+            // No paths with at least 2 nodes, just cycle through all floors
+            setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
+            return;
+        }
+
+        // Find the next floor with visible paths
+        const currentFloor = imageIndex + 1;
+        const currentIndexInPaths = floorsWithPaths.indexOf(currentFloor);
+        let nextIndex;
+
+        if (currentIndexInPaths === -1) {
+            // Current floor not in paths, start from first floor with paths
+            nextIndex = floorsWithPaths[0] - 1;
+        } else {
+            // Move to next floor with paths
+            nextIndex = floorsWithPaths[(currentIndexInPaths + 1) % floorsWithPaths.length] - 1;
+        }
+
+        setImageIndex(nextIndex);
     };
 
     return (
