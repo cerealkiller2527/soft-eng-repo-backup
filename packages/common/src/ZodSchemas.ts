@@ -1,5 +1,15 @@
 import {z} from "zod";
 
+export const NodeTypeZod = z.enum([
+    "Entrance",
+    "Intermediary",
+    "Staircase",
+    "Elevator",
+    "Location",
+    "Help_Desk",
+    "Parking"
+]);
+
 export const pNodeZod = z.object({
     id: z.number(),
     description: z.string(),
@@ -7,6 +17,7 @@ export const pNodeZod = z.object({
     latitude: z.number(),
     floor: z.number(),
     outside: z.boolean(),
+    type: NodeTypeZod,
     neighbors: z.array(z.number()), // Only include IDs of neighbors
 })
 
@@ -33,12 +44,3 @@ export const searchOutput = z.object({
     toDepartment: z.array(pNodeZod),
 })
 
-export const NodeTypeZod = z.enum([
-    "Entrance",
-    "Intermediary",
-    "Staircase",
-    "Elevator",
-    "Location",
-    "Help_Desk",
-    "Parking"
-]);

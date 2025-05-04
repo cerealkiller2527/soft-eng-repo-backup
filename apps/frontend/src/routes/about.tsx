@@ -7,100 +7,159 @@ import {Card, CardHeader, CardTitle, CardDescription, CardContent} from "@/compo
 type teamProps = {
     name: string,
     position: string,
-    path: string
+    path: string,
+    quote: string
 }
 
 
 const mattAlexProps = {
     name: "Matthew Alex",
     position: "Lead Engineer, Front End Dev",
-    path: "/headshots/malex.jpg"
+    path: "/headshots/malex.jpg",
+    quote: "\"Believe you can and you're halfway there.\"\n" +
+        "— Theodore Roosevelt"
 }
 
 const bobbyProps = {
     name: "Robert Branchaud",
     position: "Scrum Master, Algos Dev",
-    path: "/public/headshots/rbranchaud.jpg"
+    path: "/public/headshots/rbranchaud.jpg",
+    quote: " \"If you only do what you can do, you'll never be more than who you are.\" - Master Shifu, Kung Fu Panda 3"
 }
 
 const tinaProps = {
     name: "Tina Cheng",
     position: "Back End Dev",
-    path: "/public/headshots/tcheng.jpg"
+    path: "/public/headshots/tcheng.jpg",
+    quote: "\"Start where you are. Use what you have. Do what you can.\"\n" +
+        "— Arthur Ashe"
 }
 
 const brandonProps = {
     name: "Brandon Contardi",
     position: "Front End Dev",
-    path: "/public/headshots/bcontardi.jpg"
+    path: "/public/headshots/bcontardi.jpg",
+    quote:"\"Real G's move in silence like lasagna.\" - Lil Wayne\n"
 }
 
 const christianProps = {
     name: "Christian Dell'Anno",
     position: "Assistant Lead, Front End Dev",
-    path: "/public/headshots/cdellanno.jpg"
+    path: "/public/headshots/cdellanno.jpg",
+    quote:" \"All you need is love. But a little chocolate now and then doesn't hurt.\" ― Charles M. Schulz"
 }
 
 const sahanaProps = {
     name: "Sahana Gokulakrishnan",
     position: "Product Owner, Front End Dev",
-    path: "/public/headshots/sgokulakrishnan.jpg"
+    path: "/public/headshots/sgokulakrishnan.jpg",
+    quote: "\"You miss 100% of the shots you don’t take.\"\n" +
+        "— Wayne Gretzky"
 }
 
 const maxProps = {
     name: "Max Inman",
     position: "Documentation, Algorithms Dev",
-    path: "/public/headshots/minman.jpg"
+    path: "/public/headshots/minman.jpg",
+    quote:"“It it what it is. Make the most of it.”- Grandpa\n",
+
 }
 
 const madhavProps = {
     name: "Madhav Lodha",
     position: "Assistant Lead, Back End Dev",
-    path: "/public/headshots/mlodha.jpg"
+    path: "/public/headshots/mlodha.jpg",
+    quote:"\"Everything you’ve ever wanted is on the other side of fear.\"\n" +
+        "— George Addair"
 }
 
 const mattNickersonProps = {
     name: "Matt Nickerson",
     position: "Assistant Lead, Front End Dev",
-    path: "/public/headshots/mnickerson.jpg"
+    path: "/public/headshots/mnickerson.jpg",
+    quote:"\"Do not wait for the perfect moment. Take the moment and make it perfect.\"\n" +
+        "— Zoey Sayward"
 }
 
 const kaylieProps = {
     name: "Kaylie Quach",
     position: "Back End Dev",
-    path: "/public/headshots/kquach.jpg"
+    path: "/public/headshots/kquach.jpg",
+    quote:" \"The gentleness that comes, not from the absence of violence, but despite the abundance of it.\" - Richard Siken"
+
 }
 
 const willProps = {
     name: "William Schieffer",
     position: "Product Manager, Front End Dev",
-    path: "public/headshots/wschieffer.jpg"
+    path: "public/headshots/wschieffer.jpg",
+    quote:"\"I swear I'm not commit farming I'm just stupid\" - Green Goblins"
 }
 
 
 
-function TeamCard(props: teamProps){
+function TeamCard(props: teamProps) {
     return (
-        <div className={"p-4"}>
-            <Card className={"w-70 pb-1"}>
-                <CardHeader className={"justify-items-center"}>
-                    <img
-                        src={props.path}
-                        alt={props.name + " Headshot"}
-                        className={"h-54 w-full object-cover rounded-xl drop-shadow-xl/20"}
-                    />
-                    <CardTitle className={"flex-1"}>
-                        {props.name}
-                    </CardTitle>
-                    <CardDescription className={"text-center italic"}>
-                        <p>{props.position}</p>
-                    </CardDescription>
-                </CardHeader>
-            </Card>
-        </div>
+        <div className="p-4 w-72 h-96 group" style={{ perspective: "1000px" }}>
+            <div
+                className="relative w-full h-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)]"
+                style={{
+                    transformStyle: "preserve-3d",
+                }}
+            >
 
-    )
+                <div
+                    className="absolute w-full h-full rounded-xl overflow-hidden"
+                    style={{
+                        backfaceVisibility: "hidden",
+                    }}
+                >
+                    <Card className="w-full h-full pb-1">
+                        <CardHeader className="justify-items-center p-0">
+                            <img
+                                src={props.path}
+                                alt={props.name + " Headshot"}
+                                className="h-64 w-full object-cover rounded-t-xl"
+                            />
+                            <CardTitle className="text-center mt-2">{props.name}</CardTitle>
+                            <CardDescription className="text-center italic">
+                                {props.position}
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </div>
+
+
+                <div
+                    className="absolute w-full h-full rounded-xl overflow-hidden flex items-center justify-center text-white text-center"
+                    style={{
+                        transform: "rotateY(180deg)",
+                        backfaceVisibility: "hidden",
+                    }}
+                >
+
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            backgroundImage: `url(${props.path})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            filter: "blur(8px) brightness(60%)" ,
+
+                        }}
+                    />
+
+                    <div className="z-20 p-4">
+                        <p className="text-lg italic text-bold max-w-[90%] text-white drop-shadow-xl">{props.quote}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
+
+
+
 
 function WPICard(){
     return(
