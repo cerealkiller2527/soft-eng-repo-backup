@@ -18,6 +18,7 @@ type AlgorithmType = "BFS" | "DFS";
 
 const primaryLink = { title: "Navigation", href: "/floorplan" };
 const directoryLink = { title: "Directory", href: "/directory" };
+const hospitalMapLink = { title: "Hospital Map", href: "/hospitalmap" };
 const moreItems = [
     { title: "CSV Import", href: "/csv", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
     { title: "Map Editor", href: "/mapeditor", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
@@ -85,6 +86,9 @@ export default function NewNavbar() {
                     </Link>
                     <Link to={directoryLink.href} className={getLinkClasses(directoryLink.href)}>
                         {directoryLink.title}
+                    </Link>
+                    <Link to={hospitalMapLink.href} className={getLinkClasses(hospitalMapLink.href)}>
+                        {hospitalMapLink.title}
                     </Link>
 
                     {/* More dropdown with hover+click stability using onOpenChange */}
@@ -204,6 +208,13 @@ export default function NewNavbar() {
                                 className={mobileItemClasses}
                             >
                                 {directoryLink.title}
+                            </Link>
+                            <Link
+                                to={hospitalMapLink.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={mobileItemClasses}
+                            >
+                                {hospitalMapLink.title}
                             </Link>
                             <button
                                 onClick={() => setMobileMoreOpen(!mobileMoreOpen)}

@@ -18,6 +18,13 @@ export default defineConfig({
         port: parseInt(process.env.FRONTEND_PORT),
         proxy: {
             '/api': process.env.BACKEND_URL,
+            // Proxy requests from /api/google-places to Google Places API
+            '/api/google-places': {
+                target: 'https://maps.googleapis.com/maps/api/place',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api\/google-places/, ''), // Remove base path
+                secure: false, // Consider setting to true if target is HTTPS and valid cert
+            },
         },
         watch: {
             usePolling: true,
