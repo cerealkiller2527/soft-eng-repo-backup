@@ -10,10 +10,6 @@ export const chatRouter = t.router({
   ask: t.procedure
     .input(z.object({ message: z.string() }))
     .mutation(async ({ input }) => {
-      console.log(
-        "Using OpenRouter API key:",
-        process.env.OPENROUTER_API_KEY?.slice(0, 10),
-      );
       try {
         const departments = await PrismaClient.department.findMany({
           include: {
