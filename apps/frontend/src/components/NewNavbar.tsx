@@ -66,7 +66,7 @@ export default function NewNavbar() {
         }`;
 
     const mobileItemClasses =
-        "block w-full text-left py-2 px-4 text-black text-lg hover:bg-[#86A2B6] transition-colors rounded-none";
+        "block w-full text-left py-2 px-4 text-black text-lg transition-colors rounded-none";
 
     const nextAlg = currentAlgorithm === "BFS" ? "DFS" : "BFS";
 
@@ -102,7 +102,7 @@ export default function NewNavbar() {
                             }}
                             onMouseEnter={() => !moreClicked && setMoreOpen(true)}
                             onMouseLeave={() => !moreClicked && setMoreOpen(false)}
-                            className="px-4 py-2 rounded-none text-lg bg-background font-normal hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                            className="px-4 py-2 rounded-none text-lg font-normal hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
                         >
                             More
                         </MenubarTrigger>
@@ -131,7 +131,7 @@ export default function NewNavbar() {
                     {isSignedIn ? (
                         <MenubarMenu>
                             <MenubarTrigger
-                                className="p-2 rounded-full text-black bg-background hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                                className="p-2 rounded-full text-black hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
                             >
                                 <UserCircleIcon className="h-8 w-8" />
                             </MenubarTrigger>
