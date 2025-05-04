@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState, SetStateAction } from 'react';
 import Layout from "../components/Layout";
-import {useMutation, useQuery} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '../database/trpc.ts';
 import { queryClient } from '../database/trpc.ts';
 import LocationRequestForm from '../components/locationRequestForm.tsx';
 import { overlays } from "@/constants.tsx";
 import InstructionsBox from "@/components/InstructionsBox";
-import {DirectionsButton} from "@/components/DirectionsButton.tsx";
+import { DirectionsButton } from "@/components/DirectionsButton.tsx";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,8 +17,6 @@ type formType = {
     transport: string;
     building: string;
 };
-
-
 
 const FloorPlan = () => {
     const location = useLocation();
@@ -44,8 +42,14 @@ const FloorPlan = () => {
     const overlaysRef = useRef<google.maps.GroundOverlay[]>([]);
     const polylineRef = useRef<google.maps.Polyline | null>(null);
     const [endMapsLocation, setEndMapsLocation] = useState({ lat: 0.00, lng: 0.00 });
+    const animationInterval = useRef<number>();
+    const isFirstAnimating = useRef(true);
+    const animationPaused = useRef(false);
 
     const [pathCoords, setPathCoords] = useState([
+        { latitude: .00, longitude: .00, floor: 1 },
+    ]);
+    const [pathCoords2, setPathCoords2] = useState([
         { latitude: .00, longitude: .00, floor: 1 },
     ]);
     const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null);
@@ -63,8 +67,7 @@ const FloorPlan = () => {
     };
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
     const [activeTab, setActiveTab] = useState("request");
-
-
+    const polylineRef2 = useRef<google.maps.Polyline | null>(null);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -102,59 +105,165 @@ const FloorPlan = () => {
     useEffect(() => {
         if (!mapInstance.current) return;
 
-        // Remove the previous polyline if it exists
-        if (polylineRef.current) {
-            polylineRef.current.setMap(null);
-            polylineRef.current = null;
-        }
+        // Cleanup previous animations and polylines
+        const cleanup = () => {
+            if (animationInterval.current) {
+                clearInterval(animationInterval.current);
+                animationInterval.current = undefined;
+            }
+            if (polylineRef.current) {
+                polylineRef.current.setMap(null);
+                polylineRef.current = null;
+            }
+            if (polylineRef2.current) {
+                polylineRef2.current.setMap(null);
+                polylineRef2.current = null;
+            }
+        };
+        cleanup();
 
-        // Filter the pathCoords to only those matching the current floor
+        // Create polylines based on current mode
         const filteredCoords = pathCoords
-            .filter(node => node.floor === imageIndex + 1) // assuming floor index starts from 1
+            .filter(node => node.floor === imageIndex + 1)
             .map(node => ({ lat: node.latitude, lng: node.longitude }));
 
-        if (filteredCoords.length < 2) return; // Need at least 2 points to draw a line
-        console.log(filteredCoords);
+        const filteredCoords2 = pathCoords2
+            .filter(node => node.floor === imageIndex + 1)
+            .map(node => ({ lat: node.latitude, lng: node.longitude }));
 
-
-        const lineSymbol = {
-            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-            scale: 3,
-        };
-
-        // Create and display new polyline
-        const polyline = new google.maps.Polyline({
-            path: filteredCoords,
-            geodesic: true,
-            strokeColor: "#00d9ff",
-            strokeOpacity: 1.0,
-            strokeWeight: 4,
-            icons: [
-                {
-                    icon: lineSymbol,
-                    offset: "100%",
-                }
-            ]
-        });
-
-        function animateArrow(line: google.maps.Polyline) {
-            let count = 0;
-
-            window.setInterval(() => {
-                count = (count + 1) % 200;
-
-                const icons = line.get("icons");
-
-                icons[0].offset = count / 2 + "%";
-                line.set("icons", icons);
-            }, 20);
+        // First polyline (always visible if coordinates exist)
+        if (filteredCoords.length >= 2) {
+            polylineRef.current = new google.maps.Polyline({
+                path: filteredCoords,
+                geodesic: true,
+                strokeColor: driving ? "#6db4fa" : "#00d9ff",
+                strokeOpacity: 0.7,
+                strokeWeight: 3,
+                icons: [{
+                    icon: {
+                        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                        scale: 3,
+                        fillOpacity: 1,
+                    },
+                    offset: "0%"
+                }]
+            });
+            polylineRef.current.setMap(mapInstance.current);
         }
 
-        polyline.setMap(mapInstance.current);
-        polylineRef.current = polyline;
-        animateArrow(polyline)
-        console.log("polyline rendered")
-    }, [pathCoords, imageIndex]);
+        // Second polyline (only for driving mode if coordinates exist)
+        if (driving && filteredCoords2.length >= 2) {
+            polylineRef2.current = new google.maps.Polyline({
+                path: filteredCoords2,
+                geodesic: true,
+                strokeColor: "#00d9ff",
+                strokeOpacity: 0.7,
+                strokeWeight: 3,
+                icons: [{
+                    icon: {
+                        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                        scale: 3,
+                        fillColor: "#00d9ff",
+                        fillOpacity: 1,
+                    },
+                    offset: "0%"
+                }]
+            });
+            polylineRef2.current.setMap(mapInstance.current);
+        }
+
+        // Animation function that handles all cases
+        const animatePath = () => {
+            if (animationPaused.current) return;
+
+            const hasFirstPolyline = polylineRef.current && polylineRef.current.getPath().getLength() > 0;
+            const hasSecondPolyline = polylineRef2.current && polylineRef2.current.getPath().getLength() > 0;
+
+            // If we have both polylines, alternate between them
+            if (hasFirstPolyline && hasSecondPolyline) {
+                const currentPolyline = isFirstAnimating.current ? polylineRef.current : polylineRef2.current;
+                const otherPolyline = isFirstAnimating.current ? polylineRef2.current : polylineRef.current;
+
+                // Highlight the active polyline
+                currentPolyline.setOptions({
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                });
+                if (otherPolyline) {
+                    otherPolyline.setOptions({
+                        strokeOpacity: 0.3,
+                        strokeWeight: 2
+                    });
+                }
+
+                let count = 0;
+                const totalSteps = 200;
+                const duration = 20;
+
+                const animateStep = () => {
+                    if (animationPaused.current || !currentPolyline) return;
+
+                    count = (count + 1) % (totalSteps + 1);
+                    const percent = count / 2;
+
+                    const icons = currentPolyline.get("icons");
+                    icons[0].offset = `${percent}%`;
+                    currentPolyline.set("icons", icons);
+
+                    if (count >= totalSteps) {
+                        // Switch to animating the other polyline
+                        isFirstAnimating.current = !isFirstAnimating.current;
+                        animatePath();
+                    } else {
+                        animationInterval.current = window.setTimeout(animateStep, duration);
+                    }
+                };
+
+                animateStep();
+            }
+            // If we have only one polyline (either first or second), animate just that one
+            else if (hasFirstPolyline || hasSecondPolyline) {
+                const activePolyline = hasFirstPolyline ? polylineRef.current : polylineRef2.current;
+                if (!activePolyline) return;
+
+                // Highlight the active polyline
+                activePolyline.setOptions({
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                });
+
+                let count = 0;
+                const totalSteps = 200;
+                const duration = 20;
+
+                const animateStep = () => {
+                    if (animationPaused.current || !activePolyline) return;
+
+                    count = (count + 1) % (totalSteps + 1);
+                    const percent = count / 2;
+
+                    const icons = activePolyline.get("icons");
+                    icons[0].offset = `${percent}%`;
+                    activePolyline.set("icons", icons);
+
+                    if (count < totalSteps) {
+                        animationInterval.current = window.setTimeout(animateStep, duration);
+                    } else {
+                        animatePath(); // Restart animation
+                    }
+                };
+
+                animateStep();
+            }
+        };
+
+        // Start the animation
+        animatePath();
+
+        return () => {
+            cleanup();
+        };
+    }, [pathCoords, pathCoords2, imageIndex, driving]);
 
     useEffect(() => {
         if (!mapInstance.current) return;
@@ -182,7 +291,6 @@ const FloorPlan = () => {
         }
     }, [instructions, form]);
 
-
     const search = useQuery(trpc.search.getPath.queryOptions({
         buildingName: form?.building ??  "",
         endDeptName: form?.destination ?? "",
@@ -196,40 +304,56 @@ const FloorPlan = () => {
     const searchKey = trpc.search.getPath.queryKey()
 
     useEffect(() => {
-        console.log("Search results:", search.data);
         if (search.data) {
-            console.log("Search results:", search.data.path);
             const startPoint = {
                 latitude: endMapsLocation.lat,
                 longitude: endMapsLocation.lng,
                 floor: 1,
             };
 
-            const formattedCoords = search.data.path.toParking.map((node) => ({
-                latitude: node.latitude,
-                longitude: node.longitude,
-                floor: node.floor,
-            }));
-            const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
-                latitude: node.latitude,
-                longitude: node.longitude,
-                floor: node.floor,
-            }));
-            const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
-            console.log("Valid end location: ", hasValidEndLocation);
-            console.log("End location: ", endMapsLocation);
-            const path = [
-                ...(hasValidEndLocation ? [startPoint] : []),
-                ...(hasValidEndLocation ? formattedCoords : []),
-                ...formattedCoords2
-            ];
-            setPathCoords(path);
+            // For walking mode, we only have one path
+            if (!driving) {
+                const formattedCoords = search.data.path.toDepartment.map((node) => ({
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    floor: node.floor,
+                }));
 
-            console.log(formattedCoords);
+                const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
+                const path = [
+                    ...(hasValidEndLocation ? [startPoint] : []),
+                    ...formattedCoords,
+                ];
+
+                setPathCoords(path);
+                setPathCoords2([]); // Clear the second path
+            }
+            // For driving mode, we have two paths (to parking and then to department)
+            else {
+                const formattedCoords = search.data.path.toParking.map((node) => ({
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    floor: node.floor,
+                }));
+
+                const formattedCoords2 = search.data.path.toDepartment.map((node) => ({
+                    latitude: node.latitude,
+                    longitude: node.longitude,
+                    floor: node.floor,
+                }));
+
+                const hasValidEndLocation = endMapsLocation.lat !== 0 && endMapsLocation.lng !== 0;
+                const path = [
+                    ...(hasValidEndLocation ? [startPoint] : []),
+                    ...(hasValidEndLocation ? formattedCoords : []),
+                ];
+
+                setPathCoords(path);
+                setPathCoords2(formattedCoords2);
+            }
+
             setInstructions((prev) => [...prev, ...search.data.directions]);
-
         }
-
     }, [search.data]);
 
 
@@ -348,8 +472,51 @@ const FloorPlan = () => {
         }
     }, [centerMode, form?.building, pathCenter]);
 
+    const getFloorsWithVisiblePaths = () => {
+        const floorNodeCounts = new Map<number, number>();
+
+        // Count nodes on each floor from first path
+        pathCoords.forEach(coord => {
+            floorNodeCounts.set(coord.floor, (floorNodeCounts.get(coord.floor) || 0) + 1);
+        });
+
+        // Count nodes on each floor from second path (if driving)
+        if (driving) {
+            pathCoords2.forEach(coord => {
+                floorNodeCounts.set(coord.floor, (floorNodeCounts.get(coord.floor) || 0) + 1);
+            });
+        }
+
+        // Filter to only floors with at least 2 nodes
+        return Array.from(floorNodeCounts.entries())
+            .filter(([_, count]) => count >= 2)
+            .map(([floor]) => floor)
+            .sort((a, b) => a - b);
+    };
+
     const handleImageSwitch = () => {
-        setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
+        const floorsWithPaths = getFloorsWithVisiblePaths();
+
+        if (floorsWithPaths.length === 0) {
+            // No paths with at least 2 nodes, just cycle through all floors
+            setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
+            return;
+        }
+
+        // Find the next floor with visible paths
+        const currentFloor = imageIndex + 1;
+        const currentIndexInPaths = floorsWithPaths.indexOf(currentFloor);
+        let nextIndex;
+
+        if (currentIndexInPaths === -1) {
+            // Current floor not in paths, start from first floor with paths
+            nextIndex = floorsWithPaths[0] - 1;
+        } else {
+            // Move to next floor with paths
+            nextIndex = floorsWithPaths[(currentIndexInPaths + 1) % floorsWithPaths.length] - 1;
+        }
+
+        setImageIndex(nextIndex);
     };
 
     return (
@@ -397,8 +564,8 @@ const FloorPlan = () => {
                             </TabsContent>
 
                             <TabsContent value="directions" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-136 relative">
-                                    <InstructionsBox key={instructions.join()} instructions={instructions} />
+                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-120 relative">
+                                    <InstructionsBox key={instructions.join()} instructions={ instructions } />
                                     <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
                                     </div>
