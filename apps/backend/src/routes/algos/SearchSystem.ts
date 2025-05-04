@@ -46,7 +46,6 @@ export class SearchSystem {
 
     // create path from start node to end node
     const toDepartment = await this.algorithm.findPath(startId, endNodeId);
-    const toDepartment = await this.algorithm.findPath(startId, endNodeId);
 
     // convert pNode[] to z.array(pNodeZod)
 

@@ -64,7 +64,7 @@ export const searchRouter = t.router({
         buildingId!.id,
         input.driving,
       );
-      
+
       // console.log("SEARCH.TS");
       const returnPaths = searchOutput.parse(paths);
       const pNodeZTs = [...returnPaths.toParking, ...returnPaths.toDepartment];
