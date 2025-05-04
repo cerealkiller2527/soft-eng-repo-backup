@@ -332,18 +332,30 @@ const DirectoryPage: React.FC = () => {
                         }}
                         className="p-3 border-t flex gap-2"
                     >
-                        <Input
-                            value={chatInput}
-                            onChange={(e) => setChatInput(e.target.value)}
-                            placeholder="Ask about a department..."
-                            className="flex-1"
-                        />
-                        <Button type="submit" className="bg-blue-600 text-white">
-                            Ask
-                        </Button>
-                        <Button type="button" onClick={startVoiceRecognition} className="bg-gray-200">
-                            🎤
-                        </Button>
+                        <div className="flex w-full rounded-md shadow-sm bg-white border border-gray-300">
+                            <div className="relative flex-grow">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Search className="h-5 w-5 text-slate-400" />
+                                </div>
+                                <Input
+                                    value={chatInput}
+                                    onChange={(e) => setChatInput(e.target.value)}
+                                    placeholder="Ask about a department..."
+                                    className="pl-10 pr-10 py-2 text-sm border-0"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={startVoiceRecognition}
+                                    className="absolute inset-y-0 right-2 flex items-center justify-center text-gray-500 hover:text-[#004170]"
+                                >
+                                    🎤
+                                </button>
+                            </div>
+                            <Button type="submit" className="rounded-l-none bg-[#004170] text-white px-4">
+                                Ask
+                            </Button>
+                        </div>
+
                     </form>
                 </div>
             )}
