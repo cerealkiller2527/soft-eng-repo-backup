@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {text} from "framer-motion/m";
 
 const NodeTypeEnum = z.enum(["Entrance", "Intermediary", "Staircase", "Elevator", "Location", "Help_Desk"]);
 const NodeSchema = z.object({
@@ -209,11 +210,21 @@ const DirectoryPage: React.FC = () => {
             const parsed = result.raw;
             setChatHistory((prev) => [...prev, { role: "assistant", message: parsed.reply }]);
 
-            if (parsed.action === "selectDepartment" && parsed.params?.name) {
-                const match = departments?.find(
-                    (d) => d.name.trim().toLowerCase() === parsed.params.name!.trim().toLowerCase()
-                );
-                if (match) setSelectedDepartment(match);
+            let matchedDepartment: Department | null = null;
+
+            if (parsed.params?.name && parsed.params?.building) {
+                const normalizedName = parsed.params.name.trim().toLowerCase();
+                const normalizedBuilding = parsed.params.building.trim().toLowerCase();
+
+                matchedDepartment = departments?.find((d) => {
+                    const deptName = d.name.trim().toLowerCase();
+                    const buildingName = d.Location[0]?.building.name.trim().toLowerCase();
+                    return deptName === normalizedName && buildingName === normalizedBuilding;
+                }) ?? null;
+
+                if (matchedDepartment) {
+                    setSelectedDepartment(matchedDepartment);
+                }
             }
 
             if (parsed.action === "awaitDirectionsConfirmation") {
@@ -221,7 +232,20 @@ const DirectoryPage: React.FC = () => {
             }
 
             if (parsed.action === "goToDepartmentDirections") {
-                goToDirections();
+                const normalizedName = parsed.params.name.trim().toLowerCase();
+                const normalizedBuilding = parsed.params.building.trim().toLowerCase();
+
+                matchedDepartment = departments?.find((d) => {
+                    const deptName = d.name.trim().toLowerCase();
+                    const buildingName = d.Location[0]?.building.name.trim().toLowerCase();
+                    return deptName === normalizedName && buildingName === normalizedBuilding;
+                }) ?? null;
+                navigate("/floorplan", {
+                    state: {
+                        building: matchedDepartment?.Location[0]?.building.name,
+                        destination: matchedDepartment?.Location[0]?.suite || "",
+                    },
+                });
                 setPendingLocationRequest(false);
             }
         } catch (err) {
