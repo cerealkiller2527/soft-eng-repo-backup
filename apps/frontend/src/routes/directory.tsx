@@ -117,6 +117,7 @@ const DirectoryPage: React.FC = () => {
     const [chatHistory, setChatHistory] = useState<{ role: "user" | "assistant"; message: string }[]>([]);
     const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
 
+    //const [isRecording, setIsRecording] = useState(false);
 
 
     const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -323,7 +324,7 @@ const DirectoryPage: React.FC = () => {
 
             {/* chat opens */}
             {chatOpen && (
-                <div className="fixed bottom-24 right-6 w-[320px] h-[420px] bg-white shadow-2xl border border-gray-200 rounded-2xl flex flex-col overflow-hidden z-50 font-sans">
+                <div className="fixed bottom-24 right-6 w-[320px] h-[420px] bg-white shadow-md border border-gray-200 rounded-lg flex flex-col overflow-hidden z-50 font-sans">
                     {/* Chatbot header with profile avatar */}
                     <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 bg-white">
                         <h2 className="text-sm font-semibold text-[#004170]">Hospital Assistant</h2>
@@ -428,7 +429,7 @@ const DirectoryPage: React.FC = () => {
                                     value={chatInput}
                                     onChange={(e) => setChatInput(e.target.value)}
                                     placeholder="Ask a question..."
-                                    className="pl-4 pr-10 py-2 text-sm rounded-full bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#004170] focus:outline-none"
+                                    className="pl-4 pr-12 py-2 text-sm rounded-md bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#004170] focus:outline-none"
                                 />
                                 <button
                                     type="button"
@@ -440,7 +441,7 @@ const DirectoryPage: React.FC = () => {
                             </div>
                             <Button
                                 type="submit"
-                                className="px-4 py-2 rounded-full bg-[#004170] text-white text-sm hover:bg-[#003055]"
+                                className="px-4 py-2 rounded-md bg-[#004170] text-white text-sm hover:bg-[#003055]"
                             >
                                 Ask
                             </Button>
