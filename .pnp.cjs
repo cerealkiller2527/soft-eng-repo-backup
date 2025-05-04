@@ -1676,6 +1676,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@google/generative-ai", [\
+      ["npm:0.24.1", {\
+        "packageLocation": "./.yarn/cache/@google-generative-ai-npm-0.24.1-d9be3495d4-8da77fc648.zip/node_modules/@google/generative-ai/",\
+        "packageDependencies": [\
+          ["@google/generative-ai", "npm:0.24.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@googlemaps/js-api-loader", [\
       ["npm:1.16.8", {\
         "packageLocation": "./.yarn/cache/@googlemaps-js-api-loader-npm-1.16.8-81aa9d2a9a-c4159411f7.zip/node_modules/@googlemaps/js-api-loader/",\
@@ -6354,6 +6363,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@clerk/clerk-sdk-node", "npm:5.1.6"],\
           ["@clerk/express", "virtual:9a28949798a912c67218bf8cea1001b3cae21be82aaad0589210650a91ed87ad2b921ce3379d36f5723672b5e5a668da59a3e262568425b08570aa654e7b0112#npm:1.4.9"],\
+          ["@google/generative-ai", "npm:0.24.1"],\
           ["@prisma/client", "virtual:3154e7e2502d6821f7eea9434c4cdb00a42b4ad928bf283b9f5a1183af99307a4f66aca3e46a37d196a6c6b81c948321e804193e2cbecf9304b80a7023c19290#npm:6.6.0"],\
           ["@swc/core", "virtual:9a28949798a912c67218bf8cea1001b3cae21be82aaad0589210650a91ed87ad2b921ce3379d36f5723672b5e5a668da59a3e262568425b08570aa654e7b0112#npm:1.11.21"],\
           ["@swc/helpers", "npm:0.5.17"],\
@@ -6388,6 +6398,7 @@ const RAW_RUNTIME_STATE =
           ["http-errors", "npm:1.6.3"],\
           ["http-terminator", "npm:3.2.0"],\
           ["jose", "npm:5.10.0"],\
+          ["json5", "npm:2.2.3"],\
           ["morgan", "npm:1.10.0"],\
           ["nodemon", "npm:3.1.9"],\
           ["papaparse", "npm:5.5.2"],\

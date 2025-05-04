@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { Search, Phone, MapPin, Bot } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -86,6 +87,18 @@ const chatbotMappings: Record<string, string> = {
 };
 
 const DirectoryPage: React.FC = () => {
+    const [sessionId, setSessionId] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Load or create a session ID once per user
+        let existing = localStorage.getItem("chatSessionId");
+        if (!existing) {
+            existing = uuidv4();
+            localStorage.setItem("chatSessionId", existing);
+        }
+        setSessionId(existing);
+    }, []);
+
     const navigate = useNavigate();
     const trpc = useTRPC();
     const [searchTerm, setSearchTerm] = useState("");
@@ -95,6 +108,7 @@ const DirectoryPage: React.FC = () => {
     const [chatInput, setChatInput] = useState("");
     const [chatHistory, setChatHistory] = useState<{ role: "user" | "assistant"; message: string }[]>([]);
     const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
+
     const chatBoxRef = useRef<HTMLDivElement>(null);
     const askMutation = useMutation(trpc.chat.ask.mutationOptions());
 
@@ -171,19 +185,19 @@ const DirectoryPage: React.FC = () => {
     };
 
     const handleChatInput = async (text: string) => {
-        if (!text) return;
+        if (!text || !sessionId) return;
+
         setChatHistory((prev) => [...prev, { role: "user", message: text }]);
 
         try {
-            const result = await askMutation.mutateAsync({ message: text });
-            const parsed: GPTResponse = JSON.parse(result.raw);
+            const result = await askMutation.mutateAsync({ message: text, sessionId });
+
+            const parsed = result.raw;
             setChatHistory((prev) => [...prev, { role: "assistant", message: parsed.reply }]);
 
             if (parsed.action === "selectDepartment" && parsed.params?.name) {
                 const match = departments?.find(
-                    (d) =>
-                        d.name.trim().toLowerCase() ===
-                        parsed.params!.name!.trim().toLowerCase()
+                    (d) => d.name.trim().toLowerCase() === parsed.params.name!.trim().toLowerCase()
                 );
                 if (match) setSelectedDepartment(match);
             }

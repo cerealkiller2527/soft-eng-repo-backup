@@ -1,15 +1,23 @@
 import { z } from "zod";
 import { t } from "../trpc";
-import axios from "axios";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import PrismaClient from "../bin/prisma-client";
+import JSON5 from "json5";
 
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_MODEL = "mistralai/mistral-7b-instruct";
+const MODEL_NAME = "models/gemini-1.5-flash-latest";
+const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+
+const chatHistories: Record<
+  string,
+  { role: "user" | "model"; content: string }[]
+> = {};
 
 export const chatRouter = t.router({
   ask: t.procedure
-    .input(z.object({ message: z.string() }))
+    .input(z.object({ message: z.string(), sessionId: z.string() }))
     .mutation(async ({ input }) => {
+      const { message, sessionId } = input;
+
       try {
         const departments = await PrismaClient.department.findMany({
           include: {
@@ -33,45 +41,66 @@ You are a helpful assistant for a healthcare facility.
 
 Your job is to match user questions or complaints to the most relevant department. Use symptoms or keywords to choose the best match, even if the name is not an exact match.
 
-Respond in **strict JSON only**, following this structure:
+ONLY respond in strict JSON, no natural language, no markdown, no preambles.
+
+FORMAT:
 {
   "reply": "Text for user",
   "action": "selectDepartment" | "awaitDirectionsConfirmation" | "goToDepartmentDirections" | null,
   "params": { "name"?: "Department name" }
 }
 
-Do not include HTML or links.
+Do NOT wrap the response in triple backticks or markdown blocks. Return raw JSON only.
 
-Always choose the closest or most likely department based on the user's message.
+If unsure, still return valid JSON with "reply" and "action": null.
+
+Always respond with "awaitDirectionsConfirmation" first. Do NOT use "goToDepartmentDirections" unless the user explicitly asks for directions.
 
 DEPARTMENTS:
 ${departmentList}
-`.trim();
+        `.trim();
 
-        const response = await axios.post(
-          OPENROUTER_API_URL,
-          {
-            model: OPENROUTER_MODEL,
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: input.message },
-            ],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        if (!chatHistories[sessionId]) {
+          chatHistories[sessionId] = [{ role: "user", content: systemPrompt }];
+        }
 
-        const content = response.data.choices?.[0]?.message?.content ?? "{}";
-        return { raw: content };
+        chatHistories[sessionId].push({ role: "user", content: message });
+
+        const model = gemini.getGenerativeModel({ model: MODEL_NAME });
+
+        const chat = model.startChat({
+          history: chatHistories[sessionId].map((m) => ({
+            role: m.role,
+            parts: [{ text: m.content }],
+          })),
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 1024,
+          },
+        });
+
+        const result = await chat.sendMessage(message);
+        const rawContent = result.response.text().trim();
+
+        const cleaned = rawContent
+          .replace(/^```(?:json)?/i, "")
+          .replace(/```$/, "")
+          .trim();
+
+        const parsed = JSON5.parse(cleaned);
+
+        chatHistories[sessionId].push({ role: "model", content: parsed.reply });
+
+        return { raw: parsed };
       } catch (err) {
-        console.error("OpenRouter chat failed:", err);
-        throw new Error(
-          "Assistant is currently unavailable. Please try again soon.",
-        );
+        console.error(err);
+        return {
+          raw: {
+            reply: "Sorry, I couldn't understand that.",
+            action: null,
+            params: {},
+          },
+        };
       }
     }),
 });
