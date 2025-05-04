@@ -16,7 +16,8 @@ const mattAlexProps = {
     name: "Matthew Alex",
     position: "Lead Engineer, Front End Dev",
     path: "/headshots/malex.jpg",
-    quote: "Quote"
+    quote: "\"Believe you can and you're halfway there.\"\n" +
+        "— Theodore Roosevelt"
 }
 
 const bobbyProps = {
@@ -30,14 +31,15 @@ const tinaProps = {
     name: "Tina Cheng",
     position: "Back End Dev",
     path: "/public/headshots/tcheng.jpg",
-    quote: "quote"
+    quote: "\"Start where you are. Use what you have. Do what you can.\"\n" +
+        "— Arthur Ashe"
 }
 
 const brandonProps = {
     name: "Brandon Contardi",
     position: "Front End Dev",
     path: "/public/headshots/bcontardi.jpg",
-    quote:"Quote"
+    quote:"\"Real G's move in silence like lasagna.\" - Lil Wayne\n"
 }
 
 const christianProps = {
@@ -51,28 +53,32 @@ const sahanaProps = {
     name: "Sahana Gokulakrishnan",
     position: "Product Owner, Front End Dev",
     path: "/public/headshots/sgokulakrishnan.jpg",
-    quote:"Quote"
+    quote: "\"You miss 100% of the shots you don’t take.\"\n" +
+        "— Wayne Gretzky"
 }
 
 const maxProps = {
     name: "Max Inman",
     position: "Documentation, Algorithms Dev",
     path: "/public/headshots/minman.jpg",
-    quote:"Quote"
+    quote:"“It it what it is. Make the most of it.”- Grandpa\n",
+
 }
 
 const madhavProps = {
     name: "Madhav Lodha",
     position: "Assistant Lead, Back End Dev",
     path: "/public/headshots/mlodha.jpg",
-    quote:"Quote"
+    quote:"\"Everything you’ve ever wanted is on the other side of fear.\"\n" +
+        "— George Addair"
 }
 
 const mattNickersonProps = {
     name: "Matt Nickerson",
     position: "Assistant Lead, Front End Dev",
     path: "/public/headshots/mnickerson.jpg",
-    quote:"Quote"
+    quote:"\"Do not wait for the perfect moment. Take the moment and make it perfect.\"\n" +
+        "— Zoey Sayward"
 }
 
 const kaylieProps = {
@@ -87,7 +93,7 @@ const willProps = {
     name: "William Schieffer",
     position: "Product Manager, Front End Dev",
     path: "public/headshots/wschieffer.jpg",
-    quote:"Quote"
+    quote:"\"I swear I'm not commit farming I'm just stupid\" - Green Goblins"
 }
 
 
