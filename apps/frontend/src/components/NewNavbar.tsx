@@ -91,7 +91,7 @@ export default function NewNavbar() {
         }`;
 
     const mobileItemClasses =
-        "block w-full text-left py-2 px-4 text-black text-lg hover:bg-[#86A2B6] transition-colors rounded-none";
+        "block w-full text-left py-2 px-4 text-black text-lg transition-colors rounded-none";
 
     const nextAlg = currentAlgorithm === "BFS" ? "DFS" : "BFS";
 

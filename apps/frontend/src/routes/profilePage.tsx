@@ -22,10 +22,14 @@ export default function ProfilePage() {
     const { isLoaded, user } = useUser();
 
     const trpc = useTRPC();
-    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
-    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
-    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
-    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+    const assignedrequestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({assigned: true, username: user?.username ?? undefined}));
+    const assignedrequestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({assigned: true, username: user?.username ?? undefined}));
+    const assignedrequestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({assigned: true, username: user?.username ?? undefined}));
+    const assignedrequestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({assigned: true, username: user?.username ?? undefined}));
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({assigned: false, username: user?.username ?? undefined}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({assigned: false, username: user?.username ?? undefined}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({assigned: false, username: user?.username ?? undefined}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({assigned: false, username: user?.username ?? undefined}));
     const listofEmployees = useQuery(trpc.employee.getEmployee.queryOptions());
 
     const combinedData = [
@@ -34,13 +38,39 @@ export default function ProfilePage() {
         ...(requestsEquipment.data ?? []),
         ...(requestsLanguage.data ?? []),
     ];
+    const assignedCombinedData = [
+        ...(assignedrequestsTransport.data ?? []),
+        ...(assignedrequestsSecurity.data ?? []),
+        ...(assignedrequestsEquipment.data ?? []),
+        ...(assignedrequestsLanguage.data ?? []),
+    ];
     const [filter, setFilter] = useState("");
+
+    function getEmployeeName(id: number): string {
+        const employee = listofEmployees.data?.find(emp => emp.id === id)
+        if (!employee) {
+            return "Unknown"
+        }else{
+            return `${employee.firstName} ${employee.lastName}`
+        }
+    }
 
     const filteredData = combinedData.filter((req) => {
         const filterLower = filter.toLowerCase();
+        const employeeName = getEmployeeName(Number(req.fromEmployeeID));
         return (
             req.type.toLowerCase().includes(filterLower) ||
-            req.fromEmployee.toLowerCase().includes(filterLower) ||
+            employeeName.toLowerCase().includes(filterLower) ||
+            req.priority.toLowerCase().includes(filterLower) ||
+            req.status.toLowerCase().includes(filterLower)
+        );
+    });
+    const assignedFilteredData = assignedCombinedData.filter((req) => {
+        const filterLower = filter.toLowerCase();
+        const employeeName = getEmployeeName(Number(req.fromEmployeeID));
+        return (
+            req.type.toLowerCase().includes(filterLower) ||
+            employeeName.toLowerCase().includes(filterLower) ||
             req.priority.toLowerCase().includes(filterLower) ||
             req.status.toLowerCase().includes(filterLower)
         );
@@ -65,7 +95,7 @@ export default function ProfilePage() {
     const initials = getInitials(user?.firstName, user?.lastName);
 
     return <Layout>
-        <div className="flex flex-col min-h-screen bg-white text-foreground">
+        <div className="flex flex-col min-h-screen bg-gray-100 text-foreground">
             <main className="flex-grow">
                 <div className="max-w-4xl mx-auto p-6 space-y-8 pt-16">
                     {/* Header */}
@@ -137,9 +167,7 @@ export default function ProfilePage() {
                                                                                     className="odd:bg-white even:bg-gray-100 cursor-pointer hover:outline-[#012D5A] hover:outline-4 transition"
                                                                                 >
                                                                                     <TableCell>{req.type}</TableCell>
-                                                                                    <TableCell>{req.fromEmployee}</TableCell>
                                                                                     <TableCell>{getEmployeeName(Number(req.assignedEmployeeID))}</TableCell>                                                        <TableCell>{req.priority}</TableCell>
-                                                                                    <TableCell>{req.description}</TableCell>
                                                                                     <TableCell>{req.status}</TableCell>
                                                                                 </TableRow>
                                                                             </>
@@ -154,7 +182,45 @@ export default function ProfilePage() {
                                         </div>
                                     </TabsContent>
                                     <TabsContent value="assigned">
-                                        {/*Placeholder*/}
+                                        <div className="@container/main flex flex-1 flex-col gap-2">
+                                            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                                                <div className="@xl/main:grid-cols-1 grid grid-cols-1 gap-4 px-4 lg:px-6">
+                                                    <Card className="@container/card">
+
+                                                        <CardFooter className="flex-col items-start gap-4 text-sm w-full">
+
+                                                            <div className="w-full overflow-auto">
+                                                                <Table className=" border border-gray-200 rounded-xl shadow-sm mt-2">
+                                                                    <TableCaption>A list of Requests</TableCaption>
+                                                                    <TableHeader>
+                                                                        <TableRow className="bg-[#012D5A] hover:bg-[#012D5A]">
+                                                                            <TableHead className="text-white">Request Type</TableHead>
+                                                                            <TableHead className="text-white">Assigned To</TableHead>
+                                                                            <TableHead className="text-white">Priority</TableHead>
+                                                                            <TableHead className="text-white">Status</TableHead>
+                                                                        </TableRow>
+                                                                    </TableHeader>
+                                                                    <TableBody>
+                                                                        {assignedFilteredData.map((req) => <>
+                                                                                <TableRow
+                                                                                    key={req.id}
+                                                                                    onClick={() => toggleRow(req.id)}
+                                                                                    className="odd:bg-white even:bg-gray-100 cursor-pointer hover:outline-[#012D5A] hover:outline-4 transition"
+                                                                                >
+                                                                                    <TableCell>{req.type}</TableCell>
+                                                                                    <TableCell>{getEmployeeName(Number(req.assignedEmployeeID))}</TableCell>                                                        <TableCell>{req.priority}</TableCell>
+                                                                                    <TableCell>{req.status}</TableCell>
+                                                                                </TableRow>
+                                                                            </>
+                                                                        )}
+                                                                    </TableBody>
+                                                                </Table>
+                                                            </div>
+                                                        </CardFooter>
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </TabsContent>
                                 </Card>
                             </Tabs>
