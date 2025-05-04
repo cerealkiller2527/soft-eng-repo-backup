@@ -311,14 +311,15 @@ const DirectoryPage: React.FC = () => {
                         {chatHistory.map((msg, idx) => (
                             <div
                                 key={idx}
-                                className={`p-2 rounded-lg text-sm max-w-[80%] whitespace-pre-wrap ${
+                                className={`px-4 py-2 rounded-xl text-sm max-w-[75%] whitespace-pre-wrap ${
                                     msg.role === "user"
-                                        ? "ml-auto bg-blue-100 text-right"
-                                        : "mr-auto bg-gray-100 text-left"
+                                        ? "ml-auto bg-[#004170] text-white"
+                                        : "mr-auto bg-gray-100 text-gray-800"
                                 }`}
                             >
                                 {msg.message}
                             </div>
+
                         ))}
                         <div ref={chatBoxRef} />
                     </div>
