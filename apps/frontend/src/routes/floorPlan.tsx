@@ -131,12 +131,12 @@ const FloorPlan = () => {
             .filter(node => node.floor === imageIndex + 1)
             .map(node => ({ lat: node.latitude, lng: node.longitude }));
 
-        // First polyline (always visible)
+        // First polyline (always visible if coordinates exist)
         if (filteredCoords.length >= 2) {
             polylineRef.current = new google.maps.Polyline({
                 path: filteredCoords,
                 geodesic: true,
-                strokeColor: driving ? "#6db4fa" : "#00d9ff", // Different color for walking
+                strokeColor: driving ? "#6db4fa" : "#00d9ff",
                 strokeOpacity: 0.7,
                 strokeWeight: 3,
                 icons: [{
@@ -151,7 +151,7 @@ const FloorPlan = () => {
             polylineRef.current.setMap(mapInstance.current);
         }
 
-        // Second polyline (only for driving mode)
+        // Second polyline (only for driving mode if coordinates exist)
         if (driving && filteredCoords2.length >= 2) {
             polylineRef2.current = new google.maps.Polyline({
                 path: filteredCoords2,
@@ -172,39 +172,15 @@ const FloorPlan = () => {
             polylineRef2.current.setMap(mapInstance.current);
         }
 
-        // Animation function that handles both single and dual polyline cases
+        // Animation function that handles all cases
         const animatePath = () => {
             if (animationPaused.current) return;
 
-            // For walking mode or when there's only one polyline
-            if (!driving || !polylineRef2.current) {
-                if (!polylineRef.current) return;
+            const hasFirstPolyline = polylineRef.current && polylineRef.current.getPath().getLength() > 0;
+            const hasSecondPolyline = polylineRef2.current && polylineRef2.current.getPath().getLength() > 0;
 
-                let count = 0;
-                const totalSteps = 200;
-                const duration = 20;
-
-                const animateStep = () => {
-                    if (animationPaused.current) return;
-
-                    count = (count + 1) % (totalSteps + 1);
-                    const percent = count / 2;
-
-                    const icons = polylineRef.current.get("icons");
-                    icons[0].offset = `${percent}%`;
-                    polylineRef.current.set("icons", icons);
-
-                    if (count < totalSteps) {
-                        animationInterval.current = window.setTimeout(animateStep, duration);
-                    } else {
-                        animatePath(); // Restart animation
-                    }
-                };
-
-                animateStep();
-            }
-            // For driving mode with two polylines
-            else {
+            // If we have both polylines, alternate between them
+            if (hasFirstPolyline && hasSecondPolyline) {
                 const currentPolyline = isFirstAnimating.current ? polylineRef.current : polylineRef2.current;
                 const otherPolyline = isFirstAnimating.current ? polylineRef2.current : polylineRef.current;
 
@@ -225,7 +201,7 @@ const FloorPlan = () => {
                 const duration = 20;
 
                 const animateStep = () => {
-                    if (animationPaused.current) return;
+                    if (animationPaused.current || !currentPolyline) return;
 
                     count = (count + 1) % (totalSteps + 1);
                     const percent = count / 2;
@@ -240,6 +216,40 @@ const FloorPlan = () => {
                         animatePath();
                     } else {
                         animationInterval.current = window.setTimeout(animateStep, duration);
+                    }
+                };
+
+                animateStep();
+            }
+            // If we have only one polyline (either first or second), animate just that one
+            else if (hasFirstPolyline || hasSecondPolyline) {
+                const activePolyline = hasFirstPolyline ? polylineRef.current : polylineRef2.current;
+                if (!activePolyline) return;
+
+                // Highlight the active polyline
+                activePolyline.setOptions({
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                });
+
+                let count = 0;
+                const totalSteps = 200;
+                const duration = 20;
+
+                const animateStep = () => {
+                    if (animationPaused.current || !activePolyline) return;
+
+                    count = (count + 1) % (totalSteps + 1);
+                    const percent = count / 2;
+
+                    const icons = activePolyline.get("icons");
+                    icons[0].offset = `${percent}%`;
+                    activePolyline.set("icons", icons);
+
+                    if (count < totalSteps) {
+                        animationInterval.current = window.setTimeout(animateStep, duration);
+                    } else {
+                        animatePath(); // Restart animation
                     }
                 };
 
