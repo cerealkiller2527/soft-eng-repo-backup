@@ -15,6 +15,7 @@ import { mapEditorRouter } from "./routes/mapEditorRouter.ts";
 import { mapInfoRouter } from "./routes/mapInfoRouter.ts";
 import { dbImportRouter } from "./routes/dbImportRouter.ts";
 import { pathfindingRouter } from "./routes/pathfindingRouter.ts";
+import { chatRouter } from "./routes/chatRouter.ts";
 
 const appRouter = t.router({
   employee: employeeRouter,
@@ -22,6 +23,7 @@ const appRouter = t.router({
   csv: csvRouter,
   directories: directoriesRouter,
   search: searchRouter,
+  chat: chatRouter,
   mapEditor: mapEditorRouter,
   mapInfoRouter: mapInfoRouter,
   dbEditor: dbImportRouter,

@@ -51,6 +51,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/supertest": "^6.0.3",
+    "axios": "^1.9.0",
     "eslint": "*",
     "eslint-config-custom": "*",
     "nodemon": "^3.1.9",

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { Search, Phone, MapPin, Bot } from "lucide-react";
@@ -58,6 +58,7 @@ const DepartmentSchema = z.object({
     DepartmentServices: z.array(ServiceSchema),
     Location: z.array(LocationSchema),
 });
+
 type Department = z.infer<typeof DepartmentSchema>;
 
 const DEPARTMENT_CATEGORIES = {
@@ -85,17 +86,28 @@ const chatbotMappings: Record<string, string> = {
 };
 
 const DirectoryPage: React.FC = () => {
-    const [chatInput, setChatInput] = useState("");
-    const [chatOpen, setChatOpen] = useState(false);
-
-
-
-
     const navigate = useNavigate();
     const trpc = useTRPC();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
 
+    const [chatOpen, setChatOpen] = useState(false);
+    const [chatInput, setChatInput] = useState("");
+    const [chatHistory, setChatHistory] = useState<{ role: "user" | "assistant"; message: string }[]>([]);
+    const [pendingLocationRequest, setPendingLocationRequest] = useState(false);
+    const chatBoxRef = useRef<HTMLDivElement>(null);
+    const askMutation = useMutation(trpc.chat.ask.mutationOptions());
+
+    const goToDirections = () => {
+        const location = selectedDepartment?.Location[0];
+        if (!location) return;
+        navigate("/floorplan", {
+            state: {
+                building: location.building.name,
+                destination: location.suite ?? "",
+            },
+        });
+    };
 
     const { data: departmentsData, isLoading } = useQuery(
         trpc.directories.getAllDepartments.queryOptions()
@@ -111,6 +123,16 @@ const DirectoryPage: React.FC = () => {
             setSelectedDepartment(departments[0]);
         }
     }, [departments, selectedDepartment]);
+    useEffect(() => {
+        if (pendingLocationRequest && chatInput.toLowerCase().includes("yes")) {
+            goToDirections();
+            setPendingLocationRequest(false);
+            setChatInput("");
+        }
+    }, [chatInput]);
+    useEffect(() => {
+        chatBoxRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [chatHistory]);
 
     const filteredDepartments = departments?.filter((dept) => {
         const matchesSearch =
@@ -148,24 +170,39 @@ const DirectoryPage: React.FC = () => {
         e.preventDefault();
     };
 
-    const handleChat = (e: React.FormEvent) => {
-        e.preventDefault();
-        const lowerInput = chatInput.toLowerCase();
-        for (const keyword in chatbotMappings) {
-            if (lowerInput.includes(keyword)) {
-                const matchName = chatbotMappings[keyword];
-                const dept = departments?.find((d) =>
-                    d.name.toLowerCase().includes(matchName.toLowerCase())
+    const handleChatInput = async (text: string) => {
+        if (!text) return;
+        setChatHistory((prev) => [...prev, { role: "user", message: text }]);
+
+        try {
+            const result = await askMutation.mutateAsync({ message: text });
+            const parsed: GPTResponse = JSON.parse(result.raw);
+            setChatHistory((prev) => [...prev, { role: "assistant", message: parsed.reply }]);
+
+            if (parsed.action === "selectDepartment" && parsed.params?.name) {
+                const match = departments?.find(
+                    (d) =>
+                        d.name.trim().toLowerCase() ===
+                        parsed.params!.name!.trim().toLowerCase()
                 );
-                if (dept) {
-                    setSelectedDepartment(dept);
-                    setChatInput("");
-                    setChatOpen(false);
-                    return;
-                }
+                if (match) setSelectedDepartment(match);
             }
+
+            if (parsed.action === "awaitDirectionsConfirmation") {
+                setPendingLocationRequest(true);
+            }
+
+            if (parsed.action === "goToDepartmentDirections") {
+                goToDirections();
+                setPendingLocationRequest(false);
+            }
+        } catch (err) {
+            console.error("GPT error:", err);
+            setChatHistory((prev) => [
+                ...prev,
+                { role: "assistant", message: "Sorry, I couldn't understand that." },
+            ]);
         }
-        alert("Sorry, I couldn't find that department.");
     };
 
     if (isLoading || !departments) {
@@ -232,27 +269,8 @@ const DirectoryPage: React.FC = () => {
     };
 
     const handleChatFromVoice = (spokenText: string) => {
-        const lowerInput = spokenText.toLowerCase();
-        for (const keyword in chatbotMappings){
-            if(lowerInput.includes(keyword)){
-                const matchName = chatbotMappings[keyword];
-                const dept = departments?.find((d) =>
-                    d.name.toLowerCase().includes(matchName.toLowerCase())
-                );
-
-                if(dept){
-                    setSelectedDepartment(dept);
-
-
-                    //setChatInput("");
-                    return;
-                }
-            }
-        }
-
-
-        alert("Department couldn't be found!");
-    }
+        handleChatInput(spokenText);
+    };
 
 
 
@@ -273,25 +291,42 @@ const DirectoryPage: React.FC = () => {
 
             {/* chat opens */}
             {chatOpen && (
-                <div className="fixed bottom-20 right-6 bg-white shadow-lg border rounded-lg p-4 w-80 z-50">
-                    <form onSubmit={handleChat} className="flex flex-col gap-3">
+                <div className="fixed bottom-24 right-6 w-80 h-[500px] bg-white shadow-lg border rounded-lg flex flex-col overflow-hidden z-50">
+                    <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                        {chatHistory.map((msg, idx) => (
+                            <div
+                                key={idx}
+                                className={`p-2 rounded-lg text-sm max-w-[80%] whitespace-pre-wrap ${
+                                    msg.role === "user"
+                                        ? "ml-auto bg-blue-100 text-right"
+                                        : "mr-auto bg-gray-100 text-left"
+                                }`}
+                            >
+                                {msg.message}
+                            </div>
+                        ))}
+                        <div ref={chatBoxRef} />
+                    </div>
+
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            handleChatInput(chatInput.trim());
+                            setChatInput("");
+                        }}
+                        className="p-3 border-t flex gap-2"
+                    >
                         <Input
                             value={chatInput}
                             onChange={(e) => setChatInput(e.target.value)}
                             placeholder="Ask about a department..."
                             className="flex-1"
                         />
-                        <Button type="submit" className="bg-primary text-white">
+                        <Button type="submit" className="bg-blue-600 text-white">
                             Ask
                         </Button>
-
-                        <Button
-                            type = "button"
-                            onClick = {startVoiceRecognition}
-                            className = "bg-primary text-white"
-
-                        >
-                            Speak
+                        <Button type="button" onClick={startVoiceRecognition} className="bg-gray-200">
+                            🎤
                         </Button>
                     </form>
                 </div>
