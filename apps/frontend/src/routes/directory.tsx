@@ -60,6 +60,13 @@ const DepartmentSchema = z.object({
 });
 type Department = z.infer<typeof DepartmentSchema>;
 
+const formatFloorNumber = (floor: number): string => {
+    if (floor === -1) return 'L1';
+    if (floor === -2) return 'L2';
+    return `Floor ${floor}`;
+};
+
+
 const DEPARTMENT_CATEGORIES = {
     "Primary Care": ["Family Medicine", "Internal Medicine", "Pediatrics", "General Practice"],
     "Specialty Care": ["Cardiology", "Dermatology", "Neurology", "Orthopedics", "Oncology"],
@@ -430,6 +437,8 @@ const DirectoryPage: React.FC = () => {
                                         <CardContent className="flex flex-col gap-4">
                                             <p className="text-slate-500">
                                                 {selectedDepartment.Location[0]?.building.name}
+                                                {selectedDepartment.Location[0]?.floor &&
+                                                    `, ${formatFloorNumber(selectedDepartment.Location[0].floor)}`}
                                                 {selectedDepartment.Location[0]?.suite &&
                                                     `, Suite ${selectedDepartment.Location[0].suite}`}
                                             </p>

@@ -532,9 +532,9 @@ const FloorPlan = () => {
                     />
 
                     {/* Combined tabs and controls container */}
-                    <div className="absolute top-4 left-4 z-10 w-80 space-y-2">
+                    <div className="absolute top-4 left-4 z-10 w-80 space-y-2 bg-white shadow-md">
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="grid w-full grid-cols-2 bg-white">
+                            <TabsList className="grid w-full grid-cols-2 chart-4">
                                 <TabsTrigger
                                     value="request"
                                     className="data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -550,21 +550,19 @@ const FloorPlan = () => {
                             </TabsList>
 
                             <TabsContent value="request" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-md">
-                                    <LocationRequestForm
-                                        onSubmit={(form) => {
-                                            setForm(form);
-                                            if (instructions.length > 0) {
-                                                setActiveTab("directions");
-                                            }
-                                        }}
-                                        initialForm={form}
-                                    />
-                                </div>
+                                <LocationRequestForm
+                                    onSubmit={(form) => {
+                                        setForm(form);
+                                        if (instructions.length > 0) {
+                                            setActiveTab("directions");
+                                        }
+                                    }}
+                                    initialForm={form}
+                                />
                             </TabsContent>
 
                             <TabsContent value="directions" className="mt-0">
-                                <div className="bg-white p-4 rounded-b-lg shadow-lg h-120 relative">
+                                <div className="bg-white p-4 shadow-lg h-120 relative">
                                     <InstructionsBox key={instructions.join()} instructions={ instructions } />
                                     <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
@@ -572,22 +570,22 @@ const FloorPlan = () => {
                                 </div>
                             </TabsContent>
                         </Tabs>
+                    </div>
 
-                        {/* Floor and view mode buttons - now under tabs */}
-                        <div className="grid grid-cols-2 gap-2">
-                            <Button
-                                onClick={handleImageSwitch}
-                                className="w-full bg-primary hover:bg-primary/90"
-                            >
-                                Floor: {imageIndex + 1}
-                            </Button>
-                            <Button
-                                onClick={toggleCenterMode}
-                                className="w-full bg-primary hover:bg-primary/90"
-                            >
-                                {centerMode}
-                            </Button>
-                        </div>
+                    {/* Floor Button Cycling */}
+                    <div className="absolute grid grid-cols-2 gap-2 top-5 right-5">
+                        <Button
+                            onClick={handleImageSwitch}
+                            className="w-full bg-primary hover:bg-primary/90"
+                        >
+                            Floor: {imageIndex + 1}
+                        </Button>
+                        <Button
+                            onClick={toggleCenterMode}
+                            className="w-full bg-primary hover:bg-primary/90"
+                        >
+                            {centerMode}
+                        </Button>
                     </div>
                 </div>
             </div>

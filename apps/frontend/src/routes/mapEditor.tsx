@@ -307,8 +307,8 @@ const MapEditor = () => {
                         {lat: fromNode.x, lng: fromNode.y},
                         {lat: toNode.x, lng: toNode.y},
                     ],
-                    strokeColor: "#0A75C2FF", // Chart-2 on style guide
-                    strokeWeight: 10,
+                    strokeColor: "#0A75C2FF", // Chart-2 I don't know how to use that in non-tailwind
+                    strokeWeight: 3,
                     map: mapInstance.current,
                 });
 
