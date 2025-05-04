@@ -459,6 +459,24 @@ const MapEditor = () => {
                 <NewNavbar />
             </div>
 
+            {/* Node Form */}
+            <div className="absolute top-30 right-4 z-30">
+                {(selectedNode || edgeStartRef.current) && (
+                    <MapForm
+                        onSubmit={handleFormSubmit}
+                        initialValues={edgeStartRef.current ? {
+                            suite: edgeStartRef.current.suite,
+                            type: edgeStartRef.current.type,
+                            description: edgeStartRef.current.description,
+                            isOutside: edgeStartRef.current.outside,
+                            departmentId: edgeStartRef.current.departmentId,
+                        } : undefined}
+                        buildingId={building}
+                        floor={Number(form?.floor ?? 1)}
+                    />
+                )}
+            </div>
+
             {/* Control Panel in top left */}
             <div className="absolute top-16 left-4 z-10 bg-white p-4 rounded-lg shadow-lg max-w-xs w-full items-center">
                 <div className="space-y-4">
@@ -495,24 +513,6 @@ const MapEditor = () => {
                             >
                                 Change Location
                             </Button>
-                        </div>
-                    )}
-
-                    {/* Node Form */}
-                    {(selectedNode || edgeStartRef.current) && (
-                        <div className="mt-4">
-                            <MapForm
-                                onSubmit={handleFormSubmit}
-                                initialValues={edgeStartRef.current ? {
-                                    suite: edgeStartRef.current.suite,
-                                    type: edgeStartRef.current.type,
-                                    description: edgeStartRef.current.description,
-                                    isOutside: edgeStartRef.current.outside,
-                                    departmentId: edgeStartRef.current.departmentId,
-                                } : undefined}
-                                buildingId={building}
-                                floor={Number(form?.floor ?? 1)}
-                            />
                         </div>
                     )}
 
