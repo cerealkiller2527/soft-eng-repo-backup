@@ -18,6 +18,8 @@ export interface SidebarContentProps {
     processedHospitals: Hospital[];
     selectedLocation: Hospital | null;
     allRoutes: EnrichedRoute[] | null;
+    currentRoute: EnrichedRoute | null | undefined;
+    hasIndoorPath: boolean;
     directionsLoading: boolean;
     directionsError: string | null;
     hospitalsLoading: boolean;
@@ -27,6 +29,8 @@ export interface SidebarContentProps {
     selectRoute: (route: EnrichedRoute) => void;
     onDepartmentSelect: (department: string) => void;
     onDrivingSelect: (Driving: boolean) => void;
+    onGoToParkingClick: () => void;
+    onIndoorNavigationClick: () => void;
 }
 
 export function SidebarContent({
@@ -38,6 +42,8 @@ export function SidebarContent({
                                    processedHospitals,
                                    selectedLocation,
                                    allRoutes,
+                                   currentRoute,
+                                   hasIndoorPath,
                                    directionsLoading,
                                    directionsError,
                                    hospitalsLoading,
@@ -47,6 +53,8 @@ export function SidebarContent({
                                    selectRoute,
                                    onDepartmentSelect,
                                    onDrivingSelect,
+                                   onGoToParkingClick,
+                                   onIndoorNavigationClick,
                                }: SidebarContentProps) {
     return (
         <div className="flex flex-col h-full">
@@ -98,21 +106,26 @@ export function SidebarContent({
                     className="flex-1 h-0 min-h-0 flex flex-col data-[state=active]:flex data-[state=inactive]:hidden"
                 >
                     {selectedLocation && (
-                        <UserDepartmentInput
-                            buildingName={selectedLocation.name}
-                            onDepartmentSelect={onDepartmentSelect}
-                            className="mb-4 flex-shrink-0" // Add flex-shrink-0 here
-                        />
+                        <div className="mb-2 flex-shrink-0 p-1 bg-primary/5 border border-primary rounded-lg shadow-sm">
+                            <UserDepartmentInput
+                                buildingName={selectedLocation.name}
+                                onDepartmentSelect={onDepartmentSelect}
+                            />
+                        </div>
                     )}
-                    <div className="flex flex-col h-full min-h-0"> {/* Add this wrapper */}
+                    <div className="flex flex-col h-full min-h-0">
                         <DirectionsCard
                             hospital={selectedLocation}
                             isLoading={directionsLoading}
                             error={directionsError}
                             allRoutes={allRoutes}
+                            currentRoute={currentRoute}
+                            hasIndoorPath={hasIndoorPath}
                             onSelectRoute={selectRoute}
+                            onGoToParkingClick={onGoToParkingClick}
+                            onIndoorNavigationClick={onIndoorNavigationClick}
                             onDrivingSelect={onDrivingSelect}
-                            className="flex-1 min-h-0" // Add these classes
+                            className="flex-1 min-h-0"
                         />
                     </div>
                 </TabsContent>

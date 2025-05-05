@@ -18,6 +18,8 @@ import {
   CheckCircle,
   AlertTriangle,
   Info,
+  ParkingSquare,
+  Footprints,
 } from "lucide-react";
 import { RouteLayerManager } from "@/components/map/RouteLayerManager";
 import { useAppMapData } from "@/lib/hooks/useAppMapData";
@@ -42,6 +44,7 @@ function AppContent() {
   const [newDepartment, setNewDepartment] = useState("");
   const [newDriving, setNewDriving] = useState(false);
   const [newHospital, setNewHospital] = useState<Hospital | undefined>(undefined);
+  const [isIndoorPathAvailable, setIsIndoorPathAvailable] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
@@ -243,9 +246,6 @@ function AppContent() {
           }
       } else if (search.error) {
           console.error("tRPC search query error:", search.error);
-          toast.error("Failed to calculate indoor path. Please try again.", {
-              description: search.error.message,
-          });
       } else if (search.isLoading) {
            console.log("tRPC search query is loading...");
       } else if (queryEnabled && !search.isLoading && !search.data) {
@@ -254,6 +254,100 @@ function AppContent() {
 
   }, [search.data, search.isLoading, search.error, form, routeLat, routeLng, routeCoordsAreReady, queryEnabled, allRoutes, mapInstance]);
 
+  useEffect(() => {
+    setIsIndoorPathAvailable(!!search.data?.path?.toParking && search.data.path.toParking.length >= 2);
+  }, [search.data]);
+
+  useEffect(() => {
+    if (activeTab === 'directions') {
+      if (!selectedLocation) {
+        toast.info("Please select a hospital from the list or map to view directions.", {
+          id: 'select-hospital-toast',
+          icon: <Info className="h-4 w-4" />,
+        });
+      } else if (!isIndoorPathAvailable && !search.isLoading && !search.error) {
+        toast.info("Please select a destination department to calculate the indoor path.", {
+          id: 'select-department-toast',
+          icon: <Info className="h-4 w-4" />,
+        });
+      }
+    }
+  }, [activeTab, selectedLocation, isIndoorPathAvailable, search.isLoading, search.error]);
+
+  const fitToBounds = useCallback((coords: ([number, number] | mapboxgl.LngLatLike)[]) => {
+    if (!mapInstance || mapInstance._removed || coords.length === 0) return;
+    
+    try {
+      const bounds = new mapboxgl.LngLatBounds();
+      coords.forEach(coord => bounds.extend(coord as mapboxgl.LngLatLike));
+      
+      mapInstance.fitBounds(bounds, {
+        padding: ROUTE_FIT_BOUNDS_OPTIONS.padding,
+        pitch: mapInstance.getPitch(),
+        bearing: mapInstance.getBearing(),
+        duration: 1000
+      });
+    } catch (error) {
+      console.error("Error fitting bounds:", error);
+    }
+  }, [mapInstance]);
+  
+  const handleGoToParkingClick = useCallback(() => {
+    if (isIndoorPathAvailable && search.data?.path?.toParking) {
+      const parkingNodes = search.data.path.toParking;
+      const parkingLocationNode = parkingNodes[parkingNodes.length - 1];
+      
+      if (parkingLocationNode?.longitude && parkingLocationNode?.latitude) {
+          const parkingCoords: [number, number] = [parkingLocationNode.longitude, parkingLocationNode.latitude];
+          
+          flyTo(parkingCoords, 19.4, {
+              pitch: 50,
+              bearing: mapInstance?.getBearing() ?? DEFAULT_FLY_TO_OPTIONS.bearing,
+              speed: DEFAULT_FLY_TO_OPTIONS.speed,
+              curve: DEFAULT_FLY_TO_OPTIONS.curve,
+          });
+          
+          toast.info("Focusing on parking location", { icon: <ParkingSquare className="h-4 w-4" /> });
+      } else {
+          toast.error("Parking location coordinates not found.");
+      }
+    } else {
+      toast.error("Indoor path data (including parking) is not available.");
+    }
+  }, [isIndoorPathAvailable, search.data, mapInstance, flyTo]);
+  
+  const handleIndoorNavigationClick = useCallback(() => {
+    if (selectedLocation?.coordinates) {
+      const hospitalId = selectedLocation.id;
+      const specificView = HOSPITAL_SPECIFIC_VIEWS[hospitalId] || {};
+      const targetCenter = specificView.coordinates || selectedLocation.coordinates;
+
+      let flyToOptions: CustomFlyToOptions & Pick<CameraOptions, 'zoom' | 'pitch' | 'bearing'> = {
+        speed: DEFAULT_FLY_TO_OPTIONS.speed,
+        curve: DEFAULT_FLY_TO_OPTIONS.curve,
+        zoom: specificView.zoom ?? DEFAULT_FLY_TO_OPTIONS.zoom,
+        pitch: specificView.pitch ?? DEFAULT_FLY_TO_OPTIONS.pitch,
+        bearing: specificView.bearing ?? mapInstance?.getBearing() ?? 0,
+      };
+
+      if (specificView.bearing === undefined && contextUserLocation) {
+          try {
+            flyToOptions.bearing = calculateBearing(contextUserLocation, targetCenter as [number, number]);
+          } catch (error) {
+            console.error("Error calculating bearing for indoor flyTo:", error);
+          }
+      }
+      
+      flyTo(targetCenter as [number, number], flyToOptions.zoom, flyToOptions);
+      
+      toast.info(`Focusing on indoor view for ${selectedLocation.name}`, { icon: <Footprints className="h-4 w-4" /> });
+    } else if (!selectedLocation) {
+      toast.error("Please select a hospital first.");
+    } else {
+      toast.error("Selected hospital has no coordinates defined.");
+    }
+  }, [selectedLocation, contextUserLocation, mapInstance, flyTo]);
+
   const sidebarProps: SidebarContentProps = {
     getCurrentPosition, geoLoading, geoError, activeTab, setActiveTab,
     processedHospitals, selectedLocation, allRoutes, directionsLoading,
@@ -261,6 +355,10 @@ function AppContent() {
     handleSelectHospitalFromList, selectRoute,
     onDepartmentSelect: handleDepartmentSelect,
     onDrivingSelect: handleNavigationModeSelect,
+    currentRoute,
+    hasIndoorPath: isIndoorPathAvailable,
+    onGoToParkingClick: handleGoToParkingClick,
+    onIndoorNavigationClick: handleIndoorNavigationClick,
   };
 
   const mapElementsProps: MapElementsProps = {

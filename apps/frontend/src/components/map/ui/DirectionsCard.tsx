@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Clock, Volume2, Loader2, Route, Map, AlertTriangle, Play, Square, Info } from "lucide-react";
+import { Clock, Volume2, Loader2, Route, Map, AlertTriangle, Play, Square, Info, ParkingSquare, Footprints } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -36,7 +36,11 @@ interface DirectionsCardProps {
   isLoading: boolean;
   error: string | null;
   allRoutes: EnrichedRoute[] | null; // All available routes
+  currentRoute: EnrichedRoute | null | undefined; // Pass currentRoute down
+  hasIndoorPath: boolean; // New prop to know if indoor path is available
   onSelectRoute?: (route: EnrichedRoute) => void;
+  onGoToParkingClick?: () => void; // Handler for parking button
+  onIndoorNavigationClick?: () => void; // Handler for indoor button
   className?: string;
   onDrivingSelect: (Driving: boolean) => void;
 }
@@ -54,22 +58,18 @@ export function DirectionsCard({
                                  isLoading,
                                  error,
                                  allRoutes,
+                                 currentRoute, // Destructure currentRoute
+                                 hasIndoorPath, // Destructure hasIndoorPath
                                  onSelectRoute,
+                                 onGoToParkingClick, // Destructure parking handler
+                                 onIndoorNavigationClick, // Destructure indoor handler
                                  className,
                                  onDrivingSelect,
 }: DirectionsCardProps) {
   const { transportMode, setActiveTab } = useMap();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  // --- State for Speech Synthesis --- MOVED TO HOOK
-  // const [isPlaying, setIsPlaying] = useState(false);
-  // const [currentStepIndex, setCurrentStepIndex] = useState(-1);
-  // const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
-  // const [selectedVoiceURI, setSelectedVoiceURI] = useState<string | undefined>(undefined);
-  // const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null); 
-
   // Derive currentRoute and its directions
-  const currentRoute = useMemo(() => allRoutes?.find(r => r.isActive), [allRoutes]);
   const currentDirections = currentRoute?.directions ?? null;
   const directionSteps = currentDirections?.steps ?? [];
 
@@ -87,12 +87,6 @@ export function DirectionsCard({
   const estimatedTime = currentDirections?.duration ?? "-";
   const distance = currentDirections?.distance ?? "-";
   const hospitalName = hospital?.name ?? "Selected Hospital";
-
-  // --- Effect to get available voices --- MOVED TO HOOK
-  // useEffect(() => { ... }, []);
-
-  // --- Effect to handle speech playback based on state --- MOVED TO HOOK
-  // useEffect(() => { ... }, [isPlaying, currentStepIndex, selectedVoiceURI, directionSteps, availableVoices]);
 
   // Effect for error toasts (keep, as it's related to directions fetching error)
   useEffect(() => {
@@ -193,13 +187,13 @@ export function DirectionsCard({
             <span className="text-xs font-medium ml-1.5 mr-2">Routes</span>
             <Separator className="flex-grow" decorative />
           </div>
-          <div className="flex flex-col gap-1 px-1 mt-1">
+          <div className="flex flex-row gap-2 px-1 mt-1">
             {allRoutes.map((route, index) => (
               <button
                 key={route.id}
                 onClick={() => onSelectRoute && onSelectRoute(route)}
                 className={cn(
-                  "w-full text-left p-1.5 rounded-md text-xs transition-colors",
+                  "flex-1 text-left p-1.5 rounded-md text-xs transition-colors",
                   "flex items-center",
                   route.isActive
                     ? "bg-primary/10 text-primary font-semibold ring-1 ring-primary/30"
@@ -210,18 +204,18 @@ export function DirectionsCard({
                 <div className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-medium mr-2 flex-shrink-0">
                   {index + 1}
                 </div>
-                <div className="flex justify-between items-center w-full">
+                <div className="flex flex-col items-start w-full">
                   <span>
                     {transportMode === "drive" && route.duration_typical
                       ? `Typically ${Math.round(route.duration_typical / 60)} min`
                       : `${route.directions.duration}`}
                   </span>
-                  <span className="font-normal">{route.directions.distance}</span>
+                  <span className="font-normal text-muted-foreground/80">{route.directions.distance}</span>
                 </div>
               </button>
             ))}
           </div>
-          <div className="flex items-center py-1.5 mt-1">
+          <div className="flex items-center py-1.5 mt-2">
             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
               <Map className="h-3 w-3 text-primary" />
             </div>
@@ -231,8 +225,41 @@ export function DirectionsCard({
         </div>
       )}
 
-      {/* Scrollable Direction Steps */}
-      <ScrollArea className="flex-1 h-0 min-h-0">
+      {/* --- Focus Buttons Section --- */}
+      <div className="flex gap-2 mb-2 flex-shrink-0">
+        <Button
+          variant={currentRoute ? "default" : "secondary"} // Style based on outdoor route availability
+          size="sm"
+          className="flex-1 h-8 text-xs gap-1.5"
+          onClick={onGoToParkingClick}
+          disabled={!currentRoute || isLoading}
+        >
+          <ParkingSquare className="h-3.5 w-3.5" />
+          Go to Parking
+        </Button>
+        <Button
+          variant={hasIndoorPath ? "default" : "secondary"} // Style based on indoor path availability
+          size="sm"
+          className="flex-1 h-8 text-xs gap-1.5"
+          onClick={onIndoorNavigationClick}
+          disabled={!hasIndoorPath || isLoading} // Disable if no indoor path
+        >
+          <Footprints className="h-3.5 w-3.5" />
+          Indoor Navigation
+        </Button>
+      </div>
+
+      {/* --- Navigation Steps Title --- */}
+      <div className="flex items-center py-1.5 flex-shrink-0 border-t pt-2">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
+            <Map className="h-3 w-3 text-primary" />
+          </div>
+          <span className="text-xs font-medium ml-1.5 mr-2">Navigation Steps</span>
+          <Separator className="flex-grow" decorative />
+      </div>
+
+      {/* Scrollable Direction Steps - Ensure it takes remaining space and scrolls */}
+      <ScrollArea className="flex-1 min-h-0">
         <div className="space-y-3 pr-2">
           {!error && currentRoute && directionSteps.map((step, index) => (
             <div key={index} className="flex items-start text-xs">
