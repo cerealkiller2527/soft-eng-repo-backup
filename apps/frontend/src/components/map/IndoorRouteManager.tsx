@@ -23,6 +23,7 @@ const MAP_LAYER_BEFORE_ID = 'road-label'; // Same as RouteLayerManager
 
 interface IndoorRouteManagerProps {
   pathNodes: pNodeZT[] | null | undefined;
+  activeType: 'parking' | 'department' | null;
 }
 
 // Convert node array to GeoJSON format
@@ -65,7 +66,7 @@ function createParkingMarkerElement(): HTMLElement {
   return element;
 }
 
-export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
+export function IndoorRouteManager({ pathNodes, activeType }: IndoorRouteManagerProps) {
   const { map } = useMap();
   const initializedRef = useRef(false);
   const layerIds = [INDOOR_ROUTE_CASING_LAYER, INDOOR_ROUTE_LAYER];
@@ -130,7 +131,7 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
               'line-color': '#00A86B', // Forest green color for indoor route
               'line-width': 10, // Match the width of the outdoor route
               'line-opacity': 0.9, // Match the opacity of the outdoor route
-              'line-dasharray': [2, 2], // Create dotted/dashed line
+              'line-dasharray': [2, 2],
             }
           }, INDOOR_ROUTE_CASING_LAYER); // Place above the casing
           
@@ -150,7 +151,8 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
           parkingMarkerRef.current = null;
         }
         
-        if (pathNodes && pathNodes.length >= 2) {
+        // Only show if activeType is 'parking' and nodes exist
+        if (activeType === 'parking' && pathNodes && pathNodes.length >= 2) {
           // Convert nodes to GeoJSON and update source
           const geojsonData = convertNodesToGeoJSON(pathNodes);
           source.setData(geojsonData);
@@ -212,7 +214,7 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
         console.warn("Error cleaning up indoor route layers:", error);
       }
     };
-  }, [map, pathNodes]);
+  }, [map, pathNodes, activeType]);
   
   return null; // Non-rendering component
 } 

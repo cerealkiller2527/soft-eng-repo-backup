@@ -34,6 +34,7 @@ import { IndoorRouteManager } from "@/components/map/IndoorRouteManager";
 import LayoutNoFooter from "../components/LayoutNoFooter";
 import { useTRPC } from '@/database/trpc';
 import { useQuery } from '@tanstack/react-query';
+import type { pNodeZT } from '../../../../packages/common/src/ZodSchemas';
 
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
 
@@ -45,6 +46,10 @@ function AppContent() {
   const [newDriving, setNewDriving] = useState(false);
   const [newHospital, setNewHospital] = useState<Hospital | undefined>(undefined);
   const [isIndoorPathAvailable, setIsIndoorPathAvailable] = useState(false);
+
+  // State to track which indoor segment is active
+  const [activeIndoorNodes, setActiveIndoorNodes] = useState<pNodeZT[] | null>(null);
+  const [activeIndoorType, setActiveIndoorType] = useState<'parking' | 'department' | null>(null);
 
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
@@ -231,14 +236,17 @@ function AppContent() {
                       bounds.extend(coord as [number, number]);
                   });
                   
-                  if (mapInstance && !mapInstance._removed) {
+                  // Only fit bounds if NOT currently focused on the indoor department view
+                  if (activeIndoorType !== 'department' && mapInstance && !mapInstance._removed) {
                       mapInstance.fitBounds(bounds, {
                           padding: ROUTE_FIT_BOUNDS_OPTIONS.padding,
                           pitch: ROUTE_FIT_BOUNDS_OPTIONS.pitch,
                           duration: ROUTE_FIT_BOUNDS_OPTIONS.duration,
                       });
                       
-                      console.log("Map fitted to combined route bounds");
+                      console.log("Map fitted to combined route bounds (skipped if indoor type was 'department')");
+                  } else if (activeIndoorType === 'department') {
+                      console.log("Skipped fitting map bounds because activeIndoorType is 'department'.")
                   }
               } catch (error) {
                   console.error("Error fitting bounds to combined routes:", error);
@@ -300,6 +308,10 @@ function AppContent() {
       if (parkingLocationNode?.longitude && parkingLocationNode?.latitude) {
           const parkingCoords: [number, number] = [parkingLocationNode.longitude, parkingLocationNode.latitude];
           
+          // Set active state for parking path
+          setActiveIndoorNodes(parkingNodes);
+          setActiveIndoorType('parking');
+
           flyTo(parkingCoords, 19.4, {
               pitch: 50,
               bearing: mapInstance?.getBearing() ?? DEFAULT_FLY_TO_OPTIONS.bearing,
@@ -317,7 +329,12 @@ function AppContent() {
   }, [isIndoorPathAvailable, search.data, mapInstance, flyTo]);
   
   const handleIndoorNavigationClick = useCallback(() => {
-    if (selectedLocation?.coordinates) {
+    if (selectedLocation?.coordinates && search.data?.path?.toDepartment) {
+      // Set active state for department path
+      setActiveIndoorNodes(search.data.path.toDepartment);
+      setActiveIndoorType('department');
+      
+      // Existing flyTo logic
       const hospitalId = selectedLocation.id;
       const specificView = HOSPITAL_SPECIFIC_VIEWS[hospitalId] || {};
       const targetCenter = specificView.coordinates || selectedLocation.coordinates;
@@ -343,10 +360,12 @@ function AppContent() {
       toast.info(`Focusing on indoor view for ${selectedLocation.name}`, { icon: <Footprints className="h-4 w-4" /> });
     } else if (!selectedLocation) {
       toast.error("Please select a hospital first.");
+    } else if (!search.data?.path?.toDepartment) {
+       toast.error("Indoor path to department is not available.");
     } else {
       toast.error("Selected hospital has no coordinates defined.");
     }
-  }, [selectedLocation, contextUserLocation, mapInstance, flyTo]);
+  }, [selectedLocation, contextUserLocation, mapInstance, flyTo, search.data?.path?.toDepartment]);
 
   const sidebarProps: SidebarContentProps = {
     getCurrentPosition, geoLoading, geoError, activeTab, setActiveTab,
@@ -379,10 +398,8 @@ function AppContent() {
           <div className="absolute top-0 bottom-0 left-0 right-0 h-full" style={{ zIndex: Z_INDEX.map }}>
             <MainMap />
             <RouteLayerManager routes={allRoutes} onSelectRoute={selectRoute} />
-            {search.data && search.data.path && search.data.path.toParking && 
-              <IndoorRouteManager pathNodes={search.data.path.toParking} />
-            }
-            <Custom3DLayerManager indoorPathNodes={search.data?.path?.toDepartment} />
+            <IndoorRouteManager pathNodes={activeIndoorNodes} activeType={activeIndoorType} />
+            <Custom3DLayerManager indoorPathNodes={activeIndoorNodes} activeType={activeIndoorType} />
             <MapElements {...mapElementsProps} />
           </div>
         </div>
