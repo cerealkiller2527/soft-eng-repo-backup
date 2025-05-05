@@ -7161,7 +7161,7 @@ __metadata:
     globals: "npm:^16.0.0"
     localforage: "npm:^1.10.0"
     lucide-react: "npm:^0.503.0"
-    mapbox-gl: "npm:^3.11.1"
+    mapbox-gl: "npm:^3.10.0"
     match-sorter: "npm:^6.3.1"
     next-themes: "npm:^0.4.6"
     papaparse: "npm:^5.5.2"
@@ -8614,7 +8614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.11.1":
+"mapbox-gl@npm:^3.10.0":
   version: 3.11.1
   resolution: "mapbox-gl@npm:3.11.1"
   dependencies:
