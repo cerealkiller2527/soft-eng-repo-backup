@@ -31,18 +31,22 @@ export function UserLocationInput({ getCurrentPosition, isGeoLoading, className 
       autocompleteRef.current = new google.maps.places.Autocomplete(
         inputRef.current,
         {
-          fields: ["place_id", "geometry", "name", "description", "formatted_address"], // Request fields needed
+          fields: ["place_id", "geometry", "name", "formatted_address"],
           types: ["geocode", "establishment"], // Optional: restrict to certain types
         }
       );
 
       // Add listener for place selection
       listenerRef.current = autocompleteRef.current.addListener('place_changed', () => {
+          console.log("Autocomplete 'place_changed' event fired.");
           const place = autocompleteRef.current?.getPlace();
+          console.log("Autocomplete place object:", place);
+          
           if (place?.geometry?.location) {
+              console.log("Place has geometry, proceeding to update location.");
               const lat = place.geometry.location.lat();
               const lng = place.geometry.location.lng();
-              const locationString = place.formatted_address || place.description || place.name || "";
+              const locationString = place.formatted_address || place.name || "";
               
               setInputValue(locationString); // Update input field
               setUserLocation([lng, lat]);  // Update context
@@ -50,7 +54,7 @@ export function UserLocationInput({ getCurrentPosition, isGeoLoading, className 
               toast.success(`Location set to: ${locationString}`, { icon: <LocateFixed className="h-4 w-4" /> });
               inputRef.current?.blur(); // Blur input after selection
           } else {
-              console.log("Autocomplete place has no geometry:", place);
+              console.warn("Autocomplete place is missing geometry.location. Cannot update location.", place);
               // Optionally handle cases where a place without geometry is selected
               // toast.error("Could not get location details for the selected place.");
           }
