@@ -119,9 +119,6 @@ export function DirectionsCard({
     // Open Google Maps in new tab
     window.open(googleMapsUrl, '_blank', 'noopener,noreferrer');
     
-    // Switch to the Indoor tab
-    setActiveTab("indoor"); 
-    
     setIsConfirmOpen(false); // Close the dialog
   };
 

@@ -7,7 +7,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import BnWLogo from "/BrighamAndWomensLogo.png";
 
 const primaryLinks = [
-    { title: "Navigation", href: "/floorplan" },
     { title: "Directory", href: "/directory" },
     { title: "Hospital Map", href: "/hospitalmap" }
 ];
