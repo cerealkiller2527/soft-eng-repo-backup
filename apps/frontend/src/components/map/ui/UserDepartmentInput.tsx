@@ -99,7 +99,7 @@ export function UserDepartmentInput({
 
             {/* Dropdown menu */}
             {isCommandOpen && (
-                <div className="absolute z-50 mt-1 w-full">
+                <div className="absolute z-100 mt-1 w-full">
                     <Command className="w-full rounded-t-none border-width-2 shadow-lg bg-background">
                         <CommandList className="max-h-[300px] overflow-y-auto">
                             {isError ? (
