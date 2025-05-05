@@ -1,5 +1,5 @@
 import PrismaClient from "../../bin/prisma-client.ts";
-
+import { nodeTypeType } from "database/prisma/generated/zod";
 export class pNode {
   private static nodeCache: Map<number, pNode> = new Map();
 
@@ -9,6 +9,7 @@ export class pNode {
   id: number;
   neighbors: pNode[];
   floor: number;
+  type: nodeTypeType;
 
   constructor(id: number);
   constructor(
@@ -17,6 +18,7 @@ export class pNode {
     lattitude: number,
     description: string,
     floor: number,
+    type: nodeTypeType,
   );
   constructor(
     id: number,
@@ -24,6 +26,7 @@ export class pNode {
     lattitute?: number,
     description?: string,
     floor?: number,
+    type?: nodeTypeType,
   ) {
     this.longitude = longitute ?? -1;
     this.latitude = lattitute ?? -1;
@@ -31,6 +34,7 @@ export class pNode {
     this.id = id;
     this.neighbors = [];
     this.floor = floor ?? -1;
+    this.type = type ?? "Intermediary";
   }
 
   static async getNode(id: number) {
@@ -103,6 +107,7 @@ export class pNode {
         neighbor.lat,
         neighbor.description,
         0,
+        neighbor.type,
       );
       this.neighbors.push(newNode);
     }

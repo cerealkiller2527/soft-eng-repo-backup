@@ -1,0 +1,5 @@
+Running seed command `ts-node --compiler-options {"module":"CommonJS"} seed.ts` ...
+Existing data purged.
+seed done!
+
+The seed command has been executed.

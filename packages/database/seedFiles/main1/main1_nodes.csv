@@ -1,7 +1,15 @@
 description,lat,long,type,floor,building,outside
-parking,42.33547312183025,-71.10591014,Parking,1,Main Campus,TRUE
-b,42.33511702507223,-71.10609939,Intermediary,1,Main Campus,TRUE
-c,42.33535105,-71.106043,Intermediary,1,Main Campus,TRUE
-d,42.33557758984637,-71.10578589,Intermediary,1,Main Campus,FALSE
-1 elevator,42.33563669522128,-71.10586982,Elevator,1,Main Campus,FALSE
-a,42.33529094598774,-71.1063377,Intermediary,1,Main Campus,TRUE
+Parking,42.33531213,-71.10617028,Parking,1,Main Campus,FALSE
+b,42.33515839,-71.10604948,Intermediary,1,Main Campus,TRUE
+d,42.33557759,-71.10578589,Intermediary,1,Main Campus,FALSE
+Floor One Elevator,42.3356367,-71.10586982,Elevator,1,Main Campus,FALSE
+i,42.33511299,-71.1061062,Intermediary,1,Main Campus,TRUE
+f,42.33547076,-71.10609562,Intermediary,1,Main Campus,TRUE
+k,42.33534648,-71.10605176,Intermediary,1,Main Campus,TRUE
+e,42.33540367,-71.10619997,Intermediary,1,Main Campus,TRUE
+g,42.33545846,-71.10594891,Intermediary,1,Main Campus,TRUE
+a,42.33529095,-71.1063377,Intermediary,1,Main Campus,TRUE
+j,42.33521473,-71.1061425,Intermediary,1,Main Campus,TRUE
+h,42.33537311,-71.10590286,Intermediary,1,Main Campus,TRUE
+c,42.3352672,-71.10591293,Intermediary,1,Main Campus,TRUE
+l,42.3352628,-71.10618939,Intermediary,1,Main Campus,TRUE

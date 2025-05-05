@@ -11,6 +11,7 @@ import {nodeCSVRow,
         employeeCSVRow,
         serviceRequestRow} from "./CSVTypes.ts";
 import { z } from 'zod';
+import {clerkClient} from "@clerk/express";
 
 const prisma = new PrismaClient();
 
@@ -156,6 +157,10 @@ async function findNodesFromEdgeInfo(parsedEdge: z.infer<typeof edgeCSVRow>) {
         }
     });
 
+    if(!toNode){
+        console.log('no node with desc: ', parsedEdge.toNode)
+    }
+
     const fromNode = await prisma.node.findFirst({
         where: {
             description: parsedEdge.fromNode,
@@ -172,6 +177,10 @@ async function findNodesFromEdgeInfo(parsedEdge: z.infer<typeof edgeCSVRow>) {
             }
         }
     });
+
+    if(!fromNode){
+        console.log('no node with desc: ', parsedEdge.fromNode)
+    }
 
     // console.log(parsedEdge.toNode, ": ", toNode?.id, parsedEdge.fromNode, ": ", fromNode?.id)
     return {
@@ -199,21 +208,41 @@ export async function seedEmployeesAndReturn(path: string){
         parsedEmployees.push(employeeCSVRow.parse(employee))
     }
 
-    const employees = parsedEmployees.map((employeeRow) => {
+    const employees = parsedEmployees.map(async(employeeRow) => {
         const services = employeeRow.services.split(";").map(service => RequestType[service.trim() as keyof typeof RequestType])
         const languages = employeeRow.languages.split(";").map(language => language.trim())
 
-        const employeeInput: z.infer<typeof EmployeeCreateInputSchema> = {
-            name: employeeRow.employee,
-            employeeType: employeeRow.type,
-            canService: services,
-            language: languages
+        const user = (await clerkClient.users.getUserList({ query: employeeRow.username })).data?.[0]
+        if (!user){
+            console.log(`${employeeRow.username} not found in Clerk!`)
+            return null;
+        }else{
+            const params = { firstName: employeeRow.firstName, lastName: employeeRow.lastName};
+            try {
+                await clerkClient.users.updateUser(user.id, params);
+            } catch (e) {
+                console.log(`${employeeRow.username}'s name not updated!`);
+            }
+            try{
+                return prisma.employee.update({
+                    where: {
+                        username:employeeRow.username
+                    },
+                    data: {
+                        firstName: employeeRow.firstName,
+                        lastName: employeeRow.lastName,
+                        title: employeeRow.type,
+                        canService: services,
+                        language: languages
+                    }
+                });
+            }catch (e) {
+                console.error(`${employeeRow.username} cannot be updated!`);
+                return null;
+            }
         }
-
-        return employeeInput;
     })
-
-    return prisma.employee.createManyAndReturn({data: employees})
+    return (await Promise.all(employees)).filter(Boolean);
 }
 
 

@@ -4,14 +4,22 @@ a,42.09264483931591,-71.26628466,Intermediary,1,20 Patriot Place,FALSE
 c,42.09259224231086,-71.26598637,Intermediary,1,20 Patriot Place,FALSE
 Blood Draw/ Phlebotomy,42.09262595027671,-71.26599941,Location,1,20 Patriot Place,FALSE
 f,42.09253927998246,-71.26623765,Intermediary,1,20 Patriot Place,FALSE
-1 elevator,42.09270374997246,-71.26563074,Elevator,1,20 Patriot Place,FALSE
+Floor One Elevator,42.09270374997246,-71.26563074,Elevator,1,20 Patriot Place,FALSE
 Cardiovascular Services,42.09266470249255,-71.26583707,Location,1,20 Patriot Place,FALSE
 stairs 1,42.09269644483917,-71.26557168,Staircase,1,20 Patriot Place,FALSE
 Radiology,42.09267325102748,-71.26634544,Location,1,20 Patriot Place,FALSE
-parking,42.09240935244083,-71.26651698,Parking,1,20 Patriot Place,TRUE
 Pharmacy,42.09270283683112,-71.26627038,Location,1,20 Patriot Place,FALSE
 b,42.09268337394115,-71.26630311,Intermediary,1,20 Patriot Place,FALSE
 d,42.09262776823628,-71.2658241,Intermediary,1,20 Patriot Place,FALSE
 front door,42.09251371194606,-71.26636415,Intermediary,1,20 Patriot Place,FALSE
 Urgent Care Center,42.09265261402209,-71.26624872,Location,1,20 Patriot Place,FALSE
 Urology,42.09265612312601,-71.26588286,Location,1,20 Patriot Place,FALSE
+20o2,42.0925094,-71.26651513,Intermediary,1,20 Patriot Place,TRUE
+20o5,42.09248845,-71.26599016,Intermediary,1,20 Patriot Place,TRUE
+20o3,42.0924442,-71.26636326,Intermediary,1,20 Patriot Place,TRUE
+20o4,42.09241417,-71.26631656,Intermediary,1,20 Patriot Place,TRUE
+20o1,42.0925128,-71.26652486,Intermediary,1,20 Patriot Place,TRUE
+Parking,42.09239309,-71.26640659,Parking,1,20 Patriot Place,TRUE
+new1,42.09247184,-71.26642546,Intermediary,1,20 Patriot Place,TRUE
+new2,42.09249006,-71.2664684,Intermediary,1,20 Patriot Place,TRUE
+new3,42.09257706,-71.26648396,Intermediary,1,20 Patriot Place,TRUE

@@ -4,15 +4,16 @@ import { CheckCircle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTRPC } from "@/database/trpc.ts";
 import { useQuery } from "@tanstack/react-query";
-import MiniChart from "@/components/serviceRequestComponents/chart.tsx";
 import NewChart from "@/components/serviceRequestComponents/NewChart.tsx";
+import BarChartMini from "@/components/serviceRequestComponents/BarChartMini.tsx";
+import clsx from 'clsx';
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
-    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({}));
-    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({}));
-    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({}));
-    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({}));
+    const requestsTransport = useQuery(trpc.service.getExternalTransportationRequests.queryOptions({assigned: false}));
+    const requestsSecurity = useQuery(trpc.service.getSecurityRequests.queryOptions({assigned: false}));
+    const requestsEquipment = useQuery(trpc.service.getEquipmentDeliveryRequests.queryOptions({assigned: false}));
+    const requestsLanguage = useQuery(trpc.service.getLanguageRequests.queryOptions({assigned: false}));
 
     // Combine all fetched requests into one array
     const combinedRequests = [
@@ -21,30 +22,32 @@ export default function MiniDashboard() {
             type: "Patient Transport",
             status: req.status,
             details: req.description ?? "Transport request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
         ...(requestsSecurity.data ?? []).map(req => ({
             id: req.id,
             type: "Security Assistance",
             status: req.status,
             details: req.description ?? "Security request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
         ...(requestsEquipment.data ?? []).map(req => ({
             id: req.id,
             type: "Medical Equipment",
             status: req.status,
             details: req.description ?? "Equipment request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
         ...(requestsLanguage.data ?? []).map(req => ({
             id: req.id,
             type: "Language Services",
             status: req.status,
             details: req.description ?? "Language request",
-            employee: req.fromEmployee,
+            employee: `${req.fromEmployee.firstName} ${req.fromEmployee.lastName}`,
         })),
     ];
+
+
 
 
     const [filterType, setFilterType] = useState<"All" | "Patient Transport" | "Security Assistance" | "Medical Equipment" | "Language Services">("All");
@@ -58,8 +61,8 @@ export default function MiniDashboard() {
     const chartLabels = ["Assigned", "Not Assigned"]
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-            <Card className="bg-white shadow md:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-30">
+            <Card className="bg-white shadow md:col-span-2 min-h-202.5">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-[#003153]">Request Quick View</CardTitle>
                 </CardHeader>
@@ -108,10 +111,14 @@ export default function MiniDashboard() {
                 </CardContent>
             </Card>
 
-            <div className="bg-white shadow h-[300px] rounded-xl mb-20">
+            <div className="bg-white shadow h-[300px] rounded-xl mb-50">
                     <NewChart transport={requestsTransport} equipment={requestsEquipment} language={requestsLanguage} security={requestsSecurity} />
+                <br />
+                <div className="">
+                <BarChartMini assigned={assignedCount} notAssigned={notAssignedCount} />
+                </div>
+            </div >
 
-            </div>
         </div>
     );
 }

@@ -1,28 +1,32 @@
 description,lat,long,type,floor,building,outside
 Rheumatology,42.33539186,-71.1087347,Location,2,Main Campus,FALSE
 International Patient Center,42.33532294,-71.1049358,Location,2,Main Campus,FALSE
-Center for Chest Diseases,42.33513323,-71.10455905,Location,2,Main Campus,FALSE
 Dental Group/Oral Medicine,42.33604963,-71.10667889,Location,2,Main Campus,FALSE
-Weiner Center,42.33556323,-71.10557862,Location,2,Main Campus,FALSE
-Lee Bell Center,42.33611045,-71.10654055,Location,2,Main Campus,FALSE
-Thoracic Surgery Center,42.33515049,-71.10463183,Location,2,Main Campus,FALSE
-Jen Center for Primary Care,42.33604246,-71.10641319,Location,2,Main Campus,FALSE
-Endoscopy,42.33599253,-71.10704001,Location,2,Main Campus,FALSE
-Brigham Medical Specialties,42.3355916,-71.10638258,Location,2,Main Campus,FALSE
-"Ear, Nose, Throat",42.33586159,-71.10632962,Location,2,Main Campus,FALSE
-2a,42.33529286,-71.108565,Intermediary,2,Main Campus,FALSE
-2b,42.33539471,-71.10844285,Intermediary,2,Main Campus,FALSE
-2c,42.33536886,-71.10832564,Intermediary,2,Main Campus,FALSE
-2d,42.33574954,-71.10783074,Intermediary,2,Main Campus,FALSE
-2e,42.33623687,-71.10723175,Intermediary,2,Main Campus,FALSE
 2f,42.33626252,-71.10700531,Intermediary,2,Main Campus,FALSE
-2g,42.33632296,-71.10692029,Intermediary,2,Main Campus,FALSE
+2b,42.33539471,-71.10844285,Intermediary,2,Main Campus,FALSE
 2h,42.33613562,-71.10658711,Intermediary,2,Main Campus,FALSE
-2i,42.33588724,-71.10686287,Intermediary,2,Main Campus,FALSE
-2j,42.33593041,-71.10624589,Intermediary,2,Main Campus,FALSE
-2k,42.33573824,-71.10621491,Intermediary,2,Main Campus,FALSE
-2l,42.33576462,-71.10597944,Intermediary,2,Main Campus,FALSE
+2d,42.33574659,-71.10783606,Intermediary,2,Main Campus,FALSE
+m1,42.33616087,-71.10731827,Intermediary,2,Main Campus,FALSE
+m2,42.33601742,-71.1074926,Intermediary,2,Main Campus,FALSE
+,42.33571185,-71.10603732,Intermediary,2,Main Campus,FALSE
+m4,42.33515605,-71.10458944,Intermediary,2,Main Campus,FALSE
 2m,42.33564827,-71.10576713,Intermediary,2,Main Campus,FALSE
+Brigham Medical Specialties,42.3355916,-71.10638258,Location,2,Main Campus,FALSE
+2j,42.33593041,-71.10624589,Intermediary,2,Main Campus,FALSE
+Jen Center for Primary Care,42.33604246,-71.10641319,Location,2,Main Campus,FALSE
+2a,42.33529286,-71.108565,Intermediary,2,Main Campus,FALSE
+Thoracic Surgery Center,42.33515049,-71.10463183,Location,2,Main Campus,FALSE
+2q,42.33520186,-71.10456382,Intermediary,2,Main Campus,FALSE
+Floor Two Elevator,42.3356367,-71.10586982,Elevator,2,Main Campus,FALSE
+2e,42.33623687,-71.10723175,Intermediary,2,Main Campus,FALSE
+2l,42.33576462,-71.10597944,Intermediary,2,Main Campus,FALSE
+Weiner Center,42.33556323,-71.10557862,Location,2,Main Campus,FALSE
+2i,42.33588724,-71.10686287,Intermediary,2,Main Campus,FALSE
+2g,42.33632296,-71.10692029,Intermediary,2,Main Campus,FALSE
+Endoscopy,42.33599253,-71.10704001,Location,2,Main Campus,FALSE
+Center for Chest Diseases,42.33513323,-71.10455905,Location,2,Main Campus,FALSE
+"Ear, Nose, Throat",42.33586159,-71.10632962,Location,2,Main Campus,FALSE
 2n,42.33559078,-71.10585143,Intermediary,2,Main Campus,FALSE
-2q,42.33520531,-71.10456454,Intermediary,2,Main Campus,FALSE
-2 elevator,42.33563669522128,-71.10586982,Elevator,2,Main Campus,FALSE
+Lee Bell Center,42.33611045,-71.10654055,Location,2,Main Campus,FALSE
+2c,42.33536886,-71.10832564,Intermediary,2,Main Campus,FALSE
+2k,42.3357537,-71.106194,Intermediary,2,Main Campus,FALSE

@@ -1,6 +1,24 @@
 toNode,fromNode,floor,building
-parking,d,1,Main Campus
-parking,c,1,Main Campus
 b,c,1,Main Campus
-d,1 elevator,1,Main Campus
-a,c,1,Main Campus
+b,j,1,Main Campus
+b,i,1,Main Campus
+d,g,1,Main Campus
+Floor One Elevator,d,1,Main Campus
+i,b,1,Main Campus
+f,g,1,Main Campus
+f,e,1,Main Campus
+k,e,1,Main Campus
+e,f,1,Main Campus
+e,a,1,Main Campus
+e,k,1,Main Campus
+g,d,1,Main Campus
+g,f,1,Main Campus
+g,h,1,Main Campus
+a,e,1,Main Campus
+j,l,1,Main Campus
+h,g,1,Main Campus
+h,c,1,Main Campus
+c,k,1,Main Campus
+c,h,1,Main Campus
+c,b,1,Main Campus
+l,Parking,1,Main Campus

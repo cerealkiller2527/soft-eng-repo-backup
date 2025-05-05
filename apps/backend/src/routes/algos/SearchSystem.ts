@@ -28,7 +28,7 @@ export class SearchSystem {
       dropOffLatitude,
       dropOffLongitude,
       false,
-        buildingId
+      buildingId,
     );
 
     // if driving, create path to parking lot and update start node to be in parking lot
@@ -37,18 +37,15 @@ export class SearchSystem {
         dropOffLatitude,
         dropOffLongitude,
         true,
-          buildingId
+        buildingId,
       );
       console.log("parking node id:", parkingNodeId);
       toParking = await this.algorithm.findPath(startId, parkingNodeId);
-      console.log('path to parking before zod: ', toParking);
       startId = parkingNodeId;
     }
 
     // create path from start node to end node
-    console.log('pathing from node: ', startId, 'to node: ', endNodeId);
     const toDepartment = await this.algorithm.findPath(startId, endNodeId);
-    console.log('path to dept before zod: ', toDepartment);
 
     // convert pNode[] to z.array(pNodeZod)
 
@@ -62,7 +59,7 @@ export class SearchSystem {
     const floorMap = await this.getFloorMap(pathIds);
     const toDeptartmentZ = this.nodesToZods(toDepartment, floorMap);
 
-    console.log('paths before returning: ', toParkingZ, toDeptartmentZ);
+    console.log("paths before returning: ", toParkingZ, toDeptartmentZ);
 
     const output = {
       toParking: toParkingZ ?? [],
@@ -76,7 +73,7 @@ export class SearchSystem {
     dropOffLatitude: number,
     dropOffLongitude: number,
     parking: boolean,
-    buildingId: number
+    buildingId: number,
   ) {
     let closestNode = null;
     let closestDist = Infinity;
@@ -87,8 +84,8 @@ export class SearchSystem {
         where: {
           outside: true,
           Location: {
-            some : {
-              buildingId: buildingId
+            some: {
+              buildingId: buildingId,
             },
           },
         },
@@ -98,8 +95,8 @@ export class SearchSystem {
         where: {
           type: "Parking",
           Location: {
-            some : {
-              buildingId: buildingId
+            some: {
+              buildingId: buildingId,
             },
           },
         },
@@ -113,12 +110,19 @@ export class SearchSystem {
         dropOffLatitude,
         dropOffLongitude,
       );
+      console.log("dist from start to ", node.description, ": ", dist);
       if (dist < closestDist) {
         closestDist = dist;
         closestNode = node;
       }
     }
 
+    console.log(
+      "returning closest node to start: ",
+      closestNode!.description,
+      " when looking for parking = ",
+      parking,
+    );
     return closestNode!.id;
   }
 
@@ -128,8 +132,10 @@ export class SearchSystem {
     dropLat: number,
     dropLong: number,
   ) {
-    const dLa = nLat - dropLat;
-    const dLn = nLong - dropLong;
+    const latScale = 111000;
+    const lngScale = 85000;
+    const dLa = (nLat - dropLat) * latScale;
+    const dLn = (nLong - dropLong) * lngScale;
     return dLa * dLa + dLn * dLn;
   }
 
@@ -141,6 +147,7 @@ export class SearchSystem {
       latitude: node.latitude,
       floor: floorMap.get(node.id) ?? -1,
       outside: false,
+      type: node.type,
       neighbors: node.neighbors.map((neighbor) => neighbor.id),
     }));
 

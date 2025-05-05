@@ -1,8 +1,15 @@
 description,lat,long,type,floor,building,outside
-parking,42.09240814,-71.26652789,Parking,1,22 Patriot Place,TRUE
-1 elevator,42.09264515131932,-71.26674325,Elevator,1,22 Patriot Place,FALSE
-front door,42.09262924769187,-71.26660843,Intermediary,1,22 Patriot Place,FALSE
-a,42.09253012,-71.26643217,Intermediary,1,22 Patriot Place,TRUE
-b,42.09262276272275,-71.26643321,Intermediary,1,22 Patriot Place,TRUE
-1 stairs,42.09258261763324,-71.26683688,Staircase,1,22 Patriot Place,FALSE
-c,42.09256347151396,-71.26678155,Intermediary,1,22 Patriot Place,FALSE
+Parking,42.09239309,-71.26640659,Parking,1,22 Patriot Place,TRUE
+Floor One Elevator,42.09264515,-71.26674325,Elevator,1,22 Patriot Place,FALSE
+22o2,42.0925094,-71.26651513,Intermediary,1,22 Patriot Place,TRUE
+22o5,42.09248845,-71.26599016,Intermediary,1,22 Patriot Place,TRUE
+front door,42.09263426,-71.26652782,Intermediary,1,22 Patriot Place,FALSE
+d,42.09252148,-71.2665218,Intermediary,1,22 Patriot Place,TRUE
+1 stairs,42.09258262,-71.26683688,Staircase,1,22 Patriot Place,FALSE
+c,42.09256347,-71.26678155,Intermediary,1,22 Patriot Place,FALSE
+a,42.09258187,-71.26648201,Intermediary,1,22 Patriot Place,TRUE
+b,42.09261945,-71.26646495,Intermediary,1,22 Patriot Place,TRUE
+22o3,42.0924442,-71.26636326,Intermediary,1,22 Patriot Place,TRUE
+22o4,42.09241417,-71.26631656,Intermediary,1,22 Patriot Place,TRUE
+22o1,42.0925128,-71.26652486,Intermediary,1,22 Patriot Place,TRUE
+22i1,42.09257572,-71.26664249,Intermediary,1,22 Patriot Place,FALSE

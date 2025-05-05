@@ -30,7 +30,6 @@ async function fetchClerkUsers() {
 
 async function main() {
     // drop all data from database
-    await prisma.user.deleteMany();
     await prisma.audioVisual.deleteMany();
     await prisma.externalTransportation.deleteMany();
     await prisma.equipmentDelivery.deleteMany();
@@ -195,17 +194,22 @@ async function main() {
     const seedeedFaulknerEdges = await seedEdges("./seedFiles/faulkner/faulkner_edges.csv");
     const seededMain1Edges = await seedEdges("./seedFiles/main1/main1_edges.csv");
     const seededMain2Edges = await seedEdges("./seedFiles/main2/main2_edges.csv")
-
+    //
     const seededInterfloorEdges = await seedEdges("./seedFiles/interfloor_edges/interfloor_edges.csv")
 
     //seed the user table by getting info from clerk
     const clerkUsers = await fetchClerkUsers();
     clerkUsers.map(async (user: any) => {
-        await prisma.user.create({
+        await prisma.employee.create({
             data: {
+                firstName: user.first_name,
+                lastName: user.last_name,
                 email: user.email_addresses?.[0]?.email_address || '',
                 username: user.username,
-                role: user.public_metadata?.role || ''
+                role: user.public_metadata?.role || '',
+                title: user.public_metadata?.role || 'staff',
+                canService: [],
+                language: []
             }
         })
     })
@@ -214,6 +218,14 @@ async function main() {
     const employees = await seedEmployeesAndReturn("./seedFiles/employees.csv")
 
     // seed some service requests for the employees
+    const admin = await prisma.employee.findFirst({
+        where: {
+            role: "admin",
+        }
+    })
+    if (!admin) {
+        throw new Error("Admin does not exist!");
+    }
     // from the old seed file
     await Promise.all(
         Array.from({ length: 10 }).map(async (_, i) => {
@@ -226,8 +238,8 @@ async function main() {
                     type: type,
                     status: i < 5 ? Status.ASSIGNED : Status.NOTASSIGNED,
                     description: `No additional note`,
-                    assignedEmployeeID: i < 5 ? employees[i % employees.length].id : null,
-                    fromEmployee: 'admin',
+                    assignedEmployeeID: i < 5? employees[i % employees.length]?.id ?? null : null,
+                    fromEmployeeID: admin.id,
                     priority: priority,
                 },
             });

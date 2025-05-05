@@ -16,6 +16,13 @@ export abstract class Algorithm {
       console.error("Node not found");
       return new pNode(-1);
     }
-    return new pNode(id, node!.long, node!.lat, node!.description, -1);
+    return new pNode(
+      id,
+      node!.long,
+      node!.lat,
+      node!.description,
+      -1,
+      node?.type ?? "Intermediary",
+    );
   }
 }
