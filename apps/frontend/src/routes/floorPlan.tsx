@@ -339,7 +339,7 @@ const FloorPlan = () => {
         setImageIndex((prevIndex) => (prevIndex + 1) % overlays.length);
     };
 
-    const handlePrint = () => {
+    const handlePrint = async () => {
         const filteredCoords = pathCoords
             .filter((node) => node.floor === imageIndex + 1)
             .map((node) => `${node.latitude},${node.longitude}`);
@@ -363,6 +363,8 @@ const FloorPlan = () => {
 
         const printWindow = window.open("", "_blank");
         if (printWindow) {
+            const logoUrl = "../public/BrighamAndWomensLogo.png";
+
             const printContent = `
               <html>
                 <head>
@@ -373,42 +375,105 @@ const FloorPlan = () => {
                       margin: 20px;
                       color: #333;
                     }
-                    h2 {
-                      text-align: center;
+            
+                    .header {
+                      display: flex;
+                      align-items: center;
+                      gap: 16px;
+                      margin-bottom: 24px;
                     }
-                    .directions {
-                      margin: 20px 0;
+            
+                    .header img {
+                      height: 32px;
+                      width: auto;
                     }
-                    .directions p {
-                      margin: 8px 0;
+            
+                    .header h2 {
+                      font-size: 20px;
+                      font-weight: bold;
+                      margin: 0;
                     }
+            
                     .map-capture {
                       text-align: center;
-                      margin-top: 20px;
+                      margin: 20px 0;
                     }
+            
                     .map-capture img {
-                      width: 90%;
+                      max-width: 90%;
                       border: 1px solid #ccc;
                       border-radius: 8px;
                     }
+            
+                    .directions {
+                      margin-top: 24px;
+                    }
+            
+                    .directions p {
+                      margin: 8px 0;
+                    }
+            
+                    @media print {
+                      body {
+                        background: white;
+                      }
+                      .no-print {
+                        display: none;
+                      }
+                    }
                   </style>
                 </head>
+
                 <body>
-                  <h2>Directions</h2>
-                  <div class="directions">
-                    ${instructions
-                        .map((step, index) => `<p><strong>Step ${index + 1}:</strong> ${step}</p>`)
-                        .join("")}
+                  <div class="header">
+                    <img id="logo" src="${logoUrl}" alt="Mass General Brigham Logo" height=32px />
+                    <h2>Mass General Brigham Directions</h2>
                   </div>
+
                   <div class="map-capture">
-                    <h3>Map Snapshot</h3>
                     <img id="mapImage" src="${mapUrl}" alt="Map Snapshot" />
                   </div>
+
+                  <div class="directions">
+                    ${instructions
+                            .map((step, index) => `<p><strong>Step ${index + 1}:</strong> ${step}</p>`)
+                            .join("")}
+                  </div>
+                 
                   <script>
-                    const img = document.getElementById('mapImage');
-                    img.onload = () => {
-                      window.print();
-                    };
+                    function waitUntilImagesAreTrulyLoaded(callback, timeout = 5000) {
+                        const start = Date.now();
+            
+                        function imagesLoaded() {
+                          const imgs = document.querySelectorAll("img");
+                          return Array.from(imgs).every(
+                            (img) => img.complete && img.naturalHeight > 0
+                          );
+                        }
+            
+                        function check() {
+                          if (imagesLoaded()) {
+                            callback();
+                          } else if (Date.now() - start < timeout) {
+                            setTimeout(check, 100);
+                          } else {
+                            console.warn("Images may not have fully loaded.");
+                            callback();
+                          }
+                        }
+            
+                        check();
+                      }
+            
+                      waitUntilImagesAreTrulyLoaded(() => {
+                        window.print();
+                      });
+            
+                      window.addEventListener("afterprint", () => {
+                        setTimeout(() => {
+                          window.close();
+                        }, 500);
+                      });
                   </script>
                 </body>
               </html>
