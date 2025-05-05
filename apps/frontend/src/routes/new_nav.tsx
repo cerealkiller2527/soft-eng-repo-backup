@@ -27,18 +27,18 @@ import { SidebarContent, type SidebarContentProps } from "@/components/map/Sideb
 import { MapElements, type MapElementsProps } from "@/components/map/MapElements";
 import { Custom3DLayerManager } from "@/components/map/Custom3DLayerManager";
 import LayoutNoFooter from "../components/LayoutNoFooter";
+import { useTRPC } from '@/database/trpc';
+import { useQuery } from '@tanstack/react-query';
 
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
 
 function AppContent() {
-
-  const handleDepartmentSelect = useCallback((department: string) => {
-    console.log("Department selected in AppContent:", department);
-  }, []);
-
-  const handleNavigationModeSelect = useCallback((Driving: boolean) => {
-    console.log("Was driving selected: ", Driving);
-  }, []);
+  const [routeLat, setRouteLat] = useState<number>(0);
+  const [routeLng, setRouteLng] = useState<number>(0);
+  const [routeCoordsAreReady, setRouteCoordsAreReady] = useState<boolean>(false);
+  const [newDepartment, setNewDepartment] = useState("");
+  const [newDriving, setNewDriving] = useState(false);
+  const [newHospital, setNewHospital] = useState<Hospital | undefined>(undefined);
 
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
@@ -50,6 +50,7 @@ function AppContent() {
     setAnimatingMarkerId,
     activeTab, setActiveTab,
     userLocation: contextUserLocation,
+    transportMode,
   } = useMap()
 
   const {
@@ -67,48 +68,21 @@ function AppContent() {
     selectRoute
   } = useAppMapData();
 
-  const locationToastShownRef = useRef(false);
-  const prevGeoLoadingRef = useRef<boolean>(geoLoading); // Ref to track previous geoLoading state
+  const trpc = useTRPC();
 
-  useEffect(() => {
-    // Condition to only show toast when geolocation finishes successfully
-    const justFinishedGeolocating = !geoLoading && prevGeoLoadingRef.current;
+  const handleDepartmentSelect = useCallback((department: string) => {
+    console.log("Department selected in AppContent:", department);
+    setNewDepartment(department);
+  }, []);
 
-    if (justFinishedGeolocating && userLocation && !locationToastShownRef.current) {
-       toast.success("Your location has been updated.", {
-         icon: <CheckCircle className="h-4 w-4" />,
-       });
-       locationToastShownRef.current = true;
-    }
-    if (!userLocation) {
-        locationToastShownRef.current = false;
-    }
-
-    // Update previous geoLoading state *after* checking the condition
-    prevGeoLoadingRef.current = geoLoading;
-
-    // Dependency array includes userLocation and geoLoading
-  }, [geoLoading, userLocation]);
-
-  useEffect(() => {
-    if (geoError) {
-      toast.error(geoError, {
-        icon: <AlertTriangle className="h-4 w-4" />,
-      });
-      locationToastShownRef.current = false;
-    }
-  }, [geoError]);
-
-  useEffect(() => {
-    if (activeTab === 'directions' && !selectedLocation) {
-      toast.info("Please select a hospital from the list or map to view directions.", {
-        icon: <Info className="h-4 w-4" />,
-      });
-    }
-  }, [activeTab, selectedLocation]);
+  const handleNavigationModeSelect = useCallback((Driving: boolean) => {
+    console.log("Was driving selected: ", Driving);
+    setNewDriving(Driving);
+  }, []);
 
   const handleSelectHospitalFromList = useCallback((hospital: Hospital) => {
     setSelectedLocation(hospital);
+    setNewHospital(hospital);
     setPopupLocation(null);
     setAnimatingMarkerId(hospital.id);
     if (hospital.coordinates) {
@@ -134,7 +108,7 @@ function AppContent() {
 
         flyTo(targetCenter as [number, number], flyToOptions.zoom, flyToOptions, hospital.id);
     }
-  }, [setSelectedLocation, setPopupLocation, setAnimatingMarkerId, flyTo, contextUserLocation, mapInstance]);
+  }, [setSelectedLocation, setNewHospital, setPopupLocation, setAnimatingMarkerId, flyTo, contextUserLocation, mapInstance]);
 
   const handleViewDirections = useCallback((hospital: Hospital) => {
     setSelectedLocation(hospital);
@@ -149,6 +123,107 @@ function AppContent() {
     //   mapInstance?.resize()
     // }, LAYOUT_DIMENSIONS.SIDEBAR_TRANSITION_MS)
   }, [mapInstance])
+
+  useEffect(() => {
+    if (activeTab === 'directions' && !selectedLocation) {
+      toast.info("Please select a hospital from the list or map to view directions.", {
+        icon: <Info className="h-4 w-4" />,
+      });
+    }
+  }, [activeTab, selectedLocation]);
+
+  useEffect(() => {
+      if (allRoutes && allRoutes.length > 0) {
+          const activeRoute = allRoutes.find(r => r.isActive) || allRoutes[0];
+          if (activeRoute?.destinationCoordinate) {
+              const [lng, lat] = activeRoute.destinationCoordinate;
+              setRouteLng(lng);
+              setRouteLat(lat);
+              setRouteCoordsAreReady(true);
+              console.log(`[Coordinates] Using route destinationCoordinate: [${lng}, ${lat}]`);
+          } else if (activeRoute?.geometry?.coordinates?.length > 0) {
+              const coords = activeRoute.geometry.coordinates;
+              const lastCoord = coords[coords.length - 1];
+              const [lng, lat] = lastCoord;
+              setRouteLng(lng);
+              setRouteLat(lat);
+              setRouteCoordsAreReady(true);
+              console.log(`[Coordinates] Using route geometry endpoint: [${lng}, ${lat}]`);
+          } else {
+              console.warn("[Coordinates] No destination or geometry coordinates found in active route.");
+              setRouteCoordsAreReady(false);
+          }
+      } else {
+          console.log("[Coordinates] No routes available.");
+          setRouteCoordsAreReady(false);
+      }
+  }, [allRoutes]);
+
+  type FormHandlers = {
+      destination: string
+      driving: boolean
+      building: Hospital | undefined
+  };
+
+  const [form, setForm] = useState<FormHandlers>({
+      destination: newDepartment,
+      driving: newDriving,
+      building: newHospital,
+  });
+
+  useEffect(() => {
+      setForm({
+          destination: newDepartment,
+          driving: newDriving,
+          building: newHospital ?? undefined
+      });
+  }, [newDepartment, newDriving, newHospital]);
+
+  const hasValidCoords = routeCoordsAreReady && (routeLat !== 0 || routeLng !== 0);
+  const queryEnabled =
+      !!form.building &&
+      !!form.destination &&
+      !directionsLoading &&
+      hasValidCoords;
+
+  const search = useQuery(
+      trpc.search.getPath.queryOptions({
+          buildingName: form?.building?.name ?? '',
+          endDeptName: form?.destination ?? '',
+          dropOffLatitude: routeLat,
+          dropOffLongitude: routeLng,
+          driving: form?.driving ?? false,
+      },
+      {
+          enabled: queryEnabled,
+          staleTime: 1000 * 60 * 5,
+          cacheTime: 1000 * 60 * 10,
+          retry: 1,
+      })
+  );
+
+  useEffect(() => {
+      console.log("Search Query Enabled:", queryEnabled);
+      console.log("Search Data:", search.data);
+      console.log("Search Loading:", search.isLoading);
+      console.log("Search Error:", search.error);
+      console.log("Form State:", form);
+      console.log("Route Coords Ready:", routeCoordsAreReady, `[${routeLng}, ${routeLat}]`);
+
+      if (search.data && form.building?.name && routeCoordsAreReady) {
+          console.log("Processing search data...");
+      } else if (search.error) {
+          console.error("tRPC search query error:", search.error);
+          toast.error("Failed to calculate indoor path. Please try again.", {
+              description: search.error.message,
+          });
+      } else if (search.isLoading) {
+           console.log("tRPC search query is loading...");
+      } else if (queryEnabled && !search.isLoading && !search.data) {
+           console.log("tRPC query enabled but no data yet (or fetch failed silently).")
+      }
+
+  }, [search.data, search.isLoading, search.error, form, routeLat, routeLng, routeCoordsAreReady, queryEnabled]);
 
   const sidebarProps: SidebarContentProps = {
     getCurrentPosition, geoLoading, geoError, activeTab, setActiveTab,

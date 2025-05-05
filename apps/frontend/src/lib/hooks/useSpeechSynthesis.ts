@@ -94,7 +94,12 @@ export function useSpeechSynthesis(steps: DirectionStep[]): UseSpeechSynthesisRe
         utteranceRef.current = null;
       };
 
-      window.speechSynthesis.speak(utterance);
+        const speakTimeout = setTimeout(() => {
+            window.speechSynthesis.speak(utterance);
+        }, 100);
+        return () => {
+            clearTimeout(speakTimeout);
+        };
 
     } else if (isPlaying && currentSteps.length > 0 && currentStepIndex >= currentSteps.length) {
        // Reached the end
