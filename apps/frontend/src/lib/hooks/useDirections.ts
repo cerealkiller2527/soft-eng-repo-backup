@@ -9,8 +9,18 @@ interface UseDirectionsState {
   error: string | null;
 }
 
+// New interface for drop-off information
+interface DropOffInfo {
+  coordinates: [number, number] | null; // [longitude, latitude]
+  hospitalName: string | null;
+  hospitalId: number | null;
+  isReady: boolean; // Indicates if data is ready to use
+}
+
 interface UseDirectionsReturn extends UseDirectionsState {
   selectRoute: (route: EnrichedRoute) => void;
+  // Add new getter for drop-off information
+  getDropOffInfo: () => DropOffInfo;
 }
 
 export function useDirections(
@@ -111,8 +121,31 @@ export function useDirections(
     }));
   }, []); // No dependencies needed as it only uses setState
 
+  // New function to get drop-off information
+  const getDropOffInfo = useCallback((): DropOffInfo => {
+    // Return null values if destination is not set
+    if (!destination) {
+      return { 
+        coordinates: null, 
+        hospitalName: null, 
+        hospitalId: null,
+        isReady: false 
+      };
+    }
+
+    // Return destination info in a format that's easy to use for routing
+    return {
+      coordinates: destination.coordinates as [number, number] || null,
+      hospitalName: destination.name,
+      hospitalId: destination.id,
+      // Only mark as ready if we have valid coordinates
+      isReady: !!destination.coordinates
+    };
+  }, [destination]);
+
   return {
     ...state,
     selectRoute,
+    getDropOffInfo, // Include the new function in the return object
   };
 } 
