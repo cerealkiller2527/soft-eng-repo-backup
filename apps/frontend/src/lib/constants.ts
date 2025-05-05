@@ -4,6 +4,9 @@ import type { SkyLayerSpecification, FillExtrusionLayerSpecification, Expression
 // Import 3D types
 import type { BuildingAttributes, TempNode } from '@/lib/map/3d/types';
 
+// API Keys
+export const GOOGLE_PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || '';
+
 // Define interface for specific view params (optional)
 interface HospitalViewParams extends Partial<Pick<CameraOptions, 'zoom' | 'pitch' | 'bearing'>> {
   coordinates?: [number, number]; // Optional coordinate override

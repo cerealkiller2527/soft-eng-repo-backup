@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { EARTH_RADIUS_MILES } from "@/lib/constants"
+import { GOOGLE_PLACES_API_KEY } from "@/lib/constants"
 
 // Combine class names
 export function cn(...inputs: ClassValue[]) {
@@ -15,6 +16,36 @@ export function debounce<T extends (...args: any[]) => any>(func: T, wait: numbe
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => func(...args), wait)
   }
+}
+
+// Loads the Google Maps API with Places library dynamically
+export function loadGoogleMapsApi(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // Skip if already loaded
+    if (window.google && window.google.maps && window.google.maps.places) {
+      resolve();
+      return;
+    }
+
+    // Don't attempt to load if API key is missing
+    if (!GOOGLE_PLACES_API_KEY) {
+      reject(new Error('Google Places API key is missing'));
+      return;
+    }
+
+    // Create the script element
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_PLACES_API_KEY}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+
+    // Set up callbacks
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Google Maps API'));
+
+    // Add to document
+    document.head.appendChild(script);
+  });
 }
 
 // Calculate bearing between coordinates
@@ -90,4 +121,41 @@ export function shortenAddress(fullAddress: string | undefined): string {
   }
   
   return address.trim(); // Trim again just in case
+}
+
+// Add TypeScript interface for window.google
+declare global {
+  interface Window {
+    google?: {
+      maps?: {
+        places?: {
+          Autocomplete: new (
+            input: HTMLInputElement,
+            options?: {
+              fields: string[];
+              types: string[];
+            }
+          ) => {
+            getPlace: () => {
+              geometry?: {
+                location: {
+                  lat: () => number;
+                  lng: () => number;
+                };
+              };
+              formatted_address?: string;
+              name?: string;
+            };
+            addListener: (
+              event: string,
+              callback: () => void
+            ) => number;
+          };
+        };
+        event?: {
+          removeListener: (id: number) => void;
+        };
+      };
+    };
+  }
 }
