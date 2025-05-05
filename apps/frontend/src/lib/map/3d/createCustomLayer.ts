@@ -2,7 +2,9 @@ import mapboxgl, { MercatorCoordinate } from "mapbox-gl";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 // Update import path for types
-import { BuildingAttributes, TempNode } from './types'; 
+import { BuildingAttributes } from './types'; 
+// Assuming pNodeZT is the correct type for indoor path nodes from the backend
+import type { pNodeZT } from '../../../../../packages/common/src/ZodSchemas'; 
 
 // Define the CustomLayerInterface type locally if not available globally
 // (Ideally, this would come from @types/mapbox-gl if fully supported)
@@ -22,8 +24,12 @@ interface CustomLayerInterface {
 // Refactor function signature and return type
 export function createCustomLayer(
     map: mapboxgl.Map,
-    attributes: BuildingAttributes
+    attributes: BuildingAttributes,
+    indoorPathNodes: pNodeZT[] | null | undefined // Add indoorPathNodes parameter
 ): CustomLayerInterface {
+
+    // --- DEBUG LOG --- Log at the beginning of the function
+    console.log(`[createCustomLayer] Function called. Received nodes count: ${indoorPathNodes?.length ?? 0}`);
 
     // Keep track of THREE resources for cleanup
     let scene: THREE.Scene | null = null;
@@ -106,7 +112,15 @@ export function createCustomLayer(
             const ambientLight = new THREE.AmbientLight(0xffffff, 6.5); // Increased intensity from 5, maybe slightly off-white if needed e.g. 0xdddddd
             scene.add(ambientLight);
 
-            // model generations: Use attributes
+            // Declare variables needed later at this scope
+            const sceneOriginMercator = MercatorCoordinate.fromLngLat(attributes.sceneCoords);
+            const buildingMask = await loadModel(attributes.buildingMaskPath); // Load mask model
+
+            // --- START NEW PATH LOGIC using indoorPathNodes ---
+            if (indoorPathNodes && indoorPathNodes.length > 0) {
+                // sceneOriginMercator is already defined above
+                
+                // Load models needed for path (start/end)
             const startNodeGeometry = new THREE.SphereGeometry(1);
             const startNodeMaterial = new THREE.MeshStandardMaterial({ color: 'red' });
             disposables.push(startNodeGeometry, startNodeMaterial);
@@ -114,47 +128,7 @@ export function createCustomLayer(
 
             const endNodeMarker = await loadModel("/endStar.gltf"); // Keep path relative to public? Needs verification
 
-            const buildingMask = await loadModel(attributes.buildingMaskPath) // Use attribute
-
-            // scene origin coords
-            const sceneOriginMercator = MercatorCoordinate.fromLngLat(attributes.sceneCoords)
-
-            // add nodes to scene - Use attributes.nodes
-            for(let i = 0; i < attributes.nodes.length; i++){
-                const node = attributes.nodes[i];
-                const nodeMercator = MercatorCoordinate.fromLngLat([node.long, node.lat]);
-                const dNode = calcMeterOffset(nodeMercator, sceneOriginMercator);
-
-                if (i === 0){ // START NODE
-                    startNodeMarker.position.set(dNode.dEastMeter, 1 + (node.floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
-                    scene.add(startNodeMarker); // Add the specific start marker
-                    continue;
-                }
-
-                if (i === attributes.nodes.length - 1){ // END NODE
-                    endNodeMarker.position.set(dNode.dEastMeter, 1 + (node.floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
-                    scene.add(endNodeMarker);
-
-                } else { // Intermediate Nodes (use kind)
-                    let color = 'gray';
-                    let radius = 0.5;
-                    switch(node.kind) {
-                        case 'elevator': color = 'skyblue'; break;
-                        case 'stairs': color = 'orange'; break; // Example for stairs
-                        case 'inter': color = 'purple'; break; // Example for intermediate path node
-                        case 'poi': color = 'yellow'; radius = 0.7; break; // Example for POI
-                    }
-
-                     const nodeGeometry = new THREE.SphereGeometry(radius);
-                     const nodeMaterial = new THREE.MeshStandardMaterial({ color: color });
-                     disposables.push(nodeGeometry, nodeMaterial);
-                     const nodeMarker = new THREE.Mesh(nodeGeometry, nodeMaterial);
-                     nodeMarker.position.set(dNode.dEastMeter, 1 + (node.floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
-                     scene.add(nodeMarker);
-                }
-            }
-
-            // set path material params
+                // Define path materials
             const lineMaterial = new THREE.LineBasicMaterial({ color: 'blue' }); // normal path
             const dashedMaterial = new THREE.LineDashedMaterial({ // elevator/stair path (dashed)
                 color: 'blue',
@@ -164,44 +138,84 @@ export function createCustomLayer(
             });
             disposables.push(lineMaterial, dashedMaterial);
 
-            // iterate over all subpaths to create full path - Use attributes.nodes
-            for (let i = 0; i < attributes.nodes.length - 1; i++) {
-                const from = attributes.nodes[i];
-                const to = attributes.nodes[i + 1];
+                // Process nodes
+                for(let i = 0; i < indoorPathNodes.length; i++) {
+                    const node = indoorPathNodes[i];
+                    const nodeMercator = MercatorCoordinate.fromLngLat([node.longitude, node.latitude]);
+                    const dNode = calcMeterOffset(nodeMercator, sceneOriginMercator);
+                    const nodeYPosition = 1 + (node.floor - 1) * attributes.floorHeight;
 
-                const fromNodeMercator = MercatorCoordinate.fromLngLat([from.long, from.lat]);
-                const toNodeMercator = MercatorCoordinate.fromLngLat([to.long, to.lat]);
-                const dFromNode = calcMeterOffset(fromNodeMercator, sceneOriginMercator);
-                const dToNode = calcMeterOffset(toNodeMercator, sceneOriginMercator);
+                    // Place Start/End Markers
+                    if (i === 0) { // START NODE
+                        startNodeMarker.position.set(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
+                        scene.add(startNodeMarker);
+                    }
+                    if (i === indoorPathNodes.length - 1) { // END NODE
+                        endNodeMarker.position.set(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
+                        // Optional: Scale or rotate end marker if needed
+                        // endNodeMarker.scale.set(0.5, 0.5, 0.5);
+                        scene.add(endNodeMarker);
+                    } 
+                    // Optional: Add intermediate markers (e.g., small gray spheres)
+                    /* else { 
+                        let color = 'gray';
+                        let radius = 0.3;
+                        // Example: Color based on type (adjust type strings as needed)
+                        if (node.type === 'ELEV') color = 'skyblue';
+                        else if (node.type === 'STAI') color = 'orange';
+                        
+                        const interNodeGeom = new THREE.SphereGeometry(radius);
+                        const interNodeMat = new THREE.MeshStandardMaterial({ color: color });
+                        disposables.push(interNodeGeom, interNodeMat);
+                        const interNodeMarker = new THREE.Mesh(interNodeGeom, interNodeMat);
+                        interNodeMarker.position.set(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
+                        scene.add(interNodeMarker);
+                    }*/
 
-                const fromVec = new THREE.Vector3(
-                    dFromNode.dEastMeter,
-                    1 + (from.floor - 1) * attributes.floorHeight, // Use attributes.floorHeight
-                    dFromNode.dNorthMeter
-                );
+                    // Create line segments to next node
+                    if (i < indoorPathNodes.length - 1) {
+                        const nextNode = indoorPathNodes[i + 1];
+                        const nextNodeMercator = MercatorCoordinate.fromLngLat([nextNode.longitude, nextNode.latitude]);
+                        const dNextNode = calcMeterOffset(nextNodeMercator, sceneOriginMercator);
+                        
+                        const fromVec = new THREE.Vector3(
+                            dNode.dEastMeter,
+                            nodeYPosition, 
+                            dNode.dNorthMeter
+                        );
+                        const toVec = new THREE.Vector3(
+                            dNextNode.dEastMeter,
+                            1 + (nextNode.floor - 1) * attributes.floorHeight, 
+                            dNextNode.dNorthMeter
+                        );
+                        
+                        // --- DEBUG LOGGING START ---
+                        console.log(`Path Segment ${i}:`);
+                        console.log(`  Node ${i}: ID=${node.id}, Type=${node.type}, Floor=${node.floor}, Coords=[${node.longitude.toFixed(6)}, ${node.latitude.toFixed(6)}]`);
+                        console.log(`  Node ${i+1}: ID=${nextNode.id}, Type=${nextNode.type}, Floor=${nextNode.floor}, Coords=[${nextNode.longitude.toFixed(6)}, ${nextNode.latitude.toFixed(6)}]`);
+                        console.log(`  From Vec3: [${fromVec.x.toFixed(2)}, ${fromVec.y.toFixed(2)}, ${fromVec.z.toFixed(2)}]`);
+                        console.log(`  To Vec3: [${toVec.x.toFixed(2)}, ${toVec.y.toFixed(2)}, ${toVec.z.toFixed(2)}]`);
+                        // --- DEBUG LOGGING END ---
 
-                const toVec = new THREE.Vector3(
-                    dToNode.dEastMeter,
-                    1 + (to.floor - 1) * attributes.floorHeight, // Use attributes.floorHeight
-                    dToNode.dNorthMeter
-                );
+                        const lineGeo = new THREE.BufferGeometry().setFromPoints([fromVec, toVec]);
+                        disposables.push(lineGeo);
 
-                const lineGeo = new THREE.BufferGeometry().setFromPoints([fromVec, toVec]);
-                disposables.push(lineGeo); // Track geometry
+                        // Determine material based on floor change or node type
+                        const isVertical = node.type === 'ELEV' || node.type === 'STAI' || nextNode.type === 'ELEV' || nextNode.type === 'STAI' || node.floor !== nextNode.floor;
+                        const material = isVertical ? dashedMaterial : lineMaterial;
 
-                const line = new THREE.Line(
-                    lineGeo,
-                    // Use node kinds to determine material (e.g., if either is elevator/stairs)
-                    (from.kind === 'elevator' || from.kind === 'stairs' || to.kind === 'elevator' || to.kind === 'stairs') ? dashedMaterial : lineMaterial
-                );
+                        const line = new THREE.Line(lineGeo, material);
 
-                // if there's a floor change or it's an elevator/stair segment
-                if (from.floor !== to.floor || from.kind === 'elevator' || from.kind === 'stairs' || to.kind === 'elevator' || to.kind === 'stairs') {
+                        if (isVertical) {
                     line.computeLineDistances(); // Needed for dashed lines
+                        }
+                        scene.add(line);
+                    }
                 }
-
-                scene.add(line);
+            } else {
+                 console.warn("Custom 3D layer: No indoor path nodes provided.");
             }
+            // --- END NEW PATH LOGIC ---
 
             // animate icon along path
             const sphereArrowGeom = new THREE.SphereGeometry(2);
@@ -219,25 +233,33 @@ export function createCustomLayer(
             sphereArrow.visible = false;
 
             const rawPoints: THREE.Vector3[] = [];
-            // Use attributes.nodes
-            for (let i = 0; i < attributes.nodes.length; i++) {
-                const nodeMercator = MercatorCoordinate.fromLngLat([attributes.nodes[i].long, attributes.nodes[i].lat]);
+            // Use indoorPathNodes if available
+            if (indoorPathNodes && indoorPathNodes.length > 0) {
+                const sceneOriginMercator = MercatorCoordinate.fromLngLat(attributes.sceneCoords);
+                for (let i = 0; i < indoorPathNodes.length; i++) {
+                    const nodeMercator = MercatorCoordinate.fromLngLat([indoorPathNodes[i].longitude, indoorPathNodes[i].latitude]);
                 const offset = calcMeterOffset(nodeMercator, sceneOriginMercator);
-
                 rawPoints.push(new THREE.Vector3(
                     offset.dEastMeter,
-                    1 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, // Use attributes.floorHeight
+                        1 + (indoorPathNodes[i].floor - 1) * attributes.floorHeight,
                     offset.dNorthMeter
                 ));
+                }
+            } else {
+                 console.warn("Animation: No indoor path nodes to generate points for animation.");
+                 // If no points, maybe hide arrows immediately or handle differently
+                 elevatorArrow.visible = false;
+                 sphereArrow.visible = false;
             }
 
             let subpathIndex = 0;
             let progress = 0;
 
             function animateArrowOnPath() {
-                 // Check if scene exists before proceeding
-                if (!scene) {
-                    animationFrameId = null; // Stop requesting frames if scene is gone
+                 // Check if scene exists and if there are points to animate
+                if (!scene || rawPoints.length < 2) {
+                    if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null; // Stop requesting frames if scene is gone or no path
                     return;
                 }
 
@@ -247,20 +269,24 @@ export function createCustomLayer(
                     progress = 0;
                 }
 
-                // Check node kinds for elevator/stairs for arrow type
-                if (subpathIndex + 1 < attributes.nodes.length) {
-                    const startNodeKind = attributes.nodes[subpathIndex].kind;
-                    const endNodeKind = attributes.nodes[subpathIndex+1].kind;
-                    const floorChange = attributes.nodes[subpathIndex].floor !== attributes.nodes[subpathIndex+1].floor;
+                // Check node types for elevator/stairs for arrow type, using indoorPathNodes
+                if (indoorPathNodes && subpathIndex + 1 < indoorPathNodes.length) {
+                    const startNode = indoorPathNodes[subpathIndex];
+                    const endNode = indoorPathNodes[subpathIndex+1];
+                    const floorChange = startNode.floor !== endNode.floor;
+                    // Check against backend types like 'ELEV', 'STAI' (case-sensitive)
+                    const isVerticalSegment = startNode.type === 'ELEV' || startNode.type === 'STAI' || 
+                                             endNode.type === 'ELEV' || endNode.type === 'STAI' || 
+                                             floorChange;
 
-                    if (startNodeKind === 'elevator' || startNodeKind === 'stairs' || endNodeKind === 'elevator' || endNodeKind === 'stairs' || floorChange) {
+                    if (isVerticalSegment) {
                         elevatorArrow.visible = true;
                         sphereArrow.visible = false;
                     } else {
                         elevatorArrow.visible = false;
                         sphereArrow.visible = true;
                     }
-                } else { // Handle last segment case if needed
+                } else { // Handle last segment case or if indoorPathNodes is missing
                     elevatorArrow.visible = false;
                     sphereArrow.visible = true;
                 }

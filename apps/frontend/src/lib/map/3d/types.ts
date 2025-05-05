@@ -23,6 +23,7 @@ export type BuildingAttributes = {
     buildingMaskPath: string; // Path to the exterior shell/mask model
     buildingRotation: number; // Rotation in radians around the Y-axis
     floorHeight: number; // Vertical distance between floors in meters
+    numFloors: number; // Total number of floors in the building
     buildingMaskCoords: LngLatLike; // Coordinates for placing the mask model
     floorPlanPaths: string[]; // Paths to 2D floor plan images (If needed later)
     nodes: TempNode[]; // Path nodes within the building

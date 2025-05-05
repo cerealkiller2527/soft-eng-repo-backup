@@ -5,6 +5,8 @@ import type mapboxgl from 'mapbox-gl';
 import { useMap } from '@/contexts/MapContext';
 import { createCustomLayer } from '@/lib/map/3d/createCustomLayer';
 import type { BuildingAttributes } from '@/lib/map/3d/types';
+// Assuming pNodeZT is the correct type for indoor path nodes from the backend
+import type { pNodeZT } from '../../../../../packages/common/src/ZodSchemas'; 
 // Assume BuildingAttributes data is stored in constants, keyed by hospital ID
 import { MAP_LAYER_IDS, MAP_LAYER_BEFORE_ID, HOSPITAL_BUILDING_ATTRIBUTES, CUSTOM_BUILDING_ZOOM_THRESHOLD } from '@/lib/constants';
 
@@ -20,7 +22,12 @@ interface CustomLayerInterface {
     // ... other optional methods
 }
 
-export function Custom3DLayerManager() {
+// Define props for the component
+interface Custom3DLayerManagerProps {
+    indoorPathNodes: pNodeZT[] | null | undefined;
+}
+
+export function Custom3DLayerManager({ indoorPathNodes }: Custom3DLayerManagerProps) {
     const { map, zoom, selectedLocation } = useMap();
     // Keep track of the ID currently added to the map
     const activeLayerIdRef = useRef<string | null>(null);
@@ -77,36 +84,67 @@ export function Custom3DLayerManager() {
                     console.log("Simplified: Hiding default buildings.");
                 }
 
-                // Check if the target layer needs to change
-                if (activeLayerIdRef.current !== targetLayerId) {
-                    console.log(`Simplified: Target changed. Old: ${activeLayerIdRef.current}, New: ${targetLayerId}`);
-                    
-                    // Remove the old layer if it exists
-                    if (activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current)) {
-                         console.log(`Simplified Removing old: ${activeLayerIdRef.current}`);
-                         map.removeLayer(activeLayerIdRef.current);
-                    }
-
-                    // Add the new layer if there is one
-                    if (targetLayerId && targetAttributes) {
-                        console.log(`Simplified Adding new: ${targetLayerId}`);
-                        // DOUBLE CHECK right before adding
-                        if (!map.getLayer(targetLayerId)) {
-                             const newLayer = createCustomLayer(map, targetAttributes);
-                             // Check AGAIN before adding, just in case createCustomLayer took time
-                             if (!map.getLayer(newLayer.id)) { 
-                                 map.addLayer(newLayer, MAP_LAYER_BEFORE_ID);
-                             } else {
-                                  console.warn(`Simplified: Layer ${newLayer.id} existed just before addLayer call.`);
+                // Logic for adding/updating the custom layer
+                if (targetLayerId && targetAttributes) {
+                    // If the target is the currently active layer, check if nodes are present now
+                    if (activeLayerIdRef.current === targetLayerId) {
+                        // If nodes just became available OR if the layer doesn't exist for some reason
+                        if (indoorPathNodes && indoorPathNodes.length > 0 /* && !map.getLayer(targetLayerId) - Rely on explicit removal */) {
+                            console.log(`Simplified Updating/Re-adding layer ${targetLayerId} because nodes are now available.`);
+                             // Explicitly remove the layer first before adding the updated one
+                             if (map.getLayer(targetLayerId)) { 
+                                console.log(`   Attempting removal of existing ${targetLayerId}...`)
+                                map.removeLayer(targetLayerId); 
                              }
+                            // Add layer with nodes
+                            console.log(`[Custom3DLayerManager] Calling createCustomLayer (update). Nodes: ${indoorPathNodes?.length ?? 0}`);
+                            const newLayer = createCustomLayer(map, targetAttributes, indoorPathNodes);
+                            if (!map.getLayer(newLayer.id)) { 
+                                 map.addLayer(newLayer, MAP_LAYER_BEFORE_ID);
+                            } else { console.warn(`Simplified: Layer ${newLayer.id} existed just before addLayer (update).`); }
+                        } else if ((!indoorPathNodes || indoorPathNodes.length === 0) && map.getLayer(targetLayerId)) {
+                             // Nodes became unavailable, remove the layer
+                             console.log(`Simplified Removing layer ${targetLayerId} because nodes are no longer available.`);
+                             map.removeLayer(targetLayerId);
+                             activeLayerIdRef.current = null; // Reflect that no layer is active anymore
+                        } 
+                        // Else: Correct layer with correct node state (either present or absent) is already there.
+                    } else { 
+                        // Target layer is DIFFERENT from active layer
+                        console.log(`Simplified: Target changed. Old: ${activeLayerIdRef.current}, New: ${targetLayerId}`);
+                        
+                        // Remove the old layer if it exists
+                        if (activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current)) {
+                             console.log(`Simplified Removing old: ${activeLayerIdRef.current}`);
+                             map.removeLayer(activeLayerIdRef.current);
+                        }
+
+                        // Add the new layer ONLY if nodes are available
+                        if (indoorPathNodes && indoorPathNodes.length > 0) {
+                            console.log(`Simplified Adding new layer ${targetLayerId} with nodes.`);
+                            if (!map.getLayer(targetLayerId)) {
+                                 console.log(`[Custom3DLayerManager] Calling createCustomLayer (new). Nodes: ${indoorPathNodes?.length ?? 0}`);
+                                 const newLayer = createCustomLayer(map, targetAttributes, indoorPathNodes);
+                                 if (!map.getLayer(newLayer.id)) { 
+                                     map.addLayer(newLayer, MAP_LAYER_BEFORE_ID);
+                                 } else { console.warn(`Simplified: Layer ${newLayer.id} existed just before addLayer (new).`); }
+                            } else {
+                                console.warn(`Simplified: Layer ${targetLayerId} already exists unexpectedly.`);
+                            }
+                            activeLayerIdRef.current = targetLayerId; // Set active ref only if added
                         } else {
-                            console.warn(`Simplified: Layer ${targetLayerId} already exists unexpectedly.`);
+                            console.log(`Simplified: Not adding new layer ${targetLayerId} because no nodes are available yet.`);
+                             activeLayerIdRef.current = null; // No layer added
                         }
                     }
-                    // Update the active ref to the new target (even if it's null)
-                    activeLayerIdRef.current = targetLayerId;
-                } 
-                // else: Correct layer (or no layer) is already active, do nothing.
+                } else { 
+                     // No target selected, remove active layer if it exists
+                     if (activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current)) {
+                          console.log(`Simplified Removing layer ${activeLayerIdRef.current} because target is null.`);
+                          map.removeLayer(activeLayerIdRef.current);
+                     }
+                     activeLayerIdRef.current = null;
+                }
             }
 
         } catch (error) {
@@ -119,7 +157,7 @@ export function Custom3DLayerManager() {
             activeLayerIdRef.current = null;
         }
 
-    }, [map, zoom, selectedLocation]); // Dependencies trigger update
+    }, [map, zoom, selectedLocation, indoorPathNodes]); // Dependencies trigger update
 
      // Cleanup effect: Remove the active layer if the component unmounts
      useEffect(() => {

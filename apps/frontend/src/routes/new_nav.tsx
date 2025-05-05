@@ -382,7 +382,7 @@ function AppContent() {
             {search.data && search.data.path && search.data.path.toParking && 
               <IndoorRouteManager pathNodes={search.data.path.toParking} />
             }
-            <Custom3DLayerManager />
+            <Custom3DLayerManager indoorPathNodes={search.data?.path?.toDepartment} />
             <MapElements {...mapElementsProps} />
           </div>
         </div>

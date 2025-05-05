@@ -70,23 +70,6 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
   const initializedRef = useRef(false);
   const layerIds = [INDOOR_ROUTE_CASING_LAYER, INDOOR_ROUTE_LAYER];
   const parkingMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  
-  // Function to animate the dash array to create a flowing effect
-  const animateDashArray = useCallback(function animate() {
-    if (!map || map._removed) return;
-    
-    // Check if the layer exists
-    if (map.getLayer(INDOOR_ROUTE_LAYER)) {
-      // Update the dash-offset property to create animation
-      // Using negative values to make it flow towards the end (parking icon)
-      const offset = (Date.now() / 100) % 20;
-      map.setPaintProperty(INDOOR_ROUTE_LAYER, 'line-dasharray-offset', -offset);
-      
-      // Continue the animation loop
-      animationFrameRef.current = requestAnimationFrame(animate);
-    }
-  }, [map]);
   
   // Effect to add/update indoor route layer
   useEffect(() => {
@@ -148,15 +131,11 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
               'line-width': 10, // Match the width of the outdoor route
               'line-opacity': 0.9, // Match the opacity of the outdoor route
               'line-dasharray': [2, 2], // Create dotted/dashed line
-              'line-dasharray-offset': 0 // Initial offset for animation
             }
           }, INDOOR_ROUTE_CASING_LAYER); // Place above the casing
           
           initializedRef.current = true;
           console.log("Indoor route layers initialized");
-          
-          // Start the animation
-          animationFrameRef.current = requestAnimationFrame(animateDashArray);
         }
       }
       
@@ -190,11 +169,6 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
               .addTo(map);
             console.log("Added parking marker at", [parkingNode.longitude, parkingNode.latitude]);
           }
-          
-          // Ensure animation is running
-          if (!animationFrameRef.current) {
-            animationFrameRef.current = requestAnimationFrame(animateDashArray);
-          }
         } else {
           // Clear the source if no valid path
           source.setData({
@@ -202,12 +176,6 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
             features: []
           });
           console.log("Indoor route cleared - no valid path nodes");
-          
-          // Stop animation if no valid path
-          if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
-            animationFrameRef.current = null;
-          }
         }
       }
     } catch (error) {
@@ -219,12 +187,6 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
       if (!map || map._removed) return;
       
       try {
-        // Stop animation
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-          animationFrameRef.current = null;
-        }
-        
         // Remove parking marker if exists
         if (parkingMarkerRef.current) {
           parkingMarkerRef.current.remove();
@@ -250,7 +212,7 @@ export function IndoorRouteManager({ pathNodes }: IndoorRouteManagerProps) {
         console.warn("Error cleaning up indoor route layers:", error);
       }
     };
-  }, [map, pathNodes, animateDashArray]);
+  }, [map, pathNodes]);
   
   return null; // Non-rendering component
 } 
