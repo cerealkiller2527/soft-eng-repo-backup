@@ -102,7 +102,11 @@ export function Custom3DLayerManager({ indoorPathNodes, activeType }: Custom3DLa
                              console.error("[Custom3DLayerManager] Attempted to create layer but targetAttributes were undefined.");
                              throw new Error("Missing targetAttributes for layer creation."); // Throw to prevent proceeding
                          }
-                         const newLayer = createCustomLayer(map, targetAttributes, indoorPathNodes);
+                         const pathShouldExistInitially = activeType === 'department' && indoorPathNodes && indoorPathNodes.length > 0;
+                         const initialNodes = pathShouldExistInitially ? indoorPathNodes : null;
+                         console.log(`   Adding new layer: ${targetLayerId}. Initial nodes count: ${initialNodes?.length ?? 0}`);
+                         
+                         const newLayer = createCustomLayer(map, targetAttributes, initialNodes);
                          if (!map.getLayer(newLayer.id)) {
                              map.addLayer(newLayer, MAP_LAYER_BEFORE_ID);
                              activeLayerIdRef.current = newLayer.id; // Update ref *after* adding

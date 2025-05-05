@@ -353,8 +353,6 @@ export function createCustomLayer(
             });
 
             renderer.autoClear = false;
-
-            console.log(`[createCustomLayer] Path built. ${pathRelatedObjects.length} objects added.`);
         },
 
         // --- Render: Draw the THREE.js scene ---
