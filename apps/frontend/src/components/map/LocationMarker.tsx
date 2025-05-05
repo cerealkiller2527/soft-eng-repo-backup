@@ -96,25 +96,56 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
 
   // Effect for creating/updating the Mapbox marker instance
   useEffect(() => {
+    // Guard clause with more specific checks
     if (!map || !hospital.coordinates || !markerElementRef.current) return;
 
-    // --- Create or update Mapbox Marker --- 
-    if (!markerRef.current) {
-      markerRef.current = new mapboxgl.Marker({
-        element: markerElementRef.current, // Use the React-rendered element
-        anchor: 'bottom',
-      })
-        .setLngLat(hospital.coordinates as [number, number])
-        .addTo(map);
-    } else {
-      // Just update position if marker already exists
-      markerRef.current.setLngLat(hospital.coordinates as [number, number]);
+    // Use a simpler approach to marker creation with fewer delays
+    try {
+      // --- Create or update Mapbox Marker --- 
+      if (!markerRef.current) {
+        // First check if the map is still valid
+        if (!map || map._removed) {
+          return;
+        }
+
+        // Create the marker
+        markerRef.current = new mapboxgl.Marker({
+          element: markerElementRef.current, // Use the React-rendered element
+          anchor: 'bottom',
+        });
+        
+        // Set position first
+        markerRef.current.setLngLat(hospital.coordinates as [number, number]);
+        
+        // Add to map with validation
+        if (map.getContainer()) {
+          try {
+            markerRef.current.addTo(map);
+          } catch (err) {
+            console.warn("Could not add marker to map, will try again later");
+          }
+        }
+      } else {
+        // Just update position if marker already exists
+        markerRef.current.setLngLat(hospital.coordinates as [number, number]);
+      }
+    } catch (error) {
+      console.error("Error creating/updating marker:", error);
+      // Clean up on error
+      if (markerRef.current) {
+        try { markerRef.current.remove(); } catch (e) { }
+        markerRef.current = null;
+      }
     }
 
     // Cleanup function to remove the Mapbox marker
     return () => {
       if (markerRef.current) {
-        markerRef.current.remove();
+        try {
+          markerRef.current.remove();
+        } catch (error) {
+          console.error("Error removing marker:", error);
+        }
         markerRef.current = null;
       }
     };
