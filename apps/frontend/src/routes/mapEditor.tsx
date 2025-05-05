@@ -9,18 +9,12 @@ import { HelpDialog } from "../components/helpDialog.tsx";
 import { Button } from "@/components/ui/button";
 import MapForm from "../components/MapForm.tsx";
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogTrigger,
-} from "@/components/ui/alertdialog";
-import {
     Alert,
     AlertDescription,
     AlertTitle
 } from "@/components/ui/alert";
 import * as z from "zod";
 import {NodeTypeZod} from "common/src/ZodSchemas.ts";
-import floorPlan from "@/routes/floorPlan.tsx";
 
 const typeEnum = NodeTypeZod
 
@@ -80,7 +74,7 @@ const MapEditor = () => {
             locationNodes.forEach(node => {
                 console.log(`Location node ID: ${node.id}, Suite: ${node.suite}, Department ID: ${node.departmentId || 'none'}`);
             });
-            
+
             const result = await setFloorMap.mutateAsync({
                 buildingId: Number(building),
                 floor: imageIndex + 1,
@@ -106,7 +100,7 @@ const MapEditor = () => {
                     message: 'Map saved successfully!',
                     variant: "default",
                 });
-                setTimeout(() => setAlert(prev => ({ ...prev, visible: false })), 3000);
+                setTimeout(() => setAlert(prev => ({...prev, visible: false})), 3000);
             }
         } catch (error) {
             setAlert({
@@ -114,7 +108,7 @@ const MapEditor = () => {
                 message: 'Failed to save map. Please try again.',
                 variant: "destructive",
             });
-            setTimeout(() => setAlert(prev => ({ ...prev, visible: false })), 3000);
+            setTimeout(() => setAlert(prev => ({...prev, visible: false})), 3000);
         }
     };
 
@@ -141,7 +135,13 @@ const MapEditor = () => {
         setEdges(prev => prev.filter(edge => edge.id !== edgeId));
     };
 
-    const handleFormSubmit = (values: { suite: string, type: string, description: string, isOutside: boolean, departmentId?: number }) => {
+    const handleFormSubmit = (values: {
+        suite: string,
+        type: string,
+        description: string,
+        isOutside: boolean,
+        departmentId?: number
+    }) => {
         if (selectedNode) {
             setNodes(prev => prev.map(node =>
                 node.id === selectedNode.id ? {
@@ -157,7 +157,7 @@ const MapEditor = () => {
 
 
             edgeStartRef.current = null;
-            
+
             // Close info window after edit
             if (infoWindow) {
                 infoWindow.close();
@@ -251,7 +251,6 @@ const MapEditor = () => {
         markersRef.current = [];
 
 
-
         // Create new markers
         nodes.forEach(node => {
             const pinElement = document.createElement("div");
@@ -264,7 +263,7 @@ const MapEditor = () => {
             pinElement.appendChild(img);
 
             const marker = new AdvancedMarker({
-                position: { lat: node.x, lng: node.y },
+                position: {lat: node.x, lng: node.y},
                 map: mapInstance.current,
                 content: pinElement,
                 gmpDraggable: true,
@@ -305,11 +304,11 @@ const MapEditor = () => {
             if (fromNode && toNode) {
                 const polyline = new google.maps.Polyline({
                     path: [
-                        { lat: fromNode.x, lng: fromNode.y },
-                        { lat: toNode.x, lng: toNode.y },
+                        {lat: fromNode.x, lng: fromNode.y},
+                        {lat: toNode.x, lng: toNode.y},
                     ],
-                    strokeColor: "#0A75C2FF", // Chart-2 on style guide
-                    strokeWeight: 10,
+                    strokeColor: "#0A75C2FF", // Chart-2 I don't know how to use that in non-tailwind
+                    strokeWeight: 3,
                     map: mapInstance.current,
                 });
 
@@ -321,8 +320,8 @@ const MapEditor = () => {
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
-            const { InfoWindow } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
+            const {InfoWindow} = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+            const {AdvancedMarkerElement} = await google.maps.importLibrary("marker") as google.maps.MarkerLibrary;
 
             const newInfoWindow = new InfoWindow();
             newInfoWindow.addListener('closeclick', () => {
@@ -341,16 +340,16 @@ const MapEditor = () => {
     useEffect(() => {
         if (!mapRef.current || !mapInstance.current) return;
         setImageIndex(Number(form?.floor ?? 1) - 1)
-        
+
         // Update map center based on building
         const buildingCenters = {
-            "20 Patriot Place": { lat: 42.09280, lng: -71.266 },
-            "22 Patriot Place": { lat: 42.09262, lng: -71.267 },
-            "Faulkner Hospital": { lat: 42.30163258195755, lng: -71.12812875693645 },
-            "Main Campus": { lat: 42.33510876646788, lng: -71.10665415417226 },
+            "20 Patriot Place": {lat: 42.09280, lng: -71.266},
+            "22 Patriot Place": {lat: 42.09262, lng: -71.267},
+            "Faulkner Hospital": {lat: 42.30163258195755, lng: -71.12812875693645},
+            "Main Campus": {lat: 42.33510876646788, lng: -71.10665415417226},
         };
-        
-        const center = buildingCenters[form?.building as keyof typeof buildingCenters] || { lat: 42.3262, lng: -71.1497 };
+
+        const center = buildingCenters[form?.building as keyof typeof buildingCenters] || {lat: 42.3262, lng: -71.1497};
         mapInstance.current.setCenter(center);
     }, [form]);
 
@@ -358,13 +357,13 @@ const MapEditor = () => {
         if (mapRef.current && !mapInstance.current) {
             const map = new google.maps.Map(mapRef.current, {
                 zoom: 19,
-                center: { lat: 42.09280, lng: -71.266 },
+                center: {lat: 42.09280, lng: -71.266},
                 disableDefaultUI: true,
                 mapId: '57f41020f9b31f57',
             });
 
             mapInstance.current = map;
-            mapInstance.current.setOptions({ disableDoubleClickZoom: true });
+            mapInstance.current.setOptions({disableDoubleClickZoom: true});
 
             mapInstance.current.addListener("dblclick", (e: google.maps.MapMouseEvent) => {
                 if (!e.latLng) return;
@@ -393,9 +392,9 @@ const MapEditor = () => {
             const overlay = new google.maps.GroundOverlay(
                 overlayData.imageUrl,
                 new google.maps.LatLngBounds(
-                    { lat: overlayData.bounds.south, lng: overlayData.bounds.west },
-                    { lat: overlayData.bounds.north, lng: overlayData.bounds.east }
-                ), { clickable: true }
+                    {lat: overlayData.bounds.south, lng: overlayData.bounds.west},
+                    {lat: overlayData.bounds.north, lng: overlayData.bounds.east}
+                ), {clickable: true}
             );
             overlay.setMap(mapInstance.current);
             console.log(imageIndex);
@@ -460,17 +459,7 @@ const MapEditor = () => {
                 <NewNavbar />
             </div>
 
-            <div className="absolute bottom-10 left-4 z-10 grid grid-cols-1 md:grid-cols-2 gap-1 mx-auto pt-28">
-                <Button
-                    onClick={handleSaveMap}
-                    className="bg-primary hover:bg-chart-4 text-white hover:text-white"
-                >
-                    Save Map
-                </Button>
-
-                <HelpDialog />
-            </div>
-
+            {/* Node Form */}
             <div className="absolute top-30 right-4 z-30">
                 {(selectedNode || edgeStartRef.current) && (
                     <MapForm
@@ -488,50 +477,62 @@ const MapEditor = () => {
                 )}
             </div>
 
-            <div className="absolute top-26 left-4 z-10">
-                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <AlertDialogTrigger asChild>
+            {/* Control Panel in top left */}
+            <div className="absolute top-16 left-4 z-10 bg-white p-4 rounded-lg shadow-lg max-w-xs w-full items-center">
+                <div className="space-y-4">
+                    {/* Location Selector */}
+                    {!form ? (
+                        <div className="space-y-4">
+                            <MapEditorSelectForm
+                                onSubmit={(form) => {
+                                    setForm(form);
+                                    const bd = form.building;
+                                    let bdId = 1;
+
+                                    if(bd == "Faulkner Hospital") {
+                                        bdId = 4
+                                    } else if(bd == "20 Patriot Place") {
+                                        bdId = 2;
+                                    } else if (bd == "22 Patriot Place") {
+                                        bdId = 3;
+                                    } else if (bd == "Main Campus") {
+                                        bdId = 5;
+                                    }
+                                    setBuilding(bdId);
+                                }}
+                            />
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            <div className="font-bold">Current Location:</div>
+                            <div>{form.building}, Floor {form.floor}</div>
+                            <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => setForm(null)}
+                            >
+                                Change Location
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col gap-2 pt-4">
                         <Button
-                            variant="outline"
+                            onClick={handleSaveMap}
                             className="bg-primary hover:bg-chart-4 text-white hover:text-white"
-                            onClick={() => setIsDialogOpen(true)}
+                            disabled={!form}
                         >
-                            Select Location
+                            Save Map
                         </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="sm:max-w-[425px]">
-                        <MapEditorSelectForm onSubmit={(form, ) => {
-                            setForm(form);
 
-
-                            // BOOF FIX
-                            const bd = form.building;
-                            let bdId = 1;
-
-                            if(bd == "Faulkner Hospital") {
-                                bdId = 4
-                            } else if(bd == "20 Patriot Place") {
-                                bdId = 2;
-                            } else if (bd == "22 Patriot Place") {
-                                bdId = 3;
-                            } else if (bd == "Main Campus") {
-                                bdId = 5;
-                            }
-                            setIsDialogOpen(false);
-                            setBuilding(bdId)
-                        }} />
-                        <Button
-                            className="absolute right-4 top-4 rounded-sm bg-white hover:bg-gray-100 text-red-500"
-                            onClick={() => setIsDialogOpen(false)}
-                        >
-                            X
-                        </Button>
-                    </AlertDialogContent>
-                </AlertDialog>
+                        <HelpDialog />
+                    </div>
+                </div>
             </div>
         </div>
     );
-};
+}
 
 function getImageFromNodeType(type: string): string {
     const images = {

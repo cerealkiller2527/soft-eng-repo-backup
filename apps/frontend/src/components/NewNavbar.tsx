@@ -1,15 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { UserCircleIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarTrigger,
-} from "@/components/ui/menubar";
-import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/database/trpc";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import BnWLogo from "/BrighamAndWomensLogo.png";
@@ -35,20 +27,16 @@ export default function NewNavbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
     const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
-
-    // More dropdown hover/click state without ref
-    const [moreOpen, setMoreOpen] = useState(false);
-    const [moreClicked, setMoreClicked] = useState(false);
+    const [openMenu, setOpenMenu] = useState<null | 'more' | 'profile'>(null);
+    const [clickedMenu, setClickedMenu] = useState<null | 'more' | 'profile'>(null);
+    const [filteredMoreItems, setFilteredMoreItems] = useState(moreItems);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const {
         data: currentAlgorithm,
         isLoading: isAlgLoading,
         refetch: refetchAlgorithm,
     } = useQuery(trpc.pathfinding.getCurrentAlgorithm.queryOptions());
-
-    useEffect(() => {
-        // handle algorithm updates if needed
-    }, [currentAlgorithm]);
 
     const toggleAlgo = useMutation(
         trpc.pathfinding.toggleAlgorithm.mutationOptions({
@@ -58,20 +46,57 @@ export default function NewNavbar() {
         })
     );
 
+    // Filter more items based on auth status
+    useEffect(() => {
+        setFilteredMoreItems(moreItems.filter(item => item.show(auth)));
+    }, [isSignedIn, user]);
+
+    // Handle hover interactions
+    const handleMenuHover = (menu: 'more' | 'profile' | null) => {
+        if (!clickedMenu) {
+            setOpenMenu(menu);
+        }
+    };
+
+    // Handle click interactions
+    const handleMenuClick = (menu: 'more' | 'profile') => {
+        if (clickedMenu === menu) {
+            // Second click on same menu - close it
+            setClickedMenu(null);
+            setOpenMenu(null);
+        } else {
+            // First click - open and mark as clicked
+            setClickedMenu(menu);
+            setOpenMenu(menu);
+        }
+    };
+
+    // Close when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setClickedMenu(null);
+                setOpenMenu(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const getLinkClasses = (path: string) =>
-        `px-4 py-2 rounded-md text-lg transition-colors ${
+        `px-4 py-2 text-lg transition-colors ${
             location.pathname === path
-                ? "bg-[#86A2B6] text-black underline"
+                ? "text-black underline"
                 : "text-black hover:underline"
         }`;
 
     const mobileItemClasses =
-        "block w-full text-left py-2 px-4 text-black text-lg hover:bg-[#86A2B6] transition-colors rounded-none";
+        "block w-full text-left py-2 px-4 text-black text-lg transition-colors rounded-none";
 
     const nextAlg = currentAlgorithm === "BFS" ? "DFS" : "BFS";
 
     return (
-        <Menubar className="fixed top-0 w-full shadow-md bg-primary-foreground z-50 h-14 rounded-none">
+        <nav className="fixed top-0 w-full shadow-md bg-white z-50 h-14 rounded-none border-b">
             <div className="flex items-center justify-between px-4 h-full w-full">
                 {/* Logo */}
                 <Link to="/" className="flex items-center space-x-2">
@@ -79,105 +104,112 @@ export default function NewNavbar() {
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden md:flex items-center space-x-10">
-                    <Link to={primaryLink.href} className={getLinkClasses(primaryLink.href)}>
+                <div className="hidden md:flex items-center space-x-4">
+                    <Link
+                        to={primaryLink.href}
+                        className={getLinkClasses(primaryLink.href)}
+                        onMouseEnter={() => setOpenMenu(null)}
+                    >
                         {primaryLink.title}
                     </Link>
-                    <Link to={directoryLink.href} className={getLinkClasses(directoryLink.href)}>
+                    <Link
+                        to={directoryLink.href}
+                        className={getLinkClasses(directoryLink.href)}
+                        onMouseEnter={() => setOpenMenu(null)}
+                    >
                         {directoryLink.title}
                     </Link>
 
-                    {/* More dropdown with hover+click stability using onOpenChange */}
-                    <MenubarMenu
-                        open={moreOpen}
-                        onOpenChange={open => {
-                            setMoreOpen(open);
-                            if (!open) setMoreClicked(false);
-                        }}
+                    {/* More dropdown */}
+                    <div
+                        ref={dropdownRef}
+                        className="relative"
+                        onMouseEnter={() => handleMenuHover('more')}
                     >
-                        <MenubarTrigger
-                            onClick={() => {
-                                setMoreClicked(prev => !prev);
-                                setMoreOpen(true);
-                            }}
-                            onMouseEnter={() => !moreClicked && setMoreOpen(true)}
-                            onMouseLeave={() => !moreClicked && setMoreOpen(false)}
-                            className="px-4 py-2 rounded-none text-lg bg-background font-normal hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
+                        <button
+                            onClick={() => handleMenuClick('more')}
+                            className={`px-4 py-2 text-lg ${openMenu === 'more' ? 'underline' : 'hover:underline'}`}
                         >
                             More
-                        </MenubarTrigger>
-                        <MenubarContent
-                            align="end"
-                            className="border rounded-none shadow-md bg-white"
-                            onMouseEnter={() => !moreClicked && setMoreOpen(true)}
-                            onMouseLeave={() => !moreClicked && setMoreOpen(false)}
-                        >
-                            {moreItems
-                                .filter(item => item.show(auth))
-                                .map(item => (
-                                    <MenubarItem key={item.href}>
-                                        <Link
-                                            to={item.href}
-                                            className="block w-full text-left py-2 px-4 text-black"
-                                        >
-                                            {item.title}
-                                        </Link>
-                                    </MenubarItem>
+                        </button>
+                        {openMenu === 'more' && (
+                            <div
+                                className="absolute right-0 mt-2 bg-white border shadow-lg z-50 rounded-md min-w-[180px]"
+                                onMouseEnter={() => handleMenuHover('more')}
+                            >
+                                {filteredMoreItems.map(item => (
+                                    <Link
+                                        key={item.href}
+                                        to={item.href}
+                                        className="block w-full text-left py-2 px-4 text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
+                                        onClick={() => {
+                                            setOpenMenu(null);
+                                            setClickedMenu(null);
+                                        }}
+                                    >
+                                        {item.title}
+                                    </Link>
                                 ))}
-                        </MenubarContent>
-                    </MenubarMenu>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Profile dropdown */}
-                    {isSignedIn ? (
-                        <MenubarMenu>
-                            <MenubarTrigger
-                                className="p-2 rounded-full text-black bg-background hover:cursor-pointer focus:outline-none data-[state=open]:bg-transparent"
-                            >
-                                <UserCircleIcon className="h-8 w-8" />
-                            </MenubarTrigger>
-                            <MenubarContent align="end" className="border rounded-none shadow-md bg-white">
-                                {user?.publicMetadata?.role === "admin" && (
-                                    <MenubarItem>
-                                        {isAlgLoading ? (
-                                            <button disabled className="block w-full py-2 px-4 text-left">
-                                                Loading…
-                                            </button>
-                                        ) : (
+                    <div
+                        className="relative"
+                        onMouseEnter={() => handleMenuHover('profile')}
+                    >
+                        {isSignedIn ? (
+                            <>
+                                <button
+                                    onClick={() => handleMenuClick('profile')}
+                                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                >
+                                    <UserCircleIcon className="h-8 w-8" />
+                                </button>
+                                {openMenu === 'profile' && (
+                                    <div className="absolute right-0 mt-2 bg-white border shadow-lg z-50 rounded-md w-48">
+                                        {user?.publicMetadata?.role === "admin" && (
                                             <button
                                                 onClick={() => toggleAlgo.mutate({ algorithm: nextAlg })}
-                                                className="block w-full py-2 px-4 text-left"
+                                                className="block w-full py-2 px-4 text-left text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
                                             >
-                                                Switch to {nextAlg}
+                                                {isAlgLoading ? 'Loading...' : `Switch to ${nextAlg}`}
                                             </button>
                                         )}
-                                    </MenubarItem>
+                                        <Link
+                                            to="/profile"
+                                            className="block w-full py-2 px-4 text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
+                                            onClick={() => {
+                                                setOpenMenu(null);
+                                                setClickedMenu(null);
+                                            }}
+                                        >
+                                            My Profile
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                signOut();
+                                                setOpenMenu(null);
+                                                setClickedMenu(null);
+                                            }}
+                                            className="block w-full py-2 px-4 text-left text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
+                                        >
+                                            Log Out
+                                        </button>
+                                    </div>
                                 )}
-                                <MenubarItem>
-                                    <Link
-                                        to="/profile"
-                                        className="block w-full py-2 px-4 text-black hover:bg-accent"
-                                    >
-                                        My Profile
-                                    </Link>
-                                </MenubarItem>
-                                <MenubarItem>
-                                    <button
-                                        onClick={() => signOut()}
-                                        className="block w-full py-2 px-4 text-left text-black"
-                                    >
-                                        Log Out
-                                    </button>
-                                </MenubarItem>
-                            </MenubarContent>
-                        </MenubarMenu>
-                    ) : (
-                        <Link
-                            to="/login"
-                            className="px-4 py-2 rounded-none text-black hover:bg-[#86A2B6] transition-colors"
-                        >
-                            Login
-                        </Link>
-                    )}
+                            </>
+                        ) : (
+                            <Link
+                                to="/login"
+                                className="px-4 py-2 hover:underline"
+                                onMouseEnter={() => setOpenMenu(null)}
+                            >
+                                Login
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 {/* Mobile Hamburger & Dropdown */}
@@ -190,7 +222,7 @@ export default function NewNavbar() {
                     </button>
 
                     {mobileMenuOpen && (
-                        <div className="absolute top-full right-0 mt-1 bg-[#AEC8E0] w-36 p-2 rounded-none shadow-lg space-y-2 z-40 overflow-auto max-h-[calc(100vh-3.5rem)]">
+                        <div className="absolute top-full right-0 mt-1 bg-white border shadow-lg z-40 w-56 rounded-md overflow-hidden">
                             <Link
                                 to={primaryLink.href}
                                 onClick={() => setMobileMenuOpen(false)}
@@ -217,19 +249,17 @@ export default function NewNavbar() {
                                 }`}
                             >
                                 {mobileMoreOpen && (
-                                    <div className="ml-2 space-y-1">
-                                        {moreItems
-                                            .filter((item) => item.show(auth))
-                                            .map((item) => (
-                                                <Link
-                                                    key={item.href}
-                                                    to={item.href}
-                                                    onClick={() => setMobileMenuOpen(false)}
-                                                    className={mobileItemClasses}
-                                                >
-                                                    {item.title}
-                                                </Link>
-                                            ))}
+                                    <div className="bg-gray-50">
+                                        {filteredMoreItems.map((item) => (
+                                            <Link
+                                                key={item.href}
+                                                to={item.href}
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className={`${mobileItemClasses} pl-8`}
+                                            >
+                                                {item.title}
+                                            </Link>
+                                        ))}
                                     </div>
                                 )}
                             </div>
@@ -245,14 +275,14 @@ export default function NewNavbar() {
                                 }`}
                             >
                                 {mobileProfileOpen && (
-                                    <div className="ml-2 space-y-1">
+                                    <div className="bg-gray-50">
                                         {isSignedIn ? (
                                             <button
                                                 onClick={() => {
                                                     signOut();
                                                     setMobileMenuOpen(false);
                                                 }}
-                                                className={mobileItemClasses}
+                                                className={`${mobileItemClasses} pl-8`}
                                             >
                                                 Log Out
                                             </button>
@@ -260,7 +290,7 @@ export default function NewNavbar() {
                                             <Link
                                                 to="/login"
                                                 onClick={() => setMobileMenuOpen(false)}
-                                                className={mobileItemClasses}
+                                                className={`${mobileItemClasses} pl-8`}
                                             >
                                                 Login
                                             </Link>
@@ -272,6 +302,6 @@ export default function NewNavbar() {
                     )}
                 </div>
             </div>
-        </Menubar>
+        </nav>
     );
 }

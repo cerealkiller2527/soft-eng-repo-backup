@@ -6,6 +6,7 @@ import { useTRPC } from "@/database/trpc.ts";
 import { useQuery } from "@tanstack/react-query";
 import NewChart from "@/components/serviceRequestComponents/NewChart.tsx";
 import BarChartMini from "@/components/serviceRequestComponents/BarChartMini.tsx";
+import clsx from 'clsx';
 
 export default function MiniDashboard() {
     const trpc = useTRPC();
@@ -61,7 +62,7 @@ export default function MiniDashboard() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-30">
-            <Card className="bg-white shadow md:col-span-2">
+            <Card className="bg-white shadow md:col-span-2 min-h-202.5">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-xl text-[#003153]">Request Quick View</CardTitle>
                 </CardHeader>
