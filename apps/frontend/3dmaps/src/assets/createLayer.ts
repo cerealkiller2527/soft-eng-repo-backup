@@ -2,13 +2,13 @@
 import {MercatorCoordinate} from "mapbox-gl";
 import * as THREE from "three";
 import { GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
-import {buildingAttributes} from "../MapboxMap.tsx";
+import type { BuildingAttributes} from '../../../src/lib/map/3d/types.ts';
 
 
 
 export function CreateLayer(
     map: mapboxgl.Map,
-    attributes: buildingAttributes
+    attributes: BuildingAttributes,
 ) {
 
     // use the nodes to get how many floors to render
@@ -50,11 +50,11 @@ export function CreateLayer(
         scene.scale.multiply(new THREE.Vector3(1, 1, -1));
 
         // create light (objects black without it)
-        const light = new THREE.DirectionalLight('white', 2);
-        light.position.set(50, 100, -30).normalize(); // noon light
+        const light = new THREE.DirectionalLight('white', 3);
+        light.position.set(50, 100, -30); // noon light
         scene.add(light);
 
-        const amLight = new THREE.AmbientLight(0x404040, 5);
+        const amLight = new THREE.AmbientLight(0x404040, 10);
         scene.add(amLight)
 
         // model generations:
@@ -82,35 +82,35 @@ export function CreateLayer(
             const dNode = calcMeterOffset(nodeMercator, sceneOriginMercator);
 
             if (i === 0){
-                startNodeMarker.position.set(dNode.dEastMeter, 1 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
-                scene.add(endNodeMarker)
+                startNodeMarker.position.set(dNode.dEastMeter, 3 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
+                scene.add(startNodeMarker)
                 continue;
             }
 
             if (i === attributes.nodes.length - 1){
-                endNodeMarker.position.set(dNode.dEastMeter, 1 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
+                endNodeMarker.position.set(dNode.dEastMeter, 3 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
+                endNodeMarker.scale.set(2, 2, 2);
                 scene.add(endNodeMarker);
 
             } else if (attributes.nodes[i].kind == "elevator"){
                 const nodeMarker = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.5),
+                    new THREE.BoxGeometry(2.0, 2.0, 2.0),
                     new THREE.MeshStandardMaterial({
                         color: 'skyblue'
                     })
                 )
-                nodeMarker.position.set(dNode.dEastMeter, 1 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
+                nodeMarker.position.set(dNode.dEastMeter, 3 + (attributes.nodes[i].floor - 1) * attributes.floorHeight, dNode.dNorthMeter);
                 scene.add(nodeMarker);
             }
         }
 
 
         // set path material params
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 'blue' }); // normal path
+        const lineMaterial = new THREE.LineBasicMaterial({color: 'blue'}); // normal path
         const dashedMaterial = new THREE.LineDashedMaterial({ // elevator path (dashed)
             color: 'blue',
             dashSize: 1,
             gapSize: 0.5,
-            linewidth: 2
         });
 
 
@@ -128,13 +128,13 @@ export function CreateLayer(
 
             const fromVec = new THREE.Vector3(
                 dFromNode.dEastMeter,
-                1 + (from.floor - 1) * attributes.floorHeight,
+                3 + (from.floor - 1) * attributes.floorHeight,
                 dFromNode.dNorthMeter
             );
 
             const toVec = new THREE.Vector3(
                 dToNode.dEastMeter,
-                1 + (to.floor - 1) * attributes.floorHeight,
+                3 + (to.floor - 1) * attributes.floorHeight,
                 dToNode.dNorthMeter
             );
 
@@ -164,7 +164,7 @@ export function CreateLayer(
         );
 
         const elevatorArrow = new THREE.Mesh(
-            new THREE.BoxGeometry(2, 2, 2),
+            new THREE.BoxGeometry(3.5, 3.5, 3.5),
             new THREE.MeshStandardMaterial({ color: 'blue' })
         );
 
@@ -183,7 +183,7 @@ export function CreateLayer(
 
             rawPoints.push(new THREE.Vector3(
                 offset.dEastMeter,
-                1 + (attributes.nodes[i].floor - 1) * attributes.floorHeight,
+                3 + (attributes.nodes[i].floor - 1) * attributes.floorHeight,
                 offset.dNorthMeter
             ));
         }
@@ -252,6 +252,29 @@ export function CreateLayer(
             floor.rotateY(attributes.buildingRotation)
             floor.position.set(dBuilding.dEastMeter, i * attributes.floorHeight - 1.8, dBuilding.dNorthMeter);
             scene.add(floor)
+
+            // add pngs to floors
+            const myFloorPath = attributes.floorPlanPaths[i];
+
+            const myTexture = new THREE.TextureLoader().load(myFloorPath, (texture) => {
+                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.minFilter = THREE.LinearMipMapLinearFilter; // good for downscaling
+                texture.magFilter = THREE.LinearFilter; // good for upscaling
+            });
+
+            const myGeometry = new THREE.PlaneGeometry(attributes.imageConstants.width, attributes.imageConstants.height, 1, 1);
+            const myMaterial = new THREE.MeshLambertMaterial({
+                map: myTexture,
+                transparent: true,
+                depthWrite: false,
+                side: THREE.DoubleSide})
+
+
+            const myPlane = new THREE.Mesh(myGeometry, myMaterial);
+            myPlane.rotateX(Math.PI/2)
+            myPlane.position.set(attributes.imageConstants.offsetEast, i * attributes.floorHeight, attributes.imageConstants.offsetNorth);
+
+            scene.add(myPlane)
         }
 
 
@@ -293,17 +316,9 @@ export function CreateLayer(
 
                 camera.projectionMatrix = m.multiply(l);
 
-                // const cameraWorldMatrix = camera.projectionMatrix.invert().transpose();
-                // const cameraRotation = new THREE.Quaternion().setFromRotationMatrix(cameraWorldMatrix);
-
-
+                endNodeMarker.rotateY(0.02);
                 renderer.resetState();
                 renderer.render(scene, camera);
-
-                // custom render updates
-                // endNodeMarker.setRotationFromQuaternion(cameraRotation);
-
-
 
                 map.triggerRepaint();
             }

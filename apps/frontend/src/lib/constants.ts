@@ -1,8 +1,9 @@
 import type { Hospital, Directions } from "@/types/hospital"
 import type mapboxgl from 'mapbox-gl';
+import {LngLatLike} from "mapbox-gl"
 import type { SkyLayerSpecification, FillExtrusionLayerSpecification, Expression, CameraOptions } from 'mapbox-gl';
 // Import 3D types
-import type { BuildingAttributes, TempNode } from '@/lib/map/3d/types';
+import type { BuildingAttributes, TempNode, imageConstants} from '@/lib/map/3d/types';
 
 // API Keys
 export const GOOGLE_PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || '';
@@ -275,52 +276,123 @@ const examplePathNodes: TempNode[] = [
 ];
 
 // Define attributes for each hospital (adapt from 3dmaps example)
+const Pat20SceneCoords: LngLatLike = [-71.26599086652641, 42.09277375925052];
+const Pat20BuildingCoords: LngLatLike = [-71.26646779246585, 42.093016005061315];
+const Pat20BuildingMaskCoords: LngLatLike = [-71.26629497632113, 42.09248760267727];
+const Pat20ImageConstants: imageConstants = {
+  width: 84,
+  height: 68,
+  offsetEast: 3,
+  offsetNorth: 5.0
+}
 const Patriot20BuildingAttributes: BuildingAttributes = {
-    // Use hospital ID 2 for "20 Patriot Place"
-    sceneCoords: [-71.26599086652641, 42.09277375925052],
-    buildingCoords: [-71.26646779246585, 42.093016005061315],
-    buildingPaths: ["/maps/Pat20Floor.glb", "/maps/Pat20Floor.glb", "/maps/Pat20Floor.glb", "/maps/Pat20Floor.glb"], // Ensure these paths are correct relative to /public
-    buildingMaskPath: '/maps/Pat20Exterior.glb',
+  sceneCoords: Pat20SceneCoords,
+  buildingCoords: Pat20BuildingCoords,
+  buildingPaths: ["/20Patriot/Pat20Floor.glb", "/20Patriot/Pat20Floor.glb", "/20Patriot/Pat20Floor.glb", "/20Patriot/Pat20Floor.glb"],
+  buildingMaskPath: '/20Patriot/PatExterior.glb',
+  buildingRotation: -Math.PI/10,
+  floorHeight: 20,
+  buildingMaskCoords: Pat20BuildingMaskCoords,
+  floorPlanPaths: ["/20Patriot/Pat20Floor1.png", "/20Patriot/Pat20Floor2.png", "/20Patriot/Pat20Floor3.png", "/20Patriot/Pat20Floor4.png"],
+  nodes: examplePathNodes,
+  imageConstants: Pat20ImageConstants
+}
+
+const Pat22SceneCoords: LngLatLike = [-71.26696722883923, 42.09258410491776]
+const Pat22BuildingCoords: LngLatLike = [-71.26697223199403, 42.09223043183033]
+const Pat22BuildingMaskCoords: LngLatLike = [-71.26629497632113, 42.09248760267727]
+const Pat22ImageConstants: imageConstants = {
+    width: 68,
+    height: 87,
+    offsetEast: -2,
+    offsetNorth: 5
+}
+const Patriot22BuildingAttributes = {
+    sceneCoords: Pat22SceneCoords,
+    buildingCoords: Pat22BuildingCoords,
+    buildingPaths: ["/22Patriot/Pat22Floor.gltf", "/22Patriot/Pat22Floor.gltf", "/22Patriot/Pat22Floor.gltf", "/22Patriot/Pat22Floor.gltf"],
+    buildingMaskPath: "/20Patriot/PatExterior.glb",
     buildingRotation: -Math.PI/10,
     floorHeight: 20,
-    buildingMaskCoords: [-71.26629497632113, 42.09248760267727],
-    nodes: examplePathNodes, // Use the example nodes for now
-    numFloors: 4 // Based on buildingPaths array length
-};
+    buildingMaskCoords: Pat22BuildingMaskCoords,
+    floorPlanPaths: ['22Patriot/22PatFloor1.png', '22Patriot/22PatFloor2.png', "22Patriot/22PatFloor3.png", "22Patriot/22PatFloor4.png"],
+    nodes: examplePathNodes,
+    imageConstants: Pat22ImageConstants
+}
 
-const Patriot22BuildingAttributes: BuildingAttributes = {
-    // Use hospital ID 3 for "22 Patriot Place"
-    sceneCoords: [-71.26696722883923, 42.09258410491776],
-    buildingCoords: [-71.26697223199403, 42.09223043183033],
-    buildingPaths: ["/maps/Pat22Floor.gltf", "/maps/Pat22Floor.gltf", "/maps/Pat22Floor.gltf", "/maps/Pat22Floor.gltf"],
-    buildingMaskPath: "/maps/Pat20Exterior.glb", // Assuming same mask for now?
-    buildingRotation: -Math.PI/10,
-    floorHeight: 20,
-    buildingMaskCoords: [-71.26629497632113, 42.09248760267727], // Same mask coords as Pat20?
-    nodes: examplePathNodes, // Use the example nodes for now
-    numFloors: 4
-};
-
+const MainSceneCoords: LngLatLike = [-71.106549430016, 42.335842853824396]
+const MainBuildingCoords: LngLatLike = [-71.10636459548073, 42.33526357549587]
+const MainBuildingMaskCoords: LngLatLike = [-71.10636459548073, 42.33526357549587]
+const MainImageConstants: imageConstants = {
+    width: 450,
+    height: 230,
+    offsetEast: -25,
+    offsetNorth: 5
+}
 const MainBuildingAttributes: BuildingAttributes = {
-    // Use hospital ID 0 for "Main Campus"
-    sceneCoords: [-71.106549430016, 42.335842853824396],
-    buildingCoords: [-71.10636459548073, 42.33526357549587],
-    buildingPaths: ["/maps/MainFloor1.gltf", "/maps/MainFloor2.gltf"],
-    buildingMaskPath: "/maps/MainExterior.gltf",
+    sceneCoords: MainSceneCoords,
+    buildingCoords: MainBuildingCoords,
+    buildingPaths: ["/Main/MainFloor1.gltf", "/Main/MainFloor2.gltf"], // one per floor
+    buildingMaskPath: "/Main/MainExterior.gltf",
     buildingRotation: 0,
     floorHeight: 45,
-    buildingMaskCoords: [-71.10636459548073, 42.33526357549587],
-    nodes: examplePathNodes, // Use the example nodes for now
-    numFloors: 2
-};
+    buildingMaskCoords: MainBuildingMaskCoords,
+    floorPlanPaths: ['/Main/MainFloor1.png', '/Main/MainFloor2.png'],
+    nodes: examplePathNodes,
+    imageConstants: MainImageConstants
+}
+
+const FaulknerSceneCoords: LngLatLike = [-71.12834142530612, 42.30150822410094]
+const FaulknerBuildingCoords: LngLatLike = [-71.12855652822122, 42.300928445283546]
+const FaulknerBuildingMaskCoords: LngLatLike = [-71.12855652822122, 42.300928445283546]
+const FaulknerImageConstants: imageConstants = {
+    width: 223,
+    height: 170,
+    offsetEast: 23,
+    offsetNorth: 13
+}
+const FaulknerBuildingAttributes: BuildingAttributes = {
+    sceneCoords: FaulknerSceneCoords,
+    buildingCoords: FaulknerBuildingCoords,
+    buildingPaths: ["/Faulkner/FaulknerFloor1.gltf"], // one per floor
+    buildingMaskPath: "/Faulkner/FaulknerExterior.gltf",
+    buildingRotation: 0,
+    floorHeight: 45,
+    buildingMaskCoords: FaulknerBuildingMaskCoords,
+    floorPlanPaths: ['Faulkner/FaulknerFloor1.png'],
+    nodes: examplePathNodes,
+    imageConstants: FaulknerImageConstants
+}
+
+const ChestnutSceneCoords: LngLatLike = [-71.14974760810384, 42.325950820451]
+const ChestnutBuildingCoords: LngLatLike = [-71.1500853668773, 42.325693309988054]
+const ChestnutBuildingMaskCoords: LngLatLike = [-71.1500853668773, 42.325693309988054]
+const ChestnutImageConstants: imageConstants = {
+    width: 72,
+    height: 63,
+    offsetEast: 5,
+    offsetNorth: 2
+}
+const ChestnutBuildingAttributes: BuildingAttributes = {
+    sceneCoords: ChestnutSceneCoords,
+    buildingCoords: ChestnutBuildingCoords,
+    buildingPaths: ["/Chestnut/ChestnutFloor1.gltf"], // one per floor
+    buildingMaskPath: "/Chestnut/ChestnutExterior.gltf",
+    buildingRotation: 0,
+    floorHeight: 25,
+    buildingMaskCoords: ChestnutBuildingMaskCoords,
+    floorPlanPaths: ['/Chestnut/ChestnutFloor1.png'],
+    nodes: examplePathNodes,
+    imageConstants: ChestnutImageConstants,
+}
 
 // Exported constant mapping hospital IDs to their attributes
 export const HOSPITAL_BUILDING_ATTRIBUTES: Record<number, BuildingAttributes> = {
     0: MainBuildingAttributes,
-    // 1: ChestnutHill attributes would go here if available
-    2: Patriot20BuildingAttributes, // Correct ID for 20 Patriot Place
-    3: Patriot22BuildingAttributes, // Correct ID for 22 Patriot Place
-    // 4: Faulkner attributes would go here if available
+    1: ChestnutBuildingAttributes,
+    2: Patriot20BuildingAttributes, // this is the correct ID for 20 Patriot Place
+    3: Patriot22BuildingAttributes, // this is the correct ID for 22 Patriot Place
+    4: FaulknerBuildingAttributes,
 };
 
 // ==========================================================
