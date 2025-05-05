@@ -47,7 +47,7 @@ export function MainMap() {
     containerRef: mapContainerRef,
     onLoad: handleMapLoad,
     onZoom: handleMapZoom,
-    logCameraParams: false
+    logCameraParams: true
   });
 
   // Resize map when context map instance changes (initial load)
