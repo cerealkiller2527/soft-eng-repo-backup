@@ -18,15 +18,13 @@ mapboxgl.workerCount = MAPBOX_WORKER_COUNT;
 
 // Entry point where root component is rendered into the DOM
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
-        <ClerkProvider publishableKey={clerkPublishableKey}>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
         <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-            <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-                <App />
-            </TRPCProvider>
-        </QueryClientProvider>
+            <QueryClientProvider client={queryClient}>
+                <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+                    <App />
+                </TRPCProvider>
+            </QueryClientProvider>
         </AuthProvider>
-        </ClerkProvider>
-    </React.StrictMode>
+    </ClerkProvider>
 );
