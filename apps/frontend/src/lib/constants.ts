@@ -47,7 +47,7 @@ export const baseHospitalData: Array<Hospital> = [
     phone: "508-718-4400",
     isOpen: true,
     website: "https://www.brighamandwomens.org/foxborough-health-care-center/foxborough-urgent-care-center",
-    coordinates: [-71.2665262516987, 42.09252289293114],
+    coordinates: [-71.26614925578323, 42.09281592721943],
     placeId: undefined
   },
   {
@@ -57,7 +57,7 @@ export const baseHospitalData: Array<Hospital> = [
     phone: "866-378-9164",
     isOpen: true,
     website: "https://www.brighamandwomens.org/about-bwh/locations/health-care-center-20-patriot-place-foxborough",
-    coordinates: [-71.2665262516987, 42.09252289293114],
+    coordinates: [-71.2669872812066, 42.092679645033186],
     placeId: undefined
   },
   {
