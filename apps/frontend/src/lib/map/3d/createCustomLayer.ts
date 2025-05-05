@@ -49,30 +49,30 @@ export function createCustomLayer(
         const targetColor = new THREE.Color('#aac7e9'); 
         const targetOpacity = 0.8;
 
-        // Traverse and update materials after loading
-        gltf.scene.traverse((object) => {
-            if ((object as THREE.Mesh).isMesh) {
-                const mesh = object as THREE.Mesh;
-                if (mesh.material) {
-                    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-                    materials.forEach(mat => {
-                        if (mat instanceof THREE.Material) {
-                            if (!disposables.includes(mat)) {
-                                disposables.push(mat);
-                            }
-                            // mat.color.set(targetColor);
-                            mat.opacity = 0.6;
-                            // Ensure transparency is enabled for opacity to work
-                            mat.transparent = true;
-                            mat.needsUpdate = true;
-                        }
-                    });
-                }
-                if (mesh.geometry && !disposables.includes(mesh.geometry)) {
-                     disposables.push(mesh.geometry);
-                }
-            }
-        });
+        // // Traverse and update materials after loading
+        // gltf.scene.traverse((object) => {
+        //     if ((object as THREE.Mesh).isMesh) {
+        //         const mesh = object as THREE.Mesh;
+        //         if (mesh.material) {
+        //             const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        //             materials.forEach(mat => {
+        //                 if (mat instanceof THREE.Material) {
+        //                     if (!disposables.includes(mat)) {
+        //                         disposables.push(mat);
+        //                     }
+        //                     // mat.color.set(targetColor);
+        //                     mat.opacity = 0.6;
+        //                     // Ensure transparency is enabled for opacity to work
+        //                     mat.transparent = true;
+        //                     mat.needsUpdate = true;
+        //                 }
+        //             });
+        //         }
+        //         if (mesh.geometry && !disposables.includes(mesh.geometry)) {
+        //              disposables.push(mesh.geometry);
+        //         }
+        //     }
+        // });
         return gltf.scene;
     }
 
@@ -104,12 +104,12 @@ export function createCustomLayer(
 
             // create lights - Adjusted for softer look
             // Decrease directional intensity, maybe change position
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2); // Reduced intensity from 2
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 14); // Reduced intensity from 2
             directionalLight.position.set(0, 70, 100).normalize(); // More frontal/top-down?
             scene.add(directionalLight);
 
             // Increase ambient intensity
-            const ambientLight = new THREE.AmbientLight(0xffffff, 6.5); // Increased intensity from 5, maybe slightly off-white if needed e.g. 0xdddddd
+            const ambientLight = new THREE.AmbientLight(0xffffff, 3); // Increased intensity from 5, maybe slightly off-white if needed e.g. 0xdddddd
             scene.add(ambientLight);
 
             // Declare variables needed later at this scope
@@ -332,6 +332,28 @@ export function createCustomLayer(
                     floor.rotateY(attributes.buildingRotation) // Use attribute
                     floor.position.set(dBuilding.dEastMeter, i * attributes.floorHeight - 1.8, dBuilding.dNorthMeter); // Use attributes.floorHeight
                     scene.add(floor)
+                    // add pngs to floors
+                    const myFloorPath = attributes.floorPlanPaths[i];
+
+                    const myTexture = new THREE.TextureLoader().load(myFloorPath, (texture) => {
+                        texture.minFilter = THREE.LinearMipMapLinearFilter; // good for downscaling
+                        texture.magFilter = THREE.LinearFilter; // good for upscaling
+                    });
+
+                    const myGeometry = new THREE.PlaneGeometry(attributes.imageConstants.width, attributes.imageConstants.height, 1, 1);
+                    const myMaterial = new THREE.MeshBasicMaterial({
+                        map: myTexture,
+                        transparent: true,
+                        depthWrite: false,
+                        side: THREE.DoubleSide})
+
+
+                    const myPlane = new THREE.Mesh(myGeometry, myMaterial);
+                    myPlane.rotateX(Math.PI/2)
+                    myPlane.position.set(attributes.imageConstants.offsetEast, i * attributes.floorHeight, attributes.imageConstants.offsetNorth);
+
+                    scene.add(myPlane)
+
                 } else {
                     console.warn(`Missing model path for floor ${i+1}`);
                 }
@@ -344,6 +366,8 @@ export function createCustomLayer(
             buildingMask.scale.multiply(new THREE.Vector3(1, 1, -1))
             buildingMask.rotateY(attributes.buildingRotation) // Use attribute
             scene.add(buildingMask)
+
+
 
             // setup the THREE.js renderer
             renderer = new THREE.WebGLRenderer({
