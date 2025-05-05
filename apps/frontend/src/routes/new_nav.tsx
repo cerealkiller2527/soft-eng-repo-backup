@@ -10,8 +10,10 @@ import {
   DEFAULT_FLY_TO_OPTIONS,
   HOSPITAL_SPECIFIC_VIEWS,
   Z_INDEX,
+  ROUTE_FIT_BOUNDS_OPTIONS
 } from "@/lib/constants";
 import type { CameraOptions } from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 import {
   CheckCircle,
   AlertTriangle,
@@ -26,6 +28,7 @@ import { MainMap } from "@/components/map/MainMap";
 import { SidebarContent, type SidebarContentProps } from "@/components/map/SidebarContent";
 import { MapElements, type MapElementsProps } from "@/components/map/MapElements";
 import { Custom3DLayerManager } from "@/components/map/Custom3DLayerManager";
+import { IndoorRouteManager } from "@/components/map/IndoorRouteManager";
 import LayoutNoFooter from "../components/LayoutNoFooter";
 import { useTRPC } from '@/database/trpc';
 import { useQuery } from '@tanstack/react-query';
@@ -212,6 +215,32 @@ function AppContent() {
 
       if (search.data && form.building?.name && routeCoordsAreReady) {
           console.log("Processing search data...");
+          
+          if (allRoutes && allRoutes.length > 0 && search.data.path.toParking.length > 0) {
+              try {
+                  const outdoorRoute = allRoutes.find(r => r.isActive) || allRoutes[0];
+                  const outdoorCoords = outdoorRoute.geometry.coordinates;
+                  const indoorCoords = search.data.path.toParking.map(n => [n.longitude, n.latitude]);
+                  
+                  const bounds = new mapboxgl.LngLatBounds();
+                  
+                  [...outdoorCoords, ...indoorCoords].forEach(coord => {
+                      bounds.extend(coord as [number, number]);
+                  });
+                  
+                  if (mapInstance && !mapInstance._removed) {
+                      mapInstance.fitBounds(bounds, {
+                          padding: ROUTE_FIT_BOUNDS_OPTIONS.padding,
+                          pitch: ROUTE_FIT_BOUNDS_OPTIONS.pitch,
+                          duration: ROUTE_FIT_BOUNDS_OPTIONS.duration,
+                      });
+                      
+                      console.log("Map fitted to combined route bounds");
+                  }
+              } catch (error) {
+                  console.error("Error fitting bounds to combined routes:", error);
+              }
+          }
       } else if (search.error) {
           console.error("tRPC search query error:", search.error);
           toast.error("Failed to calculate indoor path. Please try again.", {
@@ -223,7 +252,7 @@ function AppContent() {
            console.log("tRPC query enabled but no data yet (or fetch failed silently).")
       }
 
-  }, [search.data, search.isLoading, search.error, form, routeLat, routeLng, routeCoordsAreReady, queryEnabled]);
+  }, [search.data, search.isLoading, search.error, form, routeLat, routeLng, routeCoordsAreReady, queryEnabled, allRoutes, mapInstance]);
 
   const sidebarProps: SidebarContentProps = {
     getCurrentPosition, geoLoading, geoError, activeTab, setActiveTab,
@@ -252,6 +281,9 @@ function AppContent() {
           <div className="absolute top-0 bottom-0 left-0 right-0 h-full" style={{ zIndex: Z_INDEX.map }}>
             <MainMap />
             <RouteLayerManager routes={allRoutes} onSelectRoute={selectRoute} />
+            {search.data && search.data.path && search.data.path.toParking && 
+              <IndoorRouteManager pathNodes={search.data.path.toParking} />
+            }
             <Custom3DLayerManager />
             <MapElements {...mapElementsProps} />
           </div>
