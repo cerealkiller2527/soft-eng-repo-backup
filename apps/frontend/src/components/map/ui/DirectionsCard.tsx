@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Clock, Volume2, Loader2, Route, Map, AlertTriangle, Play, Square, Info, ParkingSquare, Footprints } from "lucide-react";
+import { Clock, Volume2, Loader2, Route, Map, AlertTriangle, Play, Square, Info, ParkingSquare, Footprints, Milestone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -214,7 +214,7 @@ export function DirectionsCard({
           </div>
           <div className="flex items-center py-1.5 mt-2">
             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
-              <Map className="h-3 w-3 text-primary" />
+              <Milestone className="h-3 w-3 text-primary" />
             </div>
             <span className="text-xs font-medium ml-1.5 mr-2">Navigation</span>
             <Separator className="flex-grow" decorative />
@@ -331,12 +331,12 @@ export function DirectionsCard({
               className="h-7 text-xs flex-shrink-0" 
               disabled={isLoading || !!error || !currentDirections}
             >
-              Start Navigation
+              Go To Google Maps
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Start Navigation?</AlertDialogTitle>
+              <AlertDialogTitle>Go To Google Maps?</AlertDialogTitle>
               <AlertDialogDescription>
                 This will open Google Maps in a new tab to start navigation to 
                 <span className="font-semibold"> {hospitalName}</span>
