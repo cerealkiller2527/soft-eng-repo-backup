@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 
 import {pNodeDTO} from "../../../../share/types.ts";
 
@@ -67,8 +67,7 @@ const FloorPlan = () => {
     };
     const [pathCenter, setPathCenter] = useState<google.maps.LatLngLiteral | null>(null);
     const [activeTab, setActiveTab] = useState("request");
-
-
+    const [staticMapUrl, setStaticMapUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -82,8 +81,6 @@ const FloorPlan = () => {
 
         loadGoogleLibraries();
     }, [])
-
-
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -343,60 +340,85 @@ const FloorPlan = () => {
     };
 
     const handlePrint = () => {
-        // html2canvas(mapRef.current).then((canvas) => {
-        //     const image = canvas.toDataURL();
+        const filteredCoords = pathCoords
+            .filter((node) => node.floor === imageIndex + 1)
+            .map((node) => `${node.latitude},${node.longitude}`);
+        const encodedPath = directionsRenderer.current?.getDirections()?.routes?.[0]?.overview_polyline;
+        console.log("Encoded Path:", encodedPath);
 
-            const printWindow = window.open("", "_blank");
-            if (printWindow) {
-                const printContent = `
-                <html>
-                    <head>
-                        <title>Directions</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                margin: 20px;
-                                color: #333;
-                            }
-                            h2 {
-                                text-align: center;
-                            }
-                            .directions {
-                                margin: 20px 0;
-                            }
-                            .directions p {
-                                margin: 8px 0;
-                            }
-                            .map-capture {
-                                text-align: center;
-                                margin-top: 20px;
-                            }
-                            .map-capture img {
-                                width: 80%;
-                                border: 1px solid #ccc;
-                                border-radius: 8px;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <h2>Directions</h2>
-                        <div class="directions">
-                            ${instructions.map((step, index) => `<p><strong>Step ${index + 1}:</strong> ${step}</p>`).join('')}
-                        </div>
-                        <div class="map-capture">
-                            <h3>Map Capture</h3>
-                            <img src="" alt="Map Screenshot" />
-                        </div>
-                    </body>
-                </html>
+        const origin = form.location;
+        const destination = `${endMapsLocation.lat},${endMapsLocation.lng}`;
+        const pathColor = "0x007BFF";
+        const size = "800x600";
+        const baseUrl = "https://maps.googleapis.com/maps/api/staticmap";
+
+        let mapUrl = `${baseUrl}?size=${size}`;
+        if (filteredCoords.length >= 2) {
+            mapUrl += `&path=color:${pathColor}|weight:5|enc:${encodedPath}`;
+        }
+        mapUrl += `&markers=color:green|label:S|${origin}`;
+        mapUrl += `&markers=color:red|label:D|${destination}`;
+        mapUrl += `&key=${import.meta.env.VITE_MAPS_API}`;
+        console.log("Map URL:", mapUrl);
+
+        const printWindow = window.open("", "_blank");
+        if (printWindow) {
+            const printContent = `
+              <html>
+                <head>
+                  <title>Directions</title>
+                  <style>
+                    body {
+                      font-family: Arial, sans-serif;
+                      margin: 20px;
+                      color: #333;
+                    }
+                    h2 {
+                      text-align: center;
+                    }
+                    .directions {
+                      margin: 20px 0;
+                    }
+                    .directions p {
+                      margin: 8px 0;
+                    }
+                    .map-capture {
+                      text-align: center;
+                      margin-top: 20px;
+                    }
+                    .map-capture img {
+                      width: 90%;
+                      border: 1px solid #ccc;
+                      border-radius: 8px;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <h2>Directions</h2>
+                  <div class="directions">
+                    ${instructions
+                        .map((step, index) => `<p><strong>Step ${index + 1}:</strong> ${step}</p>`)
+                        .join("")}
+                  </div>
+                  <div class="map-capture">
+                    <h3>Map Snapshot</h3>
+                    <img id="mapImage" src="${mapUrl}" alt="Map Snapshot" />
+                  </div>
+                  <script>
+                    const img = document.getElementById('mapImage');
+                    img.onload = () => {
+                      window.print();
+                    };
+                  </script>
+                </body>
+              </html>
             `;
-                printWindow.document.write(printContent);
-                printWindow.document.close();
-                printWindow.print();
-            } else {
-                console.error('Unable to open the print window');
-            }
-        // });
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.print();
+        } else {
+            console.error("Unable to open the print window");
+        }
     };
 
     return (
@@ -406,7 +428,7 @@ const FloorPlan = () => {
                     {/* Google Map full size */}
                     <div
                         id="google-map-container"
-                        className="absolute inset-0 z-0"
+                        className="absolute inset-0 z-0 google-map-container"
                         ref={mapRef}
                         style={{ width: '100%', height: '100%' }}
                     />
