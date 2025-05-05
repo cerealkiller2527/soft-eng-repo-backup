@@ -22,7 +22,11 @@ interface UserDepartmentInputProps {
     className?: string;
 }
 
-export function UserDepartmentInput({ buildingName, onDepartmentSelect, className }: UserDepartmentInputProps) {
+export function UserDepartmentInput({
+                                        buildingName,
+                                        onDepartmentSelect,
+                                        className
+                                    }: UserDepartmentInputProps) {
     const trpc = useTRPC();
     const [inputValue, setInputValue] = useState("");
     const [open, setOpen] = useState(false);
@@ -30,15 +34,15 @@ export function UserDepartmentInput({ buildingName, onDepartmentSelect, classNam
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     // Fetch departments for the current building
-    const nodesQuery = useQuery(
+    const { data, isLoading, isError } = useQuery(
         trpc.mapInfoRouter.mapInfo.queryOptions({ buildingName })
     );
 
     useEffect(() => {
-        if (nodesQuery.data) {
-            setDepartments(nodesQuery.data);
+        if (data) {
+            setDepartments(data);
         }
-    }, [nodesQuery.data]);
+    }, [data]);
 
     const filteredDepartments = departments.filter(dept =>
         dept.toLowerCase().includes(inputValue.toLowerCase())
@@ -58,12 +62,14 @@ export function UserDepartmentInput({ buildingName, onDepartmentSelect, classNam
     };
 
     return (
-        <div className={cn("flex gap-2 w-full", className)}>
+        <div className={cn("w-full", className)}>
             <Popover open={open} onOpenChange={setOpen}>
-                <div className="relative w-full flex-1">
+                <div className="relative">
                     <PopoverTrigger asChild>
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <Search className="h-4 w-4 text-muted-foreground" />
+                            </div>
                             <Input
                                 ref={inputRef}
                                 placeholder="Search departments..."
@@ -73,46 +79,62 @@ export function UserDepartmentInput({ buildingName, onDepartmentSelect, classNam
                                     setOpen(true);
                                 }}
                                 onClick={() => setOpen(true)}
-                                className="w-full pl-9 pr-9 h-10 text-base bg-secondary/30 border-0 focus-visible:ring-1 focus-visible:ring-primary/30"
+                                className="w-full pl-9 pr-9 h-10 bg-background hover:bg-accent/50 focus:bg-background transition-colors"
                             />
-                            {inputValue && !nodesQuery.isLoading && (
-                                <button
-                                    type="button"
-                                    onClick={handleClearInput}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10 p-1"
-                                    aria-label="Clear search"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                            )}
-                            {nodesQuery.isLoading && (
-                                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin z-10" />
-                            )}
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                {inputValue && !isLoading && (
+                                    <button
+                                        type="button"
+                                        onClick={handleClearInput}
+                                        className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-full"
+                                        aria-label="Clear search"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                )}
+                                {isLoading && (
+                                    <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
+                                )}
+                            </div>
                         </div>
                     </PopoverTrigger>
 
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                        <Command shouldFilter={false}>
+                    <PopoverContent
+                        className="w-[var(--radix-popover-trigger-width)] p-0 shadow-lg rounded-lg border"
+                        align="start"
+                        sideOffset={4}
+                    >
+                        <Command shouldFilter={false} className="rounded-lg">
                             <CommandInput
                                 placeholder="Search departments..."
                                 value={inputValue}
                                 onValueChange={setInputValue}
+                                className="border-b"
                             />
-                            <CommandList>
-                                <CommandEmpty>No departments found</CommandEmpty>
-                                <CommandGroup>
-                                    {filteredDepartments.map((department) => (
-                                        <CommandItem
-                                            key={department}
-                                            value={department}
-                                            onSelect={() => handleSelect(department)}
-                                            className="cursor-pointer"
-                                        >
-                                            <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                                            {department}
-                                        </CommandItem>
-                                    ))}
-                                </CommandGroup>
+                            <CommandList className="max-h-[300px] overflow-y-auto">
+                                {isError ? (
+                                    <CommandEmpty className="py-6 text-center text-sm text-destructive">
+                                        Failed to load departments
+                                    </CommandEmpty>
+                                ) : filteredDepartments.length === 0 ? (
+                                    <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                                        {inputValue ? "No matching departments" : "No departments available"}
+                                    </CommandEmpty>
+                                ) : (
+                                    <CommandGroup>
+                                        {filteredDepartments.map((department) => (
+                                            <CommandItem
+                                                key={department}
+                                                value={department}
+                                                onSelect={() => handleSelect(department)}
+                                                className="px-4 py-2 cursor-pointer transition-colors hover:bg-accent/50 aria-selected:bg-accent"
+                                            >
+                                                <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
+                                                <span className="truncate">{department}</span>
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                )}
                             </CommandList>
                         </Command>
                     </PopoverContent>

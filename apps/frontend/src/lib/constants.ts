@@ -26,7 +26,7 @@ export const SPACING = {
 export const baseHospitalData: Array<Hospital> = [
   { 
     id: 1, 
-    name: "Chestnut Hill", 
+    name: "Chestnut Hill Medical Center",
     address: "25 Boylston St, Chestnut Hill, MA 02467", 
     phone: "800-294-9999", 
     isOpen: true, 
