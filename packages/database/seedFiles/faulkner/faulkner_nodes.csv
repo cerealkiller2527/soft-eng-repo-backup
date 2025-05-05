@@ -17,7 +17,7 @@ Cardiac Rehab,42.30155289,-71.12816624,Location,1,Faulkner Hospital,FALSE
 Pre-admission,42.30147271,-71.12816531,Location,1,Faulkner Hospital,FALSE
 Admission,42.30157119,-71.12788428,Location,1,Faulkner Hospital,FALSE
 a,42.30161833,-71.12790829,Intermediary,1,Faulkner Hospital,FALSE
-e,42.30091261,-71.12774427,Parking,1,Faulkner Hospital,TRUE
+Parking,42.30091261,-71.12774427,Parking,1,Faulkner Hospital,TRUE
 c,42.30152205,-71.12818297,Intermediary,1,Faulkner Hospital,FALSE
 Dialysis Unit,42.30172859,-71.12712322,Location,1,Faulkner Hospital,FALSE
 Audiology,42.30170072,-71.12805525,Location,1,Faulkner Hospital,FALSE

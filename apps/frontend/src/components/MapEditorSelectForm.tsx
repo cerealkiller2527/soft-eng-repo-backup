@@ -72,11 +72,11 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-md p-6 w-64">
+        <div className="w-full"> {/* Removed fixed width and padding */}
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-                    <h2 className="text-2xl font-bold text-center text-primary mb-6">
-                        Map Editor Selection
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4"> {/* Reduced space-y from 6 to 4 */}
+                    <h2 className="text-lg font-bold text-center text-primary mb-2"> {/* Reduced text size and margin */}
+                        Where do you want to edit?
                     </h2>
 
                     <FormField
@@ -84,7 +84,7 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                         name="building"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="block text-sm font-medium text-black">
+                                <FormLabel className="block text-sm font-medium text-gray-700"> {/* Changed text color */}
                                     Building
                                 </FormLabel>
                                 <Select
@@ -120,7 +120,7 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                         name="floor"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="block text-sm font-medium text-black">
+                                <FormLabel className="block text-sm font-medium text-gray-700"> {/* Changed text color */}
                                     Floor
                                 </FormLabel>
                                 <Select
@@ -149,7 +149,7 @@ export default function MapEditorSelectForm({ onSubmit }: { onSubmit: (values: z
                         )}
                     />
 
-                    <div className="pt-4">
+                    <div className="pt-2"> {/* Reduced padding */}
                         <Button
                             type="submit"
                             className="w-full bg-primary hover:bg-chart-4 text-white hover:text-white"

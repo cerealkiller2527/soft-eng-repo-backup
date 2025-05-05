@@ -1,7 +1,7 @@
 ﻿fromNode,toNode,floor,building
 e,stairs 1,1,20 Patriot
 e,d,1,20 Patriot
-e,1 elevator,1,20 Patriot
+e,Floor One Elevator,1,20 Patriot
 a,Urgent Care Center,1,20 Patriot
 a,b,1,20 Patriot
 c,Blood Draw/ Phlebotomy,1,20 Patriot
@@ -13,12 +13,12 @@ Cardiovascular Services,d,1,20 Patriot
 Radiology,b,1,20 Patriot
 Pharmacy,b,1,20 Patriot
 d,Urology,1,20 Patriot
-parking,20o3,1,20 Patriot
+Parking,20o3,1,20 Patriot
 20o2,20o3,1,20 Patriot
 20o2,20o3,1,20 Patriot
 20o5,20o4,1,20 Patriot
 20o3,20o4,1,20 Patriot
-20o3,parking,1,20 Patriot
+20o3,Parking,1,20 Patriot
 20o4,20o5,1,20 Patriot
 20o4,20o3,1,20 Patriot
 20o1,20o2,1,20 Patriot

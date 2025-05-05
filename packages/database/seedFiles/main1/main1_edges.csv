@@ -3,7 +3,7 @@ b,c,1,Main Campus
 b,j,1,Main Campus
 b,i,1,Main Campus
 d,g,1,Main Campus
-1 elevator,d,1,Main Campus
+Floor One Elevator,d,1,Main Campus
 i,b,1,Main Campus
 f,g,1,Main Campus
 f,e,1,Main Campus
@@ -21,4 +21,4 @@ h,c,1,Main Campus
 c,k,1,Main Campus
 c,h,1,Main Campus
 c,b,1,Main Campus
-l,parking,1,Main Campus
+l,Parking,1,Main Campus
