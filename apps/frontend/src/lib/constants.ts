@@ -118,10 +118,10 @@ export const DEFAULT_FLY_TO_OPTIONS = {
 export const HOSPITAL_SPECIFIC_VIEWS: Record<number, HospitalViewParams> = {
   // Example: Replicate Chestnut Hill view
   1: {
-    coordinates: [-71.167169, 42.323224],
-    zoom: 19.56,
-    pitch: 71.00,
-    bearing: 16.00,
+    coordinates: [-71.168056, 42.323216],
+    zoom: 18.31,
+    pitch: 60.11,
+    bearing: -17.38,
   },
   0: {
     coordinates: [-71.107050, 42.336130],
@@ -134,7 +134,20 @@ export const HOSPITAL_SPECIFIC_VIEWS: Record<number, HospitalViewParams> = {
     zoom: 18.00,
     pitch: 60.53,
     bearing: -42.75,
+  },
+  2: {
+      coordinates: [-71.266429, 42.093084],
+      zoom: 17.52,
+      pitch: 77.33,
+      bearing: -21.55,
+  },
+  3: {
+      coordinates: [-71.267716, 42.093336],
+      zoom: 17.52,
+      pitch: 77.33,
+      bearing: -21.55,
   }
+
 };
 
 export const SKY_LAYER_CONFIG: SkyLayerSpecification = {

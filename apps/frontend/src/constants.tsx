@@ -12,7 +12,7 @@ export const overlays: OverlayImage[][] = [
     //Floor 1
     [
         {
-            imageUrl: "/chestnutFloorOne.png",
+            imageUrl: "/NEWchestnutfloorone.png",
             bounds: {
                 north: 42.32624046941922,
                 south: 42.32567461058454,
@@ -21,16 +21,16 @@ export const overlays: OverlayImage[][] = [
             },
         },
         {
-            imageUrl: "/BWMainCampus.png",
+            imageUrl: "/1maincampus.png",
             bounds: {
-                north: 42.33795,
-                south: 42.33300,
-                east: -71.10340,
-                west: -71.11050,
+                north: 42.3369129421801,
+                south: 42.334922653086586,
+                east: -71.10426875447908,
+                west: -71.10933782098382,
             }
         },
         {
-            imageUrl: "/20PatriotPlaceFloorOne.png",
+            imageUrl: "/20patriotplacefloorone.png",
             bounds: {
                 north: 42.09309,
                 south: 42.09249,
@@ -39,7 +39,7 @@ export const overlays: OverlayImage[][] = [
             },
         },
         {
-            imageUrl: "/falknerFloorOne.png",
+            imageUrl: "/falknerfloorone.png",
             bounds: {
                 north: 42.30250258195755,
                 south: 42.300903146614,
@@ -61,7 +61,7 @@ export const overlays: OverlayImage[][] = [
 
         },
         {
-            imageUrl: "/22PatriotPlaceFloorOne.png",
+            imageUrl: "/22patriotplacefloorone.png",
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
@@ -74,7 +74,7 @@ export const overlays: OverlayImage[][] = [
     //Floor 2
     [
         {
-            imageUrl: "/22PatriotPlaceFloorTwo.png",
+            imageUrl: "/22patriotplacefloortwo.png",
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
@@ -83,12 +83,14 @@ export const overlays: OverlayImage[][] = [
             },
         },
         {
-            imageUrl: "/BWMainCampus.png",
+            //42.3369129421801, -71.10933782098382
+            //42.334922653086586, -71.10426875447908
+            imageUrl: "/maincampus2.png",
             bounds: {
-                north: 42.33795,
-                south: 42.33300,
-                east: -71.10340,
-                west: -71.11050,
+                north: 42.3369129421801,
+                south: 42.334922653086586,
+                east: -71.10426875447908,
+                west: -71.10933782098382,
             }
         },
         {
@@ -105,7 +107,7 @@ export const overlays: OverlayImage[][] = [
     //floor 3
     [
         {
-            imageUrl: "/22PatriotPlaceFloorThree.png",
+            imageUrl: "/22patriotplacefloorthree.png",
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
@@ -114,7 +116,7 @@ export const overlays: OverlayImage[][] = [
             },
         },
         {
-            imageUrl: "/20PatriotPlaceFloorThree.png", // 3 the same as 4
+            imageUrl: "/20patriotplacefloorthree.png", // 3 the same as 4
             bounds: {
                 north: 42.09309,
                 south: 42.09249,
@@ -127,7 +129,7 @@ export const overlays: OverlayImage[][] = [
     //Floor 4
     [
         {
-            imageUrl: "/22PatriotPlaceFloorFour.png",
+            imageUrl: "/22patriotplacefloorfour.png",
             bounds: {
                 north: 42.09310,
                 south: 42.09224,
