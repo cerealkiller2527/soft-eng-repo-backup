@@ -56,7 +56,7 @@ export const baseHospitalData: Array<Hospital> = [
   },
   { 
     id: 4, 
-    name: "Faulkner", 
+    name: "Faulkner Hospital",
     address: "1153 Centre St, Jamaica Plain, MA 02130", 
     phone: "617-983-7000", 
     isOpen: true, 

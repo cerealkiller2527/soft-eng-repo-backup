@@ -19,6 +19,7 @@ export interface EnrichedRoute {
   congestion?: string[]; // Array of congestion levels per segment
   duration_typical?: number; // Duration based on typical traffic (seconds)
   isActive?: boolean; // Flag to indicate if this is the currently displayed route
+  destinationCoordinate: [number, number];
 }
 
 // Define the structured return type
@@ -61,7 +62,9 @@ export async function getDirections(
     const enrichedRoutes: EnrichedRoute[] = data.routes.map((route: any, index: number): EnrichedRoute => {
       const leg = route.legs[0];
       const congestion = leg.annotation?.congestion;
-      
+      const geometry = route.geometry as LineString;
+      const endCoordinate = geometry.coordinates[geometry.coordinates.length - 1];
+
       const steps: DirectionStep[] = leg.steps.map((step: any) => ({
         instruction: step.maneuver.instruction,
         distance: `${(step.distance * CONVERSION_FACTORS.METERS_TO_MILES).toFixed(1)} mi`,
@@ -74,8 +77,6 @@ export async function getDirections(
         duration: `${Math.round((route.duration_typical ?? route.duration) / 60)} min`,
       };
 
-      const geometry = route.geometry as LineString;
-
       return {
         id: `route-${index}`, // Simple ID based on index
         directions,
@@ -83,7 +84,8 @@ export async function getDirections(
         duration: route.duration, // ADD assignment for numeric duration (seconds)
         congestion,
         duration_typical: route.duration_typical,
-        isActive: index === 0 // Mark the first route as active initially
+        isActive: index === 0, // Mark the first route as active initially
+        destinationCoordinate: endCoordinate // return the lng lat
       };
     });
 
