@@ -17,19 +17,6 @@ export function MainMap() {
     loadedMap.addLayer(SKY_LAYER_CONFIG);
     console.log("Sky layer added.");
 
-    const layers = loadedMap.getStyle().layers;
-          let firstSymbolId;
-          if (layers) {
-            for (const layer of layers) {
-                if (layer.type === 'symbol') {
-                    firstSymbolId = layer.id;
-                    break;
-                }
-            }
-          }
-    loadedMap.addLayer(BUILDINGS_LAYER_CONFIG, firstSymbolId);
-    console.log("3D buildings layer added.");
-
     setMap(loadedMap);
     
     // Force resize after map loads to ensure correct dimensions

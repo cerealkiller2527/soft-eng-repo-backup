@@ -266,6 +266,19 @@ function AppContent() {
     setIsIndoorPathAvailable(!!search.data?.path?.toParking && search.data.path.toParking.length >= 2);
   }, [search.data]);
 
+  // Effect to automatically update active nodes when search data changes while in a specific mode
+  useEffect(() => {
+    if (activeIndoorType === 'department' && search.data?.path?.toDepartment) {
+        console.log("[Auto Update Effect] Updating activeIndoorNodes for 'department' mode.");
+        setActiveIndoorNodes(search.data.path.toDepartment);
+    } else if (activeIndoorType === 'parking' && search.data?.path?.toParking) {
+        console.log("[Auto Update Effect] Updating activeIndoorNodes for 'parking' mode.");
+        setActiveIndoorNodes(search.data.path.toParking);
+    } 
+    // If activeIndoorType is null or search data is missing, activeIndoorNodes won't be updated here,
+    // relying on the button clicks to set it initially.
+  }, [search.data, activeIndoorType]); // Watch for changes in search results and the active mode
+
   useEffect(() => {
     if (activeTab === 'directions') {
       if (!selectedLocation) {

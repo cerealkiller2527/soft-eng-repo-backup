@@ -37,7 +37,6 @@ export function Custom3DLayerManager({ indoorPathNodes, activeType }: Custom3DLa
         if (!map || map._removed) return;
 
         const defaultBuildingsLayerId = MAP_LAYER_IDS.BUILDINGS;
-        const zoomThreshold = CUSTOM_BUILDING_ZOOM_THRESHOLD;
         const targetHospitalId = selectedLocation?.id;
         let targetAttributes: BuildingAttributes | undefined = undefined;
         let targetLayerId: string | null = null;
@@ -51,96 +50,81 @@ export function Custom3DLayerManager({ indoorPathNodes, activeType }: Custom3DLa
         console.log(`[Custom3DLayerManager Update] Zoom: ${zoom.toFixed(2)}, TargetID: ${targetLayerId}, ActiveID: ${activeLayerIdRef.current}, ActiveType: ${activeType}, Nodes: ${indoorPathNodes?.length ?? 0}`);
 
         try {
-            // Ensure default layer exists
+            // --- REMOVE ZOOM LOGIC and default layer visibility checks ---
+            /*
+            // Ensure default layer exists (No longer needed)
             const defaultLayer = map.getLayer(defaultBuildingsLayerId);
-            if (!defaultLayer) {
-                 console.warn(`Default building layer '${defaultBuildingsLayerId}' not found.`);
-                 // If default layer is missing, we probably can't proceed reliably
-                 return; 
-            }
-
+            if (!defaultLayer) { ... }
+            
             // --- Logic based on Zoom --- 
             if (zoom <= zoomThreshold) {
                 // ZOMMED OUT: Show default, remove custom
-                
-                // Ensure default is visible
-                 if (map.getLayoutProperty(defaultBuildingsLayerId, 'visibility') !== 'visible') {
-                    map.setLayoutProperty(defaultBuildingsLayerId, 'visibility', 'visible');
-                    console.log("Simplified: Showing default buildings.");
-                 }
-
-                // Remove active custom layer if it exists
-                if (activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current)) {
-                    console.log(`Simplified Zoom Out: Removing layer ${activeLayerIdRef.current}`);
-                    map.removeLayer(activeLayerIdRef.current);
-                }
-                activeLayerIdRef.current = null; // Clear active ref
-
-            } else {
+                if (map.getLayoutProperty(defaultBuildingsLayerId, 'visibility') !== 'visible') { ... }
+                if (activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current)) { ... }
+                activeLayerIdRef.current = null;
+            } else { 
                 // ZOMMED IN: Hide default, manage custom
+                if (map.getLayoutProperty(defaultBuildingsLayerId, 'visibility') !== 'none') { ... }
+            */
+            // --- END REMOVAL ---
 
-                // Ensure default is hidden
-                if (map.getLayoutProperty(defaultBuildingsLayerId, 'visibility') !== 'none') {
-                    map.setLayoutProperty(defaultBuildingsLayerId, 'visibility', 'none');
-                    console.log("[Custom3DLayerManager] Hiding default buildings.");
+            // --- Logic now runs regardless of zoom --- 
+            
+            // 1. Determine if the active layer needs removal (due to target change)
+            if (activeLayerIdRef.current && activeLayerIdRef.current !== targetLayerId) {
+                console.log(`[Custom3DLayerManager] Target changed. Removing old layer: ${activeLayerIdRef.current}`);
+                if (map.getLayer(activeLayerIdRef.current)) {
+                     map.removeLayer(activeLayerIdRef.current);
                 }
+                activeLayerIdRef.current = null;
+            }
 
-                // 1. Determine if the active layer needs removal
-                if (activeLayerIdRef.current && activeLayerIdRef.current !== targetLayerId) {
-                    console.log(`[Custom3DLayerManager] Target changed. Removing old layer: ${activeLayerIdRef.current}`);
-                    if (map.getLayer(activeLayerIdRef.current)) {
-                         map.removeLayer(activeLayerIdRef.current);
-                    }
-                    activeLayerIdRef.current = null; // Clear ref after removal
-                }
+            // 2. Determine if the target layer should be added or updated
+            // Layer should be visible if zoomed in and a target hospital is selected.
+            // The path *within* the layer depends on indoorPathNodes being passed.
+            const shouldLayerBeVisible = targetLayerId && targetAttributes; // Removed dependency on activeType and indoorPathNodes here
+            const isLayerCurrentlyVisible = activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current);
 
-                // 2. Determine if the target layer should be added or updated
-                // Layer should be visible if zoomed in and a target hospital is selected.
-                // The path *within* the layer depends on indoorPathNodes being passed.
-                const shouldLayerBeVisible = targetLayerId && targetAttributes; // Removed dependency on activeType and indoorPathNodes here
-                const isLayerCurrentlyVisible = activeLayerIdRef.current && map.getLayer(activeLayerIdRef.current);
+            if (shouldLayerBeVisible) {
+                if (!isLayerCurrentlyVisible || activeLayerIdRef.current !== targetLayerId) {
+                     // Add the new target layer (or update if ID is same but layer somehow got removed)
+                     console.log(`[Custom3DLayerManager] Adding/Updating layer: ${targetLayerId}. Nodes: ${indoorPathNodes?.length}`);
+                     
+                     // Explicitly remove if it exists (handles edge case where ID is same but layer needs refresh)
+                     if (map.getLayer(targetLayerId)) { 
+                         console.log(`   Removing existing ${targetLayerId} before adding update...`);
+                         map.removeLayer(targetLayerId); 
+                     }
 
-                if (shouldLayerBeVisible) {
-                    if (!isLayerCurrentlyVisible || activeLayerIdRef.current !== targetLayerId) {
-                         // Add the new target layer (or update if ID is same but layer somehow got removed)
-                         console.log(`[Custom3DLayerManager] Adding/Updating layer: ${targetLayerId}. Nodes: ${indoorPathNodes?.length}`);
-                         
-                         // Explicitly remove if it exists (handles edge case where ID is same but layer needs refresh)
-                         if (map.getLayer(targetLayerId)) { 
-                             console.log(`   Removing existing ${targetLayerId} before adding update...`);
-                             map.removeLayer(targetLayerId); 
+                     try {
+                         // Add explicit check for targetAttributes
+                         if (!targetAttributes) {
+                             console.error("[Custom3DLayerManager] Attempted to create layer but targetAttributes were undefined.");
+                             throw new Error("Missing targetAttributes for layer creation."); // Throw to prevent proceeding
                          }
-
-                         try {
-                             // Add explicit check for targetAttributes
-                             if (!targetAttributes) {
-                                 console.error("[Custom3DLayerManager] Attempted to create layer but targetAttributes were undefined.");
-                                 throw new Error("Missing targetAttributes for layer creation."); // Throw to prevent proceeding
-                             }
-                             const newLayer = createCustomLayer(map, targetAttributes, indoorPathNodes);
-                             if (!map.getLayer(newLayer.id)) {
-                                 map.addLayer(newLayer, MAP_LAYER_BEFORE_ID);
-                                 activeLayerIdRef.current = newLayer.id; // Update ref *after* adding
-                                 console.log(`   Layer ${newLayer.id} added successfully.`);
-                             } else {
-                                  console.warn(`[Custom3DLayerManager] Layer ${newLayer.id} existed just before addLayer call.`);
-                                  activeLayerIdRef.current = newLayer.id; // Ensure ref is set even if addLayer was skipped
-                             }
-                         } catch (creationError) {
-                              console.error(`[Custom3DLayerManager] Error creating layer ${targetLayerId}:`, creationError);
-                              activeLayerIdRef.current = null; // Ensure ref is null if creation failed
+                         const newLayer = createCustomLayer(map, targetAttributes, indoorPathNodes);
+                         if (!map.getLayer(newLayer.id)) {
+                             map.addLayer(newLayer, MAP_LAYER_BEFORE_ID);
+                             activeLayerIdRef.current = newLayer.id; // Update ref *after* adding
+                             console.log(`   Layer ${newLayer.id} added successfully.`);
+                         } else {
+                              console.warn(`[Custom3DLayerManager] Layer ${newLayer.id} existed just before addLayer call.`);
+                              activeLayerIdRef.current = newLayer.id; // Ensure ref is set even if addLayer was skipped
                          }
-                    } 
-                    // Else: Correct layer is already visible, do nothing.
-                } else {
-                    // Layer should NOT be visible (no target, no nodes, etc.)
-                    if (isLayerCurrentlyVisible) {
-                        console.log(`[Custom3DLayerManager] Conditions not met. Removing active layer: ${activeLayerIdRef.current}`);
-                        map.removeLayer(activeLayerIdRef.current);
-                        activeLayerIdRef.current = null;
-                    }
-                    // Else: No layer should be visible, and none is. Do nothing.
+                     } catch (creationError) {
+                          console.error(`[Custom3DLayerManager] Error creating layer ${targetLayerId}:`, creationError);
+                          activeLayerIdRef.current = null; // Ensure ref is null if creation failed
+                     }
+                } 
+                // Else: Correct layer is already visible, do nothing.
+            } else {
+                // Layer should NOT be visible (no target, no nodes, etc.)
+                if (isLayerCurrentlyVisible) {
+                    console.log(`[Custom3DLayerManager] Conditions not met. Removing active layer: ${activeLayerIdRef.current}`);
+                    map.removeLayer(activeLayerIdRef.current);
+                    activeLayerIdRef.current = null;
                 }
+                // Else: No layer should be visible, and none is. Do nothing.
             }
 
         } catch (error) {
@@ -153,7 +137,7 @@ export function Custom3DLayerManager({ indoorPathNodes, activeType }: Custom3DLa
             activeLayerIdRef.current = null;
         }
 
-    }, [map, zoom, selectedLocation, indoorPathNodes, activeType]); // Dependencies trigger update
+    }, [map, selectedLocation, indoorPathNodes, activeType]); // Dependencies trigger update
 
      // Cleanup effect: Remove the active layer if the component unmounts
      useEffect(() => {
