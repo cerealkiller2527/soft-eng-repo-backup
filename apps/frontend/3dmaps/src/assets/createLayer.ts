@@ -50,11 +50,11 @@ export function CreateLayer(
         scene.scale.multiply(new THREE.Vector3(1, 1, -1));
 
         // create light (objects black without it)
-        const light = new THREE.DirectionalLight('white', 3);
+        const light = new THREE.DirectionalLight('white', 8);
         light.position.set(50, 100, -30); // noon light
         scene.add(light);
 
-        const amLight = new THREE.AmbientLight(0x404040, 10);
+        const amLight = new THREE.AmbientLight('white', 2);
         scene.add(amLight)
 
         // model generations:
@@ -263,7 +263,7 @@ export function CreateLayer(
             });
 
             const myGeometry = new THREE.PlaneGeometry(attributes.imageConstants.width, attributes.imageConstants.height, 1, 1);
-            const myMaterial = new THREE.MeshLambertMaterial({
+            const myMaterial = new THREE.MeshBasicMaterial({
                 map: myTexture,
                 transparent: true,
                 depthWrite: false,

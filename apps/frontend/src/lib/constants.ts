@@ -47,7 +47,7 @@ export const baseHospitalData: Array<Hospital> = [
     phone: "508-718-4400",
     isOpen: true,
     website: "https://www.brighamandwomens.org/foxborough-health-care-center/foxborough-urgent-care-center",
-    coordinates: [-71.2665262516987, 42.09252289293114],
+    coordinates: [-71.26614925578323, 42.09281592721943],
     placeId: undefined
   },
   {
@@ -57,7 +57,7 @@ export const baseHospitalData: Array<Hospital> = [
     phone: "866-378-9164",
     isOpen: true,
     website: "https://www.brighamandwomens.org/about-bwh/locations/health-care-center-20-patriot-place-foxborough",
-    coordinates: [-71.2665262516987, 42.09252289293114],
+    coordinates: [-71.2669872812066, 42.092679645033186],
     placeId: undefined
   },
   {
@@ -308,7 +308,8 @@ const Patriot20BuildingAttributes: BuildingAttributes = {
   buildingMaskCoords: Pat20BuildingMaskCoords,
   floorPlanPaths: ["/Pat20Floor1.png", "/Pat20Floor2.png", "/Pat20Floor3.png", "/Pat20Floor4.png"],
   nodes: examplePathNodes,
-  imageConstants: Pat20ImageConstants
+  imageConstants: Pat20ImageConstants,
+  numFloors: 4,
 }
 
 const Pat22SceneCoords: LngLatLike = [-71.26696722883923, 42.09258410491776]
@@ -330,7 +331,8 @@ const Patriot22BuildingAttributes = {
     buildingMaskCoords: Pat22BuildingMaskCoords,
     floorPlanPaths: ['22PatFloor1.png', '22PatFloor2.png', "/22PatFloor3.png", "22PatFloor4.png"],
     nodes: examplePathNodes,
-    imageConstants: Pat22ImageConstants
+    imageConstants: Pat22ImageConstants,
+    numFloors: 4
 }
 
 const MainSceneCoords: LngLatLike = [-71.106549430016, 42.335842853824396]
@@ -345,14 +347,15 @@ const MainImageConstants: imageConstants = {
 const MainBuildingAttributes: BuildingAttributes = {
     sceneCoords: MainSceneCoords,
     buildingCoords: MainBuildingCoords,
-    buildingPaths: ["MainFloor1.gltf", "/MainFloor2.gltf"], // one per floor
+    buildingPaths: ["MainFloor1.gltf", "MainFloor2.gltf"], // one per floor
     buildingMaskPath: "MainExterior.gltf",
     buildingRotation: 0,
     floorHeight: 45,
     buildingMaskCoords: MainBuildingMaskCoords,
     floorPlanPaths: ['MainFloor1.png', 'MainFloor2.png'],
     nodes: examplePathNodes,
-    imageConstants: MainImageConstants
+    imageConstants: MainImageConstants,
+    numFloors: 2
 }
 
 const FaulknerSceneCoords: LngLatLike = [-71.12834142530612, 42.30150822410094]
@@ -368,13 +371,14 @@ const FaulknerBuildingAttributes: BuildingAttributes = {
     sceneCoords: FaulknerSceneCoords,
     buildingCoords: FaulknerBuildingCoords,
     buildingPaths: ["FaulknerFloor1.gltf"], // one per floor
-    buildingMaskPath: "/Faulkner/FaulknerExterior.gltf",
+    buildingMaskPath: "FaulknerExterior.gltf",
     buildingRotation: 0,
     floorHeight: 45,
     buildingMaskCoords: FaulknerBuildingMaskCoords,
     floorPlanPaths: ['FaulknerFloor1.png'],
     nodes: examplePathNodes,
-    imageConstants: FaulknerImageConstants
+    imageConstants: FaulknerImageConstants,
+    numFloors: 1
 }
 
 const ChestnutSceneCoords: LngLatLike = [-71.14974760810384, 42.325950820451]
@@ -394,9 +398,10 @@ const ChestnutBuildingAttributes: BuildingAttributes = {
     buildingRotation: 0,
     floorHeight: 25,
     buildingMaskCoords: ChestnutBuildingMaskCoords,
-    floorPlanPaths: ['ChestnutFloor1.png'],
+    floorPlanPaths: ['/public/ChestnutFloor1.png'],
     nodes: examplePathNodes,
     imageConstants: ChestnutImageConstants,
+    numFloors: 1
 }
 
 // Exported constant mapping hospital IDs to their attributes
