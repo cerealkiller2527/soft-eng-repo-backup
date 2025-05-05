@@ -961,6 +961,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@dimforge/rapier3d-compat", [\
+      ["npm:0.12.0", {\
+        "packageLocation": "./.yarn/cache/@dimforge-rapier3d-compat-npm-0.12.0-d35c7c9478-c66c24f906.zip/node_modules/@dimforge/rapier3d-compat/",\
+        "packageDependencies": [\
+          ["@dimforge/rapier3d-compat", "npm:0.12.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@emnapi/core", [\
       ["npm:1.4.3", {\
         "packageLocation": "./.yarn/cache/@emnapi-core-npm-1.4.3-c3f95d462e-e30101d16d.zip/node_modules/@emnapi/core/",\
@@ -5173,6 +5182,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@tweenjs/tween.js", [\
+      ["npm:23.1.3", {\
+        "packageLocation": "./.yarn/cache/@tweenjs-tween.js-npm-23.1.3-54a25ced7d-811b30f5f0.zip/node_modules/@tweenjs/tween.js/",\
+        "packageDependencies": [\
+          ["@tweenjs/tween.js", "npm:23.1.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@tybys/wasm-util", [\
       ["npm:0.9.0", {\
         "packageLocation": "./.yarn/cache/@tybys-wasm-util-npm-0.9.0-5f9b6b37b1-f9fde5c554.zip/node_modules/@tybys/wasm-util/",\
@@ -5785,6 +5803,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/stats.js", [\
+      ["npm:0.17.3", {\
+        "packageLocation": "./.yarn/cache/@types-stats.js-npm-0.17.3-72645350c6-ccccc992c6.zip/node_modules/@types/stats.js/",\
+        "packageDependencies": [\
+          ["@types/stats.js", "npm:0.17.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/superagent", [\
       ["npm:8.1.9", {\
         "packageLocation": "./.yarn/cache/@types-superagent-npm-8.1.9-673be5c6fd-12631f1d8b.zip/node_modules/@types/superagent/",\
@@ -5819,11 +5846,36 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@types/three", [\
+      ["npm:0.176.0", {\
+        "packageLocation": "./.yarn/cache/@types-three-npm-0.176.0-8fc926d22d-a06960a719.zip/node_modules/@types/three/",\
+        "packageDependencies": [\
+          ["@types/three", "npm:0.176.0"],\
+          ["@dimforge/rapier3d-compat", "npm:0.12.0"],\
+          ["@tweenjs/tween.js", "npm:23.1.3"],\
+          ["@types/stats.js", "npm:0.17.3"],\
+          ["@types/webxr", "npm:0.5.22"],\
+          ["@webgpu/types", "npm:0.1.60"],\
+          ["fflate", "npm:0.8.2"],\
+          ["meshoptimizer", "npm:0.18.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@types/treeify", [\
       ["npm:1.0.3", {\
         "packageLocation": "./.yarn/cache/@types-treeify-npm-1.0.3-ef5ef3400e-758902638f.zip/node_modules/@types/treeify/",\
         "packageDependencies": [\
           ["@types/treeify", "npm:1.0.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@types/webxr", [\
+      ["npm:0.5.22", {\
+        "packageLocation": "./.yarn/cache/@types-webxr-npm-0.5.22-6b482d6361-dd015cadd7.zip/node_modules/@types/webxr/",\
+        "packageDependencies": [\
+          ["@types/webxr", "npm:0.5.22"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -6400,6 +6452,15 @@ const RAW_RUNTIME_STATE =
           ["@vitest/pretty-format", "npm:3.1.2"],\
           ["loupe", "npm:3.1.3"],\
           ["tinyrainbow", "npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@webgpu/types", [\
+      ["npm:0.1.60", {\
+        "packageLocation": "./.yarn/cache/@webgpu-types-npm-0.1.60-79b3475636-6dcd286806.zip/node_modules/@webgpu/types/",\
+        "packageDependencies": [\
+          ["@webgpu/types", "npm:0.1.60"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -9696,6 +9757,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-dom", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:19.1.2"],\
           ["@types/react-router-bootstrap", "npm:0.26.6"],\
           ["@types/react-router-dom", "npm:5.3.3"],\
+          ["@types/three", "npm:0.176.0"],\
           ["@vitejs/plugin-react-swc", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:3.9.0"],\
           ["axios", "npm:1.8.4"],\
           ["class-variance-authority", "npm:0.7.1"],\
@@ -9736,6 +9798,7 @@ const RAW_RUNTIME_STATE =
           ["tailwind-merge", "npm:3.2.0"],\
           ["tailwindcss", "npm:4.1.4"],\
           ["tailwindcss-animate", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:1.0.7"],\
+          ["three", "npm:0.176.0"],\
           ["timescape", "virtual:d3996bc66f5a97675d735c6457b44af0f25df32a5e5981f61ff7f22e93004839ccc5d56298eff651f971a908820429de35800a3f2669be95e1c0f6bb82e8a700#npm:0.7.1"],\
           ["ts-config-custom", "workspace:configs/ts-config-custom"],\
           ["tw-animate-css", "npm:1.2.8"],\
@@ -11421,6 +11484,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/merge2-npm-1.4.1-a2507bd06c-254a8a4605.zip/node_modules/merge2/",\
         "packageDependencies": [\
           ["merge2", "npm:1.4.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["meshoptimizer", [\
+      ["npm:0.18.1", {\
+        "packageLocation": "./.yarn/cache/meshoptimizer-npm-0.18.1-ce62c2344d-8a825c58b2.zip/node_modules/meshoptimizer/",\
+        "packageDependencies": [\
+          ["meshoptimizer", "npm:0.18.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -15204,6 +15276,15 @@ const RAW_RUNTIME_STATE =
           ["terminal-link", "npm:2.1.1"],\
           ["ansi-escapes", "npm:4.3.2"],\
           ["supports-hyperlinks", "npm:2.3.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["three", [\
+      ["npm:0.176.0", {\
+        "packageLocation": "./.yarn/cache/three-npm-0.176.0-3cd9cb4f31-e1aee55364.zip/node_modules/three/",\
+        "packageDependencies": [\
+          ["three", "npm:0.176.0"]\
         ],\
         "linkType": "HARD"\
       }]\

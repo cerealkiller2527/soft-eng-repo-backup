@@ -8,7 +8,7 @@ interface UseMapInitializationProps {
   options?: Partial<mapboxgl.MapOptions>;
   onZoom?: (zoom: number) => void; // Callback for zoom changes
   onLoad?: (map: mapboxgl.Map) => void; // Callback when map is loaded
-  logCameraParams?: boolean; // Optional flag to log camera params on move end
+  logCameraParams?: boolean; // Allow boolean for logging flag
 }
 
 export function useMapInitialization({

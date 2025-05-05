@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { MainMap } from "@/components/map/MainMap";
 import { SidebarContent, type SidebarContentProps } from "@/components/map/SidebarContent";
 import { MapElements, type MapElementsProps } from "@/components/map/MapElements";
+import { Custom3DLayerManager } from "@/components/map/Custom3DLayerManager";
 import LayoutNoFooter from "../components/LayoutNoFooter";
 
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
@@ -176,6 +177,7 @@ function AppContent() {
           <div className="absolute top-0 bottom-0 left-0 right-0 h-full" style={{ zIndex: Z_INDEX.map }}>
             <MainMap />
             <RouteLayerManager routes={allRoutes} onSelectRoute={selectRoute} />
+            <Custom3DLayerManager />
             <MapElements {...mapElementsProps} />
           </div>
         </div>
