@@ -65,7 +65,7 @@ export function MapElements({
       {/* Render Route Info Card */}
       <RouteInfoCard
         route={currentRoute}
-        className="absolute top-4 right-4 z-10"
+        className="absolute top-24 right-4 z-10"
       />
     </>
   );
