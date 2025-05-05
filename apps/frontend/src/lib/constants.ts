@@ -29,52 +29,52 @@ export const SPACING = {
 // hardcoded data fix - i hate this, but it's a quick fix for now - fml
 
 export const baseHospitalData: Array<Hospital> = [
-  { 
-    id: 1, 
+  {
+    id: 1,
     name: "Chestnut Hill Medical Center",
-    address: "25 Boylston St, Chestnut Hill, MA 02467", 
-    phone: "800-294-9999", 
-    isOpen: true, 
+    address: "25 Boylston St, Chestnut Hill, MA 02467",
+    phone: "800-294-9999",
+    isOpen: true,
     website: "https://www.brighamandwomens.org/about-bwh/locations/health-care-center-850-boylston-street-chestnut-hill",
     coordinates: [-71.14951471, 42.3262626],
     placeId: undefined
   },
-  { 
-    id: 2, 
+  {
+    id: 2,
     name: "20 Patriot Place",
-    address: "20 Patriot Pl, Foxborough, MA 02035", 
-    phone: "508-718-4400", 
-    isOpen: true, 
+    address: "20 Patriot Pl, Foxborough, MA 02035",
+    phone: "508-718-4400",
+    isOpen: true,
     website: "https://www.brighamandwomens.org/foxborough-health-care-center/foxborough-urgent-care-center",
     coordinates: [-71.2665262516987, 42.09252289293114],
     placeId: undefined
   },
-  { 
-    id: 3, 
-    name: "22 Patriot Place", 
-    address: "22 Patriot Pl 3rd Floor, Foxborough, MA 02035", 
-    phone: "866-378-9164", 
-    isOpen: true, 
+  {
+    id: 3,
+    name: "22 Patriot Place",
+    address: "22 Patriot Pl 3rd Floor, Foxborough, MA 02035",
+    phone: "866-378-9164",
+    isOpen: true,
     website: "https://www.brighamandwomens.org/about-bwh/locations/health-care-center-20-patriot-place-foxborough",
     coordinates: [-71.2665262516987, 42.09252289293114],
     placeId: undefined
   },
-  { 
-    id: 4, 
+  {
+    id: 4,
     name: "Faulkner Hospital",
-    address: "1153 Centre St, Jamaica Plain, MA 02130", 
-    phone: "617-983-7000", 
-    isOpen: true, 
+    address: "1153 Centre St, Jamaica Plain, MA 02130",
+    phone: "617-983-7000",
+    isOpen: true,
     website: "http://www.brighamandwomensfaulkner.org/",
     coordinates: [-71.12762714, 42.3012168],
     placeId: undefined
   },
-  { 
-    id: 0, 
-    name: "Main Campus", 
-    address: "75 Francis St, Boston, MA 02115", 
-    phone: "617-732-25500", 
-    isOpen: true, 
+  {
+    id: 0,
+    name: "Main Campus",
+    address: "75 Francis St, Boston, MA 02115",
+    phone: "617-732-25500",
+    isOpen: true,
     website: "https://www.massgeneralbrigham.org/en/patient-care/services-and-specialties/locations/brigham-and-womens-hospital",
     coordinates: [-71.10608207, 42.33532599],
     placeId: undefined
@@ -122,8 +122,18 @@ export const HOSPITAL_SPECIFIC_VIEWS: Record<number, HospitalViewParams> = {
     pitch: 71.00,
     bearing: 16.00,
   },
-  // Add entries for other hospitals here if needed, e.g.:
-  // 4: { zoom: 17.5, pitch: 65 }, // Faulkner example
+  0: {
+    coordinates: [-71.107050, 42.336130],
+    zoom: 16.99,
+    pitch: 61.17,
+    bearing: -12.07,
+  },
+  4: {
+    coordinates: [-71.128046, 42.301314],
+    zoom: 18.00,
+    pitch: 60.53,
+    bearing: -42.75,
+  }
 };
 
 export const SKY_LAYER_CONFIG: SkyLayerSpecification = {
