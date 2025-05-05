@@ -74,7 +74,7 @@ export function RouteInfoCard({ route, className }: RouteInfoCardProps) {
   }, [congestionData]);
 
   return (
-    <Card className={cn("w-52 shadow-md border-primary/10 bg-background", className="pt-20")}>
+    <Card className={cn("w-52 shadow-md border-primary/10 bg-background", className)}>
       <CardContent className="p-2.5 space-y-2.5">
         {/* Distance */}
         <div className="flex items-center text-sm">

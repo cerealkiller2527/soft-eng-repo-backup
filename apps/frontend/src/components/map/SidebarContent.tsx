@@ -13,8 +13,8 @@ export interface SidebarContentProps {
     getCurrentPosition: () => void;
     geoLoading: boolean;
     geoError: string | null;
-    activeTab: "list" | "directions" | "indoor";
-    setActiveTab: (value: "list" | "directions" | "indoor") => void;
+    activeTab: "list" | "directions";
+    setActiveTab: (value: "list" | "directions") => void;
     processedHospitals: Hospital[];
     selectedLocation: Hospital | null;
     allRoutes: EnrichedRoute[] | null;
@@ -52,13 +52,12 @@ export function SidebarContent({
         <div className="flex flex-col h-full">
             <Tabs
                 value={activeTab}
-                onValueChange={(value) => setActiveTab(value as "list" | "directions" | "indoor")}
+                onValueChange={(value) => setActiveTab(value as "list" | "directions")}
                 className="flex flex-col flex-1 h-0 min-h-0"
             >
-                <TabsList className="grid w-full grid-cols-3 h-9 flex-shrink-0 mb-2">
+                <TabsList className="grid w-full grid-cols-2 h-9 flex-shrink-0 mb-2">
                     <TabsTrigger value="list" className="text-xs">List View</TabsTrigger>
                     <TabsTrigger value="directions" className="text-xs">Directions</TabsTrigger>
-                    <TabsTrigger value="indoor" className="text-xs" disabled={!selectedLocation}>Indoor</TabsTrigger>
                 </TabsList>
 
                 {/* List Tab */}
@@ -96,38 +95,26 @@ export function SidebarContent({
                 {/* Directions Tab */}
                 <TabsContent
                     value="directions"
-                    className="flex-1 h-0 min-h-0 flex flex-col data-[state=active]:flex data-[state=inactive]:hidden overflow-hidden"
+                    className="flex-1 h-0 min-h-0 flex flex-col data-[state=active]:flex data-[state=inactive]:hidden"
                 >
                     {selectedLocation && (
                         <UserDepartmentInput
                             buildingName={selectedLocation.name}
                             onDepartmentSelect={onDepartmentSelect}
-                            className="mb-4"
+                            className="mb-4 flex-shrink-0" // Add flex-shrink-0 here
                         />
                     )}
-                    <DirectionsCard
-                        hospital={selectedLocation}
-                        isLoading={directionsLoading}
-                        error={directionsError}
-                        allRoutes={allRoutes}
-                        onSelectRoute={selectRoute}
-                        onDrivingSelect={onDrivingSelect}
-                    />
-                </TabsContent>
-
-                {/* Indoor Tab */}
-                <TabsContent
-                    value="indoor"
-                    className="flex-1 h-0 min-h-0 flex flex-col data-[state=active]:flex data-[state=inactive]:hidden p-4"
-                >
-                    <h3 className="text-sm font-semibold mb-2">Indoor Path Planning</h3>
-                    {selectedLocation ? (
-                        <p className="text-xs text-muted-foreground">
-                            Indoor navigation for <span className="font-medium text-foreground">{selectedLocation.name}</span> will appear here.
-                        </p>
-                    ) : (
-                        <p className="text-xs text-muted-foreground">Please select a hospital destination first.</p>
-                    )}
+                    <div className="flex flex-col h-full min-h-0"> {/* Add this wrapper */}
+                        <DirectionsCard
+                            hospital={selectedLocation}
+                            isLoading={directionsLoading}
+                            error={directionsError}
+                            allRoutes={allRoutes}
+                            onSelectRoute={selectRoute}
+                            onDrivingSelect={onDrivingSelect}
+                            className="flex-1 min-h-0" // Add these classes
+                        />
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

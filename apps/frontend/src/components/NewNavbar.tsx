@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import { UserCircleIcon, Bars3Icon, XMarkIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -6,11 +6,12 @@ import { useTRPC } from "@/database/trpc";
 import { useMutation, useQuery } from '@tanstack/react-query';
 import BnWLogo from "/BrighamAndWomensLogo.png";
 
-type AlgorithmType = "BFS" | "DFS";
+const primaryLinks = [
+    { title: "Navigation", href: "/floorplan" },
+    { title: "Directory", href: "/directory" },
+    { title: "Hospital Map", href: "/hospitalmap" }
+];
 
-const primaryLink = { title: "Navigation", href: "/floorplan" };
-const directoryLink = { title: "Directory", href: "/directory" };
-const hospitalMapLink = { title: "Hospital Map", href: "/hospitalmap" };
 const moreItems = [
     { title: "CSV Import", href: "/csv", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
     { title: "Map Editor", href: "/mapeditor", show: u => u.isSignedIn && u.user?.publicMetadata?.role === "admin" },
@@ -22,134 +23,74 @@ const moreItems = [
 export default function NewNavbar() {
     const { isSignedIn, user } = useUser();
     const { signOut } = useClerk();
-    const auth = { isSignedIn, user };
     const location = useLocation();
     const trpc = useTRPC();
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
-    const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
-    const [openMenu, setOpenMenu] = useState<null | 'more' | 'profile'>(null);
-    const [clickedMenu, setClickedMenu] = useState<null | 'more' | 'profile'>(null);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [filteredMoreItems, setFilteredMoreItems] = useState(moreItems);
-    const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const {
-        data: currentAlgorithm,
-        isLoading: isAlgLoading,
-        refetch: refetchAlgorithm,
-    } = useQuery(trpc.pathfinding.getCurrentAlgorithm.queryOptions());
-
-    const toggleAlgo = useMutation(
-        trpc.pathfinding.toggleAlgorithm.mutationOptions({
-            onSuccess() {
-                refetchAlgorithm();
-            },
-        })
+    const { data: currentAlgorithm, isLoading: isAlgLoading } = useQuery(
+        trpc.pathfinding.getCurrentAlgorithm.queryOptions()
     );
 
-    // Filter more items based on auth status
+    const toggleAlgo = useMutation(
+        trpc.pathfinding.toggleAlgorithm.mutationOptions()
+    );
+
     useEffect(() => {
-        setFilteredMoreItems(moreItems.filter(item => item.show(auth)));
+        setFilteredMoreItems(moreItems.filter(item => item.show({ isSignedIn, user })));
     }, [isSignedIn, user]);
 
-    // Handle hover interactions
-    const handleMenuHover = (menu: 'more' | 'profile' | null) => {
-        if (!clickedMenu) {
-            setOpenMenu(menu);
-        }
+    const toggleDropdown = (name: string) => {
+        setOpenDropdown(openDropdown === name ? null : name);
     };
 
-    // Handle click interactions
-    const handleMenuClick = (menu: 'more' | 'profile') => {
-        if (clickedMenu === menu) {
-            // Second click on same menu - close it
-            setClickedMenu(null);
-            setOpenMenu(null);
-        } else {
-            // First click - open and mark as clicked
-            setClickedMenu(menu);
-            setOpenMenu(menu);
-        }
+    const closeAll = () => {
+        setMobileOpen(false);
+        setOpenDropdown(null);
     };
-
-    // Close when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-                setClickedMenu(null);
-                setOpenMenu(null);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     const getLinkClasses = (path: string) =>
-        `px-4 py-2 text-lg transition-colors ${
-            location.pathname === path
-                ? "text-black underline"
-                : "text-black hover:underline"
-        }`;
-
-    const mobileItemClasses =
-        "block w-full text-left py-2 px-4 text-black text-lg transition-colors rounded-none";
+        `px-4 py-2 text-lg ${location.pathname === path ? "text-black underline" : "text-black hover:underline"}`;
 
     const nextAlg = currentAlgorithm === "BFS" ? "DFS" : "BFS";
 
     return (
-        <nav className="fixed top-0 w-full shadow-md bg-white z-50 h-14 rounded-none border-b">
+        <nav className="fixed top-0 w-full shadow-md bg-white z-50 h-14 border-b">
             <div className="flex items-center justify-between px-4 h-full w-full">
-                {/* Logo */}
-                <Link to="/" className="flex items-center space-x-2">
+                <Link to="/" className="flex items-center space-x-2" onClick={closeAll}>
                     <img src={BnWLogo} alt="Brigham & Women's Logo" className="h-10" />
                 </Link>
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex items-center space-x-4">
-                    <Link
-                        to={primaryLink.href}
-                        className={getLinkClasses(primaryLink.href)}
-                        onMouseEnter={() => setOpenMenu(null)}
-                    >
-                        {primaryLink.title}
-                    </Link>
-                    <Link
-                        to={directoryLink.href}
-                        className={getLinkClasses(directoryLink.href)}
-                        onMouseEnter={() => setOpenMenu(null)}
-                    >
-                        {directoryLink.title}
-                    </Link>
-                    <Link to={hospitalMapLink.href} className={getLinkClasses(hospitalMapLink.href)}>
-                        {hospitalMapLink.title}
-                    </Link>
+                    {primaryLinks.map(link => (
+                        <Link
+                            key={link.href}
+                            to={link.href}
+                            className={getLinkClasses(link.href)}
+                            onClick={closeAll}
+                        >
+                            {link.title}
+                        </Link>
+                    ))}
 
                     {/* More dropdown */}
-                    <div
-                        ref={dropdownRef}
-                        className="relative"
-                        onMouseEnter={() => handleMenuHover('more')}
-                    >
+                    <div className="relative">
                         <button
-                            onClick={() => handleMenuClick('more')}
-                            className={`px-4 py-2 text-lg ${openMenu === 'more' ? 'underline' : 'hover:underline'}`}
+                            onClick={() => toggleDropdown('more')}
+                            className={`px-4 py-2 text-lg ${openDropdown === 'more' ? 'underline' : 'hover:underline'}`}
                         >
                             More
                         </button>
-                        {openMenu === 'more' && (
-                            <div
-                                className="absolute right-0 mt-2 bg-white border shadow-lg z-50 rounded-md min-w-[180px]"
-                                onMouseEnter={() => handleMenuHover('more')}
-                            >
+                        {openDropdown === 'more' && (
+                            <div className="absolute right-0 mt-2 bg-white border shadow-lg z-50 rounded-md min-w-[180px]">
                                 {filteredMoreItems.map(item => (
                                     <Link
                                         key={item.href}
                                         to={item.href}
-                                        className="block w-full text-left py-2 px-4 text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
-                                        onClick={() => {
-                                            setOpenMenu(null);
-                                            setClickedMenu(null);
-                                        }}
+                                        className="block w-full text-left py-2 px-4 text-black hover:bg-[#86A2B6] hover:text-white"
+                                        onClick={closeAll}
                                     >
                                         {item.title}
                                     </Link>
@@ -159,45 +100,35 @@ export default function NewNavbar() {
                     </div>
 
                     {/* Profile dropdown */}
-                    <div
-                        className="relative"
-                        onMouseEnter={() => handleMenuHover('profile')}
-                    >
+                    <div className="relative">
                         {isSignedIn ? (
                             <>
                                 <button
-                                    onClick={() => handleMenuClick('profile')}
-                                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                    onClick={() => toggleDropdown('profile')}
+                                    className="p-2 rounded-full hover:bg-gray-100"
                                 >
                                     <UserCircleIcon className="h-8 w-8" />
                                 </button>
-                                {openMenu === 'profile' && (
+                                {openDropdown === 'profile' && (
                                     <div className="absolute right-0 mt-2 bg-white border shadow-lg z-50 rounded-md w-48">
                                         {user?.publicMetadata?.role === "admin" && (
                                             <button
                                                 onClick={() => toggleAlgo.mutate({ algorithm: nextAlg })}
-                                                className="block w-full py-2 px-4 text-left text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
+                                                className="block w-full py-2 px-4 text-left text-black hover:bg-[#86A2B6] hover:text-white"
                                             >
                                                 {isAlgLoading ? 'Loading...' : `Switch to ${nextAlg}`}
                                             </button>
                                         )}
                                         <Link
                                             to="/profile"
-                                            className="block w-full py-2 px-4 text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
-                                            onClick={() => {
-                                                setOpenMenu(null);
-                                                setClickedMenu(null);
-                                            }}
+                                            className="block w-full py-2 px-4 text-black hover:bg-[#86A2B6] hover:text-white"
+                                            onClick={closeAll}
                                         >
                                             My Profile
                                         </Link>
                                         <button
-                                            onClick={() => {
-                                                signOut();
-                                                setOpenMenu(null);
-                                                setClickedMenu(null);
-                                            }}
-                                            className="block w-full py-2 px-4 text-left text-black hover:bg-[#86A2B6] hover:text-white transition-colors"
+                                            onClick={() => signOut()}
+                                            className="block w-full py-2 px-4 text-left text-black hover:bg-[#86A2B6] hover:text-white"
                                         >
                                             Log Out
                                         </button>
@@ -208,7 +139,7 @@ export default function NewNavbar() {
                             <Link
                                 to="/login"
                                 className="px-4 py-2 hover:underline"
-                                onMouseEnter={() => setOpenMenu(null)}
+                                onClick={closeAll}
                             >
                                 Login
                             </Link>
@@ -216,99 +147,93 @@ export default function NewNavbar() {
                     </div>
                 </div>
 
-                {/* Mobile Hamburger & Dropdown */}
-                <div className="md:hidden relative">
+                {/* Mobile Menu */}
+                <div className="md:hidden">
                     <button
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        onClick={() => setMobileOpen(!mobileOpen)}
                         className="text-black hover:bg-[#86A2B6] p-2 rounded-none"
                     >
-                        {mobileMenuOpen ? <XMarkIcon className="h-8 w-8" /> : <Bars3Icon className="h-8 w-8" />}
+                        {mobileOpen ? <XMarkIcon className="h-8 w-8" /> : <Bars3Icon className="h-8 w-8" />}
                     </button>
 
-                    {mobileMenuOpen && (
-                        <div className="absolute top-full right-0 mt-1 bg-white border shadow-lg z-40 w-56 rounded-md overflow-hidden">
-                            <Link
-                                to={primaryLink.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={mobileItemClasses}
-                            >
-                                {primaryLink.title}
-                            </Link>
-                            <Link
-                                to={directoryLink.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={mobileItemClasses}
-                            >
-                                {directoryLink.title}
-                            </Link>
-                            <Link
-                                to={hospitalMapLink.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={mobileItemClasses}
-                            >
-                                {hospitalMapLink.title}
-                            </Link>
+                    {mobileOpen && (
+                        <div className="absolute top-full right-0 mt-1 bg-white border shadow-lg z-40 w-56 rounded-md">
+                            {primaryLinks.map(link => (
+                                <Link
+                                    key={link.href}
+                                    to={link.href}
+                                    onClick={closeAll}
+                                    className="block w-full text-left py-2 px-4 text-black text-lg border-b"
+                                >
+                                    {link.title}
+                                </Link>
+                            ))}
+
                             <button
-                                onClick={() => setMobileMoreOpen(!mobileMoreOpen)}
-                                className={`flex justify-between items-center ${mobileItemClasses}`}
+                                onClick={() => toggleDropdown('mobileMore')}
+                                className="flex justify-between items-center w-full text-left py-2 px-4 text-black text-lg border-b"
                             >
                                 More <ChevronDownIcon className="h-5 w-5" />
                             </button>
-                            <div
-                                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                    mobileMoreOpen ? "max-h-96" : "max-h-0"
-                                }`}
-                            >
-                                {mobileMoreOpen && (
-                                    <div className="bg-gray-50">
-                                        {filteredMoreItems.map((item) => (
+
+                            {openDropdown === 'mobileMore' && filteredMoreItems.map(item => (
+                                <Link
+                                    key={item.href}
+                                    to={item.href}
+                                    onClick={closeAll}
+                                    className="block w-full text-left py-2 px-6 text-black text-lg border-b bg-gray-50"
+                                >
+                                    {item.title}
+                                </Link>
+                            ))}
+
+                            {isSignedIn ? (
+                                <>
+                                    <button
+                                        onClick={() => toggleDropdown('mobileProfile')}
+                                        className="flex justify-between items-center w-full text-left py-2 px-4 text-black text-lg border-b"
+                                    >
+                                        Profile <ChevronDownIcon className="h-5 w-5" />
+                                    </button>
+
+                                    {openDropdown === 'mobileProfile' && (
+                                        <>
+                                            {user?.publicMetadata?.role === "admin" && (
+                                                <button
+                                                    onClick={() => toggleAlgo.mutate({ algorithm: nextAlg })}
+                                                    className="block w-full text-left py-2 px-6 text-black text-lg border-b bg-gray-50"
+                                                >
+                                                    {isAlgLoading ? 'Loading...' : `Switch to ${nextAlg}`}
+                                                </button>
+                                            )}
                                             <Link
-                                                key={item.href}
-                                                to={item.href}
-                                                onClick={() => setMobileMenuOpen(false)}
-                                                className={`${mobileItemClasses} pl-8`}
+                                                to="/profile"
+                                                onClick={closeAll}
+                                                className="block w-full text-left py-2 px-6 text-black text-lg border-b bg-gray-50"
                                             >
-                                                {item.title}
+                                                My Profile
                                             </Link>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <button
-                                onClick={() => setMobileProfileOpen(!mobileProfileOpen)}
-                                className={`flex justify-between items-center ${mobileItemClasses}`}
-                            >
-                                Profile <ChevronDownIcon className="h-5 w-5" />
-                            </button>
-                            <div
-                                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                    mobileProfileOpen ? "max-h-40" : "max-h-0"
-                                }`}
-                            >
-                                {mobileProfileOpen && (
-                                    <div className="bg-gray-50">
-                                        {isSignedIn ? (
                                             <button
                                                 onClick={() => {
                                                     signOut();
-                                                    setMobileMenuOpen(false);
+                                                    closeAll();
                                                 }}
-                                                className={`${mobileItemClasses} pl-8`}
+                                                className="block w-full text-left py-2 px-6 text-black text-lg border-b bg-gray-50"
                                             >
                                                 Log Out
                                             </button>
-                                        ) : (
-                                            <Link
-                                                to="/login"
-                                                onClick={() => setMobileMenuOpen(false)}
-                                                className={`${mobileItemClasses} pl-8`}
-                                            >
-                                                Login
-                                            </Link>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
+                                        </>
+                                    )}
+                                </>
+                            ) : (
+                                <Link
+                                    to="/login"
+                                    onClick={closeAll}
+                                    className="block w-full text-left py-2 px-4 text-black text-lg border-b"
+                                >
+                                    Login
+                                </Link>
+                            )}
                         </div>
                     )}
                 </div>

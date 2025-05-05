@@ -11,7 +11,6 @@ import {
   HOSPITAL_SPECIFIC_VIEWS,
   Z_INDEX,
 } from "@/lib/constants";
-import mapboxgl from 'mapbox-gl';
 import type { CameraOptions } from 'mapbox-gl';
 import {
   CheckCircle,
@@ -26,7 +25,6 @@ import { toast } from "sonner";
 import { MainMap } from "@/components/map/MainMap";
 import { SidebarContent, type SidebarContentProps } from "@/components/map/SidebarContent";
 import { MapElements, type MapElementsProps } from "@/components/map/MapElements";
-import { EnrichedRoute } from "@/lib/services/directions.ts";
 import LayoutNoFooter from "../components/LayoutNoFooter";
 
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;

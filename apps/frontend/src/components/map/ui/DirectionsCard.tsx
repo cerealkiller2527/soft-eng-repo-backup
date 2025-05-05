@@ -164,7 +164,7 @@ export function DirectionsCard({
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full z-70">
       <div className="flex-shrink-0 border-b pb-3 mb-2">
         <CardHeader className="pb-2 pt-3 px-3 flex-shrink-0">
           <CardTitle className="text-sm truncate">Directions to {hospitalName}</CardTitle>
@@ -259,7 +259,7 @@ export function DirectionsCard({
       </ScrollArea>
 
       {/* Footer with Audio Controls */}
-      <CardFooter className="pt-2 px-3 flex-shrink-0 mt-3 gap-2 items-center">
+      <CardFooter className="pt-2 px-3 flex-shrink-0 gap-2 items-center">
         {/* Audio Button */}
         <Button 
           variant="outline" 
