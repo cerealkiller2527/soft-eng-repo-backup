@@ -24,7 +24,7 @@ export const MAP_STYLES = {
 // Default map configuration
 export const DEFAULT_MAP_VIEW = { // Fork Factory Brook Reservation
   center: [-71.146450, 42.274798],
-  minZoom: 8,
+  minZoom: 0,
   zoom: 11.59,
   pitch: 65.51,
   maxZoom: 22,
