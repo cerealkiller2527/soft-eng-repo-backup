@@ -67,38 +67,6 @@ function AppContent() {
     selectRoute
   } = useAppMapData();
 
-  const locationToastShownRef = useRef(false);
-  const prevGeoLoadingRef = useRef<boolean>(geoLoading); // Ref to track previous geoLoading state
-
-  useEffect(() => {
-    // Condition to only show toast when geolocation finishes successfully
-    const justFinishedGeolocating = !geoLoading && prevGeoLoadingRef.current;
-
-    if (justFinishedGeolocating && userLocation && !locationToastShownRef.current) {
-       toast.success("Your location has been updated.", {
-         icon: <CheckCircle className="h-4 w-4" />,
-       });
-       locationToastShownRef.current = true;
-    }
-    if (!userLocation) {
-        locationToastShownRef.current = false;
-    }
-
-    // Update previous geoLoading state *after* checking the condition
-    prevGeoLoadingRef.current = geoLoading;
-
-    // Dependency array includes userLocation and geoLoading
-  }, [geoLoading, userLocation]);
-
-  useEffect(() => {
-    if (geoError) {
-      toast.error(geoError, {
-        icon: <AlertTriangle className="h-4 w-4" />,
-      });
-      locationToastShownRef.current = false;
-    }
-  }, [geoError]);
-
   useEffect(() => {
     if (activeTab === 'directions' && !selectedLocation) {
       toast.info("Please select a hospital from the list or map to view directions.", {
