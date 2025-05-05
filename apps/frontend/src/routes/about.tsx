@@ -31,8 +31,7 @@ const tinaProps = {
     name: "Tina Cheng",
     position: "Back End Dev",
     path: "/public/headshots/tcheng.jpg",
-    quote: "\"Start where you are. Use what you have. Do what you can.\"\n" +
-        "- Arthur Ashe"
+    quote: "\"Wait! We're not recording in here! I can say whatever I want!\" - Professor Engling"
 }
 
 const brandonProps = {
@@ -70,7 +69,7 @@ const madhavProps = {
     position: "Assistant Lead, Back End Dev",
     path: "/public/headshots/mlodha.jpg",
     quote:"\"Everything you’ve ever wanted is on the other side of fear.\"\n" +
-        "— George Addair"
+        "- George Addair"
 }
 
 const mattNickersonProps = {
