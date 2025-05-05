@@ -1,5 +1,5 @@
 import PrismaClient from "../../bin/prisma-client.ts";
-import {nodeTypeType} from "database/prisma/generated/zod";
+import { nodeTypeType } from "database/prisma/generated/zod";
 export class pNode {
   private static nodeCache: Map<number, pNode> = new Map();
 
@@ -34,7 +34,7 @@ export class pNode {
     this.id = id;
     this.neighbors = [];
     this.floor = floor ?? -1;
-    this.type = type ?? "Intermediary"
+    this.type = type ?? "Intermediary";
   }
 
   static async getNode(id: number) {
