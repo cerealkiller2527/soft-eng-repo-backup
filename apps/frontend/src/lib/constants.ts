@@ -288,12 +288,12 @@ const Pat20ImageConstants: imageConstants = {
 const Patriot20BuildingAttributes: BuildingAttributes = {
   sceneCoords: Pat20SceneCoords,
   buildingCoords: Pat20BuildingCoords,
-  buildingPaths: ["/20Patriot/Pat20Floor.glb", "/20Patriot/Pat20Floor.glb", "/20Patriot/Pat20Floor.glb", "/20Patriot/Pat20Floor.glb"],
-  buildingMaskPath: '/20Patriot/PatExterior.glb',
+  buildingPaths: ["/Pat20Floor.glb", "/Pat20Floor.glb", "/Pat20Floor.glb", "/Pat20Floor.glb"],
+  buildingMaskPath: '/PatExterior.glb',
   buildingRotation: -Math.PI/10,
   floorHeight: 20,
   buildingMaskCoords: Pat20BuildingMaskCoords,
-  floorPlanPaths: ["/20Patriot/Pat20Floor1.png", "/20Patriot/Pat20Floor2.png", "/20Patriot/Pat20Floor3.png", "/20Patriot/Pat20Floor4.png"],
+  floorPlanPaths: ["/Pat20Floor1.png", "/Pat20Floor2.png", "/Pat20Floor3.png", "/Pat20Floor4.png"],
   nodes: examplePathNodes,
   imageConstants: Pat20ImageConstants
 }
@@ -310,12 +310,12 @@ const Pat22ImageConstants: imageConstants = {
 const Patriot22BuildingAttributes = {
     sceneCoords: Pat22SceneCoords,
     buildingCoords: Pat22BuildingCoords,
-    buildingPaths: ["/22Patriot/Pat22Floor.gltf", "/22Patriot/Pat22Floor.gltf", "/22Patriot/Pat22Floor.gltf", "/22Patriot/Pat22Floor.gltf"],
-    buildingMaskPath: "/20Patriot/PatExterior.glb",
+    buildingPaths: ["Pat22Floor.gltf", "Pat22Floor.gltf", "Pat22Floor.gltf", "Pat22Floor.gltf"],
+    buildingMaskPath: "PatExterior.glb",
     buildingRotation: -Math.PI/10,
     floorHeight: 20,
     buildingMaskCoords: Pat22BuildingMaskCoords,
-    floorPlanPaths: ['22Patriot/22PatFloor1.png', '22Patriot/22PatFloor2.png', "22Patriot/22PatFloor3.png", "22Patriot/22PatFloor4.png"],
+    floorPlanPaths: ['22PatFloor1.png', '22PatFloor2.png', "/22PatFloor3.png", "22PatFloor4.png"],
     nodes: examplePathNodes,
     imageConstants: Pat22ImageConstants
 }
@@ -332,12 +332,12 @@ const MainImageConstants: imageConstants = {
 const MainBuildingAttributes: BuildingAttributes = {
     sceneCoords: MainSceneCoords,
     buildingCoords: MainBuildingCoords,
-    buildingPaths: ["/Main/MainFloor1.gltf", "/Main/MainFloor2.gltf"], // one per floor
-    buildingMaskPath: "/Main/MainExterior.gltf",
+    buildingPaths: ["MainFloor1.gltf", "/MainFloor2.gltf"], // one per floor
+    buildingMaskPath: "MainExterior.gltf",
     buildingRotation: 0,
     floorHeight: 45,
     buildingMaskCoords: MainBuildingMaskCoords,
-    floorPlanPaths: ['/Main/MainFloor1.png', '/Main/MainFloor2.png'],
+    floorPlanPaths: ['MainFloor1.png', 'MainFloor2.png'],
     nodes: examplePathNodes,
     imageConstants: MainImageConstants
 }
@@ -354,12 +354,12 @@ const FaulknerImageConstants: imageConstants = {
 const FaulknerBuildingAttributes: BuildingAttributes = {
     sceneCoords: FaulknerSceneCoords,
     buildingCoords: FaulknerBuildingCoords,
-    buildingPaths: ["/Faulkner/FaulknerFloor1.gltf"], // one per floor
+    buildingPaths: ["FaulknerFloor1.gltf"], // one per floor
     buildingMaskPath: "/Faulkner/FaulknerExterior.gltf",
     buildingRotation: 0,
     floorHeight: 45,
     buildingMaskCoords: FaulknerBuildingMaskCoords,
-    floorPlanPaths: ['Faulkner/FaulknerFloor1.png'],
+    floorPlanPaths: ['FaulknerFloor1.png'],
     nodes: examplePathNodes,
     imageConstants: FaulknerImageConstants
 }
@@ -376,12 +376,12 @@ const ChestnutImageConstants: imageConstants = {
 const ChestnutBuildingAttributes: BuildingAttributes = {
     sceneCoords: ChestnutSceneCoords,
     buildingCoords: ChestnutBuildingCoords,
-    buildingPaths: ["/Chestnut/ChestnutFloor1.gltf"], // one per floor
-    buildingMaskPath: "/Chestnut/ChestnutExterior.gltf",
+    buildingPaths: ["ChestnutFloor1.gltf"], // one per floor
+    buildingMaskPath: "ChestnutExterior.gltf",
     buildingRotation: 0,
     floorHeight: 25,
     buildingMaskCoords: ChestnutBuildingMaskCoords,
-    floorPlanPaths: ['/Chestnut/ChestnutFloor1.png'],
+    floorPlanPaths: ['ChestnutFloor1.png'],
     nodes: examplePathNodes,
     imageConstants: ChestnutImageConstants,
 }
