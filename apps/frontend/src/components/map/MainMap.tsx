@@ -33,9 +33,9 @@ export function MainMap() {
     setMap(loadedMap);
     
     // Force resize after map loads to ensure correct dimensions
-    setTimeout(() => {
-      loadedMap.resize();
-    }, 100);
+    // setTimeout(() => {
+    //   loadedMap.resize();
+    // }, 100); - might be causing issues with the map not loading
   }, [setMap]);
 
   const handleMapZoom = useCallback((newZoom: number) => {
@@ -51,9 +51,9 @@ export function MainMap() {
   });
 
   // Resize map when context map instance changes (initial load)
-  useEffect(() => {
-    contextMap?.resize()
-  }, [contextMap])
+  // useEffect(() => {
+  //   contextMap?.resize()
+  // }, [contextMap])
 
   return (
     <div 
