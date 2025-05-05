@@ -59,9 +59,13 @@ function AppContent() {
   } = useAppMapData();
 
   const locationToastShownRef = useRef(false);
+  const prevGeoLoadingRef = useRef<boolean>(geoLoading); // Ref to track previous geoLoading state
 
   useEffect(() => {
-    if (!geoLoading && userLocation && !locationToastShownRef.current) {
+    // Condition to only show toast when geolocation finishes successfully
+    const justFinishedGeolocating = !geoLoading && prevGeoLoadingRef.current;
+    
+    if (justFinishedGeolocating && userLocation && !locationToastShownRef.current) {
        toast.success("Your location has been updated.", {
          icon: <CheckCircle className="h-4 w-4" />,
        });
@@ -70,6 +74,11 @@ function AppContent() {
     if (!userLocation) {
         locationToastShownRef.current = false;
     }
+    
+    // Update previous geoLoading state *after* checking the condition
+    prevGeoLoadingRef.current = geoLoading;
+
+    // Dependency array includes userLocation and geoLoading
   }, [geoLoading, userLocation]);
 
   useEffect(() => {
@@ -127,9 +136,9 @@ function AppContent() {
   
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev)
-    setTimeout(() => {
-      mapInstance?.resize()
-    }, LAYOUT_DIMENSIONS.SIDEBAR_TRANSITION_MS) 
+    // setTimeout(() => {
+    //   mapInstance?.resize()
+    // }, LAYOUT_DIMENSIONS.SIDEBAR_TRANSITION_MS) 
   }, [mapInstance])
 
   const sidebarProps: SidebarContentProps = {
