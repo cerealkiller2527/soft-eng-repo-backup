@@ -251,7 +251,7 @@ export function DirectionsCard({
           <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
             <Map className="h-3 w-3 text-primary" />
           </div>
-          <span className="text-xs font-medium ml-1.5 mr-2">Navigation Steps</span>
+          <span className="text-xs font-medium ml-1.5 mr-2">Directions</span>
           <Separator className="flex-grow" decorative />
       </div>
 
