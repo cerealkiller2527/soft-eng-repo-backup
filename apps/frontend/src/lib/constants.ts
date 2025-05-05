@@ -1,6 +1,8 @@
 import type { Hospital, Directions } from "@/types/hospital"
 import type mapboxgl from 'mapbox-gl';
 import type { SkyLayerSpecification, FillExtrusionLayerSpecification, Expression, CameraOptions } from 'mapbox-gl';
+// Import 3D types
+import type { BuildingAttributes, TempNode } from '@/lib/map/3d/types';
 
 // Define interface for specific view params (optional)
 interface HospitalViewParams extends Partial<Pick<CameraOptions, 'zoom' | 'pitch' | 'bearing'>> {
@@ -209,3 +211,106 @@ export const MAPBOX_SUPPORT_REASONS = {
   WEBGL_DISABLED: "Your browser supports WebGL, but it may be disabled or unavailable.",
   UNKNOWN: "Mapbox GL isn't supported by your browser for an unknown reason.",
 };
+
+// ==================== 3D Building Data ====================
+
+// Adapted tempNodes from 3dmaps example (ensure kind matches TempNode type)
+// TODO: Replace with actual node data from backend or a dedicated data source
+const examplePathNodes: TempNode[] = [
+  {
+    lat: 42.09248682590311,
+    long: -71.26629410633672,
+    floor: 1,
+    kind: "path" // Changed from "inter"
+  },
+  {
+    lat: 42.09277375925052,
+    long: -71.26599086652641,
+    floor: 1,
+    kind: "path" // Changed from "inter"
+  },
+  {
+    lat: 42.09324032652947,
+    long: -71.26658286746988,
+    floor: 1,
+    kind: "elevator"
+  },
+  {
+    lat: 42.09324032652947,
+    long: -71.26658286746988,
+    floor: 2,
+    kind: "elevator"
+  },
+  {
+    lat: 42.09277375925052,
+    long: -71.26599086652641,
+    floor: 2,
+    kind: "path" // Changed from "inter"
+  },
+  {
+    lat: 42.09248682590311,
+    long: -71.26629410633672,
+    floor: 2,
+    kind: "elevator" // Changed from "elevator" to end path?
+  },
+   {
+    lat: 42.09248682590311,
+    long: -71.26629410633672,
+    floor: 2,
+    kind: "poi" // Example POI at the end
+  }
+];
+
+// Define attributes for each hospital (adapt from 3dmaps example)
+const Patriot20BuildingAttributes: BuildingAttributes = {
+    // Use hospital ID 2 for "20 Patriot Place"
+    sceneCoords: [-71.26599086652641, 42.09277375925052],
+    buildingCoords: [-71.26646779246585, 42.093016005061315],
+    buildingPaths: ["/maps/Pat20Floor.glb", "/maps/Pat20Floor.glb", "/maps/Pat20Floor.glb", "/maps/Pat20Floor.glb"], // Ensure these paths are correct relative to /public
+    buildingMaskPath: '/maps/Pat20Exterior.glb',
+    buildingRotation: -Math.PI/10,
+    floorHeight: 20,
+    buildingMaskCoords: [-71.26629497632113, 42.09248760267727],
+    nodes: examplePathNodes, // Use the example nodes for now
+    numFloors: 4 // Based on buildingPaths array length
+};
+
+const Patriot22BuildingAttributes: BuildingAttributes = {
+    // Use hospital ID 3 for "22 Patriot Place"
+    sceneCoords: [-71.26696722883923, 42.09258410491776],
+    buildingCoords: [-71.26697223199403, 42.09223043183033],
+    buildingPaths: ["/maps/Pat22Floor.gltf", "/maps/Pat22Floor.gltf", "/maps/Pat22Floor.gltf", "/maps/Pat22Floor.gltf"],
+    buildingMaskPath: "/maps/Pat20Exterior.glb", // Assuming same mask for now?
+    buildingRotation: -Math.PI/10,
+    floorHeight: 20,
+    buildingMaskCoords: [-71.26629497632113, 42.09248760267727], // Same mask coords as Pat20?
+    nodes: examplePathNodes, // Use the example nodes for now
+    numFloors: 4
+};
+
+const MainBuildingAttributes: BuildingAttributes = {
+    // Use hospital ID 0 for "Main Campus"
+    sceneCoords: [-71.106549430016, 42.335842853824396],
+    buildingCoords: [-71.10636459548073, 42.33526357549587],
+    buildingPaths: ["/maps/MainFloor1.gltf", "/maps/MainFloor2.gltf"],
+    buildingMaskPath: "/maps/MainExterior.gltf",
+    buildingRotation: 0,
+    floorHeight: 45,
+    buildingMaskCoords: [-71.10636459548073, 42.33526357549587],
+    nodes: examplePathNodes, // Use the example nodes for now
+    numFloors: 2
+};
+
+// Exported constant mapping hospital IDs to their attributes
+export const HOSPITAL_BUILDING_ATTRIBUTES: Record<number, BuildingAttributes> = {
+    0: MainBuildingAttributes,
+    // 1: ChestnutHill attributes would go here if available
+    2: Patriot20BuildingAttributes, // Correct ID for 20 Patriot Place
+    3: Patriot22BuildingAttributes, // Correct ID for 22 Patriot Place
+    // 4: Faulkner attributes would go here if available
+};
+
+// ==========================================================
+
+// Zoom level at which custom 3D buildings appear
+export const CUSTOM_BUILDING_ZOOM_THRESHOLD = 16.9; // Slightly less than 17 to reduce flickering

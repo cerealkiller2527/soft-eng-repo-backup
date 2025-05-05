@@ -87,20 +87,20 @@ export type buildingAttributes = {
 };
 
 
-// const Pat20SceneCoords: LngLatLike = [-71.26599086652641, 42.09277375925052]
-// const Pat20BuildingCoords: LngLatLike = [-71.26646779246585, 42.093016005061315]
-// const Pat20BuildingMaskCoords: LngLatLike = [-71.26629497632113, 42.09248760267727]
-// const Patriot20Building: buildingAttributes = {
-//     sceneCoords: Pat20SceneCoords,
-//     buildingCoords: Pat20BuildingCoords,
-//     buildingPaths: ["/public/Pat20Floor.glb", "/public/Pat20Floor.glb", "/public/Pat20Floor.glb", "/public/Pat20Floor.glb"],
-//     buildingMaskPath: '/Pat20Exterior.glb',
-//     buildingRotation: -Math.PI/10,
-//     floorHeight: 20,
-//     buildingMaskCoords: Pat20BuildingMaskCoords,
-//     floorPlanPaths: [""],
-//     nodes: tempNodes,
-// }
+const Pat20SceneCoords: LngLatLike = [-71.26599086652641, 42.09277375925052]
+const Pat20BuildingCoords: LngLatLike = [-71.26646779246585, 42.093016005061315]
+const Pat20BuildingMaskCoords: LngLatLike = [-71.26629497632113, 42.09248760267727]
+const Patriot20Building: buildingAttributes = {
+    sceneCoords: Pat20SceneCoords,
+    buildingCoords: Pat20BuildingCoords,
+    buildingPaths: ["/public/Pat20Floor.glb", "/public/Pat20Floor.glb", "/public/Pat20Floor.glb", "/public/Pat20Floor.glb"],
+    buildingMaskPath: '/Pat20Exterior.glb',
+    buildingRotation: -Math.PI/10,
+    floorHeight: 20,
+    buildingMaskCoords: Pat20BuildingMaskCoords,
+    floorPlanPaths: [""],
+    nodes: tempNodes,
+}
 
 const Pat22SceneCoords: LngLatLike = [-71.26696722883923, 42.09258410491776]
 const Pat22BuildingCoords: LngLatLike = [-71.26697223199403, 42.09223043183033]
@@ -117,20 +117,20 @@ const Patriot22Building = {
     nodes: tempNodes,
 }
 
-// const MainSceneCoords: LngLatLike = [-71.106549430016, 42.335842853824396]
-// const MainBuildingCoords: LngLatLike = [-71.10636459548073, 42.33526357549587]
-// const MainBuildingMaskCoords: LngLatLike = [-71.10636459548073, 42.33526357549587]
-// const MainBuilding = {
-//     sceneCoords: MainSceneCoords,
-//     buildingCoords: MainBuildingCoords,
-//     buildingPaths: ["/MainFloor1.gltf", "/MainFloor2.gltf"], // one per floor
-//     buildingMaskPath: "/MainExterior.gltf",
-//     buildingRotation: 0,
-//     floorHeight: 45,
-//     buildingMaskCoords: MainBuildingMaskCoords,
-//     floorPlanPaths: [''],
-//     nodes: tempNodes,
-// }
+const MainSceneCoords: LngLatLike = [-71.106549430016, 42.335842853824396]
+const MainBuildingCoords: LngLatLike = [-71.10636459548073, 42.33526357549587]
+const MainBuildingMaskCoords: LngLatLike = [-71.10636459548073, 42.33526357549587]
+const MainBuilding = {
+    sceneCoords: MainSceneCoords,
+    buildingCoords: MainBuildingCoords,
+    buildingPaths: ["/MainFloor1.gltf", "/MainFloor2.gltf"], // one per floor
+    buildingMaskPath: "/MainExterior.gltf",
+    buildingRotation: 0,
+    floorHeight: 45,
+    buildingMaskCoords: MainBuildingMaskCoords,
+    floorPlanPaths: [''],
+    nodes: tempNodes,
+}
 
 
 const MapboxMap: React.FC = () => {
