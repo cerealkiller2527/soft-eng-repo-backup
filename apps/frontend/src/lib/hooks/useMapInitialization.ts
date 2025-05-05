@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { initializeMap } from '@/lib/services/mapbox-service';
+import { initializeMap, getMapInstance } from '@/lib/services/mapbox-service';
 import { MAP_STYLE, DEFAULT_MAP_VIEW } from '@/lib/mapbox';
 
 interface UseMapInitializationProps {
@@ -19,30 +19,34 @@ export function useMapInitialization({
   logCameraParams = false, // Default to false
 }: UseMapInitializationProps): mapboxgl.Map | null {
   const [mapInstance, setMapInstance] = useState<mapboxgl.Map | null>(null);
-  // Use a ref to hold the log handler to avoid re-binding in useEffect deps
-  const logCameraParamsHandlerRef = useRef<(() => void) | null>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null); // Use a ref to hold the map instance internally
-
+  const handlersAttachedRef = useRef(false); // Track if handlers are attached
+  
   // --- Define Stable Listener Functions --- 
   const handleMapLoad = useCallback(() => {
-    if (!mapRef.current) return;
+    const map = getMapInstance();
+    if (!map) return;
     console.log("Map loaded via hook.");
-    mapRef.current.resize();
-    setMapInstance(mapRef.current);
-    onLoad?.(mapRef.current);
+    
+    // Only call onLoad if the map instance is still valid
+    if (!map._removed) {
+      setMapInstance(map);
+      onLoad?.(map);
+    }
   }, [onLoad]); // Dependency: onLoad callback
 
   const handleMapZoom = useCallback(() => {
-    if (!mapRef.current) return;
-    onZoom?.(mapRef.current.getZoom());
+    const map = getMapInstance();
+    if (!map || map._removed) return;
+    onZoom?.(map.getZoom());
   }, [onZoom]); // Dependency: onZoom callback
 
   const handleMoveEndLog = useCallback(() => {
-    if (!mapRef.current || !logCameraParams) return;
-    const center = mapRef.current.getCenter();
-    const zoom = mapRef.current.getZoom();
-    const pitch = mapRef.current.getPitch();
-    const bearing = mapRef.current.getBearing();
+    const map = getMapInstance();
+    if (!map || !logCameraParams || map._removed) return;
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    const pitch = map.getPitch();
+    const bearing = map.getBearing();
     console.log('Map Camera Params:',
       `\n  Center: [${center.lng.toFixed(6)}, ${center.lat.toFixed(6)}]`,
       `\n  Zoom: ${zoom.toFixed(2)}`,
@@ -51,11 +55,59 @@ export function useMapInitialization({
     );
   }, [logCameraParams]); // Dependency: logCameraParams flag
 
-  // Effect for initializing the map
+  // Function to attach event handlers
+  const attachHandlers = useCallback((map: mapboxgl.Map) => {
+    if (!map || handlersAttachedRef.current) return;
+    
+    // Attach event listeners
+    map.on('load', handleMapLoad);
+    map.on('zoom', handleMapZoom);
+    if (logCameraParams) {
+      map.on('moveend', handleMoveEndLog);
+    }
+    
+    // Add debug click handler for development
+    if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'development') {
+      map.on('click', (e) => {
+        console.log(`Clicked: [${e.lngLat.lng}, ${e.lngLat.lat}]`);
+      });
+    }
+    
+    handlersAttachedRef.current = true;
+    console.log("Map handlers attached");
+  }, [handleMapLoad, handleMapZoom, handleMoveEndLog, logCameraParams]);
+
+  // Function to clean up event handlers (without removing the map)
+  const detachHandlers = useCallback((map: mapboxgl.Map) => {
+    if (!map || !handlersAttachedRef.current) return;
+    
+    try {
+      // Remove event listeners
+      map.off('load', handleMapLoad);
+      map.off('zoom', handleMapZoom);
+      if (logCameraParams) {
+        map.off('moveend', handleMoveEndLog);
+      }
+      
+      handlersAttachedRef.current = false;
+      console.log("Map handlers detached");
+    } catch (e) {
+      console.warn("Error detaching map handlers:", e);
+    }
+  }, [handleMapLoad, handleMapZoom, handleMoveEndLog, logCameraParams]);
+
+  // Effect for initializing the map or reusing existing
   useEffect(() => {
-    // Initialize only if ref is valid and internal mapRef is null
-    if (containerRef.current && !mapRef.current) { 
-      const map = initializeMap(containerRef.current, {
+    // Skip if container ref is invalid
+    if (!containerRef.current) return;
+    
+    // Check if we already have a map (singleton pattern)
+    let map = getMapInstance();
+    
+    if (!map) {
+      console.log("No existing map found, initializing new map");
+      // Initialize the map with our config
+      map = initializeMap(containerRef.current, {
         style: MAP_STYLE,
         center: DEFAULT_MAP_VIEW.center as [number, number],
         zoom: DEFAULT_MAP_VIEW.zoom,
@@ -66,41 +118,37 @@ export function useMapInitialization({
         renderWorldCopies: false,
         ...options, // Allow overriding defaults
       });
-      mapRef.current = map; // Store the map instance immediately in the ref
-
-      if (map) {
-        // Define log handler if requested
-        if (logCameraParams) {
-          logCameraParamsHandlerRef.current = handleMoveEndLog;
-        }
-
-        // --- Attach Event Listeners ---
-        map.on('load', handleMapLoad);
-        map.on('zoom', handleMapZoom);
-        if (logCameraParams) {
-          map.on('moveend', handleMoveEndLog);
-        }
+    } else {
+      console.log("Using existing map instance");
+    }
+    
+    // If we have a valid map, attach handlers and update state
+    if (map && !map._removed) {
+      attachHandlers(map);
+      setMapInstance(map);
+      
+      // If map is already loaded, call onLoad directly
+      if (map.loaded()) {
+        console.log("Map already loaded, calling onLoad directly");
+        onLoad?.(map);
       }
     }
 
-    // --- Cleanup Function ---
+    // Cleanup function - only detach handlers, don't remove map
     return () => {
-      const mapToRemove = mapRef.current; // Get map from ref for cleanup
-      if (mapToRemove) {
-        // --- Remove Event Listeners ---
-        try { mapToRemove.off('load', handleMapLoad); } catch (e) { console.warn("Error removing load listener", e); }
-        try { mapToRemove.off('zoom', handleMapZoom); } catch (e) { console.warn("Error removing zoom listener", e); }
-        if (logCameraParams) {
-          try { mapToRemove.off('moveend', handleMoveEndLog); } catch (e) { console.warn("Error removing moveend listener", e); }
-        }
+      const currentMap = getMapInstance();
+      if (currentMap) {
+        detachHandlers(currentMap);
       }
-      // Reset the state and internal ref
-      setMapInstance(null); 
-      mapRef.current = null;
-      console.log("Map initialization hook cleanup ran (listeners removed)."); 
     };
-  // Remove 'options' from the dependency array
-  }, [containerRef, onZoom, onLoad, logCameraParams, handleMapLoad, handleMapZoom, handleMoveEndLog]); // Re-run if container ref or callbacks change
+  }, [
+    containerRef,
+    options.style, // Only major option changes should cause reinitialization
+    options.projection,
+    attachHandlers,
+    detachHandlers,
+    onLoad
+  ]); 
 
   return mapInstance; // Return the map instance state
 } 
