@@ -54,10 +54,10 @@ export function createCustomLayer(
                             if (!disposables.includes(mat)) {
                                 disposables.push(mat);
                             }
-                            mat.color.set(targetColor);
-                            mat.opacity = targetOpacity;
+                            // mat.color.set(targetColor);
+                            mat.opacity = 0.6;
                             // Ensure transparency is enabled for opacity to work
-                            mat.transparent = true; 
+                            mat.transparent = true;
                             mat.needsUpdate = true;
                         }
                     });
