@@ -38,6 +38,7 @@ interface DirectionsCardProps {
   allRoutes: EnrichedRoute[] | null; // All available routes
   onSelectRoute?: (route: EnrichedRoute) => void;
   className?: string;
+  onDrivingSelect: (Driving: boolean) => void;
 }
 
 // Map internal modes to Google Maps travel modes
@@ -49,12 +50,13 @@ const googleMapsTravelModes: Record<TransportMode, string> = {
 
 // Main Directions Card Component
 export function DirectionsCard({
-  hospital,
-  isLoading,
-  error,
-  allRoutes,
-  onSelectRoute,
-  className,
+                                 hospital,
+                                 isLoading,
+                                 error,
+                                 allRoutes,
+                                 onSelectRoute,
+                                 className,
+                                 onDrivingSelect,
 }: DirectionsCardProps) {
   const { transportMode, setActiveTab } = useMap();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -99,6 +101,14 @@ export function DirectionsCard({
       toast.error(error, { id: toastId, icon: <AlertTriangle className="h-4 w-4" /> });
     }
   }, [error]);
+
+  useEffect(() => {
+    if (transportMode == "drive") {
+      onDrivingSelect(true);
+    } else {
+      onDrivingSelect(false);
+    }
+  }, [transportMode]);
 
   const handleNavigationConfirm = () => {
     if (!hospital?.coordinates) return; 

@@ -37,6 +37,10 @@ function AppContent() {
     console.log("Department selected in AppContent:", department);
   }, []);
 
+  const handleNavigationModeSelect = useCallback((Driving: boolean) => {
+    console.log("Was driving selected: ", Driving);
+  }, []);
+
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const {
@@ -153,6 +157,7 @@ function AppContent() {
     directionsError, hospitalsLoading, hospitalsError, handleViewDirections,
     handleSelectHospitalFromList, selectRoute,
     onDepartmentSelect: handleDepartmentSelect,
+    onDrivingSelect: handleNavigationModeSelect,
   };
 
   const mapElementsProps: MapElementsProps = {

@@ -26,6 +26,7 @@ export interface SidebarContentProps {
     handleSelectHospitalFromList: (hospital: Hospital) => void;
     selectRoute: (route: EnrichedRoute) => void;
     onDepartmentSelect: (department: string) => void;
+    onDrivingSelect: (Driving: boolean) => void;
 }
 
 export function SidebarContent({
@@ -45,6 +46,7 @@ export function SidebarContent({
                                    handleSelectHospitalFromList,
                                    selectRoute,
                                    onDepartmentSelect,
+                                   onDrivingSelect,
                                }: SidebarContentProps) {
     return (
         <div className="flex flex-col h-full">
@@ -109,6 +111,7 @@ export function SidebarContent({
                         error={directionsError}
                         allRoutes={allRoutes}
                         onSelectRoute={selectRoute}
+                        onDrivingSelect={onDrivingSelect}
                     />
                 </TabsContent>
 
