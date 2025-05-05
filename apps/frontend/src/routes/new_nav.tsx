@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { MainMap } from "@/components/map/MainMap";
 import { SidebarContent, type SidebarContentProps } from "@/components/map/SidebarContent";
 import { MapElements, type MapElementsProps } from "@/components/map/MapElements";
-import Layout from "../components/Layout";
+import LayoutNoFooter from "../components/LayoutNoFooter";
 
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
 
@@ -168,7 +168,7 @@ export default function App() {
   return (
       <MapErrorBoundary fallback={<p>Map failed to load. Please refresh.</p>}>
         <MapProvider>
-          <Layout>
+          <LayoutNoFooter>
             <AppContent />
             <Toaster
                 position="top-center"
@@ -178,7 +178,7 @@ export default function App() {
                   style: { marginTop: `${LAYOUT_DIMENSIONS.HEADER_HEIGHT + 8}px` },
                 }}
             />
-          </Layout>
+          </LayoutNoFooter>
         </MapProvider>
       </MapErrorBoundary>
   )
