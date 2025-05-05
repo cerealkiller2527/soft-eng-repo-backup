@@ -17,7 +17,7 @@ const mattAlexProps = {
     position: "Lead Engineer, Front End Dev",
     path: "/headshots/malex.jpg",
     quote: "\"Believe you can and you're halfway there.\"\n" +
-        "— Theodore Roosevelt"
+        "- Theodore Roosevelt"
 }
 
 const bobbyProps = {
@@ -32,7 +32,7 @@ const tinaProps = {
     position: "Back End Dev",
     path: "/public/headshots/tcheng.jpg",
     quote: "\"Start where you are. Use what you have. Do what you can.\"\n" +
-        "— Arthur Ashe"
+        "- Arthur Ashe"
 }
 
 const brandonProps = {
@@ -46,15 +46,15 @@ const christianProps = {
     name: "Christian Dell'Anno",
     position: "Assistant Lead, Front End Dev",
     path: "/public/headshots/cdellanno.jpg",
-    quote:" \"All you need is love. But a little chocolate now and then doesn't hurt.\" ― Charles M. Schulz"
+    quote:" \"All you need is love. But a little chocolate now and then doesn't hurt.\" - Charles M. Schulz"
 }
 
 const sahanaProps = {
     name: "Sahana Gokulakrishnan",
     position: "Product Owner, Front End Dev",
     path: "/public/headshots/sgokulakrishnan.jpg",
-    quote: "\"You miss 100% of the shots you don’t take.\"\n" +
-        "— Wayne Gretzky"
+    quote: "\"Hakuna Matata! It means no worries for the rest of your days.\"\n" +
+        "- Timon & Pumbaa, The Lion King"
 }
 
 const maxProps = {
@@ -77,8 +77,7 @@ const mattNickersonProps = {
     name: "Matt Nickerson",
     position: "Assistant Lead, Front End Dev",
     path: "/public/headshots/mnickerson.jpg",
-    quote:"\"Do not wait for the perfect moment. Take the moment and make it perfect.\"\n" +
-        "— Zoey Sayward"
+    quote:"\"I Don't Even Have Any Good Skills. You Know, Like Nunchuck Skills, Bow Hunting Skills, Computer Hacking Skills.\" - Napoleon Dynamite"
 }
 
 const kaylieProps = {
