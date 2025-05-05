@@ -5,13 +5,12 @@ import { SidebarContainer } from "@/components/map/Layout"
 import { MapProvider, useMap } from "../contexts/MapContext"
 import { MapErrorBoundary } from "@/components/map/MapErrorBoundary"
 import type { Hospital } from "@/types/hospital"
-import { 
-  LAYOUT_DIMENSIONS, 
+import {
+  LAYOUT_DIMENSIONS,
   DEFAULT_FLY_TO_OPTIONS,
   HOSPITAL_SPECIFIC_VIEWS,
   Z_INDEX,
 } from "@/lib/constants";
-import mapboxgl from 'mapbox-gl';
 import type { CameraOptions } from 'mapbox-gl';
 import {
   CheckCircle,
@@ -32,6 +31,15 @@ import LayoutNoFooter from "../components/LayoutNoFooter";
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
 
 function AppContent() {
+
+  const handleDepartmentSelect = useCallback((department: string) => {
+    console.log("Department selected in AppContent:", department);
+  }, []);
+
+  const handleNavigationModeSelect = useCallback((Driving: boolean) => {
+    console.log("Was driving selected: ", Driving);
+  }, []);
+
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const {
@@ -65,7 +73,7 @@ function AppContent() {
   useEffect(() => {
     // Condition to only show toast when geolocation finishes successfully
     const justFinishedGeolocating = !geoLoading && prevGeoLoadingRef.current;
-    
+
     if (justFinishedGeolocating && userLocation && !locationToastShownRef.current) {
        toast.success("Your location has been updated.", {
          icon: <CheckCircle className="h-4 w-4" />,
@@ -75,7 +83,7 @@ function AppContent() {
     if (!userLocation) {
         locationToastShownRef.current = false;
     }
-    
+
     // Update previous geoLoading state *after* checking the condition
     prevGeoLoadingRef.current = geoLoading;
 
@@ -97,17 +105,17 @@ function AppContent() {
         icon: <Info className="h-4 w-4" />,
       });
     }
-  }, [activeTab, selectedLocation]); 
+  }, [activeTab, selectedLocation]);
 
   const handleSelectHospitalFromList = useCallback((hospital: Hospital) => {
-    setSelectedLocation(hospital); 
-    setPopupLocation(null);        
+    setSelectedLocation(hospital);
+    setPopupLocation(null);
     setAnimatingMarkerId(hospital.id);
     if (hospital.coordinates) {
         const specificView = HOSPITAL_SPECIFIC_VIEWS[hospital.id] || {};
-        
+
         const targetCenter = specificView.coordinates || hospital.coordinates;
-        
+
         let flyToOptions: CustomFlyToOptions & Pick<CameraOptions, 'zoom' | 'pitch' | 'bearing'> = {
           speed: DEFAULT_FLY_TO_OPTIONS.speed,
           curve: DEFAULT_FLY_TO_OPTIONS.curve,
@@ -123,23 +131,23 @@ function AppContent() {
               console.error("Error calculating bearing:", error);
             }
           }
-        
+
         flyTo(targetCenter as [number, number], flyToOptions.zoom, flyToOptions, hospital.id);
     }
   }, [setSelectedLocation, setPopupLocation, setAnimatingMarkerId, flyTo, contextUserLocation, mapInstance]);
 
   const handleViewDirections = useCallback((hospital: Hospital) => {
     setSelectedLocation(hospital);
-    setPopupLocation(null);      
+    setPopupLocation(null);
     setAnimatingMarkerId(null);
     setActiveTab("directions");
   }, [setSelectedLocation, setPopupLocation, setAnimatingMarkerId, setActiveTab]);
-  
+
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev)
     // setTimeout(() => {
     //   mapInstance?.resize()
-    // }, LAYOUT_DIMENSIONS.SIDEBAR_TRANSITION_MS) 
+    // }, LAYOUT_DIMENSIONS.SIDEBAR_TRANSITION_MS)
   }, [mapInstance])
 
   const sidebarProps: SidebarContentProps = {
@@ -147,7 +155,8 @@ function AppContent() {
     processedHospitals, selectedLocation, allRoutes, directionsLoading,
     directionsError, hospitalsLoading, hospitalsError, handleViewDirections,
     handleSelectHospitalFromList, selectRoute,
-    onDepartmentSelect: (dept) => { console.log("Department selected:", dept); }
+    onDepartmentSelect: handleDepartmentSelect,
+    onDrivingSelect: handleNavigationModeSelect,
   };
 
   const mapElementsProps: MapElementsProps = {

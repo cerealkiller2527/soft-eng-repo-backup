@@ -38,6 +38,7 @@ interface DirectionsCardProps {
   allRoutes: EnrichedRoute[] | null; // All available routes
   onSelectRoute?: (route: EnrichedRoute) => void;
   className?: string;
+  onDrivingSelect: (Driving: boolean) => void;
 }
 
 // Map internal modes to Google Maps travel modes
@@ -49,12 +50,13 @@ const googleMapsTravelModes: Record<TransportMode, string> = {
 
 // Main Directions Card Component
 export function DirectionsCard({
-  hospital,
-  isLoading,
-  error,
-  allRoutes,
-  onSelectRoute,
-  className,
+                                 hospital,
+                                 isLoading,
+                                 error,
+                                 allRoutes,
+                                 onSelectRoute,
+                                 className,
+                                 onDrivingSelect,
 }: DirectionsCardProps) {
   const { transportMode, setActiveTab } = useMap();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -99,6 +101,14 @@ export function DirectionsCard({
       toast.error(error, { id: toastId, icon: <AlertTriangle className="h-4 w-4" /> });
     }
   }, [error]);
+
+  useEffect(() => {
+    if (transportMode == "drive") {
+      onDrivingSelect(true);
+    } else {
+      onDrivingSelect(false);
+    }
+  }, [transportMode]);
 
   const handleNavigationConfirm = () => {
     if (!hospital?.coordinates) return; 
@@ -154,7 +164,7 @@ export function DirectionsCard({
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full z-70">
       <div className="flex-shrink-0 border-b pb-3 mb-2">
         <CardHeader className="pb-2 pt-3 px-3 flex-shrink-0">
           <CardTitle className="text-sm truncate">Directions to {hospitalName}</CardTitle>
@@ -249,7 +259,7 @@ export function DirectionsCard({
       </ScrollArea>
 
       {/* Footer with Audio Controls */}
-      <CardFooter className="pt-2 px-3 flex-shrink-0 mt-3 gap-2 items-center">
+      <CardFooter className="pt-2 px-3 flex-shrink-0 gap-2 items-center">
         {/* Audio Button */}
         <Button 
           variant="outline" 

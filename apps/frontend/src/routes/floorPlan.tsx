@@ -83,6 +83,7 @@ const FloorPlan = () => {
     const [activeTab, setActiveTab] = useState("request");
     const polylineRef2 = useRef<google.maps.Polyline | null>(null);
     const [markers, setMarkers] = useState<google.maps.marker.AdvancedMarkerElement[]>([]);
+    const [staticMapUrl, setStaticMapUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const loadGoogleLibraries = async () => {
@@ -96,8 +97,6 @@ const FloorPlan = () => {
 
         loadGoogleLibraries();
     }, [])
-
-
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -666,6 +665,153 @@ const FloorPlan = () => {
         };
     }, [search.data, driving, imageIndex, AdvancedMarker, Pin, infoWindow]);
 
+    const handlePrint = async () => {
+        const filteredCoords = pathCoords
+            .filter((node) => node.floor === imageIndex + 1)
+            .map((node) => `${node.latitude},${node.longitude}`);
+        const encodedPath = directionsRenderer.current?.getDirections()?.routes?.[0]?.overview_polyline;
+        console.log("Encoded Path:", encodedPath);
+
+        const origin = form.location;
+        const destination = `${endMapsLocation.lat},${endMapsLocation.lng}`;
+        const pathColor = "0x007BFF";
+        const size = "800x600";
+        const baseUrl = "https://maps.googleapis.com/maps/api/staticmap";
+
+        let mapUrl = `${baseUrl}?size=${size}`;
+        if (filteredCoords.length >= 2) {
+            mapUrl += `&path=color:${pathColor}|weight:5|enc:${encodedPath}`;
+        }
+        mapUrl += `&markers=color:green|label:S|${origin}`;
+        mapUrl += `&markers=color:red|label:D|${destination}`;
+        mapUrl += `&key=${import.meta.env.VITE_MAPS_API}`;
+        console.log("Map URL:", mapUrl);
+
+        const printWindow = window.open("", "_blank");
+        if (printWindow) {
+            const logoUrl = "../public/BrighamAndWomensLogo.png";
+
+            const printContent = `
+              <html>
+                <head>
+                  <title>Directions</title>
+                  <style>
+                    body {
+                      font-family: Arial, sans-serif;
+                      margin: 20px;
+                      color: #333;
+                    }
+            
+                    .header {
+                      display: flex;
+                      align-items: center;
+                      gap: 16px;
+                      margin-bottom: 24px;
+                    }
+            
+                    .header img {
+                      height: 32px;
+                      width: auto;
+                    }
+            
+                    .header h2 {
+                      font-size: 20px;
+                      font-weight: bold;
+                      margin: 0;
+                    }
+            
+                    .map-capture {
+                      text-align: center;
+                      margin: 20px 0;
+                    }
+            
+                    .map-capture img {
+                      max-width: 90%;
+                      border: 1px solid #ccc;
+                      border-radius: 8px;
+                    }
+            
+                    .directions {
+                      margin-top: 24px;
+                    }
+            
+                    .directions p {
+                      margin: 8px 0;
+                    }
+            
+                    @media print {
+                      body {
+                        background: white;
+                      }
+                      .no-print {
+                        display: none;
+                      }
+                    }
+                  </style>
+                </head>
+
+                <body>
+                  <div class="header">
+                    <img id="logo" src="${logoUrl}" alt="Mass General Brigham Logo" height=32px />
+                    <h2>Mass General Brigham Directions</h2>
+                  </div>
+
+                  <div class="map-capture">
+                    <img id="mapImage" src="${mapUrl}" alt="Map Snapshot" />
+                  </div>
+
+                  <div class="directions">
+                    ${instructions
+                            .map((step, index) => `<p><strong>Step ${index + 1}:</strong> ${step}</p>`)
+                            .join("")}
+                  </div>
+                 
+                  <script>
+                    function waitUntilImagesAreTrulyLoaded(callback, timeout = 5000) {
+                        const start = Date.now();
+            
+                        function imagesLoaded() {
+                          const imgs = document.querySelectorAll("img");
+                          return Array.from(imgs).every(
+                            (img) => img.complete && img.naturalHeight > 0
+                          );
+                        }
+            
+                        function check() {
+                          if (imagesLoaded()) {
+                            callback();
+                          } else if (Date.now() - start < timeout) {
+                            setTimeout(check, 100);
+                          } else {
+                            console.warn("Images may not have fully loaded.");
+                            callback();
+                          }
+                        }
+            
+                        check();
+                      }
+            
+                      waitUntilImagesAreTrulyLoaded(() => {
+                        window.print();
+                      });
+            
+                      window.addEventListener("afterprint", () => {
+                        setTimeout(() => {
+                          window.close();
+                        }, 500);
+                      });
+                  </script>
+                </body>
+              </html>
+            `;
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.print();
+        } else {
+            console.error("Unable to open the print window");
+        }
+    };
+
     return (
         <Layout>
             <div id="floorplan" className="min-h-screen bg-gray-100 flex flex-col pt-14">
@@ -673,7 +819,7 @@ const FloorPlan = () => {
                     {/* Google Map full size */}
                     <div
                         id="google-map-container"
-                        className="absolute inset-0 z-0"
+                        className="absolute inset-0 z-0 google-map-container"
                         ref={mapRef}
                         style={{ width: '100%', height: '100%' }}
                     />
@@ -713,6 +859,11 @@ const FloorPlan = () => {
                                     <InstructionsBox key={instructions.join()} instructions={ instructions } />
                                     <div className="absolute top-4 right-4 z-50">
                                         <DirectionsButton directions={instructions} />
+                                    </div>
+                                    <div className="absolute top-4 right-20 z-50">
+                                        <Button onClick={handlePrint} className="bg-primary hover:bg-primary/90 text-white">
+                                            Print Directions
+                                        </Button>
                                     </div>
                                 </div>
                             </TabsContent>
