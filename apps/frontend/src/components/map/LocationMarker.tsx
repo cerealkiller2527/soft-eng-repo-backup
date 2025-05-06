@@ -37,8 +37,6 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
   
   // Ref for the Mapbox marker instance
   const markerRef = useRef<mapboxgl.Marker | null>(null);
-  // Ref to hold the DOM element *created programmatically*
-  const markerElementRef = useRef<HTMLDivElement | null>(null);
 
   // Find the icon component based on name, default to HospitalIcon
   const IconComponent = useMemo(() => icons[iconName] || HospitalIcon, [iconName]);
@@ -97,7 +95,7 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
   // Effect for creating/updating the Mapbox marker instance
   useEffect(() => {
     // Guard clause with more specific checks
-    if (!map || !hospital.coordinates || !markerElementRef.current) return;
+    if (!map || !hospital.coordinates) return;
 
     // Use a simpler approach to marker creation with fewer delays
     try {
@@ -107,10 +105,62 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
         if (!map || map._removed) {
           return;
         }
+        
+        // --- Create the DOM element programmatically --- 
+        const el = document.createElement('div');
+        el.className = cn(
+          'marker-dom-element cursor-pointer relative transition-transform duration-150 ease-in-out',
+          isSelected && 'animate-marker-jump'
+        );
+        el.style.pointerEvents = 'auto';
+        el.innerHTML = `
+          <div class="${cn(
+            `relative h-8 w-8 rounded-full flex items-center justify-center shadow-lg ring-2 ring-offset-2 ring-offset-background transition-all`,
+             isSelected 
+                ? 'bg-primary text-primary-foreground ring-primary ring-offset-primary/30 marker-icon-container-glow' 
+                : 'bg-primary text-primary-foreground ring-primary ring-offset-primary/30'
+          )}">
+             <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                class="lucide lucide-${iconName}" // Dynamically add icon class if needed, or use fixed placeholder
+             >
+               <!-- Placeholder for IconComponent SVG content - Requires getting SVG string or using innerHTML dangerously -->
+               <!-- Example: Direct SVG path for HospitalIcon as fallback -->
+               <path d="M12 6v4"/> 
+               <path d="M14 14h-4"/>
+               <path d="M14 18h-4"/>
+               <path d="M14 8h-4"/>
+               <path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/>
+               <path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"/>
+             </svg>
+          </div>
+          <div class="${cn(
+            `tip-element absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-0 h-0`,
+            `border-l-[6px] border-l-transparent border-t-[9px] border-r-[6px] border-r-transparent transition-colors z-10`,
+             isSelected ? 'border-t-primary' : 'border-t-primary'
+          )}"></div>
+        `;
+        // Attach click listener directly to the DOM element
+        el.addEventListener('click', (domEvent) => {
+           domEvent.stopPropagation(); // Prevent map click
+           if (activeTab === 'directions') {
+               handleDirectionsTabClick(hospital);
+           } else {
+               handleListTabClick(hospital);
+           }
+        });
+        // --- End element creation ---
 
         // Create the marker
         markerRef.current = new mapboxgl.Marker({
-          element: markerElementRef.current, // Use the React-rendered element
+          element: el, // Use the programmatically created element
           anchor: 'bottom',
         });
         
@@ -150,43 +200,8 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
       }
     };
   // Dependencies: map instance and coordinates
-  }, [map, hospital.coordinates]); // Keep dependencies minimal for marker management
+  }, [map, hospital.coordinates, isSelected, activeTab]); // Add isSelected and activeTab dependency for correct styling/click behavior
 
-  // Restore JSX structure
-  return (
-    <div 
-      ref={markerElementRef} 
-      className="marker-dom-element cursor-pointer" 
-      style={{ pointerEvents: 'auto' }} 
-      onClick={handleClick} // Use React onClick
-    >
-      {/* Apply jump animation to this container when selected */}
-      <div className={cn(
-        'relative', 
-        'transition-transform duration-150 ease-in-out',
-        isSelected && 'animate-marker-jump'
-      )}>
-        {/* Icon Container - Apply glow class here when selected */}
-        <div className={cn(
-          `relative h-8 w-8 rounded-full flex items-center justify-center shadow-lg ring-2 ring-offset-2 ring-offset-background transition-all`,
-          isSelected 
-            ? 'bg-primary text-primary-foreground ring-primary ring-offset-primary/30'
-            : 'bg-primary text-primary-foreground ring-primary ring-offset-primary/30', // Ensure non-selected state is defined
-          isSelected && 'marker-icon-container-glow'
-        )}>
-          {/* Render the dynamic IconComponent directly */}
-          <IconComponent className="h-4 w-4" />
-        </div>
-        {/* Tip */}
-        <div className={cn(
-          `tip-element absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-0 h-0`,
-          `border-l-[6px] border-l-transparent`,
-          `border-t-[9px]`,
-          `border-r-[6px] border-r-transparent`,
-          `transition-colors z-10`,
-          isSelected ? 'border-t-primary' : 'border-t-primary'
-        )}></div>
-      </div>
-    </div>
-  );
+  // This component no longer renders anything in React tree
+  return null;
 } 

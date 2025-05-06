@@ -1,6 +1,10 @@
 import mapboxgl, { MercatorCoordinate } from "mapbox-gl";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+// Import Line classes for thick lines
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 // Update import path for types
 import { BuildingAttributes } from './types'; 
 // Assuming pNodeZT is the correct type for indoor path nodes from the backend
@@ -25,20 +29,27 @@ interface CustomLayerInterface {
 export function createCustomLayer(
     map: mapboxgl.Map,
     attributes: BuildingAttributes,
-    indoorPathNodes: pNodeZT[] | null | undefined // Add indoorPathNodes parameter
+    initialIndoorPathNodes: pNodeZT[] | null | undefined // Rename for clarity
 ): CustomLayerInterface {
 
-    // --- DEBUG LOG --- Log at the beginning of the function
-    console.log(`[createCustomLayer] Function called. Received nodes count: ${indoorPathNodes?.length ?? 0}`);
+    console.log(`[createCustomLayer] Initializing layer. Initial nodes count: ${initialIndoorPathNodes?.length ?? 0}`);
 
-    // Keep track of THREE resources for cleanup
     let scene: THREE.Scene | null = null;
     let camera: THREE.Camera | null = null;
     let renderer: THREE.WebGLRenderer | null = null;
-    const disposables: { dispose?: () => void }[] = []; // Store objects with dispose methods
+    // Ensure this is the Set definition
+    const disposables: Set<THREE.Object3D | THREE.Material | THREE.BufferGeometry | THREE.Texture | THREE.Light> = new Set(); 
     let animationFrameId: number | null = null;
-    const layerId = `custom-3d-${attributes.buildingPaths.join('-').replace(/[\/\.]/g, '_')}`; // Store the ID
+    const layerId = `custom-3d-${attributes.buildingPaths.join('-').replace(/[/.]/g, '_')}`;
+    
+    // Mapbox marker for start point
+    let startMapboxMarker: mapboxgl.Marker | null = null;
 
+    // Path specific state
+    const pathRelatedObjects: THREE.Object3D[] = []; 
+    const pathRelatedDisposables: Set<THREE.Material | THREE.BufferGeometry> = new Set();
+    // Keep the material at a higher scope
+    let pathLineMaterial: LineMaterial;
 
     // --- Helper functions remain mostly the same ---
     async function loadModel(path: string): Promise<THREE.Group> {
@@ -49,30 +60,30 @@ export function createCustomLayer(
         const targetColor = new THREE.Color('#aac7e9'); 
         const targetOpacity = 0.8;
 
-        // // Traverse and update materials after loading
-        // gltf.scene.traverse((object) => {
-        //     if ((object as THREE.Mesh).isMesh) {
-        //         const mesh = object as THREE.Mesh;
-        //         if (mesh.material) {
-        //             const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        //             materials.forEach(mat => {
-        //                 if (mat instanceof THREE.Material) {
-        //                     if (!disposables.includes(mat)) {
-        //                         disposables.push(mat);
-        //                     }
-        //                     // mat.color.set(targetColor);
-        //                     mat.opacity = 0.6;
-        //                     // Ensure transparency is enabled for opacity to work
-        //                     mat.transparent = true;
-        //                     mat.needsUpdate = true;
-        //                 }
-        //             });
-        //         }
-        //         if (mesh.geometry && !disposables.includes(mesh.geometry)) {
-        //              disposables.push(mesh.geometry);
-        //         }
-        //     }
-        // });
+        // Traverse and update materials after loading
+        gltf.scene.traverse((object) => {
+            if ((object as THREE.Mesh).isMesh) {
+                const mesh = object as THREE.Mesh;
+                if (mesh.material) {
+                    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+                    materials.forEach(mat => {
+                        if (mat instanceof THREE.Material) {
+                            if (!pathRelatedDisposables.has(mat)) {
+                                pathRelatedDisposables.add(mat);
+                            }
+                            // mat.color.set(targetColor);
+                            mat.opacity = 0.6;
+                            // Ensure transparency is enabled for opacity to work
+                            mat.transparent = true;
+                            mat.needsUpdate = true;
+                        }
+                    });
+                }
+                if (mesh.geometry && !pathRelatedDisposables.has(mesh.geometry)) {
+                     pathRelatedDisposables.add(mesh.geometry);
+                }
+            }
+        });
         return gltf.scene;
     }
 
@@ -95,161 +106,221 @@ export function createCustomLayer(
 
         // --- onAdd: Setup THREE.js environment ---
         onAdd: async (mapInstance: mapboxgl.Map, gl: WebGLRenderingContext) => {
+            console.log(`[createCustomLayer] onAdd called for ${layerId}`);
             camera = new THREE.Camera();
             scene = new THREE.Scene();
 
-            // rotations
             scene.rotateX(Math.PI/2);
             scene.scale.multiply(new THREE.Vector3(1, 1, -1));
 
-            // create lights - Adjusted for softer look
-            // Decrease directional intensity, maybe change position
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 14); // Reduced intensity from 2
-            directionalLight.position.set(0, 70, 100).normalize(); // More frontal/top-down?
+            // create lights
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
+            directionalLight.position.set(0, 70, 100).normalize();
             scene.add(directionalLight);
+            disposables.add(directionalLight); // Track light
 
-            // Increase ambient intensity
-            const ambientLight = new THREE.AmbientLight(0xffffff, 3); // Increased intensity from 5, maybe slightly off-white if needed e.g. 0xdddddd
+            const ambientLight = new THREE.AmbientLight(0xffffff, 6.5);
             scene.add(ambientLight);
+            disposables.add(ambientLight); // Track light
 
             // Declare variables needed later at this scope
             const sceneOriginMercator = MercatorCoordinate.fromLngLat(attributes.sceneCoords);
             const buildingMask = await loadModel(attributes.buildingMaskPath); // Load mask model
 
+            // --- Create materials (use LineMaterial) ---
+            pathLineMaterial = new LineMaterial({
+                color: 0xff00ff, // Bright magenta for visibility testing
+                linewidth: 10, // Line width in pixels
+                vertexColors: false,
+                dashed: false,
+                alphaToCoverage: false, // Ensure this is false
+                transparent: false,     // Ensure this is false for now
+            });
+            // Initialize the resolution - crucial for LineMaterial to work
+            pathLineMaterial.resolution.set(
+                mapInstance.getCanvas().width, 
+                mapInstance.getCanvas().height
+            );
+            // Force material to use high precision
+            pathLineMaterial.defines = pathLineMaterial.defines || {};
+            pathLineMaterial.defines.USE_SIZEATTENUATION = '';
+            
+            pathRelatedDisposables.add(pathLineMaterial);
+            disposables.add(pathLineMaterial);
+
             // --- START NEW PATH LOGIC using indoorPathNodes ---
-            if (indoorPathNodes && indoorPathNodes.length > 0) {
-                // sceneOriginMercator is already defined above
+            if (initialIndoorPathNodes && initialIndoorPathNodes.length > 0) {
+                console.log(`[createCustomLayer] Creating 3D path with ${initialIndoorPathNodes.length} nodes`);
                 
                 // Load models needed for path (start/end)
-            const startNodeGeometry = new THREE.SphereGeometry(1);
-            const startNodeMaterial = new THREE.MeshStandardMaterial({ color: 'red' });
-            disposables.push(startNodeGeometry, startNodeMaterial);
-            const startNodeMarker = new THREE.Mesh(startNodeGeometry, startNodeMaterial);
+                const endNodeMarker = await loadModel("/endStar.gltf");
 
-            const endNodeMarker = await loadModel("/endStar.gltf"); // Keep path relative to public? Needs verification
-
-                // Define path materials
-            const lineMaterial = new THREE.LineBasicMaterial({ color: 'blue' }); // normal path
-            const dashedMaterial = new THREE.LineDashedMaterial({ // elevator/stair path (dashed)
-                color: 'blue',
-                dashSize: 1,
-                gapSize: 0.5,
-                linewidth: 2
-            });
-            disposables.push(lineMaterial, dashedMaterial);
-
+                // Collect points for path
+                const points = [];
+                
                 // Process nodes
-                for(let i = 0; i < indoorPathNodes.length; i++) {
-                    const node = indoorPathNodes[i];
+                for(let i = 0; i < initialIndoorPathNodes.length; i++) {
+                    const node = initialIndoorPathNodes[i];
                     const nodeMercator = MercatorCoordinate.fromLngLat([node.longitude, node.latitude]);
-                    const dNode = calcMeterOffset(nodeMercator, sceneOriginMercator);
+                const dNode = calcMeterOffset(nodeMercator, sceneOriginMercator);
                     const nodeYPosition = 1 + (node.floor - 1) * attributes.floorHeight;
 
+                    // Create a point for this node
+                    const point = new THREE.Vector3(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
+                    points.push(point);
+
                     // Place Start/End Markers
-                    if (i === 0) { // START NODE
-                        startNodeMarker.position.set(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
-                        scene.add(startNodeMarker);
+                    if (i === 0) { // START NODE - Add Mapbox marker with 'S'
+                        // Create a custom HTML element for the marker
+                        const element = document.createElement('div');
+                        element.className = 'start-marker';
+                        element.style.width = '32px';
+                        element.style.height = '32px';
+                        element.style.borderRadius = '50%';
+                        element.style.backgroundColor = '#0066ff'; // Blue color matching path
+                        element.style.color = 'white';
+                        element.style.fontWeight = 'bold';
+                        element.style.display = 'flex';
+                        element.style.alignItems = 'center';
+                        element.style.justifyContent = 'center';
+                        element.style.border = '2px solid white';
+                        element.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+                        element.style.fontSize = '16px';
+                        element.innerHTML = 'S';
+                        
+                        // Create and add the marker to the map
+                        startMapboxMarker = new mapboxgl.Marker({
+                            element: element,
+                            anchor: 'center'
+                        })
+                        .setLngLat([node.longitude, node.latitude])
+                        .addTo(map);
                     }
-                    if (i === indoorPathNodes.length - 1) { // END NODE
+                    else if (i === initialIndoorPathNodes.length - 1) { // END NODE
                         endNodeMarker.position.set(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
-                        // Optional: Scale or rotate end marker if needed
-                        // endNodeMarker.scale.set(0.5, 0.5, 0.5);
+                        endNodeMarker.scale.set(2, 2, 2); // Increase scale of the end node marker
                         scene.add(endNodeMarker);
                     } 
-                    // Optional: Add intermediate markers (e.g., small gray spheres)
-                    /* else { 
-                        let color = 'gray';
-                        let radius = 0.3;
-                        // Example: Color based on type (adjust type strings as needed)
-                        if (node.type === 'ELEV') color = 'skyblue';
-                        else if (node.type === 'STAI') color = 'orange';
-                        
-                        const interNodeGeom = new THREE.SphereGeometry(radius);
-                        const interNodeMat = new THREE.MeshStandardMaterial({ color: color });
-                        disposables.push(interNodeGeom, interNodeMat);
-                        const interNodeMarker = new THREE.Mesh(interNodeGeom, interNodeMat);
-                        interNodeMarker.position.set(dNode.dEastMeter, nodeYPosition, dNode.dNorthMeter);
-                        scene.add(interNodeMarker);
-                    }*/
+                }
 
-                    // Create line segments to next node
-                    if (i < indoorPathNodes.length - 1) {
-                        const nextNode = indoorPathNodes[i + 1];
-                        const nextNodeMercator = MercatorCoordinate.fromLngLat([nextNode.longitude, nextNode.latitude]);
-                        const dNextNode = calcMeterOffset(nextNodeMercator, sceneOriginMercator);
+                // Debug the points
+                console.log(`[createCustomLayer] Path points array length: ${points.length}`);
+                console.log("[createCustomLayer] First point:", points[0]);
+                console.log("[createCustomLayer] Last point:", points[points.length - 1]);
+                
+                if (points.length >= 2) {
+                    try {
+                        // Create a THREE.js curve from the points for smooth paths
+                        const curve = new THREE.CatmullRomCurve3(points);
                         
-                        const fromVec = new THREE.Vector3(
-                            dNode.dEastMeter,
-                            nodeYPosition, 
-                            dNode.dNorthMeter
-                        );
-                        const toVec = new THREE.Vector3(
-                            dNextNode.dEastMeter,
-                            1 + (nextNode.floor - 1) * attributes.floorHeight, 
-                            dNextNode.dNorthMeter
+                        // Create a tube geometry along the curve
+                        // 0.5 radius is equivalent to ~10px width at normal zoom levels
+                        const tubeGeometry = new THREE.TubeGeometry(
+                            curve,           // path
+                            points.length * 6, // tubular segments (higher = smoother)
+                            0.5,             // radius
+                            8,               // radial segments (higher = smoother tube)
+                            false            // closed path?
                         );
                         
-                        // --- DEBUG LOGGING START ---
-                        console.log(`Path Segment ${i}:`);
-                        console.log(`  Node ${i}: ID=${node.id}, Type=${node.type}, Floor=${node.floor}, Coords=[${node.longitude.toFixed(6)}, ${node.latitude.toFixed(6)}]`);
-                        console.log(`  Node ${i+1}: ID=${nextNode.id}, Type=${nextNode.type}, Floor=${nextNode.floor}, Coords=[${nextNode.longitude.toFixed(6)}, ${nextNode.latitude.toFixed(6)}]`);
-                        console.log(`  From Vec3: [${fromVec.x.toFixed(2)}, ${fromVec.y.toFixed(2)}, ${fromVec.z.toFixed(2)}]`);
-                        console.log(`  To Vec3: [${toVec.x.toFixed(2)}, ${toVec.y.toFixed(2)}, ${toVec.z.toFixed(2)}]`);
-                        // --- DEBUG LOGGING END ---
-
-                        const lineGeo = new THREE.BufferGeometry().setFromPoints([fromVec, toVec]);
-                        disposables.push(lineGeo);
-
-                        // Determine material based on floor change or node type
-                        const isVertical = node.type === 'ELEV' || node.type === 'STAI' || nextNode.type === 'ELEV' || nextNode.type === 'STAI' || node.floor !== nextNode.floor;
-                        const material = isVertical ? dashedMaterial : lineMaterial;
-
-                        const line = new THREE.Line(lineGeo, material);
-
-                        if (isVertical) {
-                    line.computeLineDistances(); // Needed for dashed lines
-                        }
-                        scene.add(line);
+                        // Create a purple material
+                        const tubeMaterial = new THREE.MeshBasicMaterial({ 
+                            color: 0x800080,  // Purple color
+                            side: THREE.DoubleSide, // Render both inside and outside
+                            // We don't need transparency for a solid path
+                            transparent: false,
+                            depthWrite: true   // Make sure it writes to depth buffer
+                        });
+                        
+                        const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+                        // Make sure our tube is visible above other elements
+                        tube.renderOrder = 999;
+                        // Don't allow the camera to cull the tube when zooming
+                        tube.frustumCulled = false;
+                        
+                        // Add to scene and track for cleanup
+                        scene.add(tube);
+                        pathRelatedDisposables.add(tubeGeometry);
+                        pathRelatedDisposables.add(tubeMaterial);
+                        pathRelatedObjects.push(tube);
+                        
+                        console.log(`[createCustomLayer] Added purple tube mesh to scene (radius: 0.5)`);
+                    } catch (error) {
+                        console.error("Error creating path:", error);
                     }
+                } else {
+                    console.warn(`[createCustomLayer] Not enough points to create a path (min 2 needed)`);
                 }
             } else {
                  console.warn("Custom 3D layer: No indoor path nodes provided.");
             }
-            // --- END NEW PATH LOGIC ---
+           
+            const circleGeometry = new THREE.SphereGeometry(1.3, 24, 16);
+            const circleMaterial = new THREE.MeshStandardMaterial({
+                color: 0x0066ff, // Bright blue
+                emissive: 0x0033cc, // Blue glow
+                emissiveIntensity: 0.3,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+            
+            // Create the mesh
+            const pathMarker = new THREE.Mesh(circleGeometry, circleMaterial);
+            // No rotation needed for sphere
 
-            // animate icon along path
-            const sphereArrowGeom = new THREE.SphereGeometry(2);
-            const sphereArrowMat = new THREE.MeshStandardMaterial({ color: 'blue' });
-            disposables.push(sphereArrowGeom, sphereArrowMat);
-            const sphereArrow = new THREE.Mesh(sphereArrowGeom, sphereArrowMat);
-
-            const elevatorArrowGeom = new THREE.BoxGeometry(2, 2, 2);
-            const elevatorArrowMat = new THREE.MeshStandardMaterial({ color: 'blue' });
-            disposables.push(elevatorArrowGeom, elevatorArrowMat);
-            const elevatorArrow = new THREE.Mesh(elevatorArrowGeom, elevatorArrowMat);
-
-            scene.add(sphereArrow, elevatorArrow);
-            elevatorArrow.visible = false;
-            sphereArrow.visible = false;
+            // Create a 3D cube for elevator/stair points
+            const elevatorGeometry = new THREE.BoxGeometry(3, 3, 3);
+            const elevatorMaterial = new THREE.MeshStandardMaterial({
+                color: 0xff9900, // Orange for elevator
+                emissive: 0xff5500, // Orange glow
+                emissiveIntensity: 0.5,
+                metalness: 0.8,
+                roughness: 0.2,
+                transparent: true,
+                opacity: 0.9 // Slight transparency to see through
+            });
+            
+            // Create the elevator mesh
+            const elevatorMarker = new THREE.Mesh(elevatorGeometry, elevatorMaterial);
+            
+            // Add edges to the cube to enhance the 3D appearance
+            const edgesGeometry = new THREE.EdgesGeometry(elevatorGeometry);
+            const edgesMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xffcc00, // Bright yellow edges
+                linewidth: 2
+            });
+            const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+            elevatorMarker.add(edges); // Add edges as a child of the cube
+            
+            // Track the additional geometries/materials for cleanup
+            pathRelatedDisposables.add(edgesGeometry);
+            pathRelatedDisposables.add(edgesMaterial);
+            disposables.add(edgesGeometry);
+            disposables.add(edgesMaterial);
+            
+            // Add to scene
+            scene.add(pathMarker, elevatorMarker);
+            pathMarker.visible = false;
+            elevatorMarker.visible = false;
 
             const rawPoints: THREE.Vector3[] = [];
             // Use indoorPathNodes if available
-            if (indoorPathNodes && indoorPathNodes.length > 0) {
+            if (initialIndoorPathNodes && initialIndoorPathNodes.length > 0) {
                 const sceneOriginMercator = MercatorCoordinate.fromLngLat(attributes.sceneCoords);
-                for (let i = 0; i < indoorPathNodes.length; i++) {
-                    const nodeMercator = MercatorCoordinate.fromLngLat([indoorPathNodes[i].longitude, indoorPathNodes[i].latitude]);
+                for (let i = 0; i < initialIndoorPathNodes.length; i++) {
+                    const nodeMercator = MercatorCoordinate.fromLngLat([initialIndoorPathNodes[i].longitude, initialIndoorPathNodes[i].latitude]);
                 const offset = calcMeterOffset(nodeMercator, sceneOriginMercator);
                 rawPoints.push(new THREE.Vector3(
                     offset.dEastMeter,
-                        1 + (indoorPathNodes[i].floor - 1) * attributes.floorHeight,
+                        1 + (initialIndoorPathNodes[i].floor - 1) * attributes.floorHeight,
                     offset.dNorthMeter
                 ));
                 }
             } else {
                  console.warn("Animation: No indoor path nodes to generate points for animation.");
-                 // If no points, maybe hide arrows immediately or handle differently
-                 elevatorArrow.visible = false;
-                 sphereArrow.visible = false;
+                 // If no points, hide markers
+                 pathMarker.visible = false;
+                 elevatorMarker.visible = false;
             }
 
             let subpathIndex = 0;
@@ -269,10 +340,10 @@ export function createCustomLayer(
                     progress = 0;
                 }
 
-                // Check node types for elevator/stairs for arrow type, using indoorPathNodes
-                if (indoorPathNodes && subpathIndex + 1 < indoorPathNodes.length) {
-                    const startNode = indoorPathNodes[subpathIndex];
-                    const endNode = indoorPathNodes[subpathIndex+1];
+                // Check node types for elevator/stairs for marker type, using indoorPathNodes
+                if (initialIndoorPathNodes && subpathIndex + 1 < initialIndoorPathNodes.length) {
+                    const startNode = initialIndoorPathNodes[subpathIndex];
+                    const endNode = initialIndoorPathNodes[subpathIndex+1];
                     const floorChange = startNode.floor !== endNode.floor;
                     // Check against backend types like 'ELEV', 'STAI' (case-sensitive)
                     const isVerticalSegment = startNode.type === 'ELEV' || startNode.type === 'STAI' || 
@@ -280,15 +351,15 @@ export function createCustomLayer(
                                              floorChange;
 
                     if (isVerticalSegment) {
-                        elevatorArrow.visible = true;
-                        sphereArrow.visible = false;
+                        elevatorMarker.visible = true;
+                        pathMarker.visible = false;
                     } else {
-                        elevatorArrow.visible = false;
-                        sphereArrow.visible = true;
+                        elevatorMarker.visible = false;
+                        pathMarker.visible = true;
                     }
                 } else { // Handle last segment case or if indoorPathNodes is missing
-                    elevatorArrow.visible = false;
-                    sphereArrow.visible = true;
+                    elevatorMarker.visible = false;
+                    pathMarker.visible = true;
                 }
 
                 const start = rawPoints[subpathIndex];
@@ -299,13 +370,29 @@ export function createCustomLayer(
                     progress = 1; // Force moving to next segment
                 } else {
                     dir.normalize();
-                    const arrowSpeed = 0.5 / length; 
-                    progress += arrowSpeed;
+                    // Increase the marker movement speed
+                    const markerSpeed = 0.45 / length; // Faster movement (was 0.15)
+                    progress += markerSpeed;
                 }
 
                 const pos = new THREE.Vector3().lerpVectors(start, end, Math.min(progress, 1)); // Clamp progress to 1
-                sphereArrow.position.copy(pos); 
-                elevatorArrow.position.copy(pos);
+                
+                // Move markers to current position
+                // Position directly on the path (no Y offset for the sphere)
+                pathMarker.position.copy(pos);
+                // Keep the elevator marker slightly above the path
+                elevatorMarker.position.copy(pos).add(new THREE.Vector3(0, 2, 0));
+                
+                // Make the elevator marker pulsate and rotate slightly for better 3D visibility
+                const pulseScale = 1 + 0.4 * Math.sin(Date.now() * 0.006); // Increased amplitude and frequency
+                elevatorMarker.scale.set(pulseScale, pulseScale, pulseScale);
+                
+                // Add a slow rotation to emphasize 3D nature
+                elevatorMarker.rotation.y += 0.02;
+                
+                // Make the sphere pulsate more dramatically
+                const spherePulse = 1 + 0.3 * Math.sin(Date.now() * 0.004); // Increased amplitude and frequency
+                pathMarker.scale.set(spherePulse, spherePulse, spherePulse);
 
                 // Request next frame only if the layer is still active
                  animationFrameId = requestAnimationFrame(animateArrowOnPath);
@@ -332,27 +419,27 @@ export function createCustomLayer(
                     floor.rotateY(attributes.buildingRotation) // Use attribute
                     floor.position.set(dBuilding.dEastMeter, i * attributes.floorHeight - 1.8, dBuilding.dNorthMeter); // Use attributes.floorHeight
                     scene.add(floor)
-                    // add pngs to floors
-                    const myFloorPath = attributes.floorPlanPaths[i];
+                // add pngs to floors
+                const myFloorPath = attributes.floorPlanPaths[i];
 
-                    const myTexture = new THREE.TextureLoader().load(myFloorPath, (texture) => {
-                        texture.minFilter = THREE.LinearMipMapLinearFilter; // good for downscaling
-                        texture.magFilter = THREE.LinearFilter; // good for upscaling
-                    });
+                const myTexture = new THREE.TextureLoader().load(myFloorPath, (texture) => {
+                    texture.minFilter = THREE.LinearMipMapLinearFilter; // good for downscaling
+                    texture.magFilter = THREE.LinearFilter; // good for upscaling
+                });
 
-                    const myGeometry = new THREE.PlaneGeometry(attributes.imageConstants.width, attributes.imageConstants.height, 1, 1);
-                    const myMaterial = new THREE.MeshBasicMaterial({
-                        map: myTexture,
-                        transparent: true,
-                        depthWrite: false,
-                        side: THREE.DoubleSide})
+                const myGeometry = new THREE.PlaneGeometry(attributes.imageConstants.width, attributes.imageConstants.height, 1, 1);
+                const myMaterial = new THREE.MeshBasicMaterial({
+                    map: myTexture,
+                    transparent: true,
+                    depthWrite: false,
+                    side: THREE.DoubleSide})
 
 
-                    const myPlane = new THREE.Mesh(myGeometry, myMaterial);
-                    myPlane.rotateX(Math.PI/2)
-                    myPlane.position.set(attributes.imageConstants.offsetEast, i * attributes.floorHeight, attributes.imageConstants.offsetNorth);
+                const myPlane = new THREE.Mesh(myGeometry, myMaterial);
+                myPlane.rotateX(Math.PI/2)
+                myPlane.position.set(attributes.imageConstants.offsetEast, i * attributes.floorHeight, attributes.imageConstants.offsetNorth);
 
-                    scene.add(myPlane)
+                scene.add(myPlane)
 
                 } else {
                     console.warn(`Missing model path for floor ${i+1}`);
@@ -367,8 +454,6 @@ export function createCustomLayer(
             buildingMask.rotateY(attributes.buildingRotation) // Use attribute
             scene.add(buildingMask)
 
-
-
             // setup the THREE.js renderer
             renderer = new THREE.WebGLRenderer({
                 canvas: mapInstance.getCanvas(),
@@ -377,11 +462,24 @@ export function createCustomLayer(
             });
 
             renderer.autoClear = false;
+            
+            // For debugging, log that we've set up the renderer
+            console.log(`[createCustomLayer] Renderer initialized, canvas size: ${mapInstance.getCanvas().width}x${mapInstance.getCanvas().height}`);
         },
 
         // --- Render: Draw the THREE.js scene ---
         render: (gl: WebGLRenderingContext, matrix: number[]) => {
             if (!scene || !camera || !renderer) return;
+
+            // Update resolution every frame - critical for LineMaterial
+            if (pathLineMaterial && renderer) {
+                pathLineMaterial.resolution.set(
+                    renderer.domElement.width,
+                    renderer.domElement.height
+                );
+                // Force material update
+                pathLineMaterial.needsUpdate = true;
+            }
 
             const sceneOriginMercator = MercatorCoordinate.fromLngLat(attributes.sceneCoords);
             const sceneTransform = {
@@ -402,9 +500,15 @@ export function createCustomLayer(
             map.triggerRepaint(); // Important: Request Mapbox redraw
         },
 
-        // --- onRemove: Cleanup THREE.js resources ---
         onRemove: (mapInstance: mapboxgl.Map, gl: WebGLRenderingContext) => {
             console.log(`Removing custom layer: ${layerId}`); // Use the stored layerId variable
+            
+            // Remove Mapbox start marker if it exists
+            if (startMapboxMarker) {
+                startMapboxMarker.remove();
+                startMapboxMarker = null;
+            }
+            
             // Stop animation loop
             if (animationFrameId !== null) {
                 cancelAnimationFrame(animationFrameId);
@@ -452,8 +556,8 @@ export function createCustomLayer(
             }
 
              // Dispose of tracked disposables (redundant if scene traversal works, but safe)
-             disposables.forEach(item => item?.dispose?.());
-             disposables.length = 0; // Clear array
+             pathRelatedDisposables.forEach(item => item?.dispose?.());
+             pathRelatedDisposables.clear();
 
 
             // Dispose of renderer
