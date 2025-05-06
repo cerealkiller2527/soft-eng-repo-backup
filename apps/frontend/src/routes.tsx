@@ -16,6 +16,7 @@ import Credits from "./routes/credits.tsx";
 import About from "./routes/about.tsx"
 import DbEditor from "@/routes/dbEditor.tsx";
 import ProfilePage from "./routes/profilePage.tsx";
+import HospitalMap from "./routes/new_nav.tsx";
 
 export const routes = [
     {
@@ -109,6 +110,11 @@ export const routes = [
         path: '/profile',
         errorElement: <div />,
         element: <ProfilePage/>,
+    },
+    {
+        path: '/hospitalmap',
+        errorElement: <div />,
+        element: <HospitalMap />,
     }
 ];
 

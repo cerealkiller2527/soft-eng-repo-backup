@@ -24,6 +24,7 @@
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
+    --color-destructive-foreground: var(--destructive-foreground);
     --color-destructive: var(--destructive);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
@@ -60,6 +61,7 @@
     --accent: oklch(0.821 0.044 246.5713675260734);
     --accent-foreground: oklch(0.212 0.027 247.5987984068987);
     --destructive: oklch(0.580 0.237 28.43022926835137);
+    --destructive-foreground: oklch(0.962 0.002 238.39342766426847);
     --border: oklch(0.922 0.003 17.208294632015928);
     --input: oklch(0.922 0.003 17.208294632015928);
     --ring: oklch(0.368 0.099 247.95801811129627);
@@ -94,6 +96,7 @@
     --accent: oklch(0.737 0.072 247.1273677475932);
     --accent-foreground: oklch(0.212 0.030 247.84005481564589);
     --destructive: oklch(0.529 0.195 27.156747692001183);
+    --destructive-foreground: oklch(0.962 0.002 238.39342766426847);
     --border: oklch(0.301 0.030 240.06958713168234);
     --input: oklch(0.301 0.030 240.06958713168234);
     --ring: oklch(0.550 0.146 248.31788997914055);
@@ -114,9 +117,68 @@
 
 @layer base {
     * {
-        @apply border-border outline-ring/50;
+        @apply border-border;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-sans;
     }
+}
+
+/* Ensure Mapbox canvas elements display correctly */
+.mapboxgl-canvas-container,
+.mapboxgl-canvas-container canvas,
+canvas.mapboxgl-canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Custom Marker Animations */
+@keyframes marker-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.9;
+  }
+}
+
+.animate-marker-select {
+  animation: marker-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes moving-glow {
+  0% {
+    box-shadow: 0 0 0 5px oklch(from var(--primary) l c h / 0.7); 
+    opacity: 0.7;
+  }
+  70%, 100% {
+     box-shadow: 0 0 0 20px oklch(from var(--primary) l c h / 0);
+    opacity: 0;
+  }
+}
+
+.marker-icon-container-glow::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  animation: moving-glow 1.4s infinite ease-out;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes marker-jump {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.animate-marker-jump {
+  animation: marker-jump 0.8s ease-in-out infinite;
 }

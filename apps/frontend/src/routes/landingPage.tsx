@@ -92,7 +92,7 @@ const Landing: React.FC = () => {
                             Login
                         </Link>
                         <Link
-                            to="/FloorPlan"
+                            to="/hospitalMap"
                             className="rounded-lg border-2 border-white px-8 py-3 text-lg font-semibold text-white transition-all hover:bg-white/10 hover:shadow-lg"
                         >
                             Navigation

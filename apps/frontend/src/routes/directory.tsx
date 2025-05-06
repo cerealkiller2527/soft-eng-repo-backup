@@ -247,7 +247,7 @@ const DirectoryPage: React.FC = () => {
                     const buildingName = d.Location[0]?.building.name.trim().toLowerCase();
                     return deptName === normalizedName && buildingName === normalizedBuilding;
                 }) ?? null;
-                navigate("/floorplan", {
+                navigate("/hospitalMap", {
                     state: {
                         building: matchedDepartment?.Location[0]?.building.name,
                         destination: matchedDepartment?.Location[0]?.suite || "",
