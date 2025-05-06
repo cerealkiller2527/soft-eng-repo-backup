@@ -5,24 +5,21 @@ import mapboxgl from 'mapbox-gl';
 import { useMap } from '@/contexts/MapContext';
 import type { Hospital } from '@/types/hospital';
 import { cn } from '@/lib/utils';
-import { icons } from '@/lib/icons'; // Import centralized map
-import { Hospital as HospitalIcon, Info } from 'lucide-react'; // Keep fallback import, add Info icon
+import { icons } from '@/lib/icons';
+import { Hospital as HospitalIcon, Info } from 'lucide-react';
 import { calculateBearing } from '@/lib/utils';
-import { toast } from 'sonner'; // Import toast
-// Import constants
+import { toast } from 'sonner';
 import {
   DEFAULT_FLY_TO_OPTIONS,
   HOSPITAL_SPECIFIC_VIEWS
 } from '@/lib/constants'; 
-// Add CameraOptions import
 import type { CameraOptions } from 'mapbox-gl';
 
-// Define the combined type for flyTo options
 type CustomFlyToOptions = Omit<mapboxgl.CameraOptions & mapboxgl.AnimationOptions, 'center'>;
 
 interface LocationMarkerProps {
   hospital: Hospital;
-  iconName: string; // Use iconName instead of index
+  iconName: string;
 }
 
 export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
@@ -30,20 +27,15 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
     map, 
     selectedLocation, setSelectedLocation, 
     popupLocation, setPopupLocation, 
-    userLocation, // Get userLocation from context
+    userLocation,
     flyTo,
-    activeTab // Get activeTab from context
+    activeTab
   } = useMap();
   
-  // Ref for the Mapbox marker instance
   const markerRef = useRef<mapboxgl.Marker | null>(null);
-
-  // Find the icon component based on name, default to HospitalIcon
   const IconComponent = useMemo(() => icons[iconName] || HospitalIcon, [iconName]);
-
   const isSelected = selectedLocation?.id === hospital.id;
 
-  // --- Logic for clicking the marker element (remains largely the same) ---
   const handleListTabClick = (clickedHospital: Hospital) => {
       setSelectedLocation(clickedHospital);
       const isPopupCurrentlyOpen = popupLocation?.id === clickedHospital.id;
@@ -83,7 +75,7 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
       }
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => { // Change type to React.MouseEvent
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (activeTab === 'directions') {
         handleDirectionsTabClick(hospital);
@@ -92,21 +84,15 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
     }
   };
 
-  // Effect for creating/updating the Mapbox marker instance
   useEffect(() => {
-    // Guard clause with more specific checks
     if (!map || !hospital.coordinates) return;
 
-    // Use a simpler approach to marker creation with fewer delays
     try {
-      // --- Create or update Mapbox Marker --- 
       if (!markerRef.current) {
-        // First check if the map is still valid
         if (!map || map._removed) {
           return;
         }
         
-        // --- Create the DOM element programmatically --- 
         const el = document.createElement('div');
         el.className = cn(
           'marker-dom-element cursor-pointer relative transition-transform duration-150 ease-in-out',
@@ -129,10 +115,8 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
                 stroke-width="2" 
                 stroke-linecap="round" 
                 stroke-linejoin="round" 
-                class="lucide lucide-${iconName}" // Dynamically add icon class if needed, or use fixed placeholder
+                class="lucide lucide-${iconName}"
              >
-               <!-- Placeholder for IconComponent SVG content - Requires getting SVG string or using innerHTML dangerously -->
-               <!-- Example: Direct SVG path for HospitalIcon as fallback -->
                <path d="M12 6v4"/> 
                <path d="M14 14h-4"/>
                <path d="M14 18h-4"/>
@@ -147,27 +131,22 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
              isSelected ? 'border-t-primary' : 'border-t-primary'
           )}"></div>
         `;
-        // Attach click listener directly to the DOM element
         el.addEventListener('click', (domEvent) => {
-           domEvent.stopPropagation(); // Prevent map click
+           domEvent.stopPropagation();
            if (activeTab === 'directions') {
                handleDirectionsTabClick(hospital);
            } else {
                handleListTabClick(hospital);
            }
         });
-        // --- End element creation ---
 
-        // Create the marker
         markerRef.current = new mapboxgl.Marker({
-          element: el, // Use the programmatically created element
+          element: el,
           anchor: 'bottom',
         });
         
-        // Set position first
         markerRef.current.setLngLat(hospital.coordinates as [number, number]);
         
-        // Add to map with validation
         if (map.getContainer()) {
           try {
             markerRef.current.addTo(map);
@@ -176,19 +155,16 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
           }
         }
       } else {
-        // Just update position if marker already exists
         markerRef.current.setLngLat(hospital.coordinates as [number, number]);
       }
     } catch (error) {
       console.error("Error creating/updating marker:", error);
-      // Clean up on error
       if (markerRef.current) {
         try { markerRef.current.remove(); } catch (e) { }
         markerRef.current = null;
       }
     }
 
-    // Cleanup function to remove the Mapbox marker
     return () => {
       if (markerRef.current) {
         try {
@@ -199,9 +175,7 @@ export function LocationMarker({ hospital, iconName }: LocationMarkerProps) {
         markerRef.current = null;
       }
     };
-  // Dependencies: map instance and coordinates
-  }, [map, hospital.coordinates, isSelected, activeTab]); // Add isSelected and activeTab dependency for correct styling/click behavior
+  }, [map, hospital.coordinates, isSelected, activeTab]);
 
-  // This component no longer renders anything in React tree
   return null;
-} 
+}
